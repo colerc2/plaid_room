@@ -53,11 +53,7 @@ if __name__ == "__main__":
                     if prices[0] != None:
                         print 'Price: %s, %s, %s' % (prices[0], prices[1], prices[2])
                     for artist in result.artists:
-                        print 'Artist:\t\t %s' % artist.name
-                        print 'Real Name:\t%s' % artist.real_name
-                        print 'Profile:\t%s' % artist.profile
-                        print 'Variations:\t%s' % (", ".join(artist.name_variations))
-                        print 'Aliases:\t%s' % (", ".join(artist.aliases))
+                        discogs.display_artist(artist, '\t')
                     print 'Track List:'
                     for t in result.tracklist:
                         print '\t Track %s - %s - %s' % (t.position, t.duration, t.title)
