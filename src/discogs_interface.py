@@ -20,17 +20,24 @@ class DiscogsClient():
     
     def search_for_release(self, upc):
         if(reconnect_if_necessary()):
-            
+            try:
+                results = self.client.search(upc, type='release')
+            except e:
+                print 'Failed on the call to discogs client: %s' % e
         else:
             #reconnect failed, throw some error breh
+            print 'Some shit is going down, figure out what'
+        return results
 
     def reconnect_if_necessary(self):
         if(!self.connected):
             #first, make sure we aren't exceeding discogs API's rate limit
             time.sleep(self.rate_limit)
+            print 'Attempting to reconnect to discogs API'
             try:
                 self.client = discogs_client.Client('Plaid Room Interface')
                 self.connected = True
+                print 'Attempted connection was successful'
                 break
             except e:
                 #TODO: be more specific about errors and maybe display a pop up window here?
