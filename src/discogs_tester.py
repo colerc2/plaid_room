@@ -61,5 +61,5 @@ if __name__ == "__main__":
 
     print '*'*50
     print '*'*50
-    print '%s found out of %s' % (len(number_found), len(upcs))
+    print '%s found out of %s' % (number_found, len(upcs))
     print 'Number of times disconnected: %s' % number_of_problems
