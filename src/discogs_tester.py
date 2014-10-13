@@ -49,6 +49,7 @@ if __name__ == "__main__":
                     print 'ID: \t\t %s' % result.id
                     print 'Title:\t\t %s' % result.title
                     print 'Year:\t\t %s' % result.year
+                    print 'Genres:\t\t %s' % (",".join(result.genres))
                     for artist in result.artists:
                         print 'Artist(s):\t\t%s' % artist.name
                         

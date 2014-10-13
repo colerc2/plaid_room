@@ -34,6 +34,7 @@ class DiscogsClient():
         return self.connected
 
  
+        #If connected, search for release
     def search_for_release(self, upc):
         if(self.reconnect_if_necessary()):
             try:
@@ -45,15 +46,49 @@ class DiscogsClient():
             print 'Some shit is going down, figure out what'
         return results
 
+        #Get rid of weird chars and white space
     def clean_up_upc(self, upc):
         new_upc = re.sub(r"\D", "", upc)
         new_upc = new_upc.strip()
         return new_upc
         
+        #Make sure it's a valid length for UPC/EAN
     def does_this_even_make_sense(self, upc):
         #first get rid of anything that isn't a number
         if (len(upc) != 12 and len(upc) != 13):
             return False
         else:
             return True
+            
+    def scrape_price(self, release_id, prices):
+        release_url = 'http://discogs.com/release/%s' % release_id
+        user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
+        headers = { 'User-Agent' : user_agent }
+        try:
+            req = urllib2.Request(release_url, None, headers)
+            response = urllib2.urlopen(req)
+            grab_low = False
+            grab_mid = False
+            grab_high = False
+            for line_ in response:
+                line = line_.rstrip()
+                if(grab_low):
+                    grab_low = False
+                    prices[0] = line.strip()
+                if(grab_mid):
+                    grab_mid = False
+                    prices[1] = line.strip()
+                if(grab_high):
+                    grab_high = False
+                    prices[2] = line.strip()
+                if(line.find('Lowest') != -1):
+                    grab_low = True
+                if(line.find('Median') != -1):
+                    grab_mid = True
+                if(line.find('Highest') != -1):
+                    grab_high = True
+        except Exception as e:
+            print 'Some error occured while trying to scrape the price from %s: %s' % (release_url, e)
+    
+            
 
