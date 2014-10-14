@@ -92,13 +92,22 @@ class DiscogsClient():
     
     #recursive (or naaa?) function to display artists
     def display_artist(self, artist, tabs):
+        #print artist.decode('utf-8')
         print 'Artist:%s\t %s' % (tabs,artist.name)
-        print 'Real Name:%s%s' % (tabs,artist.real_name)
-        print 'Profile:%s%s' % (tabs,artist.profile)
-        print 'Variations:%s%s' % (tabs,(", ".join(artist.name_variations)))
+        #hard coded work around uh gross oh well
+        if artist.name == 'Various':
+            return
+        if artist.real_name is not None:
+            print 'Real Name:%s%s' % (tabs,artist.real_name)
+        if artist.profile is not None:
+            print 'Profile:%s%s' % (tabs,artist.profile)
+        if artist.name_variations is not None:
+            print 'Variations:%s%s' % (tabs,(", ".join(artist.name_variations)))
         #print 'Variations:%s%s' % (tabs,artist.name_variations)
         #print artist.name_variations
-        alias_list = []
-        for alias in artist.aliases:
-            alias_list.append(alias.name)
-        print 'Aliases: %s%s' % (tabs, (", ".join(alias_list)))
+        if artist.aliases is not None:
+            alias_list = []
+            for alias in artist.aliases:
+                alias_list.append(alias.name)
+            print 'Aliases: %s%s' % (tabs, (", ".join(alias_list)))
+        return

@@ -18,10 +18,16 @@ if __name__ == "__main__":
     number_of_problems = 0
     number_found = 0
     #grab info from discogs
+    times_checked = 0
     for upc in upcs:
         upc_checked = False
         while(upc_checked == False):
             try:
+                if(times_checked > 4):
+                    times_checked = 0
+                    upc_checked = True
+                    continue
+
                 #make sure not to exceed discogs API limit
                 time.sleep(discogs.rate_limit)
                 print '*'*60
@@ -51,9 +57,13 @@ if __name__ == "__main__":
                     prices = [None] * 3
                     discogs.scrape_price(result.id, prices)
                     if prices[0] != None:
-                        print 'Price: %s, %s, %s' % (prices[0], prices[1], prices[2])
+                        print 'Price:\t\t %s, %s, %s' % (prices[0], prices[1], prices[2])
                     for artist in result.artists:
                         discogs.display_artist(artist, '\t')
+                    label_list = []
+                    for label in result.labels:
+                        label_list.append(label.name)
+                    print 'Label:\t\t%s' % (", ".join(label_list))
                     print 'Track List:'
                     for t in result.tracklist:
                         print '\t Track %s - %s - %s' % (t.position, t.duration, t.title)
@@ -63,10 +73,12 @@ if __name__ == "__main__":
                         
                 number_found = number_found + 1
                 upc_checked = True
+                times_checked = 0
 
             except Exception as e:
                 number_of_problems = number_of_problems + 1
                 print 'Something bad happened, retrying for UPC %s: %s' % (upc, e)
+                times_checked = times_checked + 1
                 time.sleep(2)
 
     print '*'*50
