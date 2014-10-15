@@ -293,6 +293,7 @@ class Ui_Form(QtGui.QWidget):
         self.search_upc_box.returnPressed.connect(self.search_for_upc)
 
     def search_for_upc(self):
+        self.clear_whole_table()
         upc_entered = str(self.search_upc_box.text())
         upc = self.discogs.clean_up_upc(upc_entered)
         if(not self.discogs.does_this_even_make_sense(upc)):
@@ -304,6 +305,7 @@ class Ui_Form(QtGui.QWidget):
             if results is None or len(results) == 0:
                 print 'No match found on discogs for upc %s.' % upc
 
+            self.results_table.setRowCount(len(results))    
             #need to use a dict here to speed things up maybe
             for ii in range(len(results)):
                 result = results[ii]
@@ -331,7 +333,9 @@ class Ui_Form(QtGui.QWidget):
             self.results_table.setItem(row,col,item)
 
     def clear_whole_table(self):
-        
+        for ii in range(self.results_table.rowCount()):
+            for jj in range(self.results_table.columnCount()):
+                self.change_table_text(ii,jj,"")
                         
 
 if __name__ == '__main__':
