@@ -928,7 +928,10 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,1,result.artists[0].name)
                 self.change_tab_one_results_table_text(ii,2,result.title)
                 self.change_tab_one_results_table_text(ii,3,'N/A')
-                self.change_tab_one_results_table_text(ii,4,'9.99')
+                prices = [None] * 3
+                self.discogs.scrape_price(result.id, prices)
+                if prices[0] != None:
+                    self.change_tab_one_results_table_text(ii,4,prices[1])
                 self.change_tab_one_results_table_text(ii,5,'New')
                 self.change_tab_one_results_table_text(ii,6,'Fat Beats')
                 self.change_tab_one_results_table_text(ii,7,str(9+ii))
