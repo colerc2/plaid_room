@@ -74,13 +74,13 @@ class DiscogsClient():
                 line = line_.rstrip()
                 if(grab_low):
                     grab_low = False
-                    prices[0] = line.strip()
+                    prices[0] = (line.strip()).replace("$", "")
                 if(grab_mid):
                     grab_mid = False
-                    prices[1] = line.strip()
+                    prices[1] = (line.strip()).replace("$", "")
                 if(grab_high):
                     grab_high = False
-                    prices[2] = line.strip()
+                    prices[2] = (line.strip()).replace("$", "")
                 if(line.find('Lowest') != -1):
                     grab_low = True
                 if(line.find('Median') != -1):

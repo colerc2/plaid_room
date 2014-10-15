@@ -927,7 +927,16 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,0,upc)
                 self.change_tab_one_results_table_text(ii,1,result.artists[0].name)
                 self.change_tab_one_results_table_text(ii,2,result.title)
-                self.change_tab_one_results_table_text(ii,3,'N/A')
+                format_ = ''
+                try:
+                    for jj in range(len(result.formats)):
+                        format_ = format_ + (result.formats[jj])['qty'] + 'x' + (result.formats[jj])['name'] + ', ' +  ", ".join((result.formats[jj])['descriptions'])
+                        if jj != (len(result.formats)-1):
+                            format_ = format_ + ' + '
+                except Exception as e:
+                    self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
+
+                self.change_tab_one_results_table_text(ii,3,str(format_))
                 prices = [None] * 3
                 self.discogs.scrape_price(result.id, prices)
                 if prices[0] != None:
@@ -938,6 +947,7 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
                 self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
                 self.change_tab_one_results_table_text(ii,10,str(result.year))
+                self.tab_one_results_table.resizeColumnsToContents()
             
 
         except Exception as e:
