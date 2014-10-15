@@ -889,6 +889,80 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.check_out_tab), _translate("Form", "Check Out", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "History/Generate Reports", None))
 
+        #other stuff
+        self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
+        #connectors bro *****************
+
+        #connect tab one search upc button
+        self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
+        self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
+        
+
+    def tab_one_search_for_upc(self):
+        #clear table
+        self.clear_tab_one_search_table()
+    
+        #get entered text and do sanity checks
+        upc = str(self.tab_one_search_upc_qline.text())
+        upc = self.discogs.clean_up_upc(upc)
+        if(not self.discogs.does_this_even_make_sense(upc)):
+            self.print_to_console(('This upc (%s) doesn\'t even make sense.\n' % upc))
+            self.tab_one_results_table.setRowCount(1)
+            return
+        #search
+        self.print_to_console('Searching discogs...')
+        try:
+            results = self.discogs.search_for_release(upc)
+            
+            #check sanity of response
+            if results is None or len(results) == 0:
+                self.print_to_console('\tNo match found on discogs for upc %s.\n' % upc)
+                self.tab_one_results_table.setRowCount(1)
+                return
+            
+            self.print_to_console('\t%s results found on discogs for upc %s.\n' % (len(results), upc))
+            self.tab_one_results_table.setRowCount(len(results))
+            for ii in range(len(results)):
+                result = results[ii]
+                self.change_tab_one_results_table_text(ii,0,upc)
+                self.change_tab_one_results_table_text(ii,1,result.artists[0].name)
+                self.change_tab_one_results_table_text(ii,2,result.title)
+                self.change_tab_one_results_table_text(ii,3,'N/A')
+                self.change_tab_one_results_table_text(ii,4,'9.99')
+                self.change_tab_one_results_table_text(ii,5,'New')
+                self.change_tab_one_results_table_text(ii,6,'Fat Beats')
+                self.change_tab_one_results_table_text(ii,7,str(9+ii))
+                self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
+                self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
+                self.change_tab_one_results_table_text(ii,10,str(result.year))
+            
+
+        except Exception as e:
+            self.print_to_console('Something bad happened while searching for release: %s\n' % e)
+            self.tab_one_results_table.setRowCount(1)
+
+        
+    def print_to_console(self, text):
+        current_text = str(self.tab_one_text_browser.toPlainText())
+        self.tab_one_text_browser.setPlainText(current_text + text)
+        self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
+
+    def change_tab_one_results_table_text(self, row, col, text):
+        item = self.tab_one_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_one_results_table.setItem(row, col, item)
+
+    def clear_tab_one_search_table(self):
+        for ii in range(self.tab_one_results_table.rowCount()):
+            for jj in range(self.tab_one_results_table.columnCount()):
+                self.change_tab_one_results_table_text(ii,jj,"")
+
+        
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     ex = Ui_Form()

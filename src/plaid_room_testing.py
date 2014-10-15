@@ -332,7 +332,7 @@ class Ui_Form(QtGui.QWidget):
             item.setText(text)
             self.results_table.setItem(row,col,item)
 
-    def clear_whole_table(self):
+    def clear_tab_one_search_table(self):
         for ii in range(self.results_table.rowCount()):
             for jj in range(self.results_table.columnCount()):
                 self.change_table_text(ii,jj,"")
