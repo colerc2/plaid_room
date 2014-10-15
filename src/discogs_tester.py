@@ -23,7 +23,7 @@ if __name__ == "__main__":
         upc_checked = False
         while(upc_checked == False):
             try:
-                if(times_checked > 4):
+                if(times_checked > 2):
                     times_checked = 0
                     upc_checked = True
                     continue
