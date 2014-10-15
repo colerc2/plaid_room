@@ -947,6 +947,10 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
                 self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
                 self.change_tab_one_results_table_text(ii,10,str(result.year))
+                try:
+                    self.change_tab_one_results_table_text(ii,12,result.real_name)
+                except Exception as e:
+                    self.print_to_console('Trying to get the real name broke things.\n')
                 self.tab_one_results_table.resizeColumnsToContents()
             
 
