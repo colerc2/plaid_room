@@ -12,6 +12,7 @@ import sys
 import discogs_client
 from discogs_interface import DiscogsClient
 import time
+import datetime
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -925,7 +926,13 @@ class Ui_Form(QtGui.QWidget):
             for ii in range(len(results)):
                 result = results[ii]
                 self.change_tab_one_results_table_text(ii,0,upc)
-                self.change_tab_one_results_table_text(ii,1,result.artists[0].name)
+                artists_ = []
+                try:
+                    for jj in range(len(result.artists)):
+                        artists_.append(result.artists[jj].name)
+                    self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
+                except Exception as e:
+                    self.print_to_console('Error when getting artist information: %s' % e)
                 self.change_tab_one_results_table_text(ii,2,result.title)
                 format_ = ''
                 try:
@@ -948,9 +955,13 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
                 self.change_tab_one_results_table_text(ii,10,str(result.year))
                 try:
-                    self.change_tab_one_results_table_text(ii,12,result.real_name)
+                    self.change_tab_one_results_table_text(ii,12,result.artists[0].real_name)
                 except Exception as e:
-                    self.print_to_console('Trying to get the real name broke things.\n')
+                    self.print_to_console('Trying to get the real name broke things: %s\n' % e)
+                try:
+                    self.change_tab_one_results_table_text(ii,11,str(datetime.date.today()))
+                except Exception as e:
+                    self.print_to_console('Fuck%s' % e)
                 self.tab_one_results_table.resizeColumnsToContents()
             
 
