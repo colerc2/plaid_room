@@ -13,6 +13,8 @@ import discogs_client
 from discogs_interface import DiscogsClient
 import time
 import datetime
+import sqlite3
+import re
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -31,11 +33,20 @@ except AttributeError:
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
-        self.setupUi(self)
 
         #declare global stuff here?
         self.discogs = DiscogsClient()
+        #DB stuff
+        self.db = sqlite3.connect('inventory.db')
+        self.db_cursor = self.db.cursor()
+        #create table
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
+        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text)
+        """)
+        
+        self.setupUi(self)
 
+        
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
@@ -892,12 +903,59 @@ class Ui_Form(QtGui.QWidget):
 
         #other stuff
         self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
+        self.tab_one_update_recently_added_table()
         #connectors bro *****************
 
         #connect tab one search upc button
         self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
+        self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
         
+    def tab_one_add_to_inventory(self):
+        row = self.tab_one_results_table.currentRow()
+        
+        try:
+            #first add it to the database
+            db_item = (str(self.get_tab_one_results_table_text(row, 0)),
+                       str(self.get_tab_one_results_table_text(row,1)),
+                       str(self.get_tab_one_results_table_text(row,2)),
+                       str(self.get_tab_one_results_table_text(row,3)),
+                       float(self.get_tab_one_results_table_text(row,4)),
+                       str(self.get_tab_one_results_table_text(row,5)),
+                       str(self.get_tab_one_results_table_text(row,6)),
+                       float(self.get_tab_one_results_table_text(row,7)),
+                       str(self.get_tab_one_results_table_text(row,8)),
+                       str(self.get_tab_one_results_table_text(row,9)),
+                       int(self.get_tab_one_results_table_text(row,10)),
+                       str(self.get_tab_one_results_table_text(row,11)),
+                       str(self.get_tab_one_results_table_text(row,12)))
+            self.db_cursor.execute('INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+            self.db.commit()
+
+        except Exception as e:
+            self.print_to_console('Problem adding item to DB: %s' % e)
+
+        #display in that young box as recently added
+        self.tab_one_update_recently_added_table()
+        
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            print row
+
+        #make a call to method that handles displaying most recent inventory items
+        
+    def tab_one_update_recently_added_table(self):
+        index = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+            #make sure we don't exceed the limits of the qtablewidget
+            if index > (self.tab_one_recently_added_table.rowCount()-1):
+                break
+            #display stuff
+            for col in range(len(row)):
+                self.change_tab_one_recently_added_table_text(index, col, str(row[col]))
+            index = index + 1
+        #make pretty
+        self.tab_one_recently_added_table.resizeColumnsToContents()
+
 
     def tab_one_search_for_upc(self):
         #clear table
@@ -925,7 +983,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table.setRowCount(len(results))
             for ii in range(len(results)):
                 result = results[ii]
+                #1 - upc
                 self.change_tab_one_results_table_text(ii,0,upc)
+                #2 - artist
                 artists_ = []
                 try:
                     for jj in range(len(result.artists)):
@@ -933,7 +993,9 @@ class Ui_Form(QtGui.QWidget):
                     self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
                 except Exception as e:
                     self.print_to_console('Error when getting artist information: %s' % e)
+                #3 - title
                 self.change_tab_one_results_table_text(ii,2,result.title)
+                #4 - format
                 format_ = ''
                 try:
                     for jj in range(len(result.formats)):
@@ -942,26 +1004,35 @@ class Ui_Form(QtGui.QWidget):
                             format_ = format_ + ' + '
                 except Exception as e:
                     self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
-
                 self.change_tab_one_results_table_text(ii,3,str(format_))
+                #5 - price
                 prices = [None] * 3
                 self.discogs.scrape_price(result.id, prices)
                 if prices[0] != None:
                     self.change_tab_one_results_table_text(ii,4,prices[1])
+                #6 - new/used
                 self.change_tab_one_results_table_text(ii,5,'New')
+                #7 - distributor
                 self.change_tab_one_results_table_text(ii,6,'Fat Beats')
+                #8 - price paid
                 self.change_tab_one_results_table_text(ii,7,str(9+ii))
+                #9 - label
                 self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
+                #10  - genre
                 self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
+                #11 - year
                 self.change_tab_one_results_table_text(ii,10,str(result.year))
+                #12 - date
+                try:
+                    self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                except Exception as e:
+                    self.print_to_console('Something went wrong while doing date stuff - that\'s not good: %s' % e)
+                #13 - real name
                 try:
                     self.change_tab_one_results_table_text(ii,12,result.artists[0].real_name)
                 except Exception as e:
                     self.print_to_console('Trying to get the real name broke things: %s\n' % e)
-                try:
-                    self.change_tab_one_results_table_text(ii,11,str(datetime.date.today()))
-                except Exception as e:
-                    self.print_to_console('Fuck%s' % e)
+                #resize columns
                 self.tab_one_results_table.resizeColumnsToContents()
             
 
@@ -974,6 +1045,13 @@ class Ui_Form(QtGui.QWidget):
         current_text = str(self.tab_one_text_browser.toPlainText())
         self.tab_one_text_browser.setPlainText(current_text + text)
         self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
+
+    def get_tab_one_results_table_text(self, row, col):
+        item = self.tab_one_results_table.item(row, col)
+        if(item is not None):
+            return item.text()
+        else:
+            return None
 
     def change_tab_one_results_table_text(self, row, col, text):
         item = self.tab_one_results_table.item(row, col)
@@ -989,6 +1067,14 @@ class Ui_Form(QtGui.QWidget):
             for jj in range(self.tab_one_results_table.columnCount()):
                 self.change_tab_one_results_table_text(ii,jj,"")
 
+    def change_tab_one_recently_added_table_text(self, row, col, text):
+        item = self.tab_one_recently_added_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_one_recently_added_table.setItem(row, col, item)
         
 
 if __name__ == '__main__':

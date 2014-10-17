@@ -92,17 +92,21 @@ class DiscogsClient():
             grab_low = False
             grab_mid = False
             grab_high = False
+            non_decimal = re.compile(r'[^\d.]+')
             for line_ in response:
                 line = line_.rstrip()
                 if(grab_low):
                     grab_low = False
                     prices[0] = (line.strip()).replace("$", "")
+                    prices[0] = non_decimal.sub('', prices[0])
                 if(grab_mid):
                     grab_mid = False
                     prices[1] = (line.strip()).replace("$", "")
+                    prices[1] = non_decimal.sub('', prices[1])
                 if(grab_high):
                     grab_high = False
                     prices[2] = (line.strip()).replace("$", "")
+                    prices[2] = non_decimal.sub('', prices[2])
                 if(line.find('Lowest') != -1):
                     grab_low = True
                 if(line.find('Median') != -1):
