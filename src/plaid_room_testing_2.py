@@ -931,7 +931,7 @@ class Ui_Form(QtGui.QWidget):
                        str(self.get_tab_one_results_table_text(row,12)))
             self.db_cursor.execute('INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
-
+            self.print_to_console('%s item added to database.\n' % str(self.get_tab_one_results_table_text(row,1))) 
         except Exception as e:
             self.print_to_console('Problem adding item to DB: %s' % e)
 
@@ -958,9 +958,12 @@ class Ui_Form(QtGui.QWidget):
 
 
     def tab_one_search_for_upc(self):
+        
         #clear table
         self.clear_tab_one_search_table()
-    
+
+        worked = [True]*19
+
         #get entered text and do sanity checks
         upc = str(self.tab_one_search_upc_qline.text())
         upc = self.discogs.clean_up_upc(upc)
@@ -1028,10 +1031,61 @@ class Ui_Form(QtGui.QWidget):
                 except Exception as e:
                     self.print_to_console('Something went wrong while doing date stuff - that\'s not good: %s' % e)
                 #13 - real name
+                real_names = []
                 try:
-                    self.change_tab_one_results_table_text(ii,12,result.artists[0].real_name)
+                    for jj in range(len(result.artists)):
+                        if result.artists[jj].real_name is not None:
+                            real_names.append(result.artists[jj].real_name)
+                    self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
                 except Exception as e:
-                    self.print_to_console('Trying to get the real name broke things: %s\n' % e)
+                    worked[12] = False
+                    #self.print_to_console('Trying to get the real name broke things: %s\n' % e)
+                #14 - profile
+                profiles = []
+                try:
+                    for jj in range(len(result.artists)):
+                        profile = result.artists[jj].name
+                        profile = profile + ' - ' + result.artists[jj].profile
+                        profiles.append(profile)
+                    self.change_tab_one_results_table_text(ii,13,"\n\n".join(profiles))
+                except Exception as e:
+                    worked[13] = False
+                    #self.print_to_console('Trying to get a profile on the artist broke things: %s\n' % e)
+                #15 variations
+                variations = []
+                try:
+                    for jj in range(len(result.artists)):
+                        variation = ", ".join(result.artists[jj].name_variations)
+                        variations.append(variation)
+                    self.change_tab_one_results_table_text(ii,14,",".join(variations))
+                except Exception as e:
+                    worked[14] = False
+                    #self.print_to_console('Trying to get variations broke things: %s\n' % e)
+                #16 aliases
+                aliases = []
+                try:
+                    for jj in range(len(result.artists)):
+                        alias = ", ".join(result.artists[jj].aliases)
+                        aliases.append(alias)
+                    self.change_tab_one_results_table_text(ii,15,",".join(aliases))
+                except Exception as e:
+                    worked[15] = False
+                    #self.print_to_console('Trying to get aliases broke things: %s\n' % e)
+                #17 - discogs release number
+                self.change_tab_one_results_table_text(ii,16,str(result.id))
+                #18 - Track List
+                tracks = []
+                try:
+                    for t in result.tracklist:
+                        tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+                    self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
+                except Exception as e:
+                    worked[17] = False
+                    #self.print_to_console('Trying to get track list broke things: %s\n' % e)
+                #19 - Notes
+                self.change_tab_one_results_table_text(ii,18,result.notes)
+                    
+
                 #resize columns
                 self.tab_one_results_table.resizeColumnsToContents()
             
