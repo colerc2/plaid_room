@@ -4,15 +4,37 @@ import discogs_client
 import urllib2
 import time
 import csv
+import urlparse
 import re
 
 class DiscogsClient():
     def __init__(self):
+        #get info from .key file
+        key_file = open('/Users/bccole1989/Documents/plaid_room_records/plaid_room/discogs.key')
+        self.consumer_key = key_file.readline().rstrip('\n')
+        self.consumer_secret = key_file.readline().rstrip('\n')
+        self.access_token = key_file.readline().rstrip('\n')
+        self.access_secret = key_file.readline().rstrip('\n')
+        #request_token_url = key_file.readline()
+        #authorize_url = key_file.readline()
+        #authorize_token = key_file.readline()
+
+        #user_agent = 'plaid_room_records_interface/1.0'
+        #consumer = oauth.Consumer(consumer_key, consumer_secret)
+        #client = oauth.Client(consumer)
+        #resp, content = client.request(request_token_url, 'POST', headers={'User-Agent': user_agent})
+        #if resp['status'] != '200':
+        #    raise Exception('Invalid response{0}.'.format(resp['status
+        
         self.rate_limit = 2
         self.connected = False
         #try to connect
         try:
-            self.client = discogs_client.Client('Plaid Room Interface')
+            self.client = discogs_client.Client('plaid_room_records_interface/1.0', self.consumer_key, self.consumer_secret, self.access_token, self.access_secret)
+            #self.client.set_consumer_key(consumer_key, consumer_secret)
+            #self.client.get_authorize_url()
+            #self.client.get_access_token('ZwNlCmaWYq')
+            #print self.client.get_access_token()
             self.connected = True
         except Exception as e:
             #TODO: be more specific about errors and maybe display a pop up window here?
@@ -24,7 +46,7 @@ class DiscogsClient():
             time.sleep(self.rate_limit)
             print 'Attempting to reconnect to discogs API'
             try:
-                self.client = discogs_client.Client('Plaid Room Interface')
+                self.client = discogs_client.Client('plaid_room_records_interface/1.0', self.consumer_key, self.consumer_secret, self.access_token, self.access_secret)
                 self.connected = True
                 print 'Attempted connection was successful'
             except e:
@@ -61,7 +83,7 @@ class DiscogsClient():
             return True
             
     def scrape_price(self, release_id, prices):
-        release_url = 'http://discogs.com/release/%s' % release_id
+        release_url = 'http://www.discogs.com/release/%s' % release_id
         user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
         headers = { 'User-Agent' : user_agent }
         try:
