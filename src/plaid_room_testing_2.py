@@ -15,6 +15,7 @@ import time
 import datetime
 import sqlite3
 import re
+import string
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -41,8 +42,10 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor = self.db.cursor()
         #create table
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
-        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text)
+        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text, profile text, variations text, aliases text, discogs_release_number integer, track_list text, notes text)
         """)
+        self.num_attributes = 19
+        self.combobox_cols = [5,6]
         
         self.setupUi(self)
 
@@ -903,7 +906,15 @@ class Ui_Form(QtGui.QWidget):
 
         #other stuff
         self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
+        
+        #displays recently added items on start up
         self.tab_one_update_recently_added_table()
+        
+        #combo box stuff
+        for ii in range(self.num_attributes):
+            self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
+            self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+
         #connectors bro *****************
 
         #connect tab one search upc button
@@ -928,8 +939,15 @@ class Ui_Form(QtGui.QWidget):
                        str(self.get_tab_one_results_table_text(row,9)),
                        int(self.get_tab_one_results_table_text(row,10)),
                        str(self.get_tab_one_results_table_text(row,11)),
-                       str(self.get_tab_one_results_table_text(row,12)))
-            self.db_cursor.execute('INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+                       str(self.get_tab_one_results_table_text(row,12)),
+                       str(self.get_tab_one_results_table_text(row,13)),
+                       str(self.get_tab_one_results_table_text(row,14)),
+                       str(self.get_tab_one_results_table_text(row,15)),
+                       int(self.get_tab_one_results_table_text(row,16)),
+                       str(self.get_tab_one_results_table_text(row,17)),
+                       str(self.get_tab_one_results_table_text(row,18)))
+            
+            self.db_cursor.execute('INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
             self.print_to_console('%s item added to database.\n' % str(self.get_tab_one_results_table_text(row,1))) 
         except Exception as e:
@@ -937,9 +955,11 @@ class Ui_Form(QtGui.QWidget):
 
         #display in that young box as recently added
         self.tab_one_update_recently_added_table()
-        
+ 
+        how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
-            print row
+            how_many = how_many + 1
+        print '%s items in database' % str(how_many)
 
         #make a call to method that handles displaying most recent inventory items
         
@@ -961,6 +981,7 @@ class Ui_Form(QtGui.QWidget):
         
         #clear table
         self.clear_tab_one_search_table()
+        #self.tab_one_results_table.clearContents()
 
         worked = [True]*19
 
@@ -1014,9 +1035,13 @@ class Ui_Form(QtGui.QWidget):
                 if prices[0] != None:
                     self.change_tab_one_results_table_text(ii,4,prices[1])
                 #6 - new/used
-                self.change_tab_one_results_table_text(ii,5,'New')
+                #TODO: select new or used based on something
+                self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
+                #self.change_tab_one_results_table_text(ii,5,'New')
                 #7 - distributor
-                self.change_tab_one_results_table_text(ii,6,'Fat Beats')
+                #TODO: select distributor based on the last item that was input
+                self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+                #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
                 #8 - price paid
                 self.change_tab_one_results_table_text(ii,7,str(9+ii))
                 #9 - label
@@ -1057,7 +1082,7 @@ class Ui_Form(QtGui.QWidget):
                     for jj in range(len(result.artists)):
                         variation = ", ".join(result.artists[jj].name_variations)
                         variations.append(variation)
-                    self.change_tab_one_results_table_text(ii,14,",".join(variations))
+                    self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
                 except Exception as e:
                     worked[14] = False
                     #self.print_to_console('Trying to get variations broke things: %s\n' % e)
@@ -1067,7 +1092,7 @@ class Ui_Form(QtGui.QWidget):
                     for jj in range(len(result.artists)):
                         alias = ", ".join(result.artists[jj].aliases)
                         aliases.append(alias)
-                    self.change_tab_one_results_table_text(ii,15,",".join(aliases))
+                    self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
                 except Exception as e:
                     worked[15] = False
                     #self.print_to_console('Trying to get aliases broke things: %s\n' % e)
@@ -1083,7 +1108,7 @@ class Ui_Form(QtGui.QWidget):
                     worked[17] = False
                     #self.print_to_console('Trying to get track list broke things: %s\n' % e)
                 #19 - Notes
-                self.change_tab_one_results_table_text(ii,18,result.notes)
+                self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
                     
 
                 #resize columns
@@ -1101,6 +1126,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
 
     def get_tab_one_results_table_text(self, row, col):
+        if col in self.combobox_cols:
+            widget = self.tab_one_results_table.cellWidget(row, col)
+            print widget.currentText()
+            return widget.currentText()
+
+
         item = self.tab_one_results_table.item(row, col)
         if(item is not None):
             return item.text()
@@ -1108,6 +1139,8 @@ class Ui_Form(QtGui.QWidget):
             return None
 
     def change_tab_one_results_table_text(self, row, col, text):
+        if col in self.combobox_cols:
+            return
         item = self.tab_one_results_table.item(row, col)
         if item is not None:
             item.setText(text)
@@ -1129,7 +1162,21 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_one_recently_added_table.setItem(row, col, item)
+
+    def generate_new_used_combobox(self):
+        combobox = QtGui.QComboBox()
+        combobox.addItem("New")
+        combobox.addItem("Used")
+        return combobox
         
+    def generate_distributor_combobox(self):
+        combobox = QtGui.QComboBox()
+        combobox.addItem("Fat Beats")
+        combobox.addItem("Other Distributor 1")
+        combobox.addItem("Other Distributor 2")
+        combobox.addItem("Other Distributor 3")
+        return combobox
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
