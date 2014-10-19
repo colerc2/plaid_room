@@ -6,6 +6,7 @@ import time
 import csv
 import urlparse
 import re
+import datetime
 
 class DiscogsClient():
     def __init__(self):
@@ -26,7 +27,7 @@ class DiscogsClient():
         #if resp['status'] != '200':
         #    raise Exception('Invalid response{0}.'.format(resp['status
         
-        self.rate_limit = 2
+        self.rate_limit = 1
         self.connected = False
         #try to connect
         try:
@@ -87,12 +88,16 @@ class DiscogsClient():
         user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
         headers = { 'User-Agent' : user_agent }
         try:
+            print 'requesting page %s' % datetime.datetime.now()
             req = urllib2.Request(release_url, None, headers)
+            print 'urlopen(req) %s' % datetime.datetime.now()
             response = urllib2.urlopen(req)
             grab_low = False
             grab_mid = False
             grab_high = False
+            print 'compiling %s' % datetime.datetime.now()
             non_decimal = re.compile(r'[^\d.]+')
+            print 'before for %s' % datetime.datetime.now()
             for line_ in response:
                 line = line_.rstrip()
                 if(grab_low):
@@ -107,6 +112,7 @@ class DiscogsClient():
                     grab_high = False
                     prices[2] = (line.strip()).replace("$", "")
                     prices[2] = non_decimal.sub('', prices[2])
+                    break
                 if(line.find('Lowest') != -1):
                     grab_low = True
                 if(line.find('Median') != -1):

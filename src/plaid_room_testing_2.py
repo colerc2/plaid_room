@@ -1030,10 +1030,11 @@ class Ui_Form(QtGui.QWidget):
                     self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
                 self.change_tab_one_results_table_text(ii,3,str(format_))
                 #5 - price
-                prices = [None] * 3
-                self.discogs.scrape_price(result.id, prices)
-                if prices[0] != None:
-                    self.change_tab_one_results_table_text(ii,4,prices[1])
+                #prices = [None] * 3
+                #self.discogs.scrape_price(result.id, prices)
+                #if prices[0] != None:
+                #    self.change_tab_one_results_table_text(ii,4,prices[1])
+                self.change_tab_one_results_table_text(ii,4,'19.99')
                 #6 - new/used
                 #TODO: select new or used based on something
                 self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
@@ -1111,13 +1112,15 @@ class Ui_Form(QtGui.QWidget):
                 self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
                     
 
-                #resize columns
-                self.tab_one_results_table.resizeColumnsToContents()
-            
-
         except Exception as e:
             self.print_to_console('Something bad happened while searching for release: %s\n' % e)
             self.tab_one_results_table.setRowCount(1)
+            
+        #resize columns
+        self.tab_one_results_table.resizeColumnsToContents()
+            
+
+
 
         
     def print_to_console(self, text):
