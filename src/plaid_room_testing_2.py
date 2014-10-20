@@ -42,7 +42,7 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor = self.db.cursor()
         #create table
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
-        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text, profile text, variations text, aliases text, discogs_release_number integer, track_list text, notes text)
+        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text, profile text, variations text, aliases text, discogs_release_number integer, track_list text, notes text, id integer primary key autoincrement)
         """)
         self.num_attributes = 19
         self.combobox_cols = [5,6]
@@ -949,8 +949,9 @@ class Ui_Form(QtGui.QWidget):
                        str(self.get_tab_one_results_table_text(row,17)),
                        str(self.get_tab_one_results_table_text(row,18)))
             
-            self.db_cursor.execute('INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+            self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, new_used, distributor, price_paid, label, genre, year, date_added, real_name, profile, variations, aliases, discogs_release_number, track_list, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
+            print self.db_cursor.lastrowid
             self.print_to_console('%s item added to database.\n' % str(self.get_tab_one_results_table_text(row,1))) 
         except Exception as e:
             self.print_to_console('Problem adding item to DB: %s' % e)
@@ -1012,8 +1013,11 @@ class Ui_Form(QtGui.QWidget):
             
             self.print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
             self.tab_one_results_table.setRowCount(min(len(results),20))
-            for ii in range(min(len(results),20)):
-                result = results[ii]
+            ii = 0
+            for result in results:
+                if ii == 20:
+                    break
+                #result = results[ii]
                 worked = [True]*19
                 errors = []
                 #1 - upc
@@ -1048,7 +1052,12 @@ class Ui_Form(QtGui.QWidget):
                 format_ = ''
                 try:
                     for jj in range(len(result.formats)):
-                        format_ = format_ + (result.formats[jj])['qty'] + 'x' + (result.formats[jj])['name'] + ', ' +  ", ".join((result.formats[jj])['descriptions'])
+                        if 'qty' in (result.formats[jj]):
+                            format_ = format_ + (result.formats[jj])['qty'] + 'x'
+                        if 'name' in (result.formats[jj]):
+                            format_ = format_ + (result.formats[jj])['name'] + ', '
+                        if 'descriptions' in (result.formats[jj]):
+                            format_ = format_ +  ", ".join((result.formats[jj])['descriptions'])
                         if jj != (len(result.formats)-1):
                             format_ = format_ + ' + '
                     self.change_tab_one_results_table_text(ii,3,str(filter(lambda x: x in string.printable,format_)))
@@ -1188,6 +1197,8 @@ class Ui_Form(QtGui.QWidget):
                     worked[18] = False
                     errors.append('Error on 18: %s\n' % e)
 
+                #had to manually increment due to things like 'Various' artists, fuck that shit
+                ii = ii + 1
                 if False in worked:
                     print "Errors adding title:"
                     print "\t%s" % ("\t".join(errors))
