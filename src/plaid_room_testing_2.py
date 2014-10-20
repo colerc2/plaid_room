@@ -921,6 +921,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
         self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
+        self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
+        self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
         
     def tab_one_add_to_inventory(self):
         row = self.tab_one_results_table.currentRow()
@@ -976,15 +978,7 @@ class Ui_Form(QtGui.QWidget):
         #make pretty
         self.tab_one_recently_added_table.resizeColumnsToContents()
 
-
     def tab_one_search_for_upc(self):
-        
-        #clear table
-        self.clear_tab_one_search_table()
-        #self.tab_one_results_table.clearContents()
-
-        worked = [True]*19
-
         #get entered text and do sanity checks
         upc = str(self.tab_one_search_upc_qline.text())
         upc = self.discogs.clean_up_upc(upc)
@@ -992,23 +986,45 @@ class Ui_Form(QtGui.QWidget):
             self.print_to_console(('This upc (%s) doesn\'t even make sense.\n' % upc))
             self.tab_one_results_table.setRowCount(1)
             return
+        else:
+            self.tab_one_search_for_release(upc, False)
+
+    def tab_one_search_for_artist_title(self):
+        artist_title = str(self.tab_one_search_artist_title_title_qline.text())
+        self.tab_one_search_for_release(artist_title, True)
+
+    def tab_one_search_for_release(self, search_query, upc_needed):
+        #clear table
+        self.clear_tab_one_search_table()
+
+        worked = [True]*19
+
         #search
         self.print_to_console('Searching discogs...')
         try:
-            results = self.discogs.search_for_release(upc)
+            results = self.discogs.search_for_release(search_query)
             
             #check sanity of response
             if results is None or len(results) == 0:
-                self.print_to_console('\tNo match found on discogs for upc %s.\n' % upc)
+                self.print_to_console('\tNo match found on discogs for term: %s.\n' % search_query)
                 self.tab_one_results_table.setRowCount(1)
                 return
             
-            self.print_to_console('\t%s results found on discogs for upc %s.\n' % (len(results), upc))
-            self.tab_one_results_table.setRowCount(len(results))
-            for ii in range(len(results)):
+            self.print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
+            self.tab_one_results_table.setRowCount(min(len(results),20))
+            for ii in range(min(len(results),20)):
                 result = results[ii]
+                worked = [True]*19
+                errors = []
                 #1 - upc
-                self.change_tab_one_results_table_text(ii,0,upc)
+                try:
+                    if(upc_needed):
+                        self.change_tab_one_results_table_text(ii,0,'PLAID4356783')
+                    else:
+                        self.change_tab_one_results_table_text(ii,0,search_query)
+                except Exception as e:
+                    worked[0] = False
+                    errors.append('Error on 0: %s\n' % e)
                 #2 - artist
                 artists_ = []
                 try:
@@ -1016,9 +1032,18 @@ class Ui_Form(QtGui.QWidget):
                         artists_.append(result.artists[jj].name)
                     self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
                 except Exception as e:
-                    self.print_to_console('Error when getting artist information: %s' % e)
+                    worked[1] = False
+                    errors.append('Error on 1: %s\n' % e)
+                    #self.print_to_console('Error when getting artist information: %s' % e)
+                #TODO: this needs to be more "elegant"
+                if 'Various' in artists_:
+                    continue
                 #3 - title
-                self.change_tab_one_results_table_text(ii,2,result.title)
+                try:
+                    self.change_tab_one_results_table_text(ii,2,result.title)
+                except Exception as e:
+                    worked[2] = False
+                    errors.append('Error on 2: %s\n' % e)
                 #4 - format
                 format_ = ''
                 try:
@@ -1026,36 +1051,68 @@ class Ui_Form(QtGui.QWidget):
                         format_ = format_ + (result.formats[jj])['qty'] + 'x' + (result.formats[jj])['name'] + ', ' +  ", ".join((result.formats[jj])['descriptions'])
                         if jj != (len(result.formats)-1):
                             format_ = format_ + ' + '
+                    self.change_tab_one_results_table_text(ii,3,str(filter(lambda x: x in string.printable,format_)))
                 except Exception as e:
-                    self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
-                self.change_tab_one_results_table_text(ii,3,str(format_))
+                    #self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
+                    worked[3] = False
+                    errors.append('Error on 3: %s\n' % e)
                 #5 - price
+                #TODO: maybe do in parallel so it doesn't suck
                 #prices = [None] * 3
                 #self.discogs.scrape_price(result.id, prices)
                 #if prices[0] != None:
                 #    self.change_tab_one_results_table_text(ii,4,prices[1])
-                self.change_tab_one_results_table_text(ii,4,'19.99')
+                try:
+                    self.change_tab_one_results_table_text(ii,4,'14.99')
+                except Exception as e:
+                    worked[4] = False
+                    errors.append('Error on 4: %s\n' % e)
                 #6 - new/used
-                #TODO: select new or used based on something
-                self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
-                #self.change_tab_one_results_table_text(ii,5,'New')
+                #TODO: select new or used based on something, i dunno yet
+                try:
+                    self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
+                except Exception as e:
+                    worked[5] = False
+                    errors.append('Error on 5: %s\n' % e)
                 #7 - distributor
-                #TODO: select distributor based on the last item that was input
-                self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+                #TODO: select distributor based on most recent DB item
+                try:
+                    self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+                except Exception as e:
+                    worked[6] = False
+                    errors.append('Error on 6: %s\n' % e)
                 #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
                 #8 - price paid
-                self.change_tab_one_results_table_text(ii,7,str(9+ii))
+                try:
+                    self.change_tab_one_results_table_text(ii,7,str(9+ii))
+                except Exception as e:
+                    worked[7] = False
+                    errors.append('Error on 7: %s\n' % e)
                 #9 - label
-                self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
+                try:
+                    self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
+                except Exception as e:
+                    worked[8] = False
+                    errors.append('Error on 8: %s\n' % e)
                 #10  - genre
-                self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
+                try:
+                    self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
+                except Exception as e:
+                    worked[9] = False
+                    errors.append('Error on 9: %s\n' % e)
                 #11 - year
-                self.change_tab_one_results_table_text(ii,10,str(result.year))
+                try:
+                    self.change_tab_one_results_table_text(ii,10,str(result.year))
+                except Exception as e:
+                    worked[10] = False
+                    errors.append('Error on 10: %s\n' % e)
                 #12 - date
                 try:
                     self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 except Exception as e:
-                    self.print_to_console('Something went wrong while doing date stuff - that\'s not good: %s' % e)
+                    #self.print_to_console('Something went wrong while doing date stuff - that\'s not good: %s' % e)
+                    worked[11] = False
+                    errors.append('Error on 11: %s\n' % e)
                 #13 - real name
                 real_names = []
                 try:
@@ -1065,52 +1122,75 @@ class Ui_Form(QtGui.QWidget):
                     self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
                 except Exception as e:
                     worked[12] = False
+                    errors.append('Error on 12: %s\n' % e)
                     #self.print_to_console('Trying to get the real name broke things: %s\n' % e)
                 #14 - profile
                 profiles = []
                 try:
                     for jj in range(len(result.artists)):
-                        profile = result.artists[jj].name
-                        profile = profile + ' - ' + result.artists[jj].profile
-                        profiles.append(profile)
-                    self.change_tab_one_results_table_text(ii,13,"\n\n".join(profiles))
+                        if result.artists[jj].profile is not None:
+                            profile = result.artists[jj].name
+                            profile = profile + ' - ' + result.artists[jj].profile
+                    self.change_tab_one_results_table_text(ii,13,filter(lambda x: x in string.printable,"\n\n".join(profiles)))
                 except Exception as e:
                     worked[13] = False
+                    errors.append('Error on 13: %s\n' % e)
                     #self.print_to_console('Trying to get a profile on the artist broke things: %s\n' % e)
                 #15 variations
                 variations = []
                 try:
                     for jj in range(len(result.artists)):
-                        variation = ", ".join(result.artists[jj].name_variations)
-                        variations.append(variation)
-                    self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
+                        if result.artists[jj].name_variations is not None:
+                            variation = ", ".join(result.artists[jj].name_variations)
+                            variations.append(variation)
+                    if variations:#this returns true if not empty
+                        self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
                 except Exception as e:
                     worked[14] = False
+                    errors.append('Error on 14: %s\n' % e)
                     #self.print_to_console('Trying to get variations broke things: %s\n' % e)
                 #16 aliases
                 aliases = []
                 try:
                     for jj in range(len(result.artists)):
-                        alias = ", ".join(result.artists[jj].aliases)
+                        temp = []
+                        for artist in result.artists[jj].aliases:
+                            temp.append(artist.name)
+                        alias = ", ".join(temp)
                         aliases.append(alias)
                     self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
                 except Exception as e:
                     worked[15] = False
+                    errors.append('Error on 15: %s\n' % e)
                     #self.print_to_console('Trying to get aliases broke things: %s\n' % e)
                 #17 - discogs release number
-                self.change_tab_one_results_table_text(ii,16,str(result.id))
+                try:
+                    self.change_tab_one_results_table_text(ii,16,str(result.id))
+                except Exception as e:
+                    worked[16] = False
+                    errors.append('Error on 16: %s\n' % e)
                 #18 - Track List
                 tracks = []
                 try:
-                    for t in result.tracklist:
-                        tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
-                    self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
+                    if result.tracklist is not None:
+                        for t in result.tracklist:
+                            tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+                        self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
                 except Exception as e:
                     worked[17] = False
+                    errors.append('Error on 17: %s\n' % e)
                     #self.print_to_console('Trying to get track list broke things: %s\n' % e)
                 #19 - Notes
-                self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
-                    
+                try:
+                    if result.notes is not None:
+                        self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
+                except Exception as e:
+                    worked[18] = False
+                    errors.append('Error on 18: %s\n' % e)
+
+                if False in worked:
+                    print "Errors adding title:"
+                    print "\t%s" % ("\t".join(errors))
 
         except Exception as e:
             self.print_to_console('Something bad happened while searching for release: %s\n' % e)
