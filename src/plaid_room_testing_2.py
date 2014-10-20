@@ -923,9 +923,35 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
         self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
+        self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
+        
+    def tab_one_remove_from_inventory(self):
+        row = self.tab_one_recently_added_table.currentRow()
+        #TODO: might want to replace this shiz with primary key stuff later
+        upc = str(self.get_tab_one_recently_added_table_text(row, 0))
+        date = str(self.get_tab_one_recently_added_table_text(row, 11))
+
+        #remove her
+        self.db_cursor.execute('''DELETE FROM inventory WHERE upc = ? and date_added = ? ''', (upc, date))
+
+        #commit
+        self.db.commit()
+        
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        print '%s items in database' % str(how_many)
+            
+
+        #update the shiz
+        self.tab_one_update_recently_added_table()
+                
+        
         
     def tab_one_add_to_inventory(self):
         row = self.tab_one_results_table.currentRow()
+        #this guy is special, we want a different time for each addition to the DB
+        curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         try:
             #first add it to the database
@@ -940,7 +966,7 @@ class Ui_Form(QtGui.QWidget):
                        str(self.get_tab_one_results_table_text(row,8)),
                        str(self.get_tab_one_results_table_text(row,9)),
                        int(self.get_tab_one_results_table_text(row,10)),
-                       str(self.get_tab_one_results_table_text(row,11)),
+                       curr_time,
                        str(self.get_tab_one_results_table_text(row,12)),
                        str(self.get_tab_one_results_table_text(row,13)),
                        str(self.get_tab_one_results_table_text(row,14)),
@@ -951,7 +977,7 @@ class Ui_Form(QtGui.QWidget):
             
             self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, new_used, distributor, price_paid, label, genre, year, date_added, real_name, profile, variations, aliases, discogs_release_number, track_list, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
-            print self.db_cursor.lastrowid
+            #print self.db_cursor.lastrowid
             self.print_to_console('%s item added to database.\n' % str(self.get_tab_one_results_table_text(row,1))) 
         except Exception as e:
             self.print_to_console('Problem adding item to DB: %s' % e)
@@ -964,16 +990,15 @@ class Ui_Form(QtGui.QWidget):
             how_many = how_many + 1
         print '%s items in database' % str(how_many)
 
-        #make a call to method that handles displaying most recent inventory items
-        
     def tab_one_update_recently_added_table(self):
+        self.clear_tab_one_recently_added_table()
         index = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
             #make sure we don't exceed the limits of the qtablewidget
             if index > (self.tab_one_recently_added_table.rowCount()-1):
                 break
             #display stuff
-            for col in range(len(row)):
+            for col in range(len(row)-1):
                 self.change_tab_one_recently_added_table_text(index, col, str(row[col]))
             index = index + 1
         #make pretty
@@ -1218,11 +1243,18 @@ class Ui_Form(QtGui.QWidget):
         current_text = str(self.tab_one_text_browser.toPlainText())
         self.tab_one_text_browser.setPlainText(current_text + text)
         self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
+    
+    def get_tab_one_recently_added_table_text(self, row, col):
+        item = self.tab_one_recently_added_table.item(row, col)
+        if(item is not None):
+            return item.text()
+        else:
+            return None
 
     def get_tab_one_results_table_text(self, row, col):
         if col in self.combobox_cols:
             widget = self.tab_one_results_table.cellWidget(row, col)
-            print widget.currentText()
+            #print widget.currentText()
             return widget.currentText()
 
 
@@ -1233,6 +1265,7 @@ class Ui_Form(QtGui.QWidget):
             return None
 
     def change_tab_one_results_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable,text))
         if col in self.combobox_cols:
             return
         item = self.tab_one_results_table.item(row, col)
@@ -1247,6 +1280,11 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.tab_one_results_table.rowCount()):
             for jj in range(self.tab_one_results_table.columnCount()):
                 self.change_tab_one_results_table_text(ii,jj,"")
+
+    def clear_tab_one_recently_added_table(self):
+        for ii in range(self.tab_one_recently_added_table.rowCount()):
+            for jj in range(self.tab_one_recently_added_table.columnCount()):
+                self.change_tab_one_recently_added_table_text(ii,jj,"")
 
     def change_tab_one_recently_added_table_text(self, row, col, text):
         item = self.tab_one_recently_added_table.item(row, col)
