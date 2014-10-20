@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../learning_pyqt/second_test/print_fucker.ui'
+# Form implementation generated from reading ui file 'src/print_fucker.ui'
 #
-# Created: Mon Oct 20 13:41:18 2014
+# Created: Mon Oct 20 14:04:06 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
+        
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -309,7 +309,7 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_13.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_13.setObjectName(_fromUtf8("add_item_vert_line_13"))
         self.horizontalLayout_3.addWidget(self.add_item_vert_line_13)
-        spacerItem13 = QtGui.QSpacerItem(920, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem13 = QtGui.QSpacerItem(413, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem13)
         self.horizontalLayout_7.addLayout(self.horizontalLayout_3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
@@ -376,15 +376,15 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_8.addWidget(self.add_item_vert_line_28)
         spacerItem19 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem19)
-        self.label = QtGui.QLabel(self.widget)
+        self.tab_one_num_inventory_label = QtGui.QLabel(self.widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setMinimumSize(QtCore.QSize(170, 0))
-        self.label.setObjectName(_fromUtf8("label"))
-        self.horizontalLayout_8.addWidget(self.label)
+        sizePolicy.setHeightForWidth(self.tab_one_num_inventory_label.sizePolicy().hasHeightForWidth())
+        self.tab_one_num_inventory_label.setSizePolicy(sizePolicy)
+        self.tab_one_num_inventory_label.setMinimumSize(QtCore.QSize(170, 0))
+        self.tab_one_num_inventory_label.setObjectName(_fromUtf8("tab_one_num_inventory_label"))
+        self.horizontalLayout_8.addWidget(self.tab_one_num_inventory_label)
         self.verticalLayout.addLayout(self.horizontalLayout_8)
         self.tab_one_recently_added_table = QtGui.QTableWidget(self.widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
@@ -797,7 +797,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_recent_additions_lbl.setText(_translate("Form", "Recent Additions", None))
         self.tab_one_remove_selected_item_from_inventory.setText(_translate("Form", "Remove Selected Item From Inventory", None))
         self.tab_one_edit_selected_item.setText(_translate("Form", "Save Changes To Selected Item", None))
-        self.label.setText(_translate("Form", "XXXX Items In Inventory", None))
+        self.tab_one_num_inventory_label.setText(_translate("Form", "XXXX Items In Inventory", None))
         self.tab_one_recently_added_table.setSortingEnabled(False)
         item = self.tab_one_recently_added_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
@@ -969,7 +969,6 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.check_out_tab), _translate("Form", "Check Out", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "History/Generate Reports", None))
 
-
         #other stuff
         self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
         
@@ -990,15 +989,18 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
         self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
+        self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
         
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
         #TODO: might want to replace this shiz with primary key stuff later
-        upc = str(self.get_tab_one_recently_added_table_text(row, 0))
+        #upc = str(self.get_tab_one_recently_added_table_text(row, 0))
         date = str(self.get_tab_one_recently_added_table_text(row, 11))
+        key = int(self.get_tab_one_recently_added_table_text(row,19))
+        print key
 
         #remove her
-        self.db_cursor.execute('''DELETE FROM inventory WHERE upc = ? and date_added = ? ''', (upc, date))
+        self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key, date))
 
         #commit
         self.db.commit()
@@ -1013,12 +1015,38 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_update_recently_added_table()
                 
     def tab_one_edit_inventory(self):
-        row = tab_one_recently_added_table.currentRow()
-        upc = str(self.get_tab_one_recently_added_table_text(row,0))
-        date = str(self.get_tab_one_recently_added_table_text(row,11))
+        row = self.tab_one_recently_added_table.currentRow()
+        date = str(self.get_tab_one_recently_added_table_text(row, 11))
+        key = int(self.get_tab_one_recently_added_table_text(row,19))
+
+        db_query = (str(self.get_tab_one_recently_added_table_text(row, 0)),
+                    str(self.get_tab_one_recently_added_table_text(row,1)),
+                    str(self.get_tab_one_recently_added_table_text(row,2)),
+                    str(self.get_tab_one_recently_added_table_text(row,3)),
+                    float(self.get_tab_one_recently_added_table_text(row,4)),
+                    str(self.get_tab_one_recently_added_table_text(row,5)),
+                    str(self.get_tab_one_recently_added_table_text(row,6)),
+                    float(self.get_tab_one_recently_added_table_text(row,7)),
+                    str(self.get_tab_one_recently_added_table_text(row,8)),
+                    str(self.get_tab_one_recently_added_table_text(row,9)),
+                    int(self.get_tab_one_recently_added_table_text(row,10)),
+                    str(self.get_tab_one_recently_added_table_text(row,12)),
+                    str(self.get_tab_one_recently_added_table_text(row,13)),
+                    str(self.get_tab_one_recently_added_table_text(row,14)),
+                    str(self.get_tab_one_recently_added_table_text(row,15)),
+                    int(self.get_tab_one_recently_added_table_text(row,16)),
+                    str(self.get_tab_one_recently_added_table_text(row,17)),
+                    str(self.get_tab_one_recently_added_table_text(row,18)), key, date)
+
         
         #edit her
-        #self.db_cursor.execute('''UPDATE inventory
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, new_used = ?, distributor = ?, price_paid = ?, label = ?, genre = ?, year = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, discogs_release_number = ?, track_list = ?, notes = ? WHERE id = ? and date_added = ?', db_query)
+        
+        #commit
+        self.db.commit()
+
+        #udate the gui
+        self.tab_one_update_recently_added_table()
         
         
     def tab_one_add_to_inventory(self):
@@ -1071,11 +1099,17 @@ class Ui_Form(QtGui.QWidget):
             if index > (self.tab_one_recently_added_table.rowCount()-1):
                 break
             #display stuff
-            for col in range(len(row)-1):
+            for col in range(len(row)):
                 self.change_tab_one_recently_added_table_text(index, col, str(row[col]))
             index = index + 1
         #make pretty
         self.tab_one_recently_added_table.resizeColumnsToContents()
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_one_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+
 
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks

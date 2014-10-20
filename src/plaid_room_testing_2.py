@@ -1010,6 +1010,8 @@ class Ui_Form(QtGui.QWidget):
             index = index + 1
         #make pretty
         self.tab_one_recently_added_table.resizeColumnsToContents()
+        #update inventory count
+        
 
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
