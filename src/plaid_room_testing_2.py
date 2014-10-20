@@ -946,6 +946,13 @@ class Ui_Form(QtGui.QWidget):
         #update the shiz
         self.tab_one_update_recently_added_table()
                 
+    def tab_one_edit_inventory(self):
+        row = tab_one_recently_added_table.currentRow()
+        upc = str(self.get_tab_one_recently_added_table_text(row,0))
+        date = str(self.get_tab_one_recently_added_table_text(row,11))
+        
+        #edit her
+        #self.db_cursor.execute('''UPDATE inventory
         
         
     def tab_one_add_to_inventory(self):
