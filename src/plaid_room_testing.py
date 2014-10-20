@@ -990,6 +990,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
         self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
         self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
+        self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
         
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
@@ -1130,12 +1131,15 @@ class Ui_Form(QtGui.QWidget):
         #clear table
         self.clear_tab_one_search_table()
 
+        #add "cd", "vinyl", or "" to search term
+        search_query_with_radio_button = search_query + self.get_tab_one_radio_button_input()
+
         worked = [True]*19
 
         #search
         self.print_to_console('Searching discogs...')
         try:
-            results = self.discogs.search_for_release(search_query)
+            results = self.discogs.search_for_release(search_query_with_radio_button)
             
             #check sanity of response
             if results is None or len(results) == 0:
@@ -1415,6 +1419,14 @@ class Ui_Form(QtGui.QWidget):
         combobox.addItem("Other Distributor 2")
         combobox.addItem("Other Distributor 3")
         return combobox
+
+    def get_tab_one_radio_button_input(self):
+        if self.tab_one_vinyl_radio_buttom.isChecked():
+            return ' vinyl'
+        if self.tab_one_cd_radio_button.isChecked():
+            return ' cd'
+        if self.tab_one_any_radio_button.isChecked():
+            return ''
 
 
 if __name__ == '__main__':
