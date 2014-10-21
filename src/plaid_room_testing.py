@@ -35,6 +35,8 @@ except AttributeError:
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
+        #self.thread().setPriority(QtCore.QThread.TimeCriticalPriority)
+        self.thread().setPriority(QtCore.QThread.HighestPriority)
 
         #declare global stuff here?
         self.discogs = DiscogsClient()
@@ -1140,7 +1142,17 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_one_search_for_release(self, search_query, upc_needed):
         print 'priority:'
-        print 
+        #print QThread.currentThread() 
+        #print self.QThread.currentThread()
+        #print self.currentThread()
+        #print ((QObject)(self)).currentThread()
+        #print QtCore.QObject.QThread.currentThread()
+        #print self.QObject.QThread.currentThread()
+        curr_thread = self.thread()
+        #curr_thread.setPriority(QtCore.QThread.TimeCriticalPriority)
+        curr_thread.setPriority(QtCore.QThread.HighestPriority)
+        print self.thread().priority()
+        
         
         #clear table
         self.clear_tab_one_search_table()
@@ -1478,6 +1490,9 @@ class Ui_Form(QtGui.QWidget):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
+    print 'shit %s' % app.thread().priority()
+    #app.thread().setPriority(QtCore.QThread.TimeCriticalPriority)
+    app.thread().setPriority(QtCore.QThread.HighestPriority)
     ex = Ui_Form()
     ex.show()
     sys.exit(app.exec_())
