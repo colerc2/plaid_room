@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::plaid_room *ui;
+    void print_to_console(QString str);
+
+public slots:
+    void search_for_upc();
 };
 
 #endif // PLAID_ROOM_H
