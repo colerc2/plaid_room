@@ -16,6 +16,7 @@ import datetime
 import sqlite3
 import re
 import string
+from threading import Thread
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -992,13 +993,23 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
         self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
         
+
+    def tab_one_search_for_artist_title_threaded(self):
+        try:
+            t = Thread(target=self.tab_one_search_for_artist_title)
+            t.start()
+        except Exception as e:
+            print 'Threading search fucked up'
+        print 'I\'m outta here breh'
+        return
+
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
         #TODO: might want to replace this shiz with primary key stuff later
         #upc = str(self.get_tab_one_recently_added_table_text(row, 0))
         date = str(self.get_tab_one_recently_added_table_text(row, 11))
         key = int(self.get_tab_one_recently_added_table_text(row,19))
-        print key
+        #print key
 
         #remove her
         self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key, date))
@@ -1009,7 +1020,7 @@ class Ui_Form(QtGui.QWidget):
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
-        print '%s items in database' % str(how_many)
+        #print '%s items in database' % str(how_many)
             
 
         #update the shiz
@@ -1090,7 +1101,7 @@ class Ui_Form(QtGui.QWidget):
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
-        print '%s items in database' % str(how_many)
+        #print '%s items in database' % str(how_many)
 
     def tab_one_update_recently_added_table(self):
         self.clear_tab_one_recently_added_table()
@@ -1118,7 +1129,7 @@ class Ui_Form(QtGui.QWidget):
         upc = self.discogs.clean_up_upc(upc)
         if(not self.discogs.does_this_even_make_sense(upc)):
             self.print_to_console(('This upc (%s) doesn\'t even make sense.\n' % upc))
-            self.tab_one_results_table.setRowCount(1)
+            #self.tab_one_results_table.setRowCount(1)
             return
         else:
             self.tab_one_search_for_release(upc, False)
@@ -1128,6 +1139,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_for_release(artist_title, True)
 
     def tab_one_search_for_release(self, search_query, upc_needed):
+        print 'priority:'
+        print 
+        
         #clear table
         self.clear_tab_one_search_table()
 
@@ -1144,19 +1158,23 @@ class Ui_Form(QtGui.QWidget):
             #check sanity of response
             if results is None or len(results) == 0:
                 self.print_to_console('\tNo match found on discogs for term: %s.\n' % search_query)
-                self.tab_one_results_table.setRowCount(1)
+                self.tab_one_results_table.setRowCount(20)
                 return
             
             self.print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
             self.tab_one_results_table.setRowCount(min(len(results),20))
+            #self.tab_one_results_table.setRowCount(20)
             ii = 0
             for result in results:
+#                QtGui.QApplication.processEvents()
+                #print 'new one'
                 if ii == 20:
                     break
                 #result = results[ii]
                 worked = [True]*19
                 errors = []
                 #1 - upc
+                #print '\t1 - %s' % time.time()
                 try:
                     if(upc_needed):
                         self.change_tab_one_results_table_text(ii,0,'PLAID4356783')
@@ -1166,25 +1184,37 @@ class Ui_Form(QtGui.QWidget):
                     worked[0] = False
                     errors.append('Error on 0: %s\n' % e)
                 #2 - artist
+                #print '\t2 - %s' % time.time()
                 artists_ = []
+                #print '\tcheck1 - %s' % time.time()
                 try:
-                    for jj in range(len(result.artists)):
-                        artists_.append(result.artists[jj].name)
+                    #print '\tcheck2 - %s' % time.time()
+                    #for jj in range(len(result.artists)):
+                    for artist in result.artists:
+                        #print '\t in loop: %s' % time.time()
+                        artists_.append(artist.name)
                     self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
+                    #print '\tcheck3 - %s' % time.time()               
                 except Exception as e:
                     worked[1] = False
                     errors.append('Error on 1: %s\n' % e)
                     #self.print_to_console('Error when getting artist information: %s' % e)
                 #TODO: this needs to be more "elegant"
+                #print '\tcheck4 - %s' % time.time()
                 if 'Various' in artists_:
+                    #TODO: clear row
                     continue
+                #print '\tcheck5 - %s' % time.time()
+
                 #3 - title
+                #print '\t3 - %s' % time.time()
                 try:
                     self.change_tab_one_results_table_text(ii,2,result.title)
                 except Exception as e:
                     worked[2] = False
                     errors.append('Error on 2: %s\n' % e)
                 #4 - format
+                #print '\t4 - %s' % time.time()
                 format_ = ''
                 try:
                     for jj in range(len(result.formats)):
@@ -1207,6 +1237,7 @@ class Ui_Form(QtGui.QWidget):
                 #self.discogs.scrape_price(result.id, prices)
                 #if prices[0] != None:
                 #    self.change_tab_one_results_table_text(ii,4,prices[1])
+                #print '\t5 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,4,'14.99')
                 except Exception as e:
@@ -1214,6 +1245,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 4: %s\n' % e)
                 #6 - new/used
                 #TODO: select new or used based on something, i dunno yet
+                #print '\t6 - %s' % datetime.datetime.now()
                 try:
                     self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
                 except Exception as e:
@@ -1221,6 +1253,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 5: %s\n' % e)
                 #7 - distributor
                 #TODO: select distributor based on most recent DB item
+                #print '\t7 - %s' % datetime.datetime.now()
                 try:
                     self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
                 except Exception as e:
@@ -1228,30 +1261,35 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 6: %s\n' % e)
                 #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
                 #8 - price paid
+                #print '\t8 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,7,str(9+ii))
                 except Exception as e:
                     worked[7] = False
                     errors.append('Error on 7: %s\n' % e)
                 #9 - label
+                #print '\t9 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
                 except Exception as e:
                     worked[8] = False
                     errors.append('Error on 8: %s\n' % e)
                 #10  - genre
+                #print '\t10 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
                 except Exception as e:
                     worked[9] = False
                     errors.append('Error on 9: %s\n' % e)
                 #11 - year
+                #print '\t11 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,10,str(result.year))
                 except Exception as e:
                     worked[10] = False
                     errors.append('Error on 10: %s\n' % e)
                 #12 - date
+                #print '\t12 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 except Exception as e:
@@ -1259,6 +1297,7 @@ class Ui_Form(QtGui.QWidget):
                     worked[11] = False
                     errors.append('Error on 11: %s\n' % e)
                 #13 - real name
+                #print '\t13 - %s' % datetime.datetime.now()
                 real_names = []
                 try:
                     for jj in range(len(result.artists)):
@@ -1270,6 +1309,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 12: %s\n' % e)
                     #self.print_to_console('Trying to get the real name broke things: %s\n' % e)
                 #14 - profile
+                #print '\t14 - %s' % datetime.datetime.now()
                 profiles = []
                 try:
                     for jj in range(len(result.artists)):
@@ -1282,6 +1322,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 13: %s\n' % e)
                     #self.print_to_console('Trying to get a profile on the artist broke things: %s\n' % e)
                 #15 variations
+                #print '\t15 - %s' % datetime.datetime.now()
                 variations = []
                 try:
                     for jj in range(len(result.artists)):
@@ -1295,6 +1336,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 14: %s\n' % e)
                     #self.print_to_console('Trying to get variations broke things: %s\n' % e)
                 #16 aliases
+                #print '\t16 - %s' % datetime.datetime.now()
                 aliases = []
                 try:
                     for jj in range(len(result.artists)):
@@ -1309,12 +1351,14 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 15: %s\n' % e)
                     #self.print_to_console('Trying to get aliases broke things: %s\n' % e)
                 #17 - discogs release number
+                #print '\t17 - %s' % datetime.datetime.now()
                 try:
                     self.change_tab_one_results_table_text(ii,16,str(result.id))
                 except Exception as e:
                     worked[16] = False
                     errors.append('Error on 16: %s\n' % e)
                 #18 - Track List
+                #print '\t18 - %s' % datetime.datetime.now()
                 tracks = []
                 try:
                     if result.tracklist is not None:
@@ -1326,6 +1370,7 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 17: %s\n' % e)
                     #self.print_to_console('Trying to get track list broke things: %s\n' % e)
                 #19 - Notes
+                #print '\t19 - %s' % datetime.datetime.now()
                 try:
                     if result.notes is not None:
                         self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
@@ -1334,14 +1379,17 @@ class Ui_Form(QtGui.QWidget):
                     errors.append('Error on 18: %s\n' % e)
 
                 #had to manually increment due to things like 'Various' artists, fuck that shit
+                #print '\t20 - %s' % datetime.datetime.now()
                 ii = ii + 1
                 if False in worked:
                     print "Errors adding title:"
                     print "\t%s" % ("\t".join(errors))
+                #print '\t21 - %s' % datetime.datetime.now()
 
         except Exception as e:
             self.print_to_console('Something bad happened while searching for release: %s\n' % e)
-            self.tab_one_results_table.setRowCount(1)
+            self.tab_one_results_table.setRowCount(20)
+            self.clear_tab_one_search_table()
             
         #resize columns
         self.tab_one_results_table.resizeColumnsToContents()
@@ -1367,7 +1415,6 @@ class Ui_Form(QtGui.QWidget):
             widget = self.tab_one_results_table.cellWidget(row, col)
             #print widget.currentText()
             return widget.currentText()
-
 
         item = self.tab_one_results_table.item(row, col)
         if(item is not None):

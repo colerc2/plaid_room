@@ -27,7 +27,7 @@ class DiscogsClient():
         #if resp['status'] != '200':
         #    raise Exception('Invalid response{0}.'.format(resp['status
         
-        self.rate_limit = 1
+        self.rate_limit = 1.1
         self.connected = False
         #try to connect
         try:
