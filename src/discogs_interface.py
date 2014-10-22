@@ -83,7 +83,7 @@ class DiscogsClient():
         else:
             return True
 
-    def process_response(self, results, search_query):
+    def process_response(self, results, search_query, upc_needed):
         ii = 0
         rows_to_return = []
         for result in results:
@@ -108,7 +108,7 @@ class DiscogsClient():
             try:
                 for artist in result.artists:
                     artists_.append(artist.name)
-                    cols_to_return[1] = ", ".join(artists_))
+                    cols_to_return[1] = ", ".join(artists_)
             except Exception as e:
                 worked[1] = False
                 errors.append('Error on 1: %s\n' % e)
@@ -143,6 +143,7 @@ class DiscogsClient():
                 worked[3] = False
                 errors.append('Error on 3: %s\n' % e)
             rows_to_return.append(cols_to_return)
+            ii = ii + 1
         return rows_to_return
 
             
