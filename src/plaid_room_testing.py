@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'src/print_fucker.ui'
+# Form implementation generated from reading ui file '../learning_pyqt/second_test/print_fucker.ui'
 #
-# Created: Mon Oct 20 14:04:06 2014
+# Created: Wed Oct 22 18:23:09 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,7 @@ import re
 import string
 from threading import Thread
 
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -31,7 +32,8 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-        
+
+
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -47,10 +49,10 @@ class Ui_Form(QtGui.QWidget):
         self.previous_results = None
         #create table
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
-        (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text, profile text, variations text, aliases text, discogs_release_number integer, track_list text, notes text, id integer primary key autoincrement)
+        (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
         self.num_attributes = 19
-        self.combobox_cols = [5,6]
+        self.combobox_cols = [6,7]
         
         self.setupUi(self)
 
@@ -83,15 +85,15 @@ class Ui_Form(QtGui.QWidget):
         sizePolicy.setHeightForWidth(self.add_inventory_tab.sizePolicy().hasHeightForWidth())
         self.add_inventory_tab.setSizePolicy(sizePolicy)
         self.add_inventory_tab.setObjectName(_fromUtf8("add_inventory_tab"))
-        self.widget = QtGui.QWidget(self.add_inventory_tab)
-        self.widget.setGeometry(QtCore.QRect(0, 0, 1876, 961))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout_3 = QtGui.QVBoxLayout(self.widget)
+        self.layoutWidget = QtGui.QWidget(self.add_inventory_tab)
+        self.layoutWidget.setGeometry(QtCore.QRect(0, 0, 1876, 961))
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.tab_one_search_item_lbl = QtGui.QLabel(self.widget)
+        self.tab_one_search_item_lbl = QtGui.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Lucida Grande"))
         font.setPointSize(18)
@@ -101,49 +103,49 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_2.addWidget(self.tab_one_search_item_lbl)
         spacerItem = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.add_item_vert_line = QtGui.QFrame(self.widget)
+        self.add_item_vert_line = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line.setObjectName(_fromUtf8("add_item_vert_line"))
         self.horizontalLayout_2.addWidget(self.add_item_vert_line)
         spacerItem1 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.tab_one_vinyl_radio_buttom = QtGui.QRadioButton(self.widget)
-        self.tab_one_vinyl_radio_buttom.setChecked(True)
-        self.tab_one_vinyl_radio_buttom.setObjectName(_fromUtf8("tab_one_vinyl_radio_buttom"))
-        self.horizontalLayout_2.addWidget(self.tab_one_vinyl_radio_buttom)
-        self.tab_one_cd_radio_button = QtGui.QRadioButton(self.widget)
+        self.tab_one_vinyl_radio_button = QtGui.QRadioButton(self.layoutWidget)
+        self.tab_one_vinyl_radio_button.setChecked(True)
+        self.tab_one_vinyl_radio_button.setObjectName(_fromUtf8("tab_one_vinyl_radio_button"))
+        self.horizontalLayout_2.addWidget(self.tab_one_vinyl_radio_button)
+        self.tab_one_cd_radio_button = QtGui.QRadioButton(self.layoutWidget)
         self.tab_one_cd_radio_button.setObjectName(_fromUtf8("tab_one_cd_radio_button"))
         self.horizontalLayout_2.addWidget(self.tab_one_cd_radio_button)
-        self.tab_one_any_radio_button = QtGui.QRadioButton(self.widget)
+        self.tab_one_any_radio_button = QtGui.QRadioButton(self.layoutWidget)
         self.tab_one_any_radio_button.setObjectName(_fromUtf8("tab_one_any_radio_button"))
         self.horizontalLayout_2.addWidget(self.tab_one_any_radio_button)
         spacerItem2 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
-        self.add_item_vert_line_27 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_27 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_27.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_27.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_27.setObjectName(_fromUtf8("add_item_vert_line_27"))
         self.horizontalLayout_2.addWidget(self.add_item_vert_line_27)
         spacerItem3 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem3)
-        self.tab_one_search_upc_qline = QtGui.QLineEdit(self.widget)
+        self.tab_one_search_upc_qline = QtGui.QLineEdit(self.layoutWidget)
         self.tab_one_search_upc_qline.setObjectName(_fromUtf8("tab_one_search_upc_qline"))
         self.horizontalLayout_2.addWidget(self.tab_one_search_upc_qline)
-        self.tab_one_search_upc_button = QtGui.QPushButton(self.widget)
+        self.tab_one_search_upc_button = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_search_upc_button.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_search_upc_button.setObjectName(_fromUtf8("tab_one_search_upc_button"))
         self.horizontalLayout_2.addWidget(self.tab_one_search_upc_button)
         spacerItem4 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem4)
-        self.add_item_vert_line_2 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_2 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_2.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_2.setObjectName(_fromUtf8("add_item_vert_line_2"))
         self.horizontalLayout_2.addWidget(self.add_item_vert_line_2)
         spacerItem5 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem5)
-        self.tab_one_search_artist_title_title_qline = QtGui.QLineEdit(self.widget)
+        self.tab_one_search_artist_title_title_qline = QtGui.QLineEdit(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -153,27 +155,27 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_artist_title_title_qline.setText(_fromUtf8(""))
         self.tab_one_search_artist_title_title_qline.setObjectName(_fromUtf8("tab_one_search_artist_title_title_qline"))
         self.horizontalLayout_2.addWidget(self.tab_one_search_artist_title_title_qline)
-        self.tab_one_search_artist_title_button = QtGui.QPushButton(self.widget)
+        self.tab_one_search_artist_title_button = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_search_artist_title_button.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_search_artist_title_button.setObjectName(_fromUtf8("tab_one_search_artist_title_button"))
         self.horizontalLayout_2.addWidget(self.tab_one_search_artist_title_button)
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem6)
-        self.add_item_vert_line_4 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_4 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_4.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_4.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_4.setObjectName(_fromUtf8("add_item_vert_line_4"))
         self.horizontalLayout_2.addWidget(self.add_item_vert_line_4)
         spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem7)
-        self.tab_one_clear_all_button = QtGui.QPushButton(self.widget)
+        self.tab_one_clear_all_button = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_clear_all_button.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_clear_all_button.setObjectName(_fromUtf8("tab_one_clear_all_button"))
         self.horizontalLayout_2.addWidget(self.tab_one_clear_all_button)
         spacerItem8 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem8)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-        self.tab_one_results_table = QtGui.QTableWidget(self.widget)
+        self.tab_one_results_table = QtGui.QTableWidget(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -183,7 +185,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_one_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_one_results_table.setObjectName(_fromUtf8("tab_one_results_table"))
-        self.tab_one_results_table.setColumnCount(19)
+        self.tab_one_results_table.setColumnCount(13)
         self.tab_one_results_table.setRowCount(15)
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setVerticalHeaderItem(0, item)
@@ -242,18 +244,6 @@ class Ui_Form(QtGui.QWidget):
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setHorizontalHeaderItem(12, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(13, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(14, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(15, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(16, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(17, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setHorizontalHeaderItem(18, item)
-        item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 0, item)
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 1, item)
@@ -268,7 +258,7 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
-        self.tab_one_add_item_lbl = QtGui.QLabel(self.widget)
+        self.tab_one_add_item_lbl = QtGui.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Lucida Grande"))
         font.setPointSize(18)
@@ -278,38 +268,38 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_6.addWidget(self.tab_one_add_item_lbl)
         spacerItem9 = QtGui.QSpacerItem(70, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem9)
-        self.add_item_vert_line_7 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_7 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_7.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_7.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_7.setObjectName(_fromUtf8("add_item_vert_line_7"))
         self.horizontalLayout_6.addWidget(self.add_item_vert_line_7)
         spacerItem10 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem10)
-        self.tab_one_add_selected_to_inventory = QtGui.QPushButton(self.widget)
+        self.tab_one_add_selected_to_inventory = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_add_selected_to_inventory.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_add_selected_to_inventory.setObjectName(_fromUtf8("tab_one_add_selected_to_inventory"))
         self.horizontalLayout_6.addWidget(self.tab_one_add_selected_to_inventory)
-        self.tab_one_print_sticker_check_box = QtGui.QCheckBox(self.widget)
+        self.tab_one_print_sticker_check_box = QtGui.QCheckBox(self.layoutWidget)
         self.tab_one_print_sticker_check_box.setChecked(True)
         self.tab_one_print_sticker_check_box.setObjectName(_fromUtf8("tab_one_print_sticker_check_box"))
         self.horizontalLayout_6.addWidget(self.tab_one_print_sticker_check_box)
         spacerItem11 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem11)
-        self.add_item_vert_line_8 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_8 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_8.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_8.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_8.setObjectName(_fromUtf8("add_item_vert_line_8"))
         self.horizontalLayout_6.addWidget(self.add_item_vert_line_8)
         spacerItem12 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem12)
-        self.tab_one_generate_sku_button = QtGui.QPushButton(self.widget)
+        self.tab_one_generate_sku_button = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_generate_sku_button.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_generate_sku_button.setObjectName(_fromUtf8("tab_one_generate_sku_button"))
         self.horizontalLayout_6.addWidget(self.tab_one_generate_sku_button)
         self.horizontalLayout_7.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.add_item_vert_line_13 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_13 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_13.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_13.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_13.setObjectName(_fromUtf8("add_item_vert_line_13"))
@@ -318,7 +308,7 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_3.addItem(spacerItem13)
         self.horizontalLayout_7.addLayout(self.horizontalLayout_3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
-        self.line = QtGui.QFrame(self.widget)
+        self.line = QtGui.QFrame(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
         font.setPointSize(24)
@@ -338,7 +328,7 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
-        self.tab_one_recent_additions_lbl = QtGui.QLabel(self.widget)
+        self.tab_one_recent_additions_lbl = QtGui.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Lucida Grande"))
         font.setPointSize(18)
@@ -348,40 +338,40 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_8.addWidget(self.tab_one_recent_additions_lbl)
         spacerItem14 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem14)
-        self.add_item_vert_line_9 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_9 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_9.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_9.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_9.setObjectName(_fromUtf8("add_item_vert_line_9"))
         self.horizontalLayout_8.addWidget(self.add_item_vert_line_9)
         spacerItem15 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem15)
-        self.tab_one_remove_selected_item_from_inventory = QtGui.QPushButton(self.widget)
+        self.tab_one_remove_selected_item_from_inventory = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_remove_selected_item_from_inventory.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_remove_selected_item_from_inventory.setObjectName(_fromUtf8("tab_one_remove_selected_item_from_inventory"))
         self.horizontalLayout_8.addWidget(self.tab_one_remove_selected_item_from_inventory)
         spacerItem16 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem16)
-        self.add_item_vert_line_14 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_14 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_14.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_14.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_14.setObjectName(_fromUtf8("add_item_vert_line_14"))
         self.horizontalLayout_8.addWidget(self.add_item_vert_line_14)
         spacerItem17 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem17)
-        self.tab_one_edit_selected_item = QtGui.QPushButton(self.widget)
+        self.tab_one_edit_selected_item = QtGui.QPushButton(self.layoutWidget)
         self.tab_one_edit_selected_item.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_one_edit_selected_item.setObjectName(_fromUtf8("tab_one_edit_selected_item"))
         self.horizontalLayout_8.addWidget(self.tab_one_edit_selected_item)
         spacerItem18 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem18)
-        self.add_item_vert_line_28 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_28 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_28.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_28.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_28.setObjectName(_fromUtf8("add_item_vert_line_28"))
         self.horizontalLayout_8.addWidget(self.add_item_vert_line_28)
         spacerItem19 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem19)
-        self.tab_one_num_inventory_label = QtGui.QLabel(self.widget)
+        self.tab_one_num_inventory_label = QtGui.QLabel(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -391,7 +381,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_num_inventory_label.setObjectName(_fromUtf8("tab_one_num_inventory_label"))
         self.horizontalLayout_8.addWidget(self.tab_one_num_inventory_label)
         self.verticalLayout.addLayout(self.horizontalLayout_8)
-        self.tab_one_recently_added_table = QtGui.QTableWidget(self.widget)
+        self.tab_one_recently_added_table = QtGui.QTableWidget(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -491,14 +481,14 @@ class Ui_Form(QtGui.QWidget):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.add_item_vert_line_12 = QtGui.QFrame(self.widget)
+        self.add_item_vert_line_12 = QtGui.QFrame(self.layoutWidget)
         self.add_item_vert_line_12.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_12.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_12.setObjectName(_fromUtf8("add_item_vert_line_12"))
         self.horizontalLayout_4.addWidget(self.add_item_vert_line_12)
         spacerItem20 = QtGui.QSpacerItem(150, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem20)
-        self.tab_one_console_lbl = QtGui.QLabel(self.widget)
+        self.tab_one_console_lbl = QtGui.QLabel(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -516,7 +506,7 @@ class Ui_Form(QtGui.QWidget):
         spacerItem21 = QtGui.QSpacerItem(150, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem21)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
-        self.tab_one_text_browser = QtGui.QTextBrowser(self.widget)
+        self.tab_one_text_browser = QtGui.QTextBrowser(self.layoutWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -622,13 +612,13 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table_2.horizontalHeader().setDefaultSectionSize(100)
         self.tab_two_results_table_2.horizontalHeader().setSortIndicatorShown(False)
         self.tab_two_results_table_2.horizontalHeader().setStretchLastSection(False)
-        self.layoutWidget = QtGui.QWidget(self.search_inventory_tab)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 1850, 34))
-        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
-        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.layoutWidget)
+        self.layoutWidget1 = QtGui.QWidget(self.search_inventory_tab)
+        self.layoutWidget1.setGeometry(QtCore.QRect(10, 20, 1850, 34))
+        self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
+        self.horizontalLayout_5 = QtGui.QHBoxLayout(self.layoutWidget1)
         self.horizontalLayout_5.setMargin(0)
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
-        self.tab_two_search_item_lbl_2 = QtGui.QLabel(self.layoutWidget)
+        self.tab_two_search_item_lbl_2 = QtGui.QLabel(self.layoutWidget1)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Lucida Grande"))
         font.setPointSize(18)
@@ -638,65 +628,65 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_5.addWidget(self.tab_two_search_item_lbl_2)
         spacerItem22 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem22)
-        self.add_item_vert_line_5 = QtGui.QFrame(self.layoutWidget)
+        self.add_item_vert_line_5 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_5.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_5.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_5.setObjectName(_fromUtf8("add_item_vert_line_5"))
         self.horizontalLayout_5.addWidget(self.add_item_vert_line_5)
         spacerItem23 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem23)
-        self.tab_two_search_upc_qline_2 = QtGui.QLineEdit(self.layoutWidget)
+        self.tab_two_search_upc_qline_2 = QtGui.QLineEdit(self.layoutWidget1)
         self.tab_two_search_upc_qline_2.setObjectName(_fromUtf8("tab_two_search_upc_qline_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_upc_qline_2)
-        self.tab_two_search_upc_button_2 = QtGui.QPushButton(self.layoutWidget)
+        self.tab_two_search_upc_button_2 = QtGui.QPushButton(self.layoutWidget1)
         self.tab_two_search_upc_button_2.setObjectName(_fromUtf8("tab_two_search_upc_button_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_upc_button_2)
         spacerItem24 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem24)
-        self.add_item_vert_line_6 = QtGui.QFrame(self.layoutWidget)
+        self.add_item_vert_line_6 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_6.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_6.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_6.setObjectName(_fromUtf8("add_item_vert_line_6"))
         self.horizontalLayout_5.addWidget(self.add_item_vert_line_6)
         spacerItem25 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem25)
-        self.tab_two_search_artist_qline_2 = QtGui.QLineEdit(self.layoutWidget)
+        self.tab_two_search_artist_qline_2 = QtGui.QLineEdit(self.layoutWidget1)
         self.tab_two_search_artist_qline_2.setText(_fromUtf8(""))
         self.tab_two_search_artist_qline_2.setObjectName(_fromUtf8("tab_two_search_artist_qline_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_artist_qline_2)
-        self.tab_two_search_artist_button_2 = QtGui.QPushButton(self.layoutWidget)
+        self.tab_two_search_artist_button_2 = QtGui.QPushButton(self.layoutWidget1)
         self.tab_two_search_artist_button_2.setObjectName(_fromUtf8("tab_two_search_artist_button_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_artist_button_2)
         spacerItem26 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem26)
-        self.add_item_vert_line_10 = QtGui.QFrame(self.layoutWidget)
+        self.add_item_vert_line_10 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_10.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_10.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_10.setObjectName(_fromUtf8("add_item_vert_line_10"))
         self.horizontalLayout_5.addWidget(self.add_item_vert_line_10)
         spacerItem27 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem27)
-        self.tab_two_search_artist_title_artist_qline_2 = QtGui.QLineEdit(self.layoutWidget)
+        self.tab_two_search_artist_title_artist_qline_2 = QtGui.QLineEdit(self.layoutWidget1)
         self.tab_two_search_artist_title_artist_qline_2.setText(_fromUtf8(""))
         self.tab_two_search_artist_title_artist_qline_2.setObjectName(_fromUtf8("tab_two_search_artist_title_artist_qline_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_artist_title_artist_qline_2)
-        self.tab_two_search_artist_title_title_qline_2 = QtGui.QLineEdit(self.layoutWidget)
+        self.tab_two_search_artist_title_title_qline_2 = QtGui.QLineEdit(self.layoutWidget1)
         self.tab_two_search_artist_title_title_qline_2.setText(_fromUtf8(""))
         self.tab_two_search_artist_title_title_qline_2.setObjectName(_fromUtf8("tab_two_search_artist_title_title_qline_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_artist_title_title_qline_2)
-        self.tab_two_search_artist_title_button_2 = QtGui.QPushButton(self.layoutWidget)
+        self.tab_two_search_artist_title_button_2 = QtGui.QPushButton(self.layoutWidget1)
         self.tab_two_search_artist_title_button_2.setObjectName(_fromUtf8("tab_two_search_artist_title_button_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_search_artist_title_button_2)
         spacerItem28 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem28)
-        self.add_item_vert_line_11 = QtGui.QFrame(self.layoutWidget)
+        self.add_item_vert_line_11 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_11.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_11.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_11.setObjectName(_fromUtf8("add_item_vert_line_11"))
         self.horizontalLayout_5.addWidget(self.add_item_vert_line_11)
         spacerItem29 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem29)
-        self.tab_two_clear_all_button_2 = QtGui.QPushButton(self.layoutWidget)
+        self.tab_two_clear_all_button_2 = QtGui.QPushButton(self.layoutWidget1)
         self.tab_two_clear_all_button_2.setObjectName(_fromUtf8("tab_two_clear_all_button_2"))
         self.horizontalLayout_5.addWidget(self.tab_two_clear_all_button_2)
         spacerItem30 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -717,7 +707,7 @@ class Ui_Form(QtGui.QWidget):
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Plaid Room Records", None))
         self.tab_one_search_item_lbl.setText(_translate("Form", "Search Item", None))
-        self.tab_one_vinyl_radio_buttom.setText(_translate("Form", "Vinyl", None))
+        self.tab_one_vinyl_radio_button.setText(_translate("Form", "Vinyl", None))
         self.tab_one_cd_radio_button.setText(_translate("Form", "CD", None))
         self.tab_one_any_radio_button.setText(_translate("Form", "Any", None))
         self.tab_one_search_upc_button.setText(_translate("Form", "Search UPC/SKU/EAN", None))
@@ -779,19 +769,7 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_one_results_table.horizontalHeaderItem(11)
         item.setText(_translate("Form", "Date Added", None))
         item = self.tab_one_results_table.horizontalHeaderItem(12)
-        item.setText(_translate("Form", "Real Name", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(13)
-        item.setText(_translate("Form", "Profile", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Variations", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Aliases", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(16)
         item.setText(_translate("Form", "Discogs Release Number", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(17)
-        item.setText(_translate("Form", "Track List", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(18)
-        item.setText(_translate("Form", "Notes", None))
         __sortingEnabled = self.tab_one_results_table.isSortingEnabled()
         self.tab_one_results_table.setSortingEnabled(False)
         self.tab_one_results_table.setSortingEnabled(__sortingEnabled)
@@ -869,15 +847,15 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_one_recently_added_table.horizontalHeaderItem(11)
         item.setText(_translate("Form", "Date Added", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(12)
-        item.setText(_translate("Form", "Real Name", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(13)
-        item.setText(_translate("Form", "Profile", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Variations", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Aliases", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(16)
         item.setText(_translate("Form", "Discogs Release Number", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(13)
+        item.setText(_translate("Form", "Real Name", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(14)
+        item.setText(_translate("Form", "Profile", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(15)
+        item.setText(_translate("Form", "Variations", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(16)
+        item.setText(_translate("Form", "Aliases", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(17)
         item.setText(_translate("Form", "Track List", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(18)
@@ -974,6 +952,7 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.check_out_tab), _translate("Form", "Check Out", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "History/Generate Reports", None))
 
+
         #other stuff
         self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
         
@@ -1031,23 +1010,23 @@ class Ui_Form(QtGui.QWidget):
                     str(self.get_tab_one_recently_added_table_text(row,2)),
                     str(self.get_tab_one_recently_added_table_text(row,3)),
                     float(self.get_tab_one_recently_added_table_text(row,4)),
-                    str(self.get_tab_one_recently_added_table_text(row,5)),
+                    float(self.get_tab_one_recently_added_table_text(row,5)),
                     str(self.get_tab_one_recently_added_table_text(row,6)),
-                    float(self.get_tab_one_recently_added_table_text(row,7)),
+                    str(self.get_tab_one_recently_added_table_text(row,7)),
                     str(self.get_tab_one_recently_added_table_text(row,8)),
                     str(self.get_tab_one_recently_added_table_text(row,9)),
                     int(self.get_tab_one_recently_added_table_text(row,10)),
-                    str(self.get_tab_one_recently_added_table_text(row,12)),
+                    int(self.get_tab_one_recently_added_table_text(row,12)),
                     str(self.get_tab_one_recently_added_table_text(row,13)),
                     str(self.get_tab_one_recently_added_table_text(row,14)),
                     str(self.get_tab_one_recently_added_table_text(row,15)),
-                    int(self.get_tab_one_recently_added_table_text(row,16)),
+                    str(self.get_tab_one_recently_added_table_text(row,16)),
                     str(self.get_tab_one_recently_added_table_text(row,17)),
                     str(self.get_tab_one_recently_added_table_text(row,18)), key, date)
 
         
         #edit her
-        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, new_used = ?, distributor = ?, price_paid = ?, label = ?, genre = ?, year = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, discogs_release_number = ?, track_list = ?, notes = ? WHERE id = ? and date_added = ?', db_query)
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, track_list = ?, notes = ? WHERE id = ? and date_added = ?', db_query)
         
         #commit
         self.db.commit()
@@ -1062,8 +1041,91 @@ class Ui_Form(QtGui.QWidget):
         curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #now find stuff out about this release that we didn't do when the search results were displayed
         discogs_release_number = str(self.get_tab_one_results_table_text(row,12))
+        errors = []
+        real_name_db = ''
+        profile_db = ''
+        variations_db = ''
+        aliases_db = ''
+        tracks_db = ''
+        notes_db = ''
         if discogs_release_number is not None: #did we find this on discogs or enter manually?
-            
+            #loop through previous results until we find the matching entry
+            for result in self.previous_results:
+                if str(result.id) != discogs_release_number:
+                    continue
+                #else, it's time to grab more info
+                
+                #13 - real name ------------------------------
+                real_names = []
+                try:
+                    for jj in range(len(result.artists)):
+                        if result.artists[jj].real_name is not None:
+                            real_names.append(result.artists[jj].real_name)
+                    real_name_db = filter(lambda x: x in string.printable,", ".join(real_names))
+                    #self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
+                except Exception as e:
+                #    worked[12] = False
+                    errors.append('Error on 12: %s\n' % e)
+                #14 - profile --------------------------------
+                profiles = []
+                try:
+                    for jj in range(len(result.artists)):
+                        if result.artists[jj].profile is not None:
+                            profile = result.artists[jj].name
+                            profile = profile + ' - ' + result.artists[jj].profile
+                        profiles.append(profile)
+                    profile_db = filter(lambda x: x in string.printable,"\n\n".join(profiles))
+                #    self.change_tab_one_results_table_text(ii,13,filter(lambda x: x in string.printable,"\n\n".join(profiles)))
+                except Exception as e:
+                #            worked[13] = False
+                            errors.append('Error on 13: %s\n' % e)
+                #15 variations --------------------------------
+                variations = []
+                try:
+                    for jj in range(len(result.artists)):
+                        if result.artists[jj].name_variations is not None:
+                            variation = ", ".join(result.artists[jj].name_variations)
+                            variations.append(variation)
+                    if variations:#this returns true if not empty
+                        variations_db = filter(lambda x: x in string.printable,",".join(variations))
+                        #self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
+                except Exception as e:
+                #    worked[14] = False
+                    errors.append('Error on 14: %s\n' % e)
+                #16 aliases -----------------------------------
+                aliases = []
+                try:
+                    for jj in range(len(result.artists)):
+                        temp = []
+                        for artist in result.artists[jj].aliases:
+                            temp.append(artist.name)
+                        alias = ", ".join(temp)
+                    aliases.append(alias)
+                    aliases_db = filter(lambda x: x in string.printable,",".join(aliases))
+                    #self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
+                except Exception as e:
+                #    worked[15] = False
+                    errors.append('Error on 15: %s\n' % e)
+                #18 - Track List -------------------------------
+                tracks = []
+                try:
+                    if result.tracklist is not None:
+                        for t in result.tracklist:
+                            tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+                        tracks_db = filter(lambda x: x in string.printable,"\n".join(tracks))
+                        #self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
+                except Exception as e:
+                #    worked[17] = False
+                    errors.append('Error on 17: %s\n' % e)
+                #19 - Notes -----------------------------------
+                try:
+                    if result.notes is not None:
+                        notes_db = filter(lambda x: x in string.printable,result.notes)
+                        #self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
+                except Exception as e:
+                #    worked[18] = False
+                    errors.append('Error on 18: %s\n' % e)
+
                                     
         
         try:
@@ -1073,22 +1135,22 @@ class Ui_Form(QtGui.QWidget):
                        str(self.get_tab_one_results_table_text(row,2)),
                        str(self.get_tab_one_results_table_text(row,3)),
                        float(self.get_tab_one_results_table_text(row,4)),
-                       str(self.get_tab_one_results_table_text(row,5)),
+                       float(self.get_tab_one_results_table_text(row,5)),
                        str(self.get_tab_one_results_table_text(row,6)),
-                       float(self.get_tab_one_results_table_text(row,7)),
+                       str(self.get_tab_one_results_table_text(row,7)),
                        str(self.get_tab_one_results_table_text(row,8)),
                        str(self.get_tab_one_results_table_text(row,9)),
                        int(self.get_tab_one_results_table_text(row,10)),
                        curr_time,
-                       str(self.get_tab_one_results_table_text(row,12)),
-                       str(self.get_tab_one_results_table_text(row,13)),
-                       str(self.get_tab_one_results_table_text(row,14)),
-                       str(self.get_tab_one_results_table_text(row,15)),
-                       int(self.get_tab_one_results_table_text(row,16)),
-                       str(self.get_tab_one_results_table_text(row,17)),
-                       str(self.get_tab_one_results_table_text(row,18)))
+                       int(self.get_tab_one_results_table_text(row,12)),
+                       str(real_name_db),
+                       str(profile_db),
+                       str(variations_db),
+                       str(aliases_db),
+                       str(tracks_db),
+                       str(notes_db))
             
-            self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, new_used, distributor, price_paid, label, genre, year, date_added, real_name, profile, variations, aliases, discogs_release_number, track_list, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+            self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
             #print self.db_cursor.lastrowid
             self.print_to_console('%s item added to database.\n' % str(self.get_tab_one_results_table_text(row,1))) 
@@ -1174,7 +1236,7 @@ class Ui_Form(QtGui.QWidget):
                     break
                 worked = [True]*19
                 errors = []
-                #1 - upc -------------------------------------
+                #0 - upc -------------------------------------
                 try:
                     if(upc_needed):
                         self.change_tab_one_results_table_text(ii,0,'BLANK')
@@ -1183,7 +1245,7 @@ class Ui_Form(QtGui.QWidget):
                 except Exception as e:
                     worked[0] = False
                     errors.append('Error on 0: %s\n' % e)
-                #2 - artist --------------------------------
+                #1 - artist --------------------------------
                 #artists_ = []
                 #try:
                 #    for artist in result.artists:
@@ -1204,13 +1266,13 @@ class Ui_Form(QtGui.QWidget):
                     self.change_tab_one_results_table_text(ii,0,'')
                     self.change_tab_one_results_table_text(ii,1,'')
                     continue
-                #3 - title ---------------------------------
+                #2 - title ---------------------------------
                 try:
                     self.change_tab_one_results_table_text(ii,2,title_)
                 except Exception as e:
                     worked[2] = False
                     errors.append('Error on 2: %s\n' % e)
-                #4 - format---------------------------------
+                #3 - format---------------------------------
                 format_ = ''
                 try:
                     for jj in range(len(result.formats)):
@@ -1226,7 +1288,7 @@ class Ui_Form(QtGui.QWidget):
                 except Exception as e:
                     worked[3] = False
                     errors.append('Error on 3: %s\n' % e)
-                #5 - price -----------------------------------
+                #4 - price -----------------------------------
                 #TODO: maybe do in parallel so it doesn't suck
                 #prices = [None] * 3
                 #self.discogs.scrape_price(result.id, prices)
@@ -1237,11 +1299,18 @@ class Ui_Form(QtGui.QWidget):
                 except Exception as e:
                     worked[4] = False
                     errors.append('Error on 4: %s\n' % e)
+                #5 - price paid ------------------------------
+                #print '\t8 - %s' % datetime.datetime.now()
+                try:
+                    self.change_tab_one_results_table_text(ii,5,str(9+ii))
+                except Exception as e:
+                    worked[7] = False
+                    errors.append('Error on 7: %s\n' % e)
                 #6 - new/used --------------------------------
                 #TODO: select new or used based on something, i dunno yet
                 #print '\t6 - %s' % datetime.datetime.now()
                 try:
-                    self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
+                    self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
                 except Exception as e:
                         worked[5] = False
                         errors.append('Error on 5: %s\n' % e)
@@ -1249,111 +1318,41 @@ class Ui_Form(QtGui.QWidget):
                 #TODO: select distributor based on most recent DB item
                 #print '\t7 - %s' % datetime.datetime.now()
                 try:
-                    self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+                    self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
                 except Exception as e:
                     worked[6] = False
                     errors.append('Error on 6: %s\n' % e)
                     #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
-                #8 - price paid ------------------------------
-                #print '\t8 - %s' % datetime.datetime.now()
-                try:
-                    self.change_tab_one_results_table_text(ii,7,str(9+ii))
-                except Exception as e:
-                    worked[7] = False
-                    errors.append('Error on 7: %s\n' % e)
-                #9 - label -----------------------------------
+                #8 - label -----------------------------------
                 try:
                     self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
                 except Exception as e:
                     worked[8] = False
                     errors.append('Error on 8: %s\n' % e)
-                #10 - genre ----------------------------------
+                #9 - genre ----------------------------------
                 try:
                     self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
                 except Exception as e:
                     worked[9] = False
                     errors.append('Error on 9: %s\n' % e)
-                #11 - year ----------------------------------
+                #10 - year ----------------------------------
                 try:
                     self.change_tab_one_results_table_text(ii,10,str(result.year))
                 except Exception as e:
                     worked[10] = False
                     errors.append('Error on 10: %s\n' % e)
-                #12 - date ----------------------------------
+                #11 - date ----------------------------------
                 try:
                     self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 except Exception as e:
                     worked[11] = False
                     errors.append('Error on 11: %s\n' % e)
-                #13 - real name ------------------------------
-                #real_names = []
-                #try:
-                #    for jj in range(len(result.artists)):
-                #        if result.artists[jj].real_name is not None:
-                #            real_names.append(result.artists[jj].real_name)
-                #    self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
-                #except Exception as e:
-                #    worked[12] = False
-                #    errors.append('Error on 12: %s\n' % e)
-                #14 - profile --------------------------------
-                #profiles = []
-                #try:
-                #    for jj in range(len(result.artists)):
-                #        if result.artists[jj].profile is not None:
-                #            profile = result.artists[jj].name
-                #            profile = profile + ' - ' + result.artists[jj].profile
-                #    self.change_tab_one_results_table_text(ii,13,filter(lambda x: x in string.printable,"\n\n".join(profiles)))
-                #except Exception as e:
-                #            worked[13] = False
-                #            errors.append('Error on 13: %s\n' % e)
-                #15 variations --------------------------------
-                #variations = []
-                #try:
-                #    for jj in range(len(result.artists)):
-                #        if result.artists[jj].name_variations is not None:
-                #            variation = ", ".join(result.artists[jj].name_variations)
-                #            variations.append(variation)
-                #    if variations:#this returns true if not empty
-                #        self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
-                #except Exception as e:
-                #    worked[14] = False
-                #    errors.append('Error on 14: %s\n' % e)
-                #16 aliases -----------------------------------
-                #aliases = []
-                #try:
-                #    for jj in range(len(result.artists)):
-                #        temp = []
-                #        for artist in result.artists[jj].aliases:
-                #            temp.append(artist.name)
-                #        alias = ", ".join(temp)
-                #    aliases.append(alias)
-                #    self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
-                #except Exception as e:
-                #    worked[15] = False
-                #    errors.append('Error on 15: %s\n' % e)
-                #17 - discogs release number -------------------
+                #12 - discogs release number -------------------
                 try:
-                    self.change_tab_one_results_table_text(ii,16,str(result.id))
+                    self.change_tab_one_results_table_text(ii,12,str(result.id))
                 except Exception as e:
                     worked[16] = False
-                    errors.append('Error on 16: %s\n' % e)
-                #18 - Track List -------------------------------
-                #tracks = []
-                #try:
-                #    if result.tracklist is not None:
-                #        for t in result.tracklist:
-                #            tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
-                #        self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
-                #except Exception as e:
-                #    worked[17] = False
-                #    errors.append('Error on 17: %s\n' % e)
-                #19 - Notes -----------------------------------
-                #try:
-                #    if result.notes is not None:
-                #        self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
-                #except Exception as e:
-                #    worked[18] = False
-                #    errors.append('Error on 18: %s\n' % e)
+                    errors.append('Error on 12: %s\n' % e)
 
                 ii = ii + 1
                 if False in worked:
@@ -1441,7 +1440,7 @@ class Ui_Form(QtGui.QWidget):
         return combobox
 
     def get_tab_one_radio_button_input(self):
-        if self.tab_one_vinyl_radio_buttom.isChecked():
+        if self.tab_one_vinyl_radio_button.isChecked():
             return ' vinyl'
         if self.tab_one_cd_radio_button.isChecked():
             return ' cd'
