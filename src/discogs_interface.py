@@ -70,6 +70,19 @@ class DiscogsClient():
         return results
 
         #Get rid of weird chars and white space
+
+    def search_for_artist(self, artist):
+        if(self.reconnect_if_necessary()):
+            try:
+                results = self.client.search(artist, type='artist')
+            except Exception as e:
+                print 'Failed on the call to discogs client: %s' % e
+        else:
+            #reconnect failed, oooooOOOOOOOOoooOOOOOOoooooo don't give him the stick
+            print 'Some shit is going down, figure out what'
+        return results
+    
+
     def clean_up_upc(self, upc):
         new_upc = re.sub(r"\D", "", upc)
         new_upc = new_upc.strip()
