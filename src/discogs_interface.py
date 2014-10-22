@@ -82,6 +82,69 @@ class DiscogsClient():
             return False
         else:
             return True
+
+    def process_response(self, results, search_query):
+        ii = 0
+        rows_to_return = []
+        for result in results:
+            cols_to_return = ['']*19
+            if ii == 20:
+                break
+                
+            worked = [True]*19
+            errors = []
+            #1 - upc
+            try:
+                if(upc_needed):
+                    cols_to_return[0] = 'PLAID4356783'
+                else:
+                    cols_to_return[0] = search_query
+            except Exception as e:
+                worked[0] = False
+                errors.append('Error on 0: %s\n' % e)
+                
+            #2 - artist
+            artists_ = []
+            try:
+                for artist in result.artists:
+                    artists_.append(artist.name)
+                    cols_to_return[1] = ", ".join(artists_))
+            except Exception as e:
+                worked[1] = False
+                errors.append('Error on 1: %s\n' % e)
+
+            #TODO: this might need some work
+            if 'Various' in artists_:
+                #TODO: clear table now
+                continue
+                
+            #3 - title
+            try:
+                cols_to_return[2] = result.title
+            except Exception as e:
+                worked[2] = False
+                errors.append('Error on 2: %s\n' % e)
+
+            #4 - format
+            format_ = ''
+            try:
+                for jj in range(len(result.formats)):
+                    if 'qty' in (result.formats[jj]):
+                        format_ = format_ + (result.formats[jj])['qty'] + 'x'
+                    if 'name' in (result.formats[jj]):
+                        format_ = format_ + (result.formats[jj])['name'] + ', '
+                    if 'descriptions' in (result.formats[jj]):
+                        format_ = format_ +  ", ".join((result.formats[jj])['descriptions'])
+                    if jj != (len(result.formats)-1):
+                        format_ = format_ + ' + '
+                cols_to_return[3] = format_
+            except Exception as e:
+                #self.print_to_console('Something went wrong when getting the format, fill it in yourself.\n')
+                worked[3] = False
+                errors.append('Error on 3: %s\n' % e)
+            rows_to_return.append(cols_to_return)
+        return rows_to_return
+
             
     def scrape_price(self, release_id, prices):
         release_url = 'http://www.discogs.com/release/%s' % release_id

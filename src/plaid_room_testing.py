@@ -1141,17 +1141,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_for_release(artist_title, True)
 
     def tab_one_search_for_release(self, search_query, upc_needed):
-        print 'priority:'
-        #print QThread.currentThread() 
-        #print self.QThread.currentThread()
-        #print self.currentThread()
-        #print ((QObject)(self)).currentThread()
-        #print QtCore.QObject.QThread.currentThread()
-        #print self.QObject.QThread.currentThread()
         curr_thread = self.thread()
         #curr_thread.setPriority(QtCore.QThread.TimeCriticalPriority)
         curr_thread.setPriority(QtCore.QThread.HighestPriority)
-        print self.thread().priority()
+        #print self.thread().priority()
         
         
         #clear table
@@ -1178,7 +1171,7 @@ class Ui_Form(QtGui.QWidget):
             #self.tab_one_results_table.setRowCount(20)
             ii = 0
             for result in results:
-#                QtGui.QApplication.processEvents()
+                QtGui.QApplication.processEvents()
                 #print 'new one'
                 if ii == 20:
                     break
@@ -1196,37 +1189,26 @@ class Ui_Form(QtGui.QWidget):
                     worked[0] = False
                     errors.append('Error on 0: %s\n' % e)
                 #2 - artist
-                #print '\t2 - %s' % time.time()
                 artists_ = []
-                #print '\tcheck1 - %s' % time.time()
                 try:
-                    #print '\tcheck2 - %s' % time.time()
-                    #for jj in range(len(result.artists)):
                     for artist in result.artists:
-                        #print '\t in loop: %s' % time.time()
                         artists_.append(artist.name)
                     self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
-                    #print '\tcheck3 - %s' % time.time()               
                 except Exception as e:
                     worked[1] = False
                     errors.append('Error on 1: %s\n' % e)
-                    #self.print_to_console('Error when getting artist information: %s' % e)
                 #TODO: this needs to be more "elegant"
-                #print '\tcheck4 - %s' % time.time()
                 if 'Various' in artists_:
-                    #TODO: clear row
+                    #TODO: clear table now
                     continue
-                #print '\tcheck5 - %s' % time.time()
 
                 #3 - title
-                #print '\t3 - %s' % time.time()
                 try:
                     self.change_tab_one_results_table_text(ii,2,result.title)
                 except Exception as e:
                     worked[2] = False
                     errors.append('Error on 2: %s\n' % e)
                 #4 - format
-                #print '\t4 - %s' % time.time()
                 format_ = ''
                 try:
                     for jj in range(len(result.formats)):
