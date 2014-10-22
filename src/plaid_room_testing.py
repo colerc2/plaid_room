@@ -44,7 +44,7 @@ class Ui_Form(QtGui.QWidget):
         self.db = sqlite3.connect('inventory.db')
         self.db_cursor = self.db.cursor()
         #store previous set of results
-        self.previous_results
+        self.previous_results = None
         #create table
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text, artist text, title text, format text, price real, new_used text, distributor text, price_paid real, label text, genre text, year integer, date_added text, real_name text, profile text, variations text, aliases text, discogs_release_number integer, track_list text, notes text, id integer primary key autoincrement)
@@ -1060,6 +1060,11 @@ class Ui_Form(QtGui.QWidget):
         row = self.tab_one_results_table.currentRow()
         #this guy is special, we want a different time for each addition to the DB
         curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #now find stuff out about this release that we didn't do when the search results were displayed
+        discogs_release_number = str(self.get_tab_one_results_table_text(row,12))
+        if discogs_release_number is not None: #did we find this on discogs or enter manually?
+            
+                                    
         
         try:
             #first add it to the database
@@ -1148,7 +1153,9 @@ class Ui_Form(QtGui.QWidget):
         self.print_to_console('Searching discogs...')
         try:
             results = self.discogs.search_for_release(search_query_with_radio_button)
-
+            
+            #save globally for use later
+            self.previous_results = results
             #check sanity of response
             if results is None or len(results) == 0:
                 self.print_to_console('\tNo match found on discogs for term: %s.\n' % search_query)
