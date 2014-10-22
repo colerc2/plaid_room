@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '../learning_pyqt/second_test/print_fucker.ui'
 #
-# Created: Wed Oct 22 18:23:09 2014
+# Created: Wed Oct 22 19:04:19 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,6 @@ import re
 import string
 from threading import Thread
 
-
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -32,7 +31,6 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
 
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
@@ -55,6 +53,7 @@ class Ui_Form(QtGui.QWidget):
         self.combobox_cols = [6,7]
         
         self.setupUi(self)
+
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
@@ -755,11 +754,11 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_one_results_table.horizontalHeaderItem(4)
         item.setText(_translate("Form", "Sale Price", None))
         item = self.tab_one_results_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "New/Used", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "Distributor", None))
-        item = self.tab_one_results_table.horizontalHeaderItem(7)
         item.setText(_translate("Form", "Price Paid", None))
+        item = self.tab_one_results_table.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "New/Used", None))
+        item = self.tab_one_results_table.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Distributor", None))
         item = self.tab_one_results_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Label", None))
         item = self.tab_one_results_table.horizontalHeaderItem(9)
@@ -833,11 +832,11 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_one_recently_added_table.horizontalHeaderItem(4)
         item.setText(_translate("Form", "Sale Price", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "New/Used", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "Distributor", None))
-        item = self.tab_one_recently_added_table.horizontalHeaderItem(7)
         item.setText(_translate("Form", "Price Paid", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "New/Used", None))
+        item = self.tab_one_recently_added_table.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Distributor", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Label", None))
         item = self.tab_one_recently_added_table.horizontalHeaderItem(9)
@@ -961,8 +960,8 @@ class Ui_Form(QtGui.QWidget):
         
         #combo box stuff
         for ii in range(self.num_attributes):
-            self.tab_one_results_table.setCellWidget(ii,5,self.generate_new_used_combobox())
-            self.tab_one_results_table.setCellWidget(ii,6,self.generate_distributor_combobox())
+            self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
+            self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
 
         #connectors bro *****************
 
