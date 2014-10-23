@@ -1625,6 +1625,9 @@ class Ui_Form(QtGui.QWidget):
 
         #update the shiz
         self.tab_one_update_recently_added_table()
+
+    def search_inventory(self):
+        #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE 
                 
     def tab_one_edit_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
