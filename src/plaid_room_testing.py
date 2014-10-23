@@ -1047,86 +1047,91 @@ class Ui_Form(QtGui.QWidget):
         aliases_db = ''
         tracks_db = ''
         notes_db = ''
-        if discogs_release_number is not None: #did we find this on discogs or enter manually?
-            #loop through previous results until we find the matching entry
-            for result in self.previous_results:
-                if str(result.id) != discogs_release_number:
-                    continue
-                #else, it's time to grab more info
-                
-                #13 - real name ------------------------------
-                real_names = []
-                try:
-                    for jj in range(len(result.artists)):
-                        if result.artists[jj].real_name is not None:
-                            real_names.append(result.artists[jj].real_name)
-                    real_name_db = filter(lambda x: x in string.printable,", ".join(real_names))
-                    #self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
-                except Exception as e:
-                #    worked[12] = False
-                    errors.append('Error on 12: %s\n' % e)
-                #14 - profile --------------------------------
-                profiles = []
-                try:
-                    for jj in range(len(result.artists)):
-                        if result.artists[jj].profile is not None:
-                            profile = result.artists[jj].name
-                            profile = profile + ' - ' + result.artists[jj].profile
-                        profiles.append(profile)
-                    profile_db = filter(lambda x: x in string.printable,"\n\n".join(profiles))
-                #    self.change_tab_one_results_table_text(ii,13,filter(lambda x: x in string.printable,"\n\n".join(profiles)))
-                except Exception as e:
-                #            worked[13] = False
-                            errors.append('Error on 13: %s\n' % e)
-                #15 variations --------------------------------
-                variations = []
-                try:
-                    for jj in range(len(result.artists)):
-                        if result.artists[jj].name_variations is not None:
-                            variation = ", ".join(result.artists[jj].name_variations)
-                            variations.append(variation)
-                    if variations:#this returns true if not empty
-                        variations_db = filter(lambda x: x in string.printable,",".join(variations))
-                        #self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
-                except Exception as e:
-                #    worked[14] = False
-                    errors.append('Error on 14: %s\n' % e)
-                #16 aliases -----------------------------------
-                aliases = []
-                try:
-                    for jj in range(len(result.artists)):
-                        temp = []
-                        for artist in result.artists[jj].aliases:
-                            temp.append(artist.name)
-                        alias = ", ".join(temp)
-                    aliases.append(alias)
-                    aliases_db = filter(lambda x: x in string.printable,",".join(aliases))
-                    #self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
-                except Exception as e:
-                #    worked[15] = False
-                    errors.append('Error on 15: %s\n' % e)
-                #18 - Track List -------------------------------
-                tracks = []
-                try:
-                    if result.tracklist is not None:
-                        for t in result.tracklist:
-                            tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
-                        tracks_db = filter(lambda x: x in string.printable,"\n".join(tracks))
-                        #self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
-                except Exception as e:
-                #    worked[17] = False
-                    errors.append('Error on 17: %s\n' % e)
-                #19 - Notes -----------------------------------
-                try:
-                    if result.notes is not None:
-                        notes_db = filter(lambda x: x in string.printable,result.notes)
-                        #self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
-                except Exception as e:
-                #    worked[18] = False
-                    errors.append('Error on 18: %s\n' % e)
-
-                                    
-        
+        try:
+            if discogs_release_number is not None: #did we find this on discogs or enter manually?
+                #loop through previous results until we find the matching entry
+                for result in self.previous_results:
+                    if str(result.id) != discogs_release_number:
+                        continue
+                    #else, it's time to grab more info
+                    
+                    #13 - real name ------------------------------
+                    real_names = []
+                    try:
+                        for jj in range(len(result.artists)):
+                            if result.artists[jj].real_name is not None:
+                                real_names.append(result.artists[jj].real_name)
+                        real_name_db = filter(lambda x: x in string.printable,", ".join(real_names))
+                        #self.change_tab_one_results_table_text(ii,12,", ".join(real_names))
+                    except Exception as e:
+                    #    worked[12] = False
+                        errors.append('Error on 12: %s\n' % e)
+                    #14 - profile --------------------------------
+                    profiles = []
+                    try:
+                        for jj in range(len(result.artists)):
+                            if result.artists[jj].profile is not None:
+                                profile = result.artists[jj].name
+                                profile = profile + ' - ' + result.artists[jj].profile
+                                profiles.append(profile)
+                        profile_db = filter(lambda x: x in string.printable,"\n\n".join(profiles))
+                    #    self.change_tab_one_results_table_text(ii,13,filter(lambda x: x in string.printable,"\n\n".join(profiles)))
+                    except Exception as e:
+                        #            worked[13] = False
+                        errors.append('Error on 13: %s\n' % e)
+                    #15 variations --------------------------------
+                    variations = []
+                    try:
+                        for jj in range(len(result.artists)):
+                            if result.artists[jj].name_variations is not None:
+                                variation = ", ".join(result.artists[jj].name_variations)
+                                variations.append(variation)
+                        if variations:#this returns true if not empty
+                            variations_db = filter(lambda x: x in string.printable,",".join(variations))
+                            #self.change_tab_one_results_table_text(ii,14,filter(lambda x: x in string.printable,",".join(variations)))
+                    except Exception as e:
+                    #    worked[14] = False
+                        errors.append('Error on 14: %s\n' % e)
+                    #16 aliases -----------------------------------
+                    aliases = []
+                    try:
+                        for jj in range(len(result.artists)):
+                            temp = []
+                            for artist in result.artists[jj].aliases:
+                                temp.append(artist.name)
+                            alias = ", ".join(temp)
+                        aliases.append(alias)
+                        aliases_db = filter(lambda x: x in string.printable,",".join(aliases))
+                        #self.change_tab_one_results_table_text(ii,15,filter(lambda x: x in string.printable,",".join(aliases)))
+                    except Exception as e:
+                    #    worked[15] = False
+                        errors.append('Error on 15: %s\n' % e)
+                    #18 - Track List -------------------------------
+                    tracks = []
+                    try:
+                        if result.tracklist is not None:
+                            for t in result.tracklist:
+                                tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+                            tracks_db = filter(lambda x: x in string.printable,"\n".join(tracks))
+                            #self.change_tab_one_results_table_text(ii,17,"\n".join(tracks))
+                    except Exception as e:
+                    #    worked[17] = False
+                        errors.append('Error on 17: %s\n' % e)
+                    #19 - Notes -----------------------------------
+                    try:
+                        if result.notes is not None:
+                            notes_db = filter(lambda x: x in string.printable,result.notes)
+                            #self.change_tab_one_results_table_text(ii,18,filter(lambda x: x in string.printable,result.notes))
+                    except Exception as e:
+                    #    worked[18] = False
+                        errors.append('Error on 18: %s\n' % e)
+            if errors:
+                self.print_to_console('There were a few issues adding the release, double check to make sure everything is OK:\n')
+                self.print_to_console("\t".join(errors))
+        except Exception as e:
+            self.print_to_console('There was some error adding release, most likely an issue with discogs time limit, wait a second and then try again.')
+            return
+            
         try:
             #first add it to the database
             db_item = (str(self.get_tab_one_results_table_text(row, 0)),
@@ -1449,7 +1454,6 @@ class Ui_Form(QtGui.QWidget):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    print 'shit %s' % app.thread().priority()
     #app.thread().setPriority(QtCore.QThread.TimeCriticalPriority)
     app.thread().setPriority(QtCore.QThread.HighestPriority)
     ex = Ui_Form()
