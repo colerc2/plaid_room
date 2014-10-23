@@ -1565,6 +1565,7 @@ class Ui_Form(QtGui.QWidget):
         
         #displays recently added items on start up
         self.tab_one_update_recently_added_table()
+        self.tab_two_reset_results_table()
         
         #combo box stuff
         for ii in range(self.num_attributes):
@@ -1582,8 +1583,26 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
         self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
         self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
-        
 
+    def tab_two_reset_results_table(self):
+        self.clear_tab_two_results_table()
+        index = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+            #make sure we don't exceed the limits of the qtablewidget
+            if index > (self.tab_two_results_table.rowCount()-1):
+                break
+            #display stuff
+            for col in range(len(row)):
+                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
+            index = index + 1
+        #make pretty
+        self.tab_two_results_table.resizeColumnsToContents()
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
         #TODO: might want to replace this shiz with primary key stuff later
@@ -2052,6 +2071,21 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_one_recently_added_table.setItem(row, col, item)
+
+    def clear_tab_two_results_table(self):
+        for ii in range(self.tab_two_results_table.rowCount()):
+            for jj in range(self.tab_two_results_table.columnCount()):
+                self.change_tab_two_results_table_text(ii,jj,"")
+    
+    def change_tab_two_results_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable, text))
+        item = self.tab_two_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_two_results_table.setItem(row, col, item)
 
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
