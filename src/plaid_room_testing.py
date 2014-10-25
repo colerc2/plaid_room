@@ -1561,7 +1561,7 @@ class Ui_Form(QtGui.QWidget):
 
 
         #other stuff
-        self.tab_one_text_browser.setPlainText('Let\'s sell some shit today nigga.\n')
+        self.tab_one_text_browser.setPlainText('\n')
         
         #displays recently added items on start up
         self.tab_one_update_recently_added_table()
