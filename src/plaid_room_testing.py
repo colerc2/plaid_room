@@ -1584,8 +1584,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
 
         #connect tab two stuff
-        self.tab_two_search_artist_title_title_qline.returnPressed.connect(self.search_inventory)
+        self.tab_two_search_artist_title_qline.returnPressed.connect(self.search_inventory)
         self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
+        self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
 
     def tab_two_reset_results_table(self):
         self.clear_tab_two_results_table()
@@ -1638,7 +1639,7 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
         self.db.commit()
         #get search term
-        query = self.tab_two_search_artist_title_title_qline.text()
+        query = self.tab_two_search_artist_title_qline.text()
         SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
         self.db_cursor.execute(SEARCH_FTS, (str(query),))
         self.clear_tab_two_results_table()
