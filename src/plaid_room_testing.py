@@ -1632,19 +1632,35 @@ class Ui_Form(QtGui.QWidget):
 
     def search_inventory(self):
         
-        print 'making a virtual table'
+        #TODO: deleting this and recreating this every time is fucking idiotic
         self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
         self.db_cursor.execute('CREATE VIRTUAL TABLE virt_inventory USING fts4(key INT, content)')
         self.db.commit()
         self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
         self.db.commit()
-        print 'made a virtual table and populated it'
         #get search term
         query = self.tab_two_search_artist_title_title_qline.text()
         SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
         self.db_cursor.execute(SEARCH_FTS, (str(query),))
+        self.clear_tab_two_results_table()
+        index = 0
         for row in self.db_cursor.fetchall():
-            print row
+            #make sure we don't exceed the limits of the qtablewidget
+            if index > (self.tab_two_results_table.rowCount()-1):
+                break
+            #display stuff
+            for col in range(len(row)):
+                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
+            index = index + 1
+        #make pretty
+        self.tab_two_results_table.resizeColumnsToContents()
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        #update number of results
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(index))
         
 
         #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE 
