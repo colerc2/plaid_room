@@ -1233,7 +1233,7 @@ p, li { white-space: pre-wrap; }
       <attribute name="title">
        <string>Search/Edit/Remove Inventory</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1300,7 +1300,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="tab_two_search_artist_title_title_qline">
+             <widget class="QLineEdit" name="tab_two_search_artist_title_qline">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -2234,11 +2234,6 @@ p, li { white-space: pre-wrap; }
           </column>
           <column>
            <property name="text">
-            <string>New Column</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>Real Name</string>
            </property>
           </column>
@@ -2260,6 +2255,11 @@ p, li { white-space: pre-wrap; }
           <column>
            <property name="text">
             <string>Track List</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Notes</string>
            </property>
           </column>
           <column>
