@@ -1574,7 +1574,7 @@ class Ui_Form(QtGui.QWidget):
 
         #connectors bro *****************
 
-        #connect tab one search upc button
+        #connect tab one stuff
         self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
         self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
@@ -1583,6 +1583,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
         self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
         self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
+
+        #connect tab two stuff
+        self.tab_two_search_artist_title_title_qline.returnPressed.connect(self.search_inventory)
+        self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
 
     def tab_two_reset_results_table(self):
         self.clear_tab_two_results_table()
@@ -1627,6 +1631,22 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_update_recently_added_table()
 
     def search_inventory(self):
+        
+        print 'making a virtual table'
+        self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
+        self.db_cursor.execute('CREATE VIRTUAL TABLE virt_inventory USING fts4(key INT, content)')
+        self.db.commit()
+        self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
+        self.db.commit()
+        print 'made a virtual table and populated it'
+        #get search term
+        query = self.tab_two_search_artist_title_title_qline.text()
+        SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+        self.db_cursor.execute(SEARCH_FTS, (str(query),))
+        for row in self.db_cursor.fetchall():
+            print row
+        
+
         #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE 
                 
     def tab_one_edit_inventory(self):
