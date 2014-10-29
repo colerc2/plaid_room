@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/print_fucker.ui'
 #
-# Created: Sat Oct 25 01:29:51 2014
+# Created: Tue Oct 28 17:09:06 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -641,6 +641,11 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_9.addWidget(self.add_item_vert_line_5)
         spacerItem33 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem33)
+        self.checkBox = QtGui.QCheckBox(self.layoutWidget1)
+        self.checkBox.setObjectName(_fromUtf8("checkBox"))
+        self.horizontalLayout_9.addWidget(self.checkBox)
+        spacerItem34 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem34)
         self.verticalLayout_6 = QtGui.QVBoxLayout()
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setSizeConstraint(QtGui.QLayout.SetFixedSize)
@@ -677,41 +682,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout_5.addWidget(self.label_3)
         self.horizontalLayout_9.addLayout(self.verticalLayout_5)
-        spacerItem34 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem34)
-        self.add_item_vert_line_39 = QtGui.QFrame(self.layoutWidget1)
-        self.add_item_vert_line_39.setFrameShape(QtGui.QFrame.VLine)
-        self.add_item_vert_line_39.setFrameShadow(QtGui.QFrame.Sunken)
-        self.add_item_vert_line_39.setObjectName(_fromUtf8("add_item_vert_line_39"))
-        self.horizontalLayout_9.addWidget(self.add_item_vert_line_39)
-        spacerItem35 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem35 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem35)
-        self.tab_two_filter_button = QtGui.QPushButton(self.layoutWidget1)
-        self.tab_two_filter_button.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_two_filter_button.setObjectName(_fromUtf8("tab_two_filter_button"))
-        self.horizontalLayout_9.addWidget(self.tab_two_filter_button)
-        spacerItem36 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem36)
         self.add_item_vert_line_40 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_40.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_40.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_40.setObjectName(_fromUtf8("add_item_vert_line_40"))
         self.horizontalLayout_9.addWidget(self.add_item_vert_line_40)
-        spacerItem37 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem37)
-        self.tab_two_reset_filters_button = QtGui.QPushButton(self.layoutWidget1)
-        self.tab_two_reset_filters_button.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_two_reset_filters_button.setObjectName(_fromUtf8("tab_two_reset_filters_button"))
-        self.horizontalLayout_9.addWidget(self.tab_two_reset_filters_button)
-        spacerItem38 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem38)
-        self.add_item_vert_line_42 = QtGui.QFrame(self.layoutWidget1)
-        self.add_item_vert_line_42.setFrameShape(QtGui.QFrame.VLine)
-        self.add_item_vert_line_42.setFrameShadow(QtGui.QFrame.Sunken)
-        self.add_item_vert_line_42.setObjectName(_fromUtf8("add_item_vert_line_42"))
-        self.horizontalLayout_9.addWidget(self.add_item_vert_line_42)
-        spacerItem39 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem39)
+        spacerItem36 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem36)
         self.label = QtGui.QLabel(self.layoutWidget1)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout_9.addWidget(self.label)
@@ -725,15 +704,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_2 = QtGui.QLabel(self.layoutWidget1)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.horizontalLayout_9.addWidget(self.label_2)
-        spacerItem40 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem40)
+        spacerItem37 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem37)
         self.add_item_vert_line_41 = QtGui.QFrame(self.layoutWidget1)
         self.add_item_vert_line_41.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_41.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_41.setObjectName(_fromUtf8("add_item_vert_line_41"))
         self.horizontalLayout_9.addWidget(self.add_item_vert_line_41)
-        spacerItem41 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem41)
+        spacerItem38 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem38)
         self.tab_two_items_found_label = QtGui.QLabel(self.layoutWidget1)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -1259,10 +1238,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_edit_selected_item.setText(_translate("Form", "Save Changes To Selected Item", None))
         self.tab_two_num_inventory_label.setText(_translate("Form", "XXXX Items In Inventory", None))
         self.tab_one_search_item_lbl_3.setText(_translate("Form", "Filter", None))
+        self.checkBox.setText(_translate("Form", "Filter by Date Added", None))
         self.label_4.setText(_translate("Form", "Start Date", None))
         self.label_3.setText(_translate("Form", "End Date", None))
-        self.tab_two_filter_button.setText(_translate("Form", "Filter", None))
-        self.tab_two_reset_filters_button.setText(_translate("Form", "Reset Filters", None))
         self.label.setText(_translate("Form", "Show", None))
         self.label_2.setText(_translate("Form", "Items", None))
         self.tab_two_items_found_label.setText(_translate("Form", "XXXX Items Found For Search Terms", None))
@@ -1570,6 +1548,10 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.num_attributes):
             self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
             self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
+        
+        #set dates to current time in date time edit boxes
+        self.tab_two_date_time_edit_start.setCalendarPopup(True)
+        self.tab_two_date_time_edit_start.setDateTime(datetime.datetime.now())
 
         #connectors bro *****************
 
@@ -1587,6 +1569,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_qline.returnPressed.connect(self.search_inventory)
         self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
+        
+
+    def tab_two_filter_by_date(self):
+        place_holder = 0
 
     def tab_two_reset_results_table(self):
         self.clear_tab_two_results_table()
