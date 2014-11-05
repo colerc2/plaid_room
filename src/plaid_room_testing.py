@@ -1576,6 +1576,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
+        self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
         
 
     def tab_two_reset_results_table(self):
@@ -1703,6 +1704,38 @@ class Ui_Form(QtGui.QWidget):
         #update number of results
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(index))
         
+    def tab_two_edit_inventory(self):
+        row = self.tab_two_results_table.currentRow()
+        date = str(self.get_tab_two_results_table_text(row,12))
+        key = int(self.get_tab_two_results_table_text(row,20))
+        
+        db_query = (str(self.get_tab_two_results_table_text(row, 1)),
+                    str(self.get_tab_two_results_table_text(row,2)),
+                    str(self.get_tab_two_results_table_text(row,3)),
+                    str(self.get_tab_two_results_table_text(row,4)),
+                    float(self.get_tab_two_results_table_text(row,5)),
+                    float(self.get_tab_two_results_table_text(row,6)),
+                    str(self.get_tab_two_results_table_text(row,7)),
+                    str(self.get_tab_two_results_table_text(row,8)),
+                    str(self.get_tab_two_results_table_text(row,9)),
+                    str(self.get_tab_two_results_table_text(row,10)),
+                    int(self.get_tab_two_results_table_text(row,11)),
+                    int(self.get_tab_two_results_table_text(row,13)),
+                    str(self.get_tab_two_results_table_text(row,14)),
+                    str(self.get_tab_two_results_table_text(row,15)),
+                    str(self.get_tab_two_results_table_text(row,16)),
+                    str(self.get_tab_two_results_table_text(row,17)),
+                    str(self.get_tab_two_results_table_text(row,18)),
+                    str(self.get_tab_two_results_table_text(row,19)), key, date)
+        
+        #edit her
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, track_list = ?, notes = ? WHERE id = ? and date_added = ?', db_query)
+        
+        #commit
+        self.db.commit()
+
+        #redo search so that the table updates
+        self.search_inventory()
 
     def tab_one_edit_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
