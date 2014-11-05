@@ -1609,9 +1609,23 @@ class Ui_Form(QtGui.QWidget):
         row = self.tab_two_results_table.currentRow()
         date = str(self.get_tab_two_results_table_text(row,12))
         key = int(self.get_tab_two_results_table_text(row,20))
-        print date
-        print key
-                
+
+        #remove her
+        self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key, date))
+        
+        #commit
+        self.db.commit()
+        
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+
+        #research for current query so the table resets itself with chosen item removed
+        self.search_inventory()
+        
+        
         
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
@@ -1637,6 +1651,11 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_update_recently_added_table()
 
     def search_inventory(self):
+        query = self.tab_two_search_artist_title_qline.text()
+        if query == '':
+            self.tab_two_reset_results_table()
+            return
+        
         #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
         self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
         self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
@@ -1644,7 +1663,6 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
         self.db.commit()
         #get search term
-        query = self.tab_two_search_artist_title_qline.text()
         SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
         self.db_cursor.execute(SEARCH_FTS, (str(query),))
         self.clear_tab_two_results_table()
