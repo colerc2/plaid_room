@@ -1584,7 +1584,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBox">
+             <widget class="QCheckBox" name="filter_by_date_added_checkbox">
               <property name="text">
                <string>Filter by Date Added</string>
               </property>
