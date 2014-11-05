@@ -1615,7 +1615,11 @@ p, li { white-space: pre-wrap; }
                <enum>QLayout::SetFixedSize</enum>
               </property>
               <item>
-               <widget class="QDateTimeEdit" name="tab_two_date_time_edit_start"/>
+               <widget class="QDateEdit" name="tab_two_date_start">
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_4">
@@ -1650,7 +1654,11 @@ p, li { white-space: pre-wrap; }
                <enum>QLayout::SetFixedSize</enum>
               </property>
               <item>
-               <widget class="QDateTimeEdit" name="tab_two_date_time_edit_end"/>
+               <widget class="QDateEdit" name="tab_two_date_end">
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_3">

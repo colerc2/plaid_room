@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/print_fucker.ui'
 #
-# Created: Tue Oct 28 17:09:06 2014
+# Created: Wed Nov  5 08:43:31 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,10 +45,13 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor = self.db.cursor()
         #store previous set of results
         self.previous_results = None
-        #create table
+        #create inventory table
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
+        
+
+        
         self.num_attributes = 19
         self.combobox_cols = [6,7]
         
@@ -650,9 +653,10 @@ class Ui_Form(QtGui.QWidget):
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
-        self.tab_two_date_time_edit_start = QtGui.QDateTimeEdit(self.layoutWidget1)
-        self.tab_two_date_time_edit_start.setObjectName(_fromUtf8("tab_two_date_time_edit_start"))
-        self.verticalLayout_6.addWidget(self.tab_two_date_time_edit_start)
+        self.tab_two_date_start = QtGui.QDateEdit(self.layoutWidget1)
+        self.tab_two_date_start.setCalendarPopup(True)
+        self.tab_two_date_start.setObjectName(_fromUtf8("tab_two_date_start"))
+        self.verticalLayout_6.addWidget(self.tab_two_date_start)
         self.label_4 = QtGui.QLabel(self.layoutWidget1)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -668,9 +672,10 @@ class Ui_Form(QtGui.QWidget):
         self.verticalLayout_5.setSpacing(0)
         self.verticalLayout_5.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
-        self.tab_two_date_time_edit_end = QtGui.QDateTimeEdit(self.layoutWidget1)
-        self.tab_two_date_time_edit_end.setObjectName(_fromUtf8("tab_two_date_time_edit_end"))
-        self.verticalLayout_5.addWidget(self.tab_two_date_time_edit_end)
+        self.tab_two_date_end = QtGui.QDateEdit(self.layoutWidget1)
+        self.tab_two_date_end.setCalendarPopup(True)
+        self.tab_two_date_end.setObjectName(_fromUtf8("tab_two_date_end"))
+        self.verticalLayout_5.addWidget(self.tab_two_date_end)
         self.label_3 = QtGui.QLabel(self.layoutWidget1)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -1536,7 +1541,6 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table_4.setSortingEnabled(__sortingEnabled)
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "History/Generate Reports", None))
 
-
         #other stuff
         self.tab_one_text_browser.setPlainText('\n')
         
@@ -1550,8 +1554,10 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
         
         #set dates to current time in date time edit boxes
-        self.tab_two_date_time_edit_start.setCalendarPopup(True)
-        self.tab_two_date_time_edit_start.setDateTime(datetime.datetime.now())
+        self.tab_two_date_start.setCalendarPopup(True)
+        self.tab_two_date_start.setDateTime(datetime.datetime.today())
+        self.tab_two_date_end.setCalendarPopup(True)
+        self.tab_two_date_end.setDateTime(datetime.datetime.today())
 
         #connectors bro *****************
 
@@ -1570,9 +1576,6 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
         
-
-    def tab_two_filter_by_date(self):
-        place_holder = 0
 
     def tab_two_reset_results_table(self):
         self.clear_tab_two_results_table()
@@ -1617,10 +1620,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_update_recently_added_table()
 
     def search_inventory(self):
-        
-        #TODO: deleting this and recreating this every time is fucking idiotic
+        #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
         self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
-        self.db_cursor.execute('CREATE VIRTUAL TABLE virt_inventory USING fts4(key INT, content)')
+        self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
         self.db.commit()
         self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
         self.db.commit()
@@ -1634,6 +1636,13 @@ class Ui_Form(QtGui.QWidget):
             #make sure we don't exceed the limits of the qtablewidget
             if index > (self.tab_two_results_table.rowCount()-1):
                 break
+            #check date ranges if specified
+            if self.filter_by_date_added_checkbox.isChecked():
+                today = datetime.datetime.today()
+                start = self.tab_two_date_start.date().toPyDate()
+                print today
+                print start
+                print '*' * 50
             #display stuff
             for col in range(len(row)):
                 self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
