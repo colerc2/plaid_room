@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/print_fucker.ui'
 #
-# Created: Wed Nov  5 08:43:31 2014
+# Created: Wed Nov  5 09:55:11 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -644,9 +644,9 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_9.addWidget(self.add_item_vert_line_5)
         spacerItem33 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem33)
-        self.checkBox = QtGui.QCheckBox(self.layoutWidget1)
-        self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.horizontalLayout_9.addWidget(self.checkBox)
+        self.filter_by_date_added_checkbox = QtGui.QCheckBox(self.layoutWidget1)
+        self.filter_by_date_added_checkbox.setObjectName(_fromUtf8("filter_by_date_added_checkbox"))
+        self.horizontalLayout_9.addWidget(self.filter_by_date_added_checkbox)
         spacerItem34 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem34)
         self.verticalLayout_6 = QtGui.QVBoxLayout()
@@ -1243,7 +1243,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_edit_selected_item.setText(_translate("Form", "Save Changes To Selected Item", None))
         self.tab_two_num_inventory_label.setText(_translate("Form", "XXXX Items In Inventory", None))
         self.tab_one_search_item_lbl_3.setText(_translate("Form", "Filter", None))
-        self.checkBox.setText(_translate("Form", "Filter by Date Added", None))
+        self.filter_by_date_added_checkbox.setText(_translate("Form", "Filter by Date Added", None))
         self.label_4.setText(_translate("Form", "Start Date", None))
         self.label_3.setText(_translate("Form", "End Date", None))
         self.label.setText(_translate("Form", "Show", None))
@@ -1575,11 +1575,19 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_qline.returnPressed.connect(self.search_inventory)
         self.tab_two_search_artist_title_button.clicked.connect(self.search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
+        self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
+        self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
         
 
     def tab_two_reset_results_table(self):
         self.clear_tab_two_results_table()
         index = 0
+        self.tab_two_num_displayed_spin_box.setValue(50)
+        self.tab_two_date_start.setDateTime(datetime.datetime.today())
+        self.tab_two_date_end.setDateTime(datetime.datetime.today())
+        self.filter_by_date_added_checkbox.setCheckState(False)
+        
+        self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
             #make sure we don't exceed the limits of the qtablewidget
             if index > (self.tab_two_results_table.rowCount()-1):
@@ -1595,6 +1603,30 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+
+
+    def tab_two_remove_from_inventory(self):
+        row = self.tab_two_results_table.currentRow()
+        date = str(self.get_tab_two_results_table_text(row,12))
+        key = int(self.get_tab_two_results_table_text(row,20))
+
+        #remove her
+        self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key, date))
+        
+        #commit
+        self.db.commit()
+        
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+
+        #research for current query so the table resets itself with chosen item removed
+        self.search_inventory()
+        
+        
         
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
@@ -1620,6 +1652,11 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_update_recently_added_table()
 
     def search_inventory(self):
+        query = self.tab_two_search_artist_title_qline.text()
+        if query == '':
+            self.tab_two_reset_results_table()
+            return
+        
         #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
         self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
         self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
@@ -1627,26 +1664,36 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
         self.db.commit()
         #get search term
-        query = self.tab_two_search_artist_title_qline.text()
         SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
         self.db_cursor.execute(SEARCH_FTS, (str(query),))
         self.clear_tab_two_results_table()
         index = 0
         for row in self.db_cursor.fetchall():
-            #make sure we don't exceed the limits of the qtablewidget
-            if index > (self.tab_two_results_table.rowCount()-1):
-                break
             #check date ranges if specified
             if self.filter_by_date_added_checkbox.isChecked():
-                today = datetime.datetime.today()
+                compare = (datetime.datetime.strptime(str(row[11]),"%Y-%m-%d %H:%M:%S")).date()
                 start = self.tab_two_date_start.date().toPyDate()
-                print today
-                print start
-                print '*' * 50
+                end = self.tab_two_date_end.date().toPyDate()
+                range_delta = end - start
+                compare_delta = end - compare
+                zero_days = start - start
+                print range_delta
+                print compare_delta
+                if (compare_delta < zero_days) or (compare_delta > range_delta):
+                    #current row is out of range
+                    continue
+
+            #make sure we don't exceed the limits of the qtablewidget
+            if index > (self.tab_two_results_table.rowCount()-1):
+                index = index + 1
+                continue
+
+            
             #display stuff
             for col in range(len(row)):
                 self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
             index = index + 1
+
         #make pretty
         self.tab_two_results_table.resizeColumnsToContents()
         #update inventory count
@@ -1657,6 +1704,38 @@ class Ui_Form(QtGui.QWidget):
         #update number of results
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(index))
         
+    def tab_two_edit_inventory(self):
+        row = self.tab_two_results_table.currentRow()
+        date = str(self.get_tab_two_results_table_text(row,12))
+        key = int(self.get_tab_two_results_table_text(row,20))
+        
+        db_query = (str(self.get_tab_two_results_table_text(row, 1)),
+                    str(self.get_tab_two_results_table_text(row,2)),
+                    str(self.get_tab_two_results_table_text(row,3)),
+                    str(self.get_tab_two_results_table_text(row,4)),
+                    float(self.get_tab_two_results_table_text(row,5)),
+                    float(self.get_tab_two_results_table_text(row,6)),
+                    str(self.get_tab_two_results_table_text(row,7)),
+                    str(self.get_tab_two_results_table_text(row,8)),
+                    str(self.get_tab_two_results_table_text(row,9)),
+                    str(self.get_tab_two_results_table_text(row,10)),
+                    int(self.get_tab_two_results_table_text(row,11)),
+                    int(self.get_tab_two_results_table_text(row,13)),
+                    str(self.get_tab_two_results_table_text(row,14)),
+                    str(self.get_tab_two_results_table_text(row,15)),
+                    str(self.get_tab_two_results_table_text(row,16)),
+                    str(self.get_tab_two_results_table_text(row,17)),
+                    str(self.get_tab_two_results_table_text(row,18)),
+                    str(self.get_tab_two_results_table_text(row,19)), key, date)
+        
+        #edit her
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, track_list = ?, notes = ? WHERE id = ? and date_added = ?', db_query)
+        
+        #commit
+        self.db.commit()
+
+        #redo search so that the table updates
+        self.search_inventory()
 
     def tab_one_edit_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
@@ -2061,6 +2140,13 @@ class Ui_Form(QtGui.QWidget):
         else:
             return None
 
+    def get_tab_two_results_table_text(self, row, col):
+        item = self.tab_two_results_table.item(row, col)
+        if item is not None:
+            return item.text()
+        else:
+            return None
+
     def get_tab_one_results_table_text(self, row, col):
         if col in self.combobox_cols:
             widget = self.tab_one_results_table.cellWidget(row, col)
@@ -2108,6 +2194,7 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.tab_two_results_table.rowCount()):
             for jj in range(self.tab_two_results_table.columnCount()):
                 self.change_tab_two_results_table_text(ii,jj,"")
+        self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
     
     def change_tab_two_results_table_text(self, row, col, text):
         text = str(filter(lambda x: x in string.printable, text))
@@ -2128,7 +2215,7 @@ class Ui_Form(QtGui.QWidget):
     def generate_distributor_combobox(self):
         combobox = QtGui.QComboBox()
         combobox.addItem("Fat Beats")
-        combobox.addItem("Other Distributor 1")
+        combobox.addItem("Secretly Canadian")
         combobox.addItem("Other Distributor 2")
         combobox.addItem("Other Distributor 3")
         return combobox
