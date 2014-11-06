@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/print_fucker.ui'
 #
-# Created: Wed Nov  5 19:54:20 2014
+# Created: Thu Nov  6 10:46:35 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,6 +63,7 @@ class Ui_Form(QtGui.QWidget):
         #declare global stuff here?
         self.discogs = DiscogsClient()
         self.checkout_list = []
+        self.search_list = []
 
         #DB stuff
         self.db = sqlite3.connect('inventory.db')
@@ -85,7 +86,7 @@ class Ui_Form(QtGui.QWidget):
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1920, 856)
+        Form.resize(1920, 1036)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -278,7 +279,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.setItem(0, 2, item)
         self.tab_one_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_one_results_table.horizontalHeader().setDefaultSectionSize(100)
-        self.tab_one_results_table.horizontalHeader().setSortIndicatorShown(True)
+        self.tab_one_results_table.horizontalHeader().setSortIndicatorShown(False)
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.tab_one_results_table)
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
@@ -633,17 +634,17 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_5.addWidget(self.tab_two_edit_selected_item)
         spacerItem30 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem30)
+        self.add_item_vert_line_31 = QtGui.QFrame(self.layoutWidget1)
+        self.add_item_vert_line_31.setFrameShape(QtGui.QFrame.VLine)
+        self.add_item_vert_line_31.setFrameShadow(QtGui.QFrame.Sunken)
+        self.add_item_vert_line_31.setObjectName(_fromUtf8("add_item_vert_line_31"))
+        self.horizontalLayout_5.addWidget(self.add_item_vert_line_31)
         spacerItem31 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem31)
         self.tab_two_add_item_to_checkout = QtGui.QPushButton(self.layoutWidget1)
         self.tab_two_add_item_to_checkout.setMinimumSize(QtCore.QSize(0, 45))
         self.tab_two_add_item_to_checkout.setObjectName(_fromUtf8("tab_two_add_item_to_checkout"))
         self.horizontalLayout_5.addWidget(self.tab_two_add_item_to_checkout)
-        self.add_item_vert_line_17 = QtGui.QFrame(self.layoutWidget1)
-        self.add_item_vert_line_17.setFrameShape(QtGui.QFrame.VLine)
-        self.add_item_vert_line_17.setFrameShadow(QtGui.QFrame.Sunken)
-        self.add_item_vert_line_17.setObjectName(_fromUtf8("add_item_vert_line_17"))
-        self.horizontalLayout_5.addWidget(self.add_item_vert_line_17)
         spacerItem32 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem32)
         self.add_item_vert_line_29 = QtGui.QFrame(self.layoutWidget1)
@@ -1024,16 +1025,19 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table.setItem(0, 3, item)
         self.tab_two_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_two_results_table.horizontalHeader().setDefaultSectionSize(100)
-        self.tab_two_results_table.horizontalHeader().setSortIndicatorShown(True)
+        self.tab_two_results_table.horizontalHeader().setSortIndicatorShown(False)
         self.tab_two_results_table.horizontalHeader().setStretchLastSection(False)
         self.verticalLayout_7.addWidget(self.tab_two_results_table)
         self.main_menu_tabs.addTab(self.search_inventory_tab, _fromUtf8(""))
         self.check_out_tab = QtGui.QWidget()
         self.check_out_tab.setObjectName(_fromUtf8("check_out_tab"))
         self.widget = QtGui.QWidget(self.check_out_tab)
+        self.widget.setGeometry(QtCore.QRect(20, 12, 1502, 949))
         self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout_10 = QtGui.QHBoxLayout(self.widget)
-        self.horizontalLayout_10.setMargin(0)
+        self.verticalLayout_8 = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout_8.setMargin(0)
+        self.verticalLayout_8.setObjectName(_fromUtf8("verticalLayout_8"))
+        self.horizontalLayout_10 = QtGui.QHBoxLayout()
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
         self.tab_one_search_item_lbl_4 = QtGui.QLabel(self.widget)
         font = QtGui.QFont()
@@ -1058,7 +1062,7 @@ class Ui_Form(QtGui.QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tab_three_scan_barcode_qline.sizePolicy().hasHeightForWidth())
         self.tab_three_scan_barcode_qline.setSizePolicy(sizePolicy)
-        self.tab_three_scan_barcode_qline.setMinimumSize(QtCore.QSize(250, 0))
+        self.tab_three_scan_barcode_qline.setMinimumSize(QtCore.QSize(250, 35))
         self.tab_three_scan_barcode_qline.setText(_fromUtf8(""))
         self.tab_three_scan_barcode_qline.setObjectName(_fromUtf8("tab_three_scan_barcode_qline"))
         self.horizontalLayout_10.addWidget(self.tab_three_scan_barcode_qline)
@@ -1080,17 +1084,14 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_inventory_count_label.setMinimumSize(QtCore.QSize(170, 0))
         self.tab_three_inventory_count_label.setObjectName(_fromUtf8("tab_three_inventory_count_label"))
         self.horizontalLayout_10.addWidget(self.tab_three_inventory_count_label)
-        self.pushButton = QtGui.QPushButton(self.widget)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout_10.addWidget(self.pushButton)
-        self.tab_three_checkout_table = QtGui.QTableWidget(self.check_out_tab)
-        self.tab_three_checkout_table.setGeometry(QtCore.QRect(20, 70, 1500, 825))
+        self.verticalLayout_8.addLayout(self.horizontalLayout_10)
+        self.tab_three_checkout_table = QtGui.QTableWidget(self.widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tab_three_checkout_table.sizePolicy().hasHeightForWidth())
         self.tab_three_checkout_table.setSizePolicy(sizePolicy)
-        self.tab_three_checkout_table.setMinimumSize(QtCore.QSize(1500, 825))
+        self.tab_three_checkout_table.setMinimumSize(QtCore.QSize(1500, 900))
         self.tab_three_checkout_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_three_checkout_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_three_checkout_table.setObjectName(_fromUtf8("tab_three_checkout_table"))
@@ -1322,8 +1323,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_checkout_table.setItem(0, 3, item)
         self.tab_three_checkout_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_three_checkout_table.horizontalHeader().setDefaultSectionSize(100)
-        self.tab_three_checkout_table.horizontalHeader().setSortIndicatorShown(True)
+        self.tab_three_checkout_table.horizontalHeader().setSortIndicatorShown(False)
         self.tab_three_checkout_table.horizontalHeader().setStretchLastSection(False)
+        self.verticalLayout_8.addWidget(self.tab_three_checkout_table)
         self.main_menu_tabs.addTab(self.check_out_tab, _fromUtf8(""))
         self.history_tab = QtGui.QWidget()
         self.history_tab.setObjectName(_fromUtf8("history_tab"))
@@ -1506,7 +1508,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_upc_button.setText(_translate("Form", "Search UPC/SKU/EAN", None))
         self.tab_one_search_artist_title_button.setText(_translate("Form", "Search Artist/Title", None))
         self.tab_one_clear_all_button.setText(_translate("Form", "Clear All", None))
-        self.tab_one_results_table.setSortingEnabled(True)
+        self.tab_one_results_table.setSortingEnabled(False)
         item = self.tab_one_results_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
         item = self.tab_one_results_table.verticalHeaderItem(1)
@@ -1679,7 +1681,7 @@ class Ui_Form(QtGui.QWidget):
         self.label.setText(_translate("Form", "Show", None))
         self.label_2.setText(_translate("Form", "Items", None))
         self.tab_two_items_found_label.setText(_translate("Form", "XXXX Items Found For Search Terms", None))
-        self.tab_two_results_table.setSortingEnabled(True)
+        self.tab_two_results_table.setSortingEnabled(False)
         item = self.tab_two_results_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
         item = self.tab_two_results_table.verticalHeaderItem(1)
@@ -1922,8 +1924,7 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.search_inventory_tab), _translate("Form", "Search/Edit/Remove Inventory", None))
         self.tab_one_search_item_lbl_4.setText(_translate("Form", "Scan Barcode", None))
         self.tab_three_inventory_count_label.setText(_translate("Form", "XXXX Items In Inventory", None))
-        self.pushButton.setText(_translate("Form", "PushButton", None))
-        self.tab_three_checkout_table.setSortingEnabled(True)
+        self.tab_three_checkout_table.setSortingEnabled(False)
         item = self.tab_three_checkout_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
         item = self.tab_three_checkout_table.verticalHeaderItem(1)
@@ -2294,7 +2295,12 @@ class Ui_Form(QtGui.QWidget):
 
         #other stuff
         self.tab_one_text_browser.setPlainText('\n')
-        
+
+        #make shift,-> a shortcut for adding stuff from search to checkout
+        self.add_to_checkout_shortcut = QtGui.QShortcut(self)
+        self.add_to_checkout_shortcut.setKey(QtGui.QKeySequence.SelectNextChar)
+        self.search_inventory_tab.connect(self.add_to_checkout_shortcut,QtCore.SIGNAL("activated()"),self.tab_two_ctrl_a_shortcut)
+
         #displays recently added items on start up
         self.tab_one_update_recently_added_table()
         self.tab_two_reset_results_table()
@@ -2337,11 +2343,19 @@ class Ui_Form(QtGui.QWidget):
         #connect tab three stuff
         self.tab_three_scan_barcode_qline.returnPressed.connect(self.search_inventory_checkout)
 
+    def tab_two_ctrl_a_shortcut(self):
+        if self.main_menu_tabs.currentIndex() == 1:
+            self.add_inventory_to_checkout()
+
     def tab_three_remove_row(self, value):
         del self.checkout_list[value]
         self.tab_three_refresh_checkout_table()
         print 'Row clicked: %d' % value
     
+    def subtract_5_percent_from_item(self, value):
+        self.checkout_list[value][20] = self.checkout_list[value][20] + 5
+        self.tab_three_refresh_checkout_table()
+
     def add_inventory_to_checkout(self):
         row = self.tab_two_results_table.currentRow()
         key = int(self.get_tab_two_results_table_text(row,20))
@@ -2353,6 +2367,8 @@ class Ui_Form(QtGui.QWidget):
             self.checkout_list.append(row_list)
         self.tab_three_refresh_checkout_table()
         self.main_menu_tabs.setCurrentIndex(2)
+        self.tab_three_scan_barcode_qline.clear()
+        self.tab_three_scan_barcode_qline.setFocus()
             
 
     def search_inventory_checkout(self):
@@ -2365,22 +2381,23 @@ class Ui_Form(QtGui.QWidget):
             #self.tab_three_checkout_table.setRowCount((len(self.checkout_list)+1))
             #add item to checkout
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('0%'))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 6, str('Button'))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(''))
-                #self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
                 row_list = list(row)
                 row_list.append(0)
                 row_list.append('')
                 self.checkout_list.append(row_list)
             self.tab_three_refresh_checkout_table()
-
+            self.tab_three_scan_barcode_qline.clear()
+            self.tab_three_scan_barcode_qline.setFocus()
+        else:
+            self.search_list = []
+            for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
+               self.search_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(1)
+            self.tab_two_results_table.selectRow(0)
+            self.tab_two_results_table.scrollToTop()
+            self.tab_two_results_table.setFocus()
+            self.tab_two_refresh()
+            
 
 
     def tab_three_refresh_checkout_table(self):
@@ -2388,15 +2405,17 @@ class Ui_Form(QtGui.QWidget):
         #loop through and populate table
         checkout_table_index = 0
         for row in self.checkout_list:
+            percent_of_price = ((100-row[20])*.01)
             self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
-            self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(round(percent_of_price*row[PRICE_INDEX],2)))
             self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('%d%%' % row[20]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(row[21]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 11, str(row[PRICE_PAID_INDEX]))
             checkout_table_index = checkout_table_index + 1
         self.tab_three_set_checkout_table_widths()
 
@@ -2487,8 +2506,7 @@ class Ui_Form(QtGui.QWidget):
         #get search term
         SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
         self.db_cursor.execute(SEARCH_FTS, (str(query),))
-        self.clear_tab_two_results_table()
-        index = 0
+        self.search_list = []
         for row in self.db_cursor.fetchall():
             #check date ranges if specified
             if self.filter_by_date_added_checkbox.isChecked():
@@ -2498,33 +2516,39 @@ class Ui_Form(QtGui.QWidget):
                 range_delta = end - start
                 compare_delta = end - compare
                 zero_days = start - start
-                print range_delta
-                print compare_delta
                 if (compare_delta < zero_days) or (compare_delta > range_delta):
                     #current row is out of range
                     continue
+            self.search_list.append(list(row))
 
-            #make sure we don't exceed the limits of the qtablewidget
-            if index > (self.tab_two_results_table.rowCount()-1):
-                index = index + 1
-                continue
+        #update UI
+        self.tab_two_refresh()
 
-            
-            #display stuff
-            for col in range(len(row)):
-                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
-            index = index + 1
-
-        #make pretty
-        self.tab_two_results_table.resizeColumnsToContents()
         #update inventory count
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
         #update number of results
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(index))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.search_list)))
         
+    def tab_two_refresh(self):
+        self.clear_tab_two_results_table()
+        index = 0
+        for row in self.search_list:
+            #don't exceed table length
+            if index > (self.tab_two_results_table.rowCount()-1):
+                index += 1
+                continue
+            
+            #fill in table
+            for col in range(len(row)):
+                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
+            
+            index += 1
+        self.tab_two_results_table.resizeColumnsToContents()
+            
+
     def tab_two_edit_inventory(self):
         row = self.tab_two_results_table.currentRow()
         date = str(self.get_tab_two_results_table_text(row,12))
@@ -3075,20 +3099,24 @@ class Ui_Form(QtGui.QWidget):
 
     def generate_remove_buttons(self):
         #mapper stuff
-        self.mapper = QtCore.QSignalMapper(self)
+        self.remove_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_three_checkout_table.rowCount()):
             button = QtGui.QPushButton('X')
-            self.connect(button, QtCore.SIGNAL("clicked()"), self.mapper, QtCore.SLOT("map()"))
-            self.mapper.setMapping(button, ii)            
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.remove_mapper, QtCore.SLOT("map()"))
+            self.remove_mapper.setMapping(button, ii)            
             self.tab_three_checkout_table.setCellWidget(ii,0,button)
-        self.connect(self.mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_remove_row)
+        self.connect(self.remove_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_remove_row)
 
 
     def generate_5_perc_buttons(self):
+        #more mapper stuff
+        self.percent_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_three_checkout_table.rowCount()):
-            button = QtGui.QPushButton()
-            button.setText('+5%')
+            button = QtGui.QPushButton('+5%')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.percent_mapper, QtCore.SLOT("map()"))
+            self.percent_mapper.setMapping(button,ii)
             self.tab_three_checkout_table.setCellWidget(ii,6,button)
+        self.connect(self.percent_mapper, QtCore.SIGNAL("mapped(int)"), self.subtract_5_percent_from_item)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():

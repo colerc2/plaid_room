@@ -1781,6 +1781,9 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <widget class="QSpinBox" name="tab_two_num_displayed_spin_box">
+              <property name="correctionMode">
+               <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+              </property>
               <property name="minimum">
                <number>10</number>
               </property>
@@ -2611,13 +2614,6 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="Line" name="add_item_vert_line_30">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
           </item>
           <item>
            <spacer name="horizontalSpacer_32">
