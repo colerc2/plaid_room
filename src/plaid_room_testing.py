@@ -2305,7 +2305,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
             
         #buttons in tab three
-        #self.tab_three_refresh_checkout_table()
+        self.tab_three_refresh_checkout_table()
         
         
         #set dates to current time in date time edit boxes
@@ -2332,13 +2332,28 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_reset_button.clicked.connect(self.tab_two_reset_results_table)
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
         self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
+        self.tab_two_add_item_to_checkout.clicked.connect(self.add_inventory_to_checkout)
         
         #connect tab three stuff
         self.tab_three_scan_barcode_qline.returnPressed.connect(self.search_inventory_checkout)
 
     def tab_three_remove_row(self, value):
+        del self.checkout_list[value]
+        self.tab_three_refresh_checkout_table()
         print 'Row clicked: %d' % value
-
+    
+    def add_inventory_to_checkout(self):
+        row = self.tab_two_results_table.currentRow()
+        key = int(self.get_tab_two_results_table_text(row,20))
+        
+        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE id = ?', (key,)):
+            row_list = list(row)
+            row_list.append(0)
+            row_list.append('')
+            self.checkout_list.append(row_list)
+        self.tab_three_refresh_checkout_table()
+        self.main_menu_tabs.setCurrentIndex(2)
+            
 
     def search_inventory_checkout(self):
         barcode_query = str(self.tab_three_scan_barcode_qline.text())
@@ -2347,27 +2362,42 @@ class Ui_Form(QtGui.QWidget):
             count = count + 1
 
         if count == 1:
-            self.tab_three_checkout_table.setRowCount((len(self.checkout_list)+1))
-            checkout_table_index = len(self.checkout_list)
+            #self.tab_three_checkout_table.setRowCount((len(self.checkout_list)+1))
             #add item to checkout
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
-                self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('0%'))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 6, str('Button'))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(''))
-                self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
-                self.checkout_list.append(row)
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('0%'))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 6, str('Button'))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(''))
+                #self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
+                row_list = list(row)
+                row_list.append(0)
+                row_list.append('')
+                self.checkout_list.append(row_list)
             self.tab_three_refresh_checkout_table()
 
 
 
     def tab_three_refresh_checkout_table(self):
         self.tab_three_checkout_table.setRowCount(len(self.checkout_list))
+        #loop through and populate table
+        checkout_table_index = 0
+        for row in self.checkout_list:
+            self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('%d%%' % row[20]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(row[21]))
+            self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
+            checkout_table_index = checkout_table_index + 1
         self.tab_three_set_checkout_table_widths()
 
     def tab_two_reset_results_table(self):
