@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1036</height>
+    <height>856</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1476,6 +1476,58 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer_33">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_34">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="tab_two_add_item_to_checkout">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Add Item to Checkout</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_17">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_60">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -2589,6 +2641,13 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QTableWidget" name="tab_three_checkout_table">
@@ -3066,6 +3125,11 @@ p, li { white-space: pre-wrap; }
        <row>
         <property name="text">
          <string>88</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>89</string>
         </property>
        </row>
        <row>
