@@ -26,6 +26,19 @@ FORMAT_INDEX = 3
 PRICE_INDEX = 4
 PRICE_PAID_INDEX = 5
 NEW_USED_INDEX = 6
+DISTRIBUTOR_INDEX = 7
+LABEL_INDEX = 8
+GENRE_INDEX = 9
+YEAR_INDEX = 10
+DATE_ADDED_INDEX = 11
+DISCOGS_RELEASE_NUMBER_INDEX = 12
+REAL_NAME_INDEX = 13
+PROFILE_INDEX = 14
+VARIATIONS_INDEX = 15
+ALIASES_INDEX = 16
+TRACK_LIST_INDEX = 17
+NOTES_INDEX = 18
+ID_INDEX = 19
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -49,6 +62,8 @@ class Ui_Form(QtGui.QWidget):
 
         #declare global stuff here?
         self.discogs = DiscogsClient()
+        self.checkout_list = []
+
         #DB stuff
         self.db = sqlite3.connect('inventory.db')
         self.db_cursor = self.db.cursor()
@@ -59,6 +74,21 @@ class Ui_Form(QtGui.QWidget):
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
         
+        #mapper stuff
+        self.mapper = QtCore.QSignalMapper(self)
+        self.push_button_array = []
+        for ii in range(100):
+            self.push_button_array.append(QtGui.QPushButton('X'))
+            self.connect(self.push_button_array[ii], QtCore.SIGNAL("clicked()"), self.mapper, QtCore.SLOT("map()"))
+
+            #button.setText('X')
+            #self.push_button_array.append(button)
+        #for ii in range(100):
+            self.mapper.setMapping(self.push_button_array[ii], ii)
+            
+        self.connect(self.mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_remove_row)
+
+
 
         
         self.num_attributes = 19
@@ -2264,6 +2294,9 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.num_attributes):
             self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
             self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
+            
+        #buttons in tab three
+        self.generate_remove_buttons()
         
         #set dates to current time in date time edit boxes
         self.tab_two_date_start.setCalendarPopup(True)
@@ -2293,15 +2326,34 @@ class Ui_Form(QtGui.QWidget):
         #connect tab three stuff
         self.tab_three_scan_barcode_qline.returnPressed.connect(self.search_inventory_checkout)
 
+    def tab_three_remove_row(self, value):
+        print 'Row clicked: %d' % value
+
+
     def search_inventory_checkout(self):
         barcode_query = str(self.tab_three_scan_barcode_qline.text())
-        results = self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
-        if len(results) > 1:
-            #do something
-        else:
+        count = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+            count = count + 1
+
+        if count == 1:
+            self.tab_three_checkout_table.setRowCount((len(self.checkout_list)+1))
+            self.tab_three_set_checkout_table_widths()
+            checkout_table_index = len(self.checkout_list)
             #add item to checkout
-            
-            
+            for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+                self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(row[PRICE_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('0%'))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 6, str('Button'))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(''))
+                self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
+            self.checkout_list.append(row)
+
 
 
     def tab_two_reset_results_table(self):
@@ -2852,6 +2904,16 @@ class Ui_Form(QtGui.QWidget):
 
 
 
+    def tab_three_set_checkout_table_widths(self):
+        #self.generate_remove_buttons()
+        self.generate_5_perc_buttons()
+        self.tab_three_checkout_table.resizeColumnsToContents()
+        self.tab_three_checkout_table.setColumnWidth(0,50)
+        self.tab_three_checkout_table.setColumnWidth(2,150)
+        self.tab_three_checkout_table.setColumnWidth(3,150)
+        self.tab_three_checkout_table.setColumnWidth(5,100)
+        self.tab_three_checkout_table.setColumnWidth(6,50)
+        self.tab_three_checkout_table.setColumnWidth(9,100)
         
     def print_to_console(self, text):
         current_text = str(self.tab_one_text_browser.toPlainText())
@@ -2966,6 +3028,16 @@ class Ui_Form(QtGui.QWidget):
         combobox.addItem("Other Distributor 2")
         combobox.addItem("Other Distributor 3")
         return combobox
+
+    def generate_remove_buttons(self):
+        for ii in range(self.tab_three_checkout_table.rowCount()):
+            self.tab_three_checkout_table.setCellWidget(ii,0,self.push_button_array[ii])
+
+    def generate_5_perc_buttons(self):
+        for ii in range(self.tab_three_checkout_table.rowCount()):
+            button = QtGui.QPushButton()
+            button.setText('+5%')
+            self.tab_three_checkout_table.setCellWidget(ii,6,button)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():
