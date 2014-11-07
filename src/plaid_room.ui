@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1036</height>
+    <height>1018</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -3530,6 +3530,11 @@ p, li { white-space: pre-wrap; }
              </row>
              <row>
               <property name="text">
+               <string>49</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
                <string>50</string>
               </property>
              </row>
@@ -3622,27 +3627,12 @@ p, li { white-space: pre-wrap; }
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_11">
                <item>
-                <widget class="QPushButton" name="pushButton">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>55</width>
-                   <height>0</height>
-                  </size>
-                 </property>
+                <widget class="QLineEdit" name="lineEdit">
                  <property name="maximumSize">
                   <size>
-                   <width>55</width>
-                   <height>50</height>
+                   <width>100</width>
+                   <height>16777215</height>
                   </size>
-                 </property>
-                 <property name="text">
-                  <string>+5%</string>
                  </property>
                 </widget>
                </item>
@@ -3704,6 +3694,52 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="text">
                 <string>$X.XX</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_19">
+             <item>
+              <widget class="QLabel" name="tab_three_shipping_label">
+               <property name="font">
+                <font>
+                 <family>Lucida Grande</family>
+                 <pointsize>16</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Shipping</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_41">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="tab_three_shipping_qline">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -4198,6 +4234,60 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
        </item>
+      </widget>
+      <widget class="QWidget" name="layoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>1020</x>
+         <y>90</y>
+         <width>200</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_18">
+        <item>
+         <widget class="QLabel" name="tab_three_total_label_2">
+          <property name="font">
+           <font>
+            <family>Lucida Grande</family>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Total</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_40">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="tab_three_total_qline_2">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>
