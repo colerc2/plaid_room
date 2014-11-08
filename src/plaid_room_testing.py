@@ -9,6 +9,7 @@
 
 from PyQt4 import QtCore, QtGui
 import sys
+import os
 import discogs_client
 from discogs_interface import DiscogsClient
 from more_info_dialog import Ui_more_info_dialog
@@ -2963,12 +2964,25 @@ class Ui_Form(QtGui.QWidget):
         #update number of results
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.search_list)))
 
+    #the redirection of stderr/stdout doesn't seem to work, still throws some weird error to console
     def tab_two_more_info_requested(self, row):
+        actual_stdout = sys.stdout
+        actual_stderr = sys.stderr
         if row <= len(self.search_list):
-            more_info = Ui_more_info_dialog()
-            more_info.add_text(self.search_list[row])
-            more_info.exec_()
-        
+            try:
+                sys.stdout = open(os.devnull, 'w')#sending to the black hole
+                sys.stderr = open(os.devnull, 'w')#more victims of the black hole
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.search_list[row])
+                more_info.exec_()
+            except Exception as e:
+                this_is_a_placeholder = 0
+        sys.stdout.flush()
+        sys.stderr.flush()
+        sys.stdout = actual_stdout
+        sys.stderr = actual_stderr
+
+
     def tab_two_refresh(self):
         self.clear_tab_two_results_table()
         self.generate_more_info_buttons()
