@@ -2,15 +2,17 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Fri Nov  7 13:34:25 2014
+# Created: Fri Nov  7 14:46:42 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 import sys
+import os
 import discogs_client
 from discogs_interface import DiscogsClient
+from more_info_dialog import Ui_more_info_dialog
 import time
 import datetime
 import sqlite3
@@ -64,9 +66,8 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.checkout_list = []
         self.search_list = []
-        self.checkout_subtotal = 0.0
-        self.checkout_discount = 0.0
-        self.checkout_shipping = 0.0
+        self.checkout_discount = 0
+        self.checkout_shipping = 0
 
         #DB stuff
         self.db = sqlite3.connect('inventory.db')
@@ -1472,11 +1473,11 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_12.addItem(spacerItem47)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
-        self.lineEdit = QtGui.QLineEdit(self.check_out_tab)
-        self.lineEdit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.lineEdit.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.horizontalLayout_11.addWidget(self.lineEdit)
+        self.tab_three_percent_discount_qline = QtGui.QLineEdit(self.check_out_tab)
+        self.tab_three_percent_discount_qline.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.tab_three_percent_discount_qline.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.tab_three_percent_discount_qline.setObjectName(_fromUtf8("tab_three_percent_discount_qline"))
+        self.horizontalLayout_11.addWidget(self.tab_three_percent_discount_qline)
         self.tab_three_discount_qline = QtGui.QLineEdit(self.check_out_tab)
         self.tab_three_discount_qline.setMinimumSize(QtCore.QSize(100, 0))
         self.tab_three_discount_qline.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -2646,7 +2647,6 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_total_label_2.setText(_translate("Form", "Total", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "History/Generate Reports", None))
 
-
         #other stuff
         self.tab_one_text_browser.setPlainText('\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
@@ -2655,6 +2655,7 @@ class Ui_Form(QtGui.QWidget):
         self.add_to_checkout_shortcut = QtGui.QShortcut(self)
         self.add_to_checkout_shortcut.setKey(QtGui.QKeySequence.SelectNextChar)
         self.search_inventory_tab.connect(self.add_to_checkout_shortcut,QtCore.SIGNAL("activated()"),self.tab_two_ctrl_a_shortcut)
+        
 
         #displays recently added items on start up
         self.tab_one_update_recently_added_table()
@@ -2699,13 +2700,23 @@ class Ui_Form(QtGui.QWidget):
         
         #connect tab three stuff
         self.tab_three_scan_barcode_qline.returnPressed.connect(self.search_inventory_checkout)
-        #for ii in range(100):
         self.connect(self.tab_three_checkout_table,QtCore.SIGNAL("cellChanged(int, int)"),self.tab_three_percent_changed)
         self.connect(self.tab_three_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_discount_qline_edited)
+        self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
+
+    def tab_three_percent_discount_qline_edited(self):
+        text = self.tab_three_percent_discount_qline.text()
+        to_number = self.string_with_percent_sign_to_int(text)
+        if to_number >= 0 and to_number <= 100:
+            self.checkout_discount = to_number
+        self.tab_three_refresh_checkout_table()
 
     def tab_three_discount_qline_edited(self):
         text = self.tab_three_discount_qline.text()
-        
+        new_price = float(text)
+        if new_price >= 0 and self.checkout_subtotal != 0:
+            self.checkout_discount = (self.checkout_subtotal-new_price)/self.checkout_subtotal
+        self.tab_three_refresh_checkout_table()
 
     def tab_three_percent_changed(self, row, col):
         if col == 5:
@@ -2735,6 +2746,8 @@ class Ui_Form(QtGui.QWidget):
     def tab_two_ctrl_a_shortcut(self):
         if self.main_menu_tabs.currentIndex() == 1:
             self.add_inventory_to_checkout()
+        elif self.main_menu_tabs.currentIndex() == 0:
+            self.tab_one_add_to_inventory()
 
     def tab_three_remove_row(self, value):
         del self.checkout_list[value]
@@ -2794,14 +2807,20 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_checkout_table.setRowCount(len(self.checkout_list))
         #loop through and populate table (both tables, this method should have been plural)
         checkout_table_index = 0
-        subtotal = 0
+        self.checkout_subtotal = 0.0
         for row in self.checkout_list:
             percent_of_price = ((100-row[20])*.01)
             self.change_tab_three_checkout_table_text(checkout_table_index, 1, str(row[UPC_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 2, str(row[ARTIST_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 3, str(row[TITLE_INDEX]))
+            #since i can only tell when a cell is changed, and not when return is pressed in a cell, there's no
+            # way to tell if the cell is being changed by code or by the user. these next two lines trigger a sort
+            #of infinite loop unless the cellChanged() signal is blocked on the table temporarily. there might
+            #be a more elegant way to do this, but i can't figure it out
+            self.tab_three_checkout_table.blockSignals(True)
             self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(round(percent_of_price*row[PRICE_INDEX],2)))
             self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('%d%%' % int(row[20])))
+            self.tab_three_checkout_table.blockSignals(False)
             self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(row[21]))
@@ -2809,14 +2828,14 @@ class Ui_Form(QtGui.QWidget):
             self.change_tab_three_checkout_table_text(checkout_table_index, 11, str(row[PRICE_PAID_INDEX]))
             self.change_tab_three_final_checkout_table_text(checkout_table_index, 0, str(row[ARTIST_INDEX] + ' - ' + row[TITLE_INDEX]))
             self.change_tab_three_final_checkout_table_text(checkout_table_index, 1, str(round(percent_of_price*row[PRICE_INDEX],2)))
-            subtotal += round(percent_of_price*row[PRICE_INDEX],2)
+            self.checkout_subtotal = self.checkout_subtotal + round((percent_of_price*row[PRICE_INDEX]),2)
             checkout_table_index = checkout_table_index + 1
         #fill in totals and stuff
         final_checkout_percent_of_price = ((100-self.checkout_discount)*.01)
-        discounted_price = round(final_checkout_percent_of_price*subtotal,2)
+        discounted_price = round(final_checkout_percent_of_price*self.checkout_subtotal,2)
         tax_amount = round(discounted_price * 0.07,2)
-        self.tab_three_subtotal_qline.setText(str(subtotal))
-        self.lineEdit.setText(str('%d%%' % int(self.checkout_discount)))
+        self.tab_three_subtotal_qline.setText(str(self.checkout_subtotal))
+        self.tab_three_percent_discount_qline.setText(str('%d%%' % int(self.checkout_discount)))
         self.tab_three_discount_qline.setText(str(discounted_price))
         self.tab_three_tax_amount_label.setText('$'+str(tax_amount))
         self.tab_three_shipping_qline.setText(str(round(self.checkout_shipping,2)))
@@ -2839,22 +2858,25 @@ class Ui_Form(QtGui.QWidget):
         self.filter_by_date_added_checkbox.setCheckState(False)
         
         self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
+        self.search_list = []
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+            self.search_list.append(row)
             #make sure we don't exceed the limits of the qtablewidget
-            if index > (self.tab_two_results_table.rowCount()-1):
-                break
+            #if index > (self.tab_two_results_table.rowCount()-1):
+            #    break
             #display stuff
-            for col in range(len(row)):
-                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
-            index = index + 1
+            #for col in range(len(row)):
+            #    self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
+            #index = index + 1
+        self.tab_two_refresh()
         #make pretty
-        self.tab_two_results_table.resizeColumnsToContents()
+        #self.tab_two_results_table.resizeColumnsToContents()
         #update inventory count
-        how_many = 0
-        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
-            how_many = how_many + 1
-        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+        #how_many = 0
+        #for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+        #    how_many = how_many + 1
+        #self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        #self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
 
 
     def tab_two_remove_from_inventory(self):
@@ -2942,9 +2964,29 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
         #update number of results
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.search_list)))
-        
+
+    #the redirection of stderr/stdout doesn't seem to work, still throws some weird error to console
+    def tab_two_more_info_requested(self, row):
+        actual_stdout = sys.stdout
+        actual_stderr = sys.stderr
+        if row <= len(self.search_list):
+            try:
+                sys.stdout = open(os.devnull, 'w')#sending to the black hole
+                sys.stderr = open(os.devnull, 'w')#more victims of the black hole
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.search_list[row])
+                more_info.exec_()
+            except Exception as e:
+                this_is_a_placeholder = 0
+        sys.stdout.flush()
+        sys.stderr.flush()
+        sys.stdout = actual_stdout
+        sys.stderr = actual_stderr
+
+
     def tab_two_refresh(self):
         self.clear_tab_two_results_table()
+        self.generate_more_info_buttons()
         index = 0
         for row in self.search_list:
             #don't exceed table length
@@ -2958,6 +3000,14 @@ class Ui_Form(QtGui.QWidget):
             
             index += 1
         self.tab_two_results_table.resizeColumnsToContents()
+        self.tab_two_results_table.setColumnWidth(0,50)
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+
             
 
     def tab_two_edit_inventory(self):
@@ -3158,6 +3208,11 @@ class Ui_Form(QtGui.QWidget):
 
         #display in that young box as recently added
         self.tab_one_update_recently_added_table()
+
+        #clear upc and artist/title search terms and give focus back to upc search box
+        self.tab_one_search_upc_qline.setText('')
+        self.tab_one_search_artist_title_title_qline.setText('')
+        self.tab_one_search_upc_qline.setFocus()
  
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
@@ -3215,9 +3270,6 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_for_release(artist_title, True)
 
     def tab_one_search_for_release(self, search_query, upc_needed):
-        #curr_thread.setPriority(QtCore.QThread.TimeCriticalPriority)
-        #curr_thread.setPriority(QtCore.QThread.HighestPriority)
-
         #clear table
         self.clear_tab_one_search_table()
 
@@ -3377,10 +3429,13 @@ class Ui_Form(QtGui.QWidget):
             self.print_to_console('Something bad happened while searching for release: %s\n' % e)
             self.tab_one_results_table.setRowCount(20)
             self.clear_tab_one_search_table()
-        #resize columns
+        
+        #select first row
+        self.tab_one_results_table.selectRow(0)
+        self.tab_one_results_table.scrollToTop()
+        self.tab_one_results_table.setFocus()
         self.tab_one_results_table.resizeColumnsToContents()
-                                                                                                                                                                                
-
+    
 
 
     def tab_three_set_checkout_table_widths(self):
@@ -3544,6 +3599,15 @@ class Ui_Form(QtGui.QWidget):
             self.percent_mapper.setMapping(button,ii)
             self.tab_three_checkout_table.setCellWidget(ii,6,button)
         self.connect(self.percent_mapper, QtCore.SIGNAL("mapped(int)"), self.subtract_5_percent_from_item)
+
+    def generate_more_info_buttons(self):
+        self.more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_two_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.more_info_mapper, QtCore.SLOT("map()"))
+            self.more_info_mapper.setMapping(button, ii)
+            self.tab_two_results_table.setCellWidget(ii,0,button)
+        self.connect(self.more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():

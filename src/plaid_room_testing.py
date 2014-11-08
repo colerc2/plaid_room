@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Fri Nov  7 14:46:42 2014
+# Created: Sat Nov  8 05:01:22 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,6 +13,7 @@ import os
 import discogs_client
 from discogs_interface import DiscogsClient
 from more_info_dialog import Ui_more_info_dialog
+from cash_dialog import Ui_CashDialog
 import time
 import datetime
 import sqlite3
@@ -66,8 +67,10 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.checkout_list = []
         self.search_list = []
+        self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0
+        self.checkout_total = 0
 
         #DB stuff
         self.db = sqlite3.connect('inventory.db')
@@ -1027,7 +1030,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_two_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_two_results_table.horizontalHeader().setSortIndicatorShown(False)
-        self.tab_two_results_table.horizontalHeader().setStretchLastSection(False)
+        self.tab_two_results_table.horizontalHeader().setStretchLastSection(True)
         self.verticalLayout_7.addWidget(self.tab_two_results_table)
         self.main_menu_tabs.addTab(self.search_inventory_tab, _fromUtf8(""))
         self.check_out_tab = QtGui.QWidget()
@@ -1076,6 +1079,16 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_inventory_count_label.setMinimumSize(QtCore.QSize(170, 0))
         self.tab_three_inventory_count_label.setObjectName(_fromUtf8("tab_three_inventory_count_label"))
         self.horizontalLayout_10.addWidget(self.tab_three_inventory_count_label)
+        self.tab_three_CREAM_button = QtGui.QPushButton(self.check_out_tab)
+        self.tab_three_CREAM_button.setMinimumSize(QtCore.QSize(150, 50))
+        self.tab_three_CREAM_button.setObjectName(_fromUtf8("tab_three_CREAM_button"))
+        self.horizontalLayout_10.addWidget(self.tab_three_CREAM_button)
+        spacerItem45 = QtGui.QSpacerItem(55, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem45)
+        self.tab_three_card_button = QtGui.QPushButton(self.check_out_tab)
+        self.tab_three_card_button.setMinimumSize(QtCore.QSize(150, 50))
+        self.tab_three_card_button.setObjectName(_fromUtf8("tab_three_card_button"))
+        self.horizontalLayout_10.addWidget(self.tab_three_card_button)
         self.verticalLayout_9.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_17 = QtGui.QHBoxLayout()
         self.horizontalLayout_17.setObjectName(_fromUtf8("horizontalLayout_17"))
@@ -1322,8 +1335,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_checkout_table.horizontalHeader().setSortIndicatorShown(False)
         self.tab_three_checkout_table.horizontalHeader().setStretchLastSection(False)
         self.horizontalLayout_17.addWidget(self.tab_three_checkout_table)
-        spacerItem45 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_17.addItem(spacerItem45)
+        spacerItem46 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_17.addItem(spacerItem46)
         self.verticalLayout_8 = QtGui.QVBoxLayout()
         self.verticalLayout_8.setObjectName(_fromUtf8("verticalLayout_8"))
         self.tab_three_final_checkout_table = QtGui.QTableWidget(self.check_out_tab)
@@ -1451,12 +1464,13 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_subtotal_label.setFont(font)
         self.tab_three_subtotal_label.setObjectName(_fromUtf8("tab_three_subtotal_label"))
         self.horizontalLayout_13.addWidget(self.tab_three_subtotal_label)
-        spacerItem46 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_13.addItem(spacerItem46)
+        spacerItem47 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_13.addItem(spacerItem47)
         self.tab_three_subtotal_qline = QtGui.QLineEdit(self.check_out_tab)
         self.tab_three_subtotal_qline.setMinimumSize(QtCore.QSize(100, 0))
         self.tab_three_subtotal_qline.setMaximumSize(QtCore.QSize(100, 16777215))
         self.tab_three_subtotal_qline.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.tab_three_subtotal_qline.setReadOnly(True)
         self.tab_three_subtotal_qline.setObjectName(_fromUtf8("tab_three_subtotal_qline"))
         self.horizontalLayout_13.addWidget(self.tab_three_subtotal_qline)
         self.verticalLayout_8.addLayout(self.horizontalLayout_13)
@@ -1469,8 +1483,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_discount_label.setFont(font)
         self.tab_three_discount_label.setObjectName(_fromUtf8("tab_three_discount_label"))
         self.horizontalLayout_12.addWidget(self.tab_three_discount_label)
-        spacerItem47 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem47)
+        spacerItem48 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem48)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName(_fromUtf8("horizontalLayout_11"))
         self.tab_three_percent_discount_qline = QtGui.QLineEdit(self.check_out_tab)
@@ -1495,8 +1509,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_tax_label.setFont(font)
         self.tab_three_tax_label.setObjectName(_fromUtf8("tab_three_tax_label"))
         self.horizontalLayout_14.addWidget(self.tab_three_tax_label)
-        spacerItem48 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_14.addItem(spacerItem48)
+        spacerItem49 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_14.addItem(spacerItem49)
         self.tab_three_tax_amount_label = QtGui.QLabel(self.check_out_tab)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Lucida Grande"))
@@ -1514,8 +1528,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_shipping_label.setFont(font)
         self.tab_three_shipping_label.setObjectName(_fromUtf8("tab_three_shipping_label"))
         self.horizontalLayout_19.addWidget(self.tab_three_shipping_label)
-        spacerItem49 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_19.addItem(spacerItem49)
+        spacerItem50 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_19.addItem(spacerItem50)
         self.tab_three_shipping_qline = QtGui.QLineEdit(self.check_out_tab)
         self.tab_three_shipping_qline.setMinimumSize(QtCore.QSize(100, 0))
         self.tab_three_shipping_qline.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -1523,8 +1537,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_shipping_qline.setObjectName(_fromUtf8("tab_three_shipping_qline"))
         self.horizontalLayout_19.addWidget(self.tab_three_shipping_qline)
         self.verticalLayout_8.addLayout(self.horizontalLayout_19)
-        spacerItem50 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_8.addItem(spacerItem50)
+        spacerItem51 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem51)
         self.horizontalLayout_16 = QtGui.QHBoxLayout()
         self.horizontalLayout_16.setObjectName(_fromUtf8("horizontalLayout_16"))
         self.tab_three_total_label = QtGui.QLabel(self.check_out_tab)
@@ -1534,8 +1548,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_total_label.setFont(font)
         self.tab_three_total_label.setObjectName(_fromUtf8("tab_three_total_label"))
         self.horizontalLayout_16.addWidget(self.tab_three_total_label)
-        spacerItem51 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_16.addItem(spacerItem51)
+        spacerItem52 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_16.addItem(spacerItem52)
         self.tab_three_total_qline = QtGui.QLineEdit(self.check_out_tab)
         self.tab_three_total_qline.setMinimumSize(QtCore.QSize(100, 0))
         self.tab_three_total_qline.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -1543,8 +1557,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_total_qline.setObjectName(_fromUtf8("tab_three_total_qline"))
         self.horizontalLayout_16.addWidget(self.tab_three_total_qline)
         self.verticalLayout_8.addLayout(self.horizontalLayout_16)
-        spacerItem52 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_8.addItem(spacerItem52)
+        spacerItem53 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_8.addItem(spacerItem53)
         self.horizontalLayout_17.addLayout(self.verticalLayout_8)
         self.verticalLayout_9.addLayout(self.horizontalLayout_17)
         self.main_menu_tabs.addTab(self.check_out_tab, _fromUtf8(""))
@@ -1726,8 +1740,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_total_label_2.setFont(font)
         self.tab_three_total_label_2.setObjectName(_fromUtf8("tab_three_total_label_2"))
         self.horizontalLayout_18.addWidget(self.tab_three_total_label_2)
-        spacerItem53 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_18.addItem(spacerItem53)
+        spacerItem54 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_18.addItem(spacerItem54)
         self.tab_three_total_qline_2 = QtGui.QLineEdit(self.layoutWidget_2)
         self.tab_three_total_qline_2.setMinimumSize(QtCore.QSize(100, 0))
         self.tab_three_total_qline_2.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -2165,6 +2179,8 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.search_inventory_tab), _translate("Form", "Search/Edit/Remove Inventory", None))
         self.tab_one_search_item_lbl_4.setText(_translate("Form", "Scan Barcode", None))
         self.tab_three_inventory_count_label.setText(_translate("Form", "XXXX Items In Inventory", None))
+        self.tab_three_CREAM_button.setText(_translate("Form", "C.R.E.A.M.", None))
+        self.tab_three_card_button.setText(_translate("Form", "Credit", None))
         self.tab_three_checkout_table.setSortingEnabled(False)
         item = self.tab_three_checkout_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
@@ -2655,6 +2671,7 @@ class Ui_Form(QtGui.QWidget):
         self.add_to_checkout_shortcut = QtGui.QShortcut(self)
         self.add_to_checkout_shortcut.setKey(QtGui.QKeySequence.SelectNextChar)
         self.search_inventory_tab.connect(self.add_to_checkout_shortcut,QtCore.SIGNAL("activated()"),self.tab_two_ctrl_a_shortcut)
+        
 
         #displays recently added items on start up
         self.tab_one_update_recently_added_table()
@@ -2702,6 +2719,16 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_checkout_table,QtCore.SIGNAL("cellChanged(int, int)"),self.tab_three_percent_changed)
         self.connect(self.tab_three_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_discount_qline_edited)
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
+        self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
+
+    def tab_three_make_a_cash_dialog(self):
+        if self.checkout_list:
+            cream = Ui_CashDialog(self.checkout_total)
+            paid_or_naaa = cream.exec_()
+            if paid_or_naaa == QtGui.QDialog.Accepted:
+                #put items in the sold table in the DB
+                self.checkout_list = []
+                self.tab_three_refresh_checkout_table()
 
     def tab_three_percent_discount_qline_edited(self):
         text = self.tab_three_percent_discount_qline.text()
@@ -2838,7 +2865,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_discount_qline.setText(str(discounted_price))
         self.tab_three_tax_amount_label.setText('$'+str(tax_amount))
         self.tab_three_shipping_qline.setText(str(round(self.checkout_shipping,2)))
-        self.tab_three_total_qline.setText(str(round(discounted_price+tax_amount,2)))
+        self.checkout_total = round(discounted_price+tax_amount,2)
+        self.tab_three_total_qline.setText(str(self.checkout_total))
         self.tab_three_set_checkout_table_widths()
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
