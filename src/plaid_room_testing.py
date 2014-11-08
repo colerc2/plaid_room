@@ -2758,6 +2758,9 @@ class Ui_Form(QtGui.QWidget):
                 new_percent = (1-new_percent)*100
                 self.checkout_list[row][20] = new_percent
             self.tab_three_refresh_checkout_table()
+        elif col == 9:
+            self.checkout_list[row][21] = str(self.get_tab_three_checkout_table_text(row,col))
+            self.tab_three_refresh_checkout_table()
             
                 
 
@@ -2792,7 +2795,8 @@ class Ui_Form(QtGui.QWidget):
             row_list = list(row)
             row_list.append(0)
             row_list.append('')
-            self.checkout_list.append(row_list)
+            if not self.tab_three_is_duplicate_item(row[PRIMARY_KEY_INDEX]):
+                self.checkout_list.append(row_list)
         self.tab_three_refresh_checkout_table()
         self.main_menu_tabs.setCurrentIndex(2)
         self.tab_three_scan_barcode_qline.clear()
@@ -2812,7 +2816,8 @@ class Ui_Form(QtGui.QWidget):
                 row_list = list(row)
                 row_list.append(0.0)
                 row_list.append('')
-                self.checkout_list.append(row_list)
+                if not self.tab_three_is_duplicate_item(row[ID_INDEX]):
+                    self.checkout_list.append(row_list)
             self.tab_three_refresh_checkout_table()
             self.tab_three_scan_barcode_qline.clear()
             self.tab_three_scan_barcode_qline.setFocus()
@@ -2826,6 +2831,11 @@ class Ui_Form(QtGui.QWidget):
             self.tab_two_results_table.setFocus()
             self.tab_two_refresh()
             
+    def tab_three_is_duplicate_item(self, primary_key):
+        for row in self.checkout_list:
+            if row[ID_INDEX] == primary_key:
+                return True
+        return False
 
 
     def tab_three_refresh_checkout_table(self):
@@ -3028,6 +3038,7 @@ class Ui_Form(QtGui.QWidget):
             index += 1
         self.tab_two_results_table.resizeColumnsToContents()
         self.tab_two_results_table.setColumnWidth(0,50)
+        self.tab_two_results_table.setColumnWidth(4,200)
         #update inventory count
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
