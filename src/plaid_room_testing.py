@@ -11,6 +11,7 @@ from PyQt4 import QtCore, QtGui
 import sys
 import discogs_client
 from discogs_interface import DiscogsClient
+from more_info_dialog import Ui_more_info_dialog
 import time
 import datetime
 import sqlite3
@@ -2855,22 +2856,25 @@ class Ui_Form(QtGui.QWidget):
         self.filter_by_date_added_checkbox.setCheckState(False)
         
         self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
+        self.search_list = []
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+            self.search_list.append(row)
             #make sure we don't exceed the limits of the qtablewidget
-            if index > (self.tab_two_results_table.rowCount()-1):
-                break
+            #if index > (self.tab_two_results_table.rowCount()-1):
+            #    break
             #display stuff
-            for col in range(len(row)):
-                self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
-            index = index + 1
+            #for col in range(len(row)):
+            #    self.change_tab_two_results_table_text(index, (col+1), str(row[col]))
+            #index = index + 1
+        self.tab_two_refresh()
         #make pretty
-        self.tab_two_results_table.resizeColumnsToContents()
+        #self.tab_two_results_table.resizeColumnsToContents()
         #update inventory count
-        how_many = 0
-        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
-            how_many = how_many + 1
-        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+        #how_many = 0
+        #for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+        #    how_many = how_many + 1
+        #self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        #self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
 
 
     def tab_two_remove_from_inventory(self):
@@ -2958,9 +2962,17 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
         #update number of results
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.search_list)))
+
+    def tab_two_more_info_requested(self, row):
+        if row <= len(self.search_list):
+            print 'made it here 1'
+            more_info = Ui_more_info_dialog()
+            more_info.exec_()
+            print 'made it here 2'
         
     def tab_two_refresh(self):
         self.clear_tab_two_results_table()
+        self.generate_more_info_buttons()
         index = 0
         for row in self.search_list:
             #don't exceed table length
@@ -2974,6 +2986,14 @@ class Ui_Form(QtGui.QWidget):
             
             index += 1
         self.tab_two_results_table.resizeColumnsToContents()
+        self.tab_two_results_table.setColumnWidth(0,50)
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+
             
 
     def tab_two_edit_inventory(self):
@@ -3565,6 +3585,15 @@ class Ui_Form(QtGui.QWidget):
             self.percent_mapper.setMapping(button,ii)
             self.tab_three_checkout_table.setCellWidget(ii,6,button)
         self.connect(self.percent_mapper, QtCore.SIGNAL("mapped(int)"), self.subtract_5_percent_from_item)
+
+    def generate_more_info_buttons(self):
+        self.more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_two_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.more_info_mapper, QtCore.SLOT("map()"))
+            self.more_info_mapper.setMapping(button, ii)
+            self.tab_two_results_table.setCellWidget(ii,0,button)
+        self.connect(self.more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():
