@@ -2965,10 +2965,9 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_two_more_info_requested(self, row):
         if row <= len(self.search_list):
-            print 'made it here 1'
             more_info = Ui_more_info_dialog()
+            more_info.add_text(self.search_list[row])
             more_info.exec_()
-            print 'made it here 2'
         
     def tab_two_refresh(self):
         self.clear_tab_two_results_table()
