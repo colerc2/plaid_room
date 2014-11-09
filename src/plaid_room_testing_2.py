@@ -85,6 +85,7 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.checkout_list = []
         self.search_list = []
+        self.history_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0

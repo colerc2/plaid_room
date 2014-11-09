@@ -4407,7 +4407,7 @@ p, li { white-space: pre-wrap; }
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="tab_two_results_table_2">
+         <widget class="QTableWidget" name="tab_four_results_table">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
             <horstretch>0</horstretch>
