@@ -42,6 +42,24 @@ ALIASES_INDEX = 16
 TRACK_LIST_INDEX = 17
 NOTES_INDEX = 18
 ID_INDEX = 19
+SOLD_FOR_INDEX = 20
+PERCENT_DISCOUNT_INDEX = 21
+DATE_SOLD_INDEX = 22
+SOLD_NOTES_INDEX = 23
+TRANSACTION_ID_INDEX = 24
+NEW_ID_INDEX = 25
+
+TRANS_NUM_ITEMS_INDEX = 0
+TRANS_DATE_SOLD_INDEX = 1
+TRANS_SUBTOTAL_INDEX = 2
+TRANS_DISCOUNT_INDEX = 3
+TRANS_DISCOUNTED_PRICE_INDEX = 4
+TRANS_TAX_INDEX = 5
+TRANS_SHIPPING_INDEX = 6
+TRANS_TOTAL_INDEX = 7
+TRANS_CASH_CREDIT_INDEX = 8
+TRANS_SOLD_IDS_INDEX = 9
+TRANS_ID_INDEX = 10
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -81,6 +99,13 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_inventory
+        (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, inventory_id integer, sold_for real, percent_discount real, date_sold text, sold_notes text, transaction_id integer, id integer primary key autoincrement)
+        """)
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_transactions
+        (number_of_items integer, date_sold text, subtotal real, discount_percent real, discounted_price real, tax real, shipping real, total real, cash_credit text, sold_ids text, id integer primary key autoincrement)
+        """)
+
         
         self.num_attributes = 19
         self.combobox_cols = [6,7]
@@ -2723,10 +2748,72 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_three_make_a_cash_dialog(self):
         if self.checkout_list:
+            #wu-tang ain't nothin' to fuck with
             cream = Ui_CashDialog(self.checkout_total)
             paid_or_naaa = cream.exec_()
             if paid_or_naaa == QtGui.QDialog.Accepted:
-                #put items in the sold table in the DB
+                curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                sold_inventory_new_ids = []
+                for row in self.checkout_list:
+                    percent_discount = row[20]
+                    sold_for = round(((100-percent_discount)*.01)*row[PRICE_INDEX],2)
+                    #first add to sold_inventory DB
+                    db_item = (self.xstr(row[UPC_INDEX]),
+                               self.xstr(row[ARTIST_INDEX]),
+                               self.xstr(row[TITLE_INDEX]),
+                               self.xstr(row[FORMAT_INDEX]),
+                               self.xfloat(row[PRICE_INDEX]),
+                               self.xfloat(row[PRICE_PAID_INDEX]),
+                               self.xstr(row[NEW_USED_INDEX]),
+                               self.xstr(row[DISTRIBUTOR_INDEX]),
+                               self.xstr(row[LABEL_INDEX]),
+                               self.xstr(row[GENRE_INDEX]),
+                               self.xint(row[YEAR_INDEX]),
+                               self.xstr(row[DATE_ADDED_INDEX]),
+                               self.xint(row[DISCOGS_RELEASE_NUMBER_INDEX]),
+                               self.xstr(row[REAL_NAME_INDEX]),
+                               self.xstr(row[PROFILE_INDEX]),
+                               self.xstr(row[VARIATIONS_INDEX]),
+                               self.xstr(row[ALIASES_INDEX]),
+                               self.xstr(row[TRACK_LIST_INDEX]),
+                               self.xstr(row[NOTES_INDEX]),
+                               self.xstr(row[ID_INDEX]),
+                               self.xfloat(sold_for),
+                               self.xint(percent_discount),
+                               curr_time,
+                               self.xstr(row[21]),
+                               0)
+                    self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, inventory_id, sold_for, percent_discount, date_sold, sold_notes, transaction_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+                    self.db.commit()
+                    sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                #add to transactions DB
+                final_checkout_percent_of_price = ((100-self.checkout_discount)*.01)
+                discounted_price = round(final_checkout_percent_of_price*self.checkout_subtotal,2)
+                tax_amount = round(discounted_price * 0.07,2)
+                trans_item = (self.xint(len(self.checkout_list)),
+                              curr_time,
+                              self.xfloat(self.checkout_subtotal),
+                              self.xfloat(self.checkout_discount),
+                              self.xfloat(discounted_price),
+                              self.xfloat(tax_amount),
+                              self.xfloat(self.checkout_shipping),
+                              self.xfloat(self.checkout_total),
+                              self.xstr("Cash"),
+                              self.xstr(",".join(sold_inventory_new_ids)))
+                self.db_cursor.execute('INSERT INTO sold_transactions (number_of_items, date_sold, subtotal, discount_percent, discounted_price, tax, shipping, total, cash_credit, sold_ids) VALUES (?,?,?,?,?,?,?,?,?,?)', trans_item)
+                self.db.commit()
+                trans_id = self.db_cursor.lastrowid
+                for item in sold_inventory_new_ids:
+                    query = (trans_id, item)
+                    self.db_cursor.execute('UPDATE sold_inventory SET transaction_id = ? WHERE id = ?', query)
+                    self.db.commit()
+                #delete from inventory DB
+                for row in self.checkout_list:
+                    date = row[DATE_ADDED_INDEX]
+                    key = row[ID_INDEX]
+                    self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key,date))
+                    self.db.commit()
+
                 self.checkout_list = []
                 self.tab_three_refresh_checkout_table()
 
@@ -2856,10 +2943,10 @@ class Ui_Form(QtGui.QWidget):
             self.tab_three_checkout_table.blockSignals(True)
             self.change_tab_three_checkout_table_text(checkout_table_index, 4, str(round(percent_of_price*row[PRICE_INDEX],2)))
             self.change_tab_three_checkout_table_text(checkout_table_index, 5, str('%d%%' % int(row[20])))
-            self.tab_three_checkout_table.blockSignals(False)
             self.change_tab_three_checkout_table_text(checkout_table_index, 7, str(row[NEW_USED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 8, str(row[DATE_ADDED_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 9, str(row[21]))
+            self.tab_three_checkout_table.blockSignals(False)
             self.change_tab_three_checkout_table_text(checkout_table_index, 10, str(row[ID_INDEX]))
             self.change_tab_three_checkout_table_text(checkout_table_index, 11, str(row[PRICE_PAID_INDEX]))
             self.change_tab_three_final_checkout_table_text(checkout_table_index, 0, str(row[ARTIST_INDEX] + ' - ' + row[TITLE_INDEX]))
