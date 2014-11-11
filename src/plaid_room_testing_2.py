@@ -86,6 +86,7 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.checkout_list = []
         self.search_list = []
+        self.history_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0
@@ -3148,6 +3149,11 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
 
+    def tab_four_more_info_requested(self, row):
+        if row <= len(self.history_list):
+            try:
+                
+
     def tab_four_reset(self):
         #need to do some stuff here
         self.history_list = []
@@ -3157,6 +3163,7 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_refresh(self):
         self.clear_tab_four_results_table()
+        self.generate_more_info_buttons_tab_four()
         index = 0
         for row in self.history_list:
             if index > (self.tab_four_results_table.rowCount()-1):

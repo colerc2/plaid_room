@@ -86,6 +86,7 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.checkout_list = []
         self.search_list = []
+        self.history_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0
@@ -3148,6 +3149,18 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
 
+    def tab_four_transaction_button_pressed(self, row):
+        placeholder = 0
+
+    def tab_four_more_info_requested(self, row):
+        if row <= len(self.history_list):
+            try:
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.history_list[row])
+                more_info.exec_()
+            except Exception as e:
+                this_is_a_placeholder = 0
+
     def tab_four_reset(self):
         #need to do some stuff here
         self.history_list = []
@@ -3157,6 +3170,8 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_refresh(self):
         self.clear_tab_four_results_table()
+        self.generate_more_info_buttons_tab_four()
+        self.generate_transaction_buttons_tab_four()
         index = 0
         for row in self.history_list:
             if index > (self.tab_four_results_table.rowCount()-1):
@@ -3194,12 +3209,18 @@ class Ui_Form(QtGui.QWidget):
 
         self.tab_four_results_table.resizeColumnsToContents()
         self.tab_four_results_table.setColumnWidth(0,50)
+        self.tab_four_results_table.setColumnWidth(1,70)
         self.tab_four_results_table.setColumnWidth(4,200)
         #update inventory count
-        #how_many = 0
-        #for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
-        #    how_many = how_many + 1
-        #self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        items_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+            items_in_history += 1
+        self.tab_four_item_history_label.setText('%s Items In History' % str(items_in_history))
+        trans_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_transactions'):
+            trans_in_history += 1
+        self.tab_four_trans_history_label.setText('%s Transactions In History' % str(trans_in_history))
+        self.tab_four_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.history_list)))
         #self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
 
             
@@ -4156,9 +4177,10 @@ class Ui_Form(QtGui.QWidget):
 
     def change_tab_four_results_table_text(self, row, col, text):
         text = str(filter(lambda x: x in string.printable, text))
-        item = self.tab_four_results_table.item(row, col)
+        item = self.tab_four_results_table.cellWidget(row, col)
         if item is not None:
             item.setText(text)
+            #self.tab_four_results_table.setItem(row, col, item)
         else:
             item = QtGui.QTableWidgetItem()
             item.setText(text)
@@ -4207,6 +4229,23 @@ class Ui_Form(QtGui.QWidget):
             self.more_info_mapper.setMapping(button, ii)
             self.tab_two_results_table.setCellWidget(ii,0,button)
         self.connect(self.more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
+
+    def generate_more_info_buttons_tab_four(self):
+        self.more_info_mapper_tab_four = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.more_info_mapper_tab_four, QtCore.SLOT("map()"))
+            self.more_info_mapper_tab_four.setMapping(button, ii)
+            self.tab_four_results_table.setCellWidget(ii,0,button)
+        self.connect(self.more_info_mapper_tab_four, QtCore.SIGNAL("mapped(int)"), self.tab_four_more_info_requested)
+
+    def generate_transaction_buttons_tab_four(self):
+        self.transaction_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_results_table.rowCount()):
+            button = QtGui.QPushButton('')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.transaction_mapper, QtCore.SLOT("map()"))
+            self.tab_four_results_table.setCellWidget(ii,1,button)
+        self.connect(self.transaction_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_transaction_button_pressed)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():

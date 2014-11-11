@@ -29,6 +29,12 @@ ALIASES_INDEX = 16
 TRACK_LIST_INDEX = 17
 NOTES_INDEX = 18
 ID_INDEX = 19
+SOLD_FOR_INDEX = 20
+PERCENT_DISCOUNT_INDEX = 21
+DATE_SOLD_INDEX = 22
+SOLD_NOTES_INDEX = 23
+TRANSACTION_ID_INDEX = 24
+NEW_ID_INDEX = 25
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -93,4 +99,11 @@ class Ui_more_info_dialog(QtGui.QDialog):
         all_the_stuff.append('Track List:\n\t%s' % track_list)
         all_the_stuff.append('Notes:\t%s' % row[NOTES_INDEX])
         all_the_stuff.append('Primary Key:\t%s' % row[ID_INDEX])
+        if len(row) > 20:
+            all_the_stuff.append('Sold For:\t%s' % row[SOLD_FOR_INDEX])
+            all_the_stuff.append('Percent Discount:\t%s' % row[PERCENT_DISCOUNT_INDEX])
+            all_the_stuff.append('Date Sold: \t%s' % row[DATE_SOLD_INDEX])
+            all_the_stuff.append('Sold Notes: \t%s' % row[SOLD_NOTES_INDEX])
+            all_the_stuff.append('Transaction ID: \t%s' % row[TRANSACTION_ID_INDEX])
+            all_the_stuff.append('New Primary Key: \t%s' % row[NEW_ID_INDEX])
         self.more_info_text_browser.setPlainText('\n'.join(all_the_stuff))
