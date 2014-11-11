@@ -86,6 +86,7 @@ class Ui_Form(QtGui.QWidget):
         self.checkout_list = []
         self.search_list = []
         self.history_list = []
+        self.transaction_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0
@@ -3486,7 +3487,7 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_four_results_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "More...", None))
         item = self.tab_four_results_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "Transaction ID", None))
+        item.setText(_translate("Form", "Trans. ID", None))
         item = self.tab_four_results_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Date Sold", None))
         item = self.tab_four_results_table.horizontalHeaderItem(3)
@@ -3777,6 +3778,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_text_browser.setPlainText('\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
         self.tab_four_reset()
+        self.tab_five_reset()
 
         #make shift,-> a shortcut for adding stuff from search to checkout
         self.add_to_checkout_shortcut = QtGui.QShortcut(self)
@@ -3832,8 +3834,62 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
 
-    def tab_four_transaction_button_pressed(self, row):
+    def tab_five_more_info_requested(self, row):
         placeholder = 0
+
+    def tab_five_transaction_button_pressed(self, row):
+        placeholder = 0
+
+    def tab_five_reset(self):
+        self.transaction_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_transactions ORDER BY date_sold DESC'):
+            self.transaction_list.append(row)
+        self.tab_five_refresh()
+
+    def tab_five_refresh(self):
+        self.clear_tab_five_results_table()
+        self.generate_more_info_buttons_tab_five()
+        self.generate_transaction_buttons_tab_five()
+        index = 0
+        for row in self.transaction_list:
+            if index > (self.tab_five_results_table.rowCount()-1):
+                index += 1
+                continue
+            #fill in table
+            self.change_tab_five_results_table_text(index, 2, str(row[TRANS_ID_INDEX]))
+            self.change_tab_five_results_table_text(index, 3, str(row[TRANS_DATE_SOLD_INDEX]))
+            self.change_tab_five_results_table_text(index, 4, str(row[TRANS_NUM_ITEMS_INDEX]))
+            self.change_tab_five_results_table_text(index, 5, str(row[TRANS_SUBTOTAL_INDEX]))
+            self.change_tab_five_results_table_text(index, 6, str(row[TRANS_DISCOUNT_INDEX]))
+            self.change_tab_five_results_table_text(index, 7, str(row[TRANS_TAX_INDEX]))
+            self.change_tab_five_results_table_text(index, 8, str(row[TRANS_SHIPPING_INDEX]))
+            self.change_tab_five_results_table_text(index, 9, str(row[TRANS_TOTAL_INDEX]))
+            self.change_tab_five_results_table_text(index, 10, str(row[TRANS_CASH_CREDIT_INDEX]))
+            index += 1
+        self.tab_five_results_table.resizeColumnsToContents()
+        self.tab_five_results_table.setColumnWidth(0,50)
+        self.tab_five_results_table.setColumnWidth(1,50)
+        trans_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_transactions'):
+            trans_in_history += 1
+        self.tab_five_trans_in_history.setText('%s Transactions In History' % str(trans_in_history))
+        self.tab_five_trans_for_search_terms.setText('%s Items Found For Search Terms' % str(len(self.transaction_list)))
+
+
+    def tab_four_transaction_button_pressed(self, row):
+        print 'fuck'
+        if row <= len(self.history_list):
+            trans_id = self.history_list[row][TRANSACTION_ID_INDEX]
+            self.tab_five_search_by_transaction_number(int(trans_id))
+            self.main_menu_tabs.setCurrentIndex(4)
+            self.tab_five_refresh()
+            
+
+    def tab_five_search_by_transaction_number(self, number):
+        self.transaction_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_transactions WHERE id = ?', (number,)):
+            self.transaction_list.append(list(row))
+            
 
     def tab_four_more_info_requested(self, row):
         if row <= len(self.history_list):
@@ -3861,7 +3917,7 @@ class Ui_Form(QtGui.QWidget):
                 index += 1
                 continue
             #fill in table, UGLY, need to make this better somehow, oh well
-            self.change_tab_four_results_table_text(index, 1 , str(row[TRANSACTION_ID_INDEX]))
+            #self.change_tab_four_results_table_text(index, 1 , str(row[TRANSACTION_ID_INDEX]))
             self.change_tab_four_results_table_text(index, 2, str(row[DATE_SOLD_INDEX]))
             self.change_tab_four_results_table_text(index, 3, str(row[SOLD_FOR_INDEX]))
             self.change_tab_four_results_table_text(index, 4, str(row[ARTIST_INDEX]))
@@ -3892,7 +3948,7 @@ class Ui_Form(QtGui.QWidget):
 
         self.tab_four_results_table.resizeColumnsToContents()
         self.tab_four_results_table.setColumnWidth(0,50)
-        self.tab_four_results_table.setColumnWidth(1,70)
+        self.tab_four_results_table.setColumnWidth(1,50)
         self.tab_four_results_table.setColumnWidth(4,200)
         #update inventory count
         items_in_history = 0
@@ -4838,6 +4894,11 @@ class Ui_Form(QtGui.QWidget):
             for jj in range(self.tab_four_results_table.columnCount()):
                 self.change_tab_four_results_table_text(ii, jj, "")
 
+    def clear_tab_five_results_table(self):
+        for ii in range(self.tab_five_results_table.rowCount()):
+            for jj in range(self.tab_five_results_table.columnCount()):
+                self.change_tab_five_results_table_text(ii, jj, "")
+
     def change_tab_three_checkout_table_text(self, row, col, text):
         text = str(filter(lambda x: x in string.printable, text))
         item = self.tab_three_checkout_table.item(row, col)
@@ -4868,6 +4929,16 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_four_results_table.setItem(row, col, item)
+
+    def change_tab_five_results_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable, text))
+        item = self.tab_five_results_table.cellWidget(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_five_results_table.setItem(row, col, item)
         
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
@@ -4922,14 +4993,35 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_results_table.setCellWidget(ii,0,button)
         self.connect(self.more_info_mapper_tab_four, QtCore.SIGNAL("mapped(int)"), self.tab_four_more_info_requested)
 
+    def generate_more_info_buttons_tab_five(self):
+        self.more_info_mapper_tab_five = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_five_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.more_info_mapper_tab_five, QtCore.SLOT("map()"))
+            self.more_info_mapper_tab_five.setMapping(button, ii)
+            self.tab_five_results_table.setCellWidget(ii,0,button)
+        self.connect(self.more_info_mapper_tab_five, QtCore.SIGNAL("mapped(int)"), self.tab_five_more_info_requested)
+
     def generate_transaction_buttons_tab_four(self):
         self.transaction_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_four_results_table.rowCount()):
             button = QtGui.QPushButton('')
+            if ii < len(self.history_list):
+                button.setText(str(self.history_list[ii][TRANSACTION_ID_INDEX]))
             self.connect(button, QtCore.SIGNAL("clicked()"), self.transaction_mapper, QtCore.SLOT("map()"))
+            self.transaction_mapper.setMapping(button, ii)
             self.tab_four_results_table.setCellWidget(ii,1,button)
         self.connect(self.transaction_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_transaction_button_pressed)
-
+    
+    def generate_transaction_buttons_tab_five(self):
+        self.transaction_mapper_tab_five = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_five_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.transaction_mapper_tab_five, QtCore.SLOT("map()"))
+            self.transaction_mapper_tab_five.setMapping(button, ii)
+            self.tab_five_results_table.setCellWidget(ii,1,button)
+        self.connect(self.transaction_mapper_tab_five, QtCore.SIGNAL("mapped(int)"), self.tab_five_transaction_button_pressed)
+    
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():
             return ' vinyl'
