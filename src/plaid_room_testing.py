@@ -83,6 +83,9 @@ class Ui_Form(QtGui.QWidget):
 
         #declare global stuff here?
         self.discogs = DiscogsClient()
+        self.search_discogs_list = []
+        self.from_inventory_db_list = []
+        self.from_sold_inventory_db_list = []
         self.checkout_list = []
         self.search_list = []
         self.history_list = []
@@ -3838,7 +3841,14 @@ class Ui_Form(QtGui.QWidget):
         placeholder = 0
 
     def tab_five_transaction_button_pressed(self, row):
-        placeholder = 0
+        if row <= self.transaction_list:
+            trans_id = self.transaction_list[row][TRANS_ID_INDEX]
+            self.history_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE transaction_id = ?', (trans_id,)):
+                self.history_list.append(row)
+            self.main_menu_tabs.setCurrentIndex(3)
+            self.tab_four_refresh()
+                
 
     def tab_five_reset(self):
         self.transaction_list = []
@@ -3877,7 +3887,6 @@ class Ui_Form(QtGui.QWidget):
 
 
     def tab_four_transaction_button_pressed(self, row):
-        print 'fuck'
         if row <= len(self.history_list):
             trans_id = self.history_list[row][TRANSACTION_ID_INDEX]
             self.tab_five_search_by_transaction_number(int(trans_id))
@@ -4269,33 +4278,47 @@ class Ui_Form(QtGui.QWidget):
 
     def search_inventory(self):
         query = self.tab_two_search_artist_title_qline.text()
-        if query == '':
-            self.tab_two_reset_results_table()
-            return
-        
-        #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
-        self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
-        self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
-        self.db.commit()
-        self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
-        self.db.commit()
-        #get search term
-        SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
-        self.db_cursor.execute(SEARCH_FTS, (str(query),))
-        self.search_list = []
-        for row in self.db_cursor.fetchall():
-            #check date ranges if specified
-            if self.filter_by_date_added_checkbox.isChecked():
-                compare = (datetime.datetime.strptime(str(row[11]),"%Y-%m-%d %H:%M:%S")).date()
-                start = self.tab_two_date_start.date().toPyDate()
-                end = self.tab_two_date_end.date().toPyDate()
-                range_delta = end - start
-                compare_delta = end - compare
-                zero_days = start - start
-                if (compare_delta < zero_days) or (compare_delta > range_delta):
-                    #current row is out of range
-                    continue
-            self.search_list.append(list(row))
+
+        if ((query != '') and (query is not None)):
+            #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
+            self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.search_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges if specified
+                if self.filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_two_date_start.date().toPyDate()
+                    end = self.tab_two_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                self.search_list.append(list(row))
+        else:
+            print 'made it here'
+            self.search_list = []
+            for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+                #check date ranges if specified
+                if self.filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_two_date_start.date().toPyDate()
+                    end = self.tab_two_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                self.search_list.append(list(row))
 
         #update UI
         self.tab_two_refresh()
@@ -4616,11 +4639,20 @@ class Ui_Form(QtGui.QWidget):
     def tab_one_search_for_release(self, search_query, upc_needed):
         #clear table
         self.clear_tab_one_search_table()
+        self.search_discogs_list = []
+        self.from_inventory_db_list = []
+        self.from_sold_inventory_db_list = []
 
         #add "cd", "vinyl", or "" to search term
         search_query_with_radio_button = search_query + self.get_tab_one_radio_button_input()
         worked = [True]*19
 
+        #search current inventory and sold inventory before discogs
+        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
+            self.from_inventory_db_list.append(list(row))
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
+            self.from_sold_inventory_db_list.append(list(row))
+        
         #search
         self.print_to_console('Searching discogs...')
         try:
@@ -4629,157 +4661,219 @@ class Ui_Form(QtGui.QWidget):
             #save globally for use later
             self.previous_results = results
             #check sanity of response
-            if results is None or len(results) == 0:
+            if (results is not None) and (len(results) != 0):
+                self.print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
+                self.tab_one_results_table.setRowCount(20)
+                ii = 0
+
+                #loop through results and display
+                for result in results:
+                    temp_row_info = []
+
+                    #udate the GUI
+                    QtGui.QApplication.processEvents()
+
+                    if ii == 20:
+                        break
+                    worked = [True]*19
+                    errors = []
+                    #0 - upc -------------------------------------
+                    try:
+                        if(upc_needed):
+                            temp_row_info.append('BLANK')
+                            #self.change_tab_one_results_table_text(ii,0,'BLANK')
+                        else:
+                            temp_row_info.append(search_query)
+                            #self.change_tab_one_results_table_text(ii,0,search_query)
+                    except Exception as e:
+                        worked[0] = False
+                        errors.append('Error on 0: %s\n' % e)
+                    #1 - artist ----------------------------------
+                    try:
+                        artists_, title_ = result.title.rsplit('-',1)
+                        temp_row_info.append(artists_)
+                        #self.change_tab_one_results_table_text(ii,1,artists_)
+                    except Exception as e:
+                        worked[1] = False
+                        errors.append('Error on 1: %s\n' % e)
+                    #TODO: this needs to be more "elegant"
+                    #if 'Various' in artists_:
+                        #TODO: clear row
+                    #    self.change_tab_one_results_table_text(ii,0,'')
+                    #    self.change_tab_one_results_table_text(ii,1,'')
+                    #    continue
+                    #2 - title ---------------------------------
+                    try:
+                        temp_row_info.append(title_.lstrip())
+                        #self.change_tab_one_results_table_text(ii,2,title_)
+                    except Exception as e:
+                        worked[2] = False
+                        errors.append('Error on 2: %s\n' % e)
+                    #3 - format---------------------------------
+                    format_ = ''
+                    try:
+                        for jj in range(len(result.formats)):
+                            if 'qty' in (result.formats[jj]):
+                                format_ = format_ + (result.formats[jj])['qty'] + 'x'
+                            if 'name' in (result.formats[jj]):
+                                format_ = format_ + (result.formats[jj])['name'] + ', '
+                            if 'descriptions' in (result.formats[jj]):
+                                format_ = format_ + ", ".join((result.formats[jj])['descriptions'])
+                            if jj != (len(result.formats)-1):
+                                format_ = format_ + ' + '
+                        temp_row_info.append(title_)
+                        #self.change_tab_one_results_table_text(ii,3,str(filter(lambda x: x in string.printable,format_)))
+                    except Exception as e:
+                        worked[3] = False
+                        errors.append('Error on 3: %s\n' % e)
+                    #4 - price -----------------------------------
+                    #TODO: maybe do in parallel so it doesn't suck
+                    #prices = [None] * 3
+                    #self.discogs.scrape_price(result.id, prices)
+                    #if prices[0] != None:
+                    # self.change_tab_one_results_table_text(ii,4,prices[1])
+                    try:
+                        temp_row_info.append('9.99')
+                        #self.change_tab_one_results_table_text(ii,4,'14.99')
+                    except Exception as e:
+                        worked[4] = False
+                        errors.append('Error on 4: %s\n' % e)
+                    #5 - price paid ------------------------------
+                    #print '\t8 - %s' % datetime.datetime.now()
+                    try:
+                        temp_row_info.append('7.99')
+                        #self.change_tab_one_results_table_text(ii,5,str(9+ii))
+                    except Exception as e:
+                        worked[7] = False
+                        errors.append('Error on 7: %s\n' % e)
+                    #6 - new/used --------------------------------
+                    #TODO: select new or used based on something, i dunno yet
+                    #print '\t6 - %s' % datetime.datetime.now()
+                    try:
+                        temp_row_info.append('New')
+                        #self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
+                    except Exception as e:
+                            worked[5] = False
+                            errors.append('Error on 5: %s\n' % e)
+                    #7 - distributor -----------------------------
+                    #TODO: select distributor based on most recent DB item
+                    #print '\t7 - %s' % datetime.datetime.now()
+                    try:
+                        temp_row_info.append('Fat Beats')
+                        #self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
+                    except Exception as e:
+                        worked[6] = False
+                        errors.append('Error on 6: %s\n' % e)
+                        #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
+                    #8 - label -----------------------------------
+                    try:
+                        temp_row_info.append(result.labels[0].name)
+                        #self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
+                    except Exception as e:
+                        worked[8] = False
+                        errors.append('Error on 8: %s\n' % e)
+                    #9 - genre ----------------------------------
+                    try:
+                        temp_row_info.append(", ".join(result.genres))
+                        #self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
+                    except Exception as e:
+                        worked[9] = False
+                        errors.append('Error on 9: %s\n' % e)
+                    #10 - year ----------------------------------
+                    try:
+                        temp_row_info.append(str(result.year))
+                        #self.change_tab_one_results_table_text(ii,10,str(result.year))
+                    except Exception as e:
+                        worked[10] = False
+                        errors.append('Error on 10: %s\n' % e)
+                    #11 - date ----------------------------------
+                    try:
+                        temp_row_info.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                        #self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                    except Exception as e:
+                        worked[11] = False
+                        errors.append('Error on 11: %s\n' % e)
+                    #12 - discogs release number -------------------
+                    try:
+                        temp_row_info.append(result.id)
+                        #self.change_tab_one_results_table_text(ii,12,str(result.id))
+                    except Exception as e:
+                        worked[16] = False
+                        errors.append('Error on 12: %s\n' % e)
+
+                    self.search_discogs_list.append(temp_row_info)
+                    ii = ii + 1
+                    if False in worked:
+                        print "Errors adding title:"
+                        print "\t%s" % ("\t".join(errors))
+                        
+            else:
                 self.print_to_console('\tNo match found on discogs for term: %s.\n' % search_query)
                 self.tab_one_results_table.setRowCount(20)
-                return
-            self.print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
-            self.tab_one_results_table.setRowCount(20)
-            ii = 0
-            
-            #loop through results and display
-            for result in results:
-                #udate the GUI
-                QtGui.QApplication.processEvents()
-                
-                if ii == 20:
-                    break
-                worked = [True]*19
-                errors = []
-                #0 - upc -------------------------------------
-                try:
-                    if(upc_needed):
-                        self.change_tab_one_results_table_text(ii,0,'BLANK')
-                    else:
-                        self.change_tab_one_results_table_text(ii,0,search_query)
-                except Exception as e:
-                    worked[0] = False
-                    errors.append('Error on 0: %s\n' % e)
-                #1 - artist --------------------------------
-                #artists_ = []
-                #try:
-                #    for artist in result.artists:
-                #        artists_.append(artist.name)
-                #    self.change_tab_one_results_table_text(ii,1,", ".join(artists_))
-                #except Exception as e:
-                #    worked[1] = False
-                #    errors.append('Error on 1: %s\n' % e)
-                try:
-                    artists_, title_ = result.title.rsplit('-',1)
-                    self.change_tab_one_results_table_text(ii,1,artists_)
-                except Exception as e:
-                    worked[1] = False
-                    errors.append('Error on 1: %s\n' % e)
-                #TODO: this needs to be more "elegant"
-                if 'Various' in artists_:
-                    #TODO: clear row
-                    self.change_tab_one_results_table_text(ii,0,'')
-                    self.change_tab_one_results_table_text(ii,1,'')
-                    continue
-                #2 - title ---------------------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,2,title_)
-                except Exception as e:
-                    worked[2] = False
-                    errors.append('Error on 2: %s\n' % e)
-                #3 - format---------------------------------
-                format_ = ''
-                try:
-                    for jj in range(len(result.formats)):
-                        if 'qty' in (result.formats[jj]):
-                            format_ = format_ + (result.formats[jj])['qty'] + 'x'
-                        if 'name' in (result.formats[jj]):
-                            format_ = format_ + (result.formats[jj])['name'] + ', '
-                        if 'descriptions' in (result.formats[jj]):
-                            format_ = format_ + ", ".join((result.formats[jj])['descriptions'])
-                        if jj != (len(result.formats)-1):
-                            format_ = format_ + ' + '
-                    self.change_tab_one_results_table_text(ii,3,str(filter(lambda x: x in string.printable,format_)))
-                except Exception as e:
-                    worked[3] = False
-                    errors.append('Error on 3: %s\n' % e)
-                #4 - price -----------------------------------
-                #TODO: maybe do in parallel so it doesn't suck
-                #prices = [None] * 3
-                #self.discogs.scrape_price(result.id, prices)
-                #if prices[0] != None:
-                # self.change_tab_one_results_table_text(ii,4,prices[1])
-                try:
-                    self.change_tab_one_results_table_text(ii,4,'14.99')
-                except Exception as e:
-                    worked[4] = False
-                    errors.append('Error on 4: %s\n' % e)
-                #5 - price paid ------------------------------
-                #print '\t8 - %s' % datetime.datetime.now()
-                try:
-                    self.change_tab_one_results_table_text(ii,5,str(9+ii))
-                except Exception as e:
-                    worked[7] = False
-                    errors.append('Error on 7: %s\n' % e)
-                #6 - new/used --------------------------------
-                #TODO: select new or used based on something, i dunno yet
-                #print '\t6 - %s' % datetime.datetime.now()
-                try:
-                    self.tab_one_results_table.setCellWidget(ii,6,self.generate_new_used_combobox())
-                except Exception as e:
-                        worked[5] = False
-                        errors.append('Error on 5: %s\n' % e)
-                #7 - distributor -----------------------------
-                #TODO: select distributor based on most recent DB item
-                #print '\t7 - %s' % datetime.datetime.now()
-                try:
-                    self.tab_one_results_table.setCellWidget(ii,7,self.generate_distributor_combobox())
-                except Exception as e:
-                    worked[6] = False
-                    errors.append('Error on 6: %s\n' % e)
-                    #self.change_tab_one_results_table_text(ii,6,'Fat Beats')
-                #8 - label -----------------------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,8,result.labels[0].name)
-                except Exception as e:
-                    worked[8] = False
-                    errors.append('Error on 8: %s\n' % e)
-                #9 - genre ----------------------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,9,(", ".join(result.genres)))
-                except Exception as e:
-                    worked[9] = False
-                    errors.append('Error on 9: %s\n' % e)
-                #10 - year ----------------------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,10,str(result.year))
-                except Exception as e:
-                    worked[10] = False
-                    errors.append('Error on 10: %s\n' % e)
-                #11 - date ----------------------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,11,datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                except Exception as e:
-                    worked[11] = False
-                    errors.append('Error on 11: %s\n' % e)
-                #12 - discogs release number -------------------
-                try:
-                    self.change_tab_one_results_table_text(ii,12,str(result.id))
-                except Exception as e:
-                    worked[16] = False
-                    errors.append('Error on 12: %s\n' % e)
-
-                ii = ii + 1
-                if False in worked:
-                    print "Errors adding title:"
-                    print "\t%s" % ("\t".join(errors))
-
         except Exception as e:
             self.print_to_console('Something bad happened while searching for release: %s\n' % e)
             self.tab_one_results_table.setRowCount(20)
             self.clear_tab_one_search_table()
         
         #select first row
+        self.tab_one_refresh_search_table()
+
+    def tab_one_refresh_search_table(self):
+        row_index = 0
+        formats = []
+        for row in self.from_inventory_db_list:
+            if row[FORMAT_INDEX] not in formats:
+                self.change_tab_one_results_table_text(row_index, 0, row[UPC_INDEX])
+                self.change_tab_one_results_table_text(row_index, 1, row[ARTIST_INDEX])
+                self.change_tab_one_results_table_text(row_index, 2, row[TITLE_INDEX])
+                self.change_tab_one_results_table_text(row_index, 3, row[FORMAT_INDEX])
+                self.change_tab_one_results_table_text(row_index, 4, self.xstr(row[PRICE_INDEX]))
+                self.change_tab_one_results_table_text(row_index, 5, self.xstr(row[PRICE_PAID_INDEX]))
+                #self.change_tab_one_results_table_text(row_index, 6, row[NEW_USED_INDEX])
+                #self.change_tab_one_results_table_text(row_index, 7, row[UPC_INDEX])
+                self.change_tab_one_results_table_text(row_index, 8, row[LABEL_INDEX])
+                self.change_tab_one_results_table_text(row_index, 9, row[GENRE_INDEX])
+                self.change_tab_one_results_table_text(row_index, 10, self.xstr(row[YEAR_INDEX]))
+                self.change_tab_one_results_table_text(row_index, 11, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                self.change_tab_one_results_table_text(row_index, 12, self.xstr(row[DISCOGS_RELEASE_NUMBER_INDEX]))
+                row_index += 1
+        for row in self.from_sold_inventory_db_list:
+            if row[FORMAT_INDEX] not in formats:
+                self.change_tab_one_results_table_text(row_index, 0, row[UPC_INDEX])
+                self.change_tab_one_results_table_text(row_index, 1, row[ARTIST_INDEX])
+                self.change_tab_one_results_table_text(row_index, 2, row[TITLE_INDEX])
+                self.change_tab_one_results_table_text(row_index, 3, row[FORMAT_INDEX])
+                self.change_tab_one_results_table_text(row_index, 4, self.xstr(row[PRICE_INDEX]))
+                self.change_tab_one_results_table_text(row_index, 5, self.xstr(row[PRICE_PAID_INDEX]))
+                #self.change_tab_one_results_table_text(row_index, 6, row[NEW_USED_INDEX])
+                #self.change_tab_one_results_table_text(row_index, 7, row[UPC_INDEX])
+                self.change_tab_one_results_table_text(row_index, 8, row[LABEL_INDEX])
+                self.change_tab_one_results_table_text(row_index, 9, row[GENRE_INDEX])
+                self.change_tab_one_results_table_text(row_index, 10, self.xstr(row[YEAR_INDEX]))
+                self.change_tab_one_results_table_text(row_index, 11, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                self.change_tab_one_results_table_text(row_index, 12, self.xstr(row[DISCOGS_RELEASE_NUMBER_INDEX]))
+                row_index += 1    
+        for row in self.search_discogs_list:
+            self.change_tab_one_results_table_text(row_index, 0, row[0])
+            self.change_tab_one_results_table_text(row_index, 1, row[1])
+            self.change_tab_one_results_table_text(row_index, 2, row[2])
+            self.change_tab_one_results_table_text(row_index, 3, row[3])
+            self.change_tab_one_results_table_text(row_index, 4, row[4])
+            self.change_tab_one_results_table_text(row_index, 5, row[5])
+            #self.change_tab_one_results_table_text(row_index, 6, row[0])
+            #self.change_tab_one_results_table_text(row_index, 7, row[0])
+            self.change_tab_one_results_table_text(row_index, 8, row[8])
+            self.change_tab_one_results_table_text(row_index, 9, row[9])
+            self.change_tab_one_results_table_text(row_index, 10, row[10])
+            self.change_tab_one_results_table_text(row_index, 11, row[11])
+            self.change_tab_one_results_table_text(row_index, 12, self.xstr(row[12]))
+            row_index += 1
+
         self.tab_one_results_table.selectRow(0)
         self.tab_one_results_table.scrollToTop()
         self.tab_one_results_table.setFocus()
         self.tab_one_results_table.resizeColumnsToContents()
-    
+
 
 
     def tab_three_set_checkout_table_widths(self):
