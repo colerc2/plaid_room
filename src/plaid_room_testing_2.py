@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Mon Nov 10 14:57:37 2014
+# Created: Mon Nov 10 20:19:52 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -2045,11 +2045,11 @@ class Ui_Form(QtGui.QWidget):
         item = QtGui.QTableWidgetItem()
         self.tab_four_results_table.setHorizontalHeaderItem(26, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_four_results_table.setItem(0, 1, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_four_results_table.setItem(0, 3, item)
-        item = QtGui.QTableWidgetItem()
         self.tab_four_results_table.setItem(0, 4, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_four_results_table.setItem(0, 5, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_four_results_table.setItem(0, 6, item)
         self.tab_four_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_four_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_four_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -3034,19 +3034,19 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_four_results_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "More...", None))
         item = self.tab_four_results_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "UPC/SKU/EAN", None))
-        item = self.tab_four_results_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Transaction ID", None))
+        item = self.tab_four_results_table.horizontalHeaderItem(2)
+        item.setText(_translate("Form", "Date Sold", None))
         item = self.tab_four_results_table.horizontalHeaderItem(3)
-        item.setText(_translate("Form", "Artist", None))
-        item = self.tab_four_results_table.horizontalHeaderItem(4)
-        item.setText(_translate("Form", "Title", None))
-        item = self.tab_four_results_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "Format", None))
-        item = self.tab_four_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "Sale Price", None))
-        item = self.tab_four_results_table.horizontalHeaderItem(7)
         item.setText(_translate("Form", "Sold For", None))
+        item = self.tab_four_results_table.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Artist", None))
+        item = self.tab_four_results_table.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "Title", None))
+        item = self.tab_four_results_table.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "UPC/SKU/EAN", None))
+        item = self.tab_four_results_table.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Sale Price", None))
         item = self.tab_four_results_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Price Paid", None))
         item = self.tab_four_results_table.horizontalHeaderItem(9)
@@ -3056,13 +3056,13 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_four_results_table.horizontalHeaderItem(11)
         item.setText(_translate("Form", "Label", None))
         item = self.tab_four_results_table.horizontalHeaderItem(12)
-        item.setText(_translate("Form", "Genre", None))
+        item.setText(_translate("Form", "Format", None))
         item = self.tab_four_results_table.horizontalHeaderItem(13)
-        item.setText(_translate("Form", "Year", None))
+        item.setText(_translate("Form", "Genre", None))
         item = self.tab_four_results_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Date Added", None))
+        item.setText(_translate("Form", "Year", None))
         item = self.tab_four_results_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Date Sold", None))
+        item.setText(_translate("Form", "Date Added", None))
         item = self.tab_four_results_table.horizontalHeaderItem(16)
         item.setText(_translate("Form", "Discogs Release Number", None))
         item = self.tab_four_results_table.horizontalHeaderItem(17)
@@ -3149,10 +3149,17 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
 
+    def tab_four_transaction_button_pressed(self, row):
+        placeholder = 0
+
     def tab_four_more_info_requested(self, row):
         if row <= len(self.history_list):
             try:
-                
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.history_list[row])
+                more_info.exec_()
+            except Exception as e:
+                this_is_a_placeholder = 0
 
     def tab_four_reset(self):
         #need to do some stuff here
@@ -3164,25 +3171,28 @@ class Ui_Form(QtGui.QWidget):
     def tab_four_refresh(self):
         self.clear_tab_four_results_table()
         self.generate_more_info_buttons_tab_four()
+        self.generate_transaction_buttons_tab_four()
         index = 0
         for row in self.history_list:
             if index > (self.tab_four_results_table.rowCount()-1):
                 index += 1
                 continue
             #fill in table, UGLY, need to make this better somehow, oh well
-            self.change_tab_four_results_table_text(index, 1, str(row[UPC_INDEX]))
-            self.change_tab_four_results_table_text(index, 2 , str(row[TRANSACTION_ID_INDEX]))
-            self.change_tab_four_results_table_text(index, 3, str(row[ARTIST_INDEX]))
-            self.change_tab_four_results_table_text(index, 4, str(row[TITLE_INDEX]))
-            self.change_tab_four_results_table_text(index, 5, str(row[FORMAT_INDEX]))
-            self.change_tab_four_results_table_text(index, 6, str(row[PRICE_INDEX]))
+            self.change_tab_four_results_table_text(index, 1 , str(row[TRANSACTION_ID_INDEX]))
+            self.change_tab_four_results_table_text(index, 2, str(row[DATE_SOLD_INDEX]))
+            self.change_tab_four_results_table_text(index, 3, str(row[SOLD_FOR_INDEX]))
+            self.change_tab_four_results_table_text(index, 4, str(row[ARTIST_INDEX]))
+            self.change_tab_four_results_table_text(index, 5, str(row[TITLE_INDEX]))
+            self.change_tab_four_results_table_text(index, 6, str(row[UPC_INDEX]))
+            self.change_tab_four_results_table_text(index, 7, str(row[PRICE_INDEX]))
             self.change_tab_four_results_table_text(index, 8, str(row[PRICE_PAID_INDEX]))
             self.change_tab_four_results_table_text(index, 9, str(row[NEW_USED_INDEX]))
             self.change_tab_four_results_table_text(index, 10, str(row[DISTRIBUTOR_INDEX]))
             self.change_tab_four_results_table_text(index, 11, str(row[LABEL_INDEX]))
-            self.change_tab_four_results_table_text(index, 12, str(row[GENRE_INDEX]))
-            self.change_tab_four_results_table_text(index, 13, str(row[YEAR_INDEX]))
-            self.change_tab_four_results_table_text(index, 14, str(row[DATE_ADDED_INDEX]))
+            self.change_tab_four_results_table_text(index, 12, str(row[FORMAT_INDEX]))
+            self.change_tab_four_results_table_text(index, 13, str(row[GENRE_INDEX]))
+            self.change_tab_four_results_table_text(index, 14, str(row[YEAR_INDEX]))
+            self.change_tab_four_results_table_text(index, 15, str(row[DATE_ADDED_INDEX]))
             self.change_tab_four_results_table_text(index, 16, str(row[DISCOGS_RELEASE_NUMBER_INDEX]))
             self.change_tab_four_results_table_text(index, 17, str(row[REAL_NAME_INDEX]))
             self.change_tab_four_results_table_text(index, 18, str(row[PROFILE_INDEX]))
@@ -3191,21 +3201,26 @@ class Ui_Form(QtGui.QWidget):
             self.change_tab_four_results_table_text(index, 21, str(row[TRACK_LIST_INDEX]))
             self.change_tab_four_results_table_text(index, 22, str(row[NOTES_INDEX]))
             self.change_tab_four_results_table_text(index, 23, str(row[ID_INDEX]))
-            self.change_tab_four_results_table_text(index, 7, str(row[SOLD_FOR_INDEX]))
-            self.change_tab_four_results_table_text(index, 25, str(row[PERCENT_DISCOUNT_INDEX]))
-            self.change_tab_four_results_table_text(index, 15, str(row[DATE_SOLD_INDEX]))
             self.change_tab_four_results_table_text(index, 24, str(row[SOLD_NOTES_INDEX]))
+            self.change_tab_four_results_table_text(index, 25, str(row[PERCENT_DISCOUNT_INDEX]))
             self.change_tab_four_results_table_text(index, 26, str(row[NEW_ID_INDEX]))
+
             index += 1
 
         self.tab_four_results_table.resizeColumnsToContents()
         self.tab_four_results_table.setColumnWidth(0,50)
+        self.tab_four_results_table.setColumnWidth(1,70)
         self.tab_four_results_table.setColumnWidth(4,200)
         #update inventory count
-        #how_many = 0
-        #for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
-        #    how_many = how_many + 1
-        #self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        items_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+            items_in_history += 1
+        self.tab_four_item_history_label.setText('%s Items In History' % str(items_in_history))
+        trans_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_transactions'):
+            trans_in_history += 1
+        self.tab_four_trans_history_label.setText('%s Transactions In History' % str(trans_in_history))
+        self.tab_four_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.history_list)))
         #self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
 
             
@@ -4162,9 +4177,10 @@ class Ui_Form(QtGui.QWidget):
 
     def change_tab_four_results_table_text(self, row, col, text):
         text = str(filter(lambda x: x in string.printable, text))
-        item = self.tab_four_results_table.item(row, col)
+        item = self.tab_four_results_table.cellWidget(row, col)
         if item is not None:
             item.setText(text)
+            #self.tab_four_results_table.setItem(row, col, item)
         else:
             item = QtGui.QTableWidgetItem()
             item.setText(text)
@@ -4213,6 +4229,23 @@ class Ui_Form(QtGui.QWidget):
             self.more_info_mapper.setMapping(button, ii)
             self.tab_two_results_table.setCellWidget(ii,0,button)
         self.connect(self.more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
+
+    def generate_more_info_buttons_tab_four(self):
+        self.more_info_mapper_tab_four = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.more_info_mapper_tab_four, QtCore.SLOT("map()"))
+            self.more_info_mapper_tab_four.setMapping(button, ii)
+            self.tab_four_results_table.setCellWidget(ii,0,button)
+        self.connect(self.more_info_mapper_tab_four, QtCore.SIGNAL("mapped(int)"), self.tab_four_more_info_requested)
+
+    def generate_transaction_buttons_tab_four(self):
+        self.transaction_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_results_table.rowCount()):
+            button = QtGui.QPushButton('')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.transaction_mapper, QtCore.SLOT("map()"))
+            self.tab_four_results_table.setCellWidget(ii,1,button)
+        self.connect(self.transaction_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_transaction_button_pressed)
 
     def get_tab_one_radio_button_input(self):
         if self.tab_one_vinyl_radio_button.isChecked():
