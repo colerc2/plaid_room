@@ -3811,6 +3811,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_date_start.setDateTime(datetime.datetime.today())
         self.tab_two_date_end.setCalendarPopup(True)
         self.tab_two_date_end.setDateTime(datetime.datetime.today())
+        self.tab_four_start_date.setCalendarPopup(True)
+        self.tab_four_start_date.setDateTime(datetime.datetime.today())
+        self.tab_four_end_date.setCalendarPopup(True)
+        self.tab_four_end_date.setDateTime(datetime.datetime.today())
 
         #connectors bro *****************
 
@@ -3840,6 +3844,12 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_discount_qline_edited)
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
+
+        #connect tab four stuff
+        self.tab_four_search_qline.returnPressed.connect(self.tab_four_search)
+        self.tab_four_search_button.clicked.connect(self.tab_four_search)
+        self.tab_four_reset_button.clicked.connect(self.tab_four_reset)
+
 
     def tab_five_more_info_requested(self, row):
         placeholder = 0
@@ -3913,8 +3923,73 @@ class Ui_Form(QtGui.QWidget):
             except Exception as e:
                 this_is_a_placeholder = 0
 
+    def tab_four_search(self):
+        query = self.tab_four_search_qline.text()
+        
+        if ((query != '') and (query is not None)):
+            #TODO: idiotic round 2
+            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.history_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges if specified
+                if self.tab_four_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_four_start_date.date().toPyDate()
+                    end = self.tab_four_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_four_filter_dist_checkbox.isChecked():
+                    dist = self.tab_four_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.history_list.append(list(row))
+        else:
+            self.history_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check date ranges if specified
+                if self.tab_four_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_four_start_date.date().toPyDate()
+                    end = self.tab_four_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_four_filter_dist_checkbox.isChecked():
+                    dist = self.tab_four_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.history_list.append(list(row))
+        #update UI
+        self.tab_four_refresh()
+
     def tab_four_reset(self):
         #need to do some stuff here
+        self.tab_four_num_displayed_spin_box.setValue(50)
+        self.tab_four_start_date.setDateTime(datetime.datetime.today())
+        self.tab_four_end_date.setDateTime(datetime.datetime.today())
+        self.tab_four_filter_date_checkbox.setCheckState(False)
+        #refresh_distributors in combobox
+        while self.tab_four_dist_combo_box.count() != 0:
+            self.tab_four_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_four_dist_combo_box.addItem(distributor)
+        self.tab_four_filter_dist_checkbox.setCheckState(False)
         self.history_list = []
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             self.history_list.append(row)
@@ -4060,7 +4135,7 @@ class Ui_Form(QtGui.QWidget):
         text = self.tab_three_discount_qline.text()
         new_price = float(text)
         if new_price >= 0 and self.checkout_subtotal != 0:
-            self.checkout_discount = (self.checkout_subtotal-new_price)/self.checkout_subtotal
+            self.checkout_discount = ((self.checkout_subtotal-new_price)/self.checkout_subtotal)*100
         self.tab_three_refresh_checkout_table()
 
     def tab_three_percent_changed(self, row, col):
@@ -5055,6 +5130,7 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.tab_four_results_table.rowCount()):
             for jj in range(self.tab_four_results_table.columnCount()):
                 self.change_tab_four_results_table_text(ii, jj, "")
+        self.tab_four_results_table.setRowCount(self.tab_four_num_displayed_spin_box.value())
 
     def clear_tab_five_results_table(self):
         for ii in range(self.tab_five_results_table.rowCount()):
