@@ -4211,6 +4211,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_date_start.setDateTime(datetime.datetime.today())
         self.tab_two_date_end.setDateTime(datetime.datetime.today())
         self.filter_by_date_added_checkbox.setCheckState(False)
+        #refresh_distributors in combobox
+        while self.tab_two_dist_combo_box.count() != 0:
+            self.tab_two_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_two_dist_combo_box.addItem(distributor)
+        self.tab_two_filter_by_dist.setCheckState(False)
         
         self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
         self.search_list = []
@@ -4305,9 +4311,13 @@ class Ui_Form(QtGui.QWidget):
                     if (compare_delta < zero_days) or (compare_delta > range_delta):
                         #current row is out of range
                         continue
+                #check distributor
+                if self.tab_two_filter_by_dist.isChecked():
+                    dist = self.tab_two_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
                 self.search_list.append(list(row))
         else:
-            print 'made it here'
             self.search_list = []
             for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
                 #check date ranges if specified
@@ -4320,6 +4330,11 @@ class Ui_Form(QtGui.QWidget):
                     zero_days = start - start
                     if (compare_delta < zero_days) or (compare_delta > range_delta):
                         #current row is out of range
+                        continue
+                #check distributor
+                if self.tab_two_filter_by_dist.isChecked():
+                    dist = self.tab_two_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 self.search_list.append(list(row))
 
