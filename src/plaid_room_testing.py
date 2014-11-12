@@ -4100,7 +4100,6 @@ class Ui_Form(QtGui.QWidget):
     def tab_three_remove_row(self, value):
         del self.checkout_list[value]
         self.tab_three_refresh_checkout_table()
-        print 'Row clicked: %d' % value
     
     def subtract_5_percent_from_item(self, value):
         self.checkout_list[value][20] = self.checkout_list[value][20] + 5
@@ -4469,7 +4468,6 @@ class Ui_Form(QtGui.QWidget):
         try:
             if from_discogs:
                 if discogs_release_number is not None and grab_more_info: #did we find this on discogs or enter manually?
-                    print 'here brej'
                     discogs_release_number = str(discogs_release_number)
                     #loop through previous results until we find the matching entry
                     for result in self.previous_results:
