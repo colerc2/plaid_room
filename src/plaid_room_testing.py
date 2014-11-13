@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Thu Nov 13 13:02:25 2014
+# Created: Thu Nov 13 15:21:03 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -3383,9 +3383,15 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_28.addWidget(self.tab_six_po_combobox)
         spacerItem113 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_28.addItem(spacerItem113)
+        self.verticalLayout_33 = QtGui.QVBoxLayout()
+        self.verticalLayout_33.setObjectName(_fromUtf8("verticalLayout_33"))
         self.tab_six_po_item_count_label = QtGui.QLabel(self.widget1)
         self.tab_six_po_item_count_label.setObjectName(_fromUtf8("tab_six_po_item_count_label"))
-        self.horizontalLayout_28.addWidget(self.tab_six_po_item_count_label)
+        self.verticalLayout_33.addWidget(self.tab_six_po_item_count_label)
+        self.tab_six_po_item_count_shown_label = QtGui.QLabel(self.widget1)
+        self.tab_six_po_item_count_shown_label.setObjectName(_fromUtf8("tab_six_po_item_count_shown_label"))
+        self.verticalLayout_33.addWidget(self.tab_six_po_item_count_shown_label)
+        self.horizontalLayout_28.addLayout(self.verticalLayout_33)
         spacerItem114 = QtGui.QSpacerItem(17, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_28.addItem(spacerItem114)
         self.verticalLayout_31.addLayout(self.horizontalLayout_28)
@@ -5399,6 +5405,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_done_table.setSortingEnabled(__sortingEnabled)
         self.tab_six_current_po_label.setText(_translate("Form", "Current Purchase Order", None))
         self.tab_six_po_item_count_label.setText(_translate("Form", "XX Total Items", None))
+        self.tab_six_po_item_count_shown_label.setText(_translate("Form", "XX Shown", None))
         self.tab_six_po_table.setSortingEnabled(False)
         item = self.tab_six_po_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
@@ -5595,9 +5602,9 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_six_po_table.verticalHeaderItem(96)
         item.setText(_translate("Form", "99", None))
         item = self.tab_six_po_table.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "Back", None))
-        item = self.tab_six_po_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "More...", None))
+        item = self.tab_six_po_table.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "Back", None))
         item = self.tab_six_po_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Qty", None))
         item = self.tab_six_po_table.horizontalHeaderItem(3)
@@ -5694,6 +5701,26 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_done_search_reset_button.clicked.connect(self.tab_six_done_reset)
         self.tab_six_search_sold_qline.returnPressed.connect(self.tab_six_search)
         self.tab_six_search_sold_button.clicked.connect(self.tab_six_search)
+        
+    def tab_six_po_back_requested(self, row):
+        if row < len(self.po_list):
+            id = self.po_list[row][NEW_ID_INDEX]
+            new_state = NEEDS_REORDERED
+            query = (new_state, id)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists and then update UI
+            temp_row = self.po_list[row]
+            del self.po_list[row]
+            temp_row[REORDER_STATE] = NEEDS_REORDERED
+            self.po_search_list.append(temp_row)
+            self.tab_six_refresh()
+        
+    def tab_six_po_more_info_requested(self, row):
+        if row < len(self.po_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.po_list[row])
+            more_info.exec_()
 
     def tab_six_search_sold_more_info_requested(self, row):
         if row < len(self.po_search_list):
@@ -5829,6 +5856,8 @@ class Ui_Form(QtGui.QWidget):
         self.generate_search_sold_more_info_buttons_tab_six()
         self.generate_search_sold_add_buttons_tab_six()
         self.generate_search_sold_ignore_buttons_tab_six()
+        self.generate_po_more_info_buttons_tab_six()
+        self.generate_po_back_buttons_tab_six()
         
         #populate/resize search inventory table
         index = 0
@@ -5886,6 +5915,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_table.setColumnWidth(0,50)
         self.tab_six_po_table.setColumnWidth(1,50)
         self.tab_six_po_item_count_label.setText('%s Total Items' % str(len(self.po_list)))
+        self.tab_six_po_item_count_shown_label.setText('%s Shown' % str(index))
         
         
     def tab_five_more_info_requested(self, row):
@@ -7356,6 +7386,24 @@ class Ui_Form(QtGui.QWidget):
             self.search_sold_ignore_mapper.setMapping(button, ii)
             self.tab_six_search_sold_table.setCellWidget(ii, 2, button)
         self.connect(self.search_sold_ignore_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_search_sold_ignore_requested)
+
+    def generate_po_more_info_buttons_tab_six(self):
+        self.po_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_po_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.po_more_info_mapper, QtCore.SLOT("map()"))
+            self.po_more_info_mapper.setMapping(button, ii)
+            self.tab_six_po_table.setCellWidget(ii, 0, button)
+        self.connect(self.po_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_po_more_info_requested)
+
+    def generate_po_back_buttons_tab_six(self):
+        self.po_back_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_po_table.rowCount()):
+            button = QtGui.QPushButton('<-')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.po_back_mapper, QtCore.SLOT("map()"))
+            self.po_back_mapper.setMapping(button, ii)
+            self.tab_six_po_table.setCellWidget(ii, 1, button)
+        self.connect(self.po_back_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_po_back_requested)
 
     def generate_more_info_buttons_tab_four(self):
         self.more_info_mapper_tab_four = QtCore.QSignalMapper(self)

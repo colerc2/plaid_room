@@ -8597,11 +8597,22 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_six_po_item_count_label">
-            <property name="text">
-             <string>XX Total Items</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_33">
+            <item>
+             <widget class="QLabel" name="tab_six_po_item_count_label">
+              <property name="text">
+               <string>XX Total Items</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="tab_six_po_item_count_shown_label">
+              <property name="text">
+               <string>XX Shown</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <spacer name="horizontalSpacer_70">
@@ -9140,12 +9151,12 @@ p, li { white-space: pre-wrap; }
           </row>
           <column>
            <property name="text">
-            <string>Back</string>
+            <string>More...</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>More...</string>
+            <string>Back</string>
            </property>
           </column>
           <column>
