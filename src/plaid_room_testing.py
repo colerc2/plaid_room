@@ -63,6 +63,11 @@ TRANS_CASH_CREDIT_INDEX = 8
 TRANS_SOLD_IDS_INDEX = 9
 TRANS_ID_INDEX = 10
 
+NEEDS_REORDERED = 0
+ON_CURRENT_PO_LIST = 1
+REORDERED = 2
+NOT_REORDERING = 3
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -93,6 +98,9 @@ class Ui_Form(QtGui.QWidget):
         self.search_list = []
         self.history_list = []
         self.transaction_list = []
+        self.po_search_list = []
+        self.po_list = []
+        self.po_done_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
         self.checkout_shipping = 0
@@ -5597,6 +5605,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
         self.tab_four_reset()
         self.tab_five_reset()
+        self.tab_six_search_reset()
+        self.tab_six_done_reset()
 
         #make shift,-> a shortcut for adding stuff from search to checkout
         self.add_to_checkout_shortcut = QtGui.QShortcut(self)
@@ -5663,7 +5673,89 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_search_button.clicked.connect(self.tab_four_search)
         self.tab_four_reset_button.clicked.connect(self.tab_four_reset)
 
+        #connect tab six stuff
+        self.tab_six_search_sold_reset.clicked.connect(self.tab_six_search_reset)
+        self.tab_six_done_search_reset_button.clicked.connect(self.tab_six_done_reset)
 
+
+    def tab_six_search_reset(self):
+        self.tab_six_search_sold_qline.setText('')
+        self.tab_six_search_sold_filter_dist_checkbox.setCheckState(False)
+        while self.tab_six_search_sold_dist_combo_box.count() != 0:
+            self.tab_six_search_sold_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_six_search_sold_dist_combo_box.addItem(distributor)
+        self.tab_six_search_sold_filter_date_checkbox.setCheckState(False)
+        self.tab_six_search_sold_start_date.setDateTime(datetime.datetime.today())
+        self.tab_six_search_sold_end_date.setDateTime(datetime.datetime.today())
+        self.tab_six_search_sold_num_displayed_spinbox.setValue(15)
+        self.po_search_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE] == NEEDS_REORDERED:
+                self.po_search_list.append(list(row))
+        self.tab_six_refresh()
+
+    def tab_six_done_reset(self):
+        self.tab_six_done_search_qline.setText('')
+        self.tab_six_done_filter_dist_checkbox.setCheckState(False)
+        while self.tab_six_done_dist_combo_box.count() != 0:
+            self.tab_six_done_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_six_done_dist_combo_box.addItem(distributor)
+        self.tab_six_done_filter_date_checkbox.setCheckState(False)
+        self.tab_six_done_start_date.setDateTime(datetime.datetime.today())
+        self.tab_six_done_end_date.setDateTime(datetime.datetime.today())
+        self.tab_six_done_num_displayed_spinbox.setValue(15)
+        self.po_done_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE] == REORDERED:
+                self.po_done_list.append(list(row))
+        self.tab_six_refresh()
+
+
+    def tab_six_po_refresh(self):
+        self.po_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE] == ON_CURRENT_PO_LIST:
+                self.po_list.append(list(row))
+        
+    def tab_six_refresh(self):
+        self.tab_six_po_refresh()
+        self.clear_tab_six_search_sold_table()
+        self.clear_tab_six_po_table()
+        self.clear_tab_six_done_table()
+        #GENERATE ALL THE BUTTONS!!!!!
+        
+        #populate/resize search inventory table
+        index = 0
+        for row in self.po_search_list:
+            if index > (self.tab_six_search_sold_table.rowCount()-1):
+                index += 1
+                continue
+            date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            price_sold = float(row[SOLD_FOR_INDEX])
+            price_paid = float(row[PRICE_PAID_INDEX])
+            time_delta = date_time_sold - date_time_added
+            days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
+            self.change_tab_six_search_sold_table_text(index, 3, str(date_sold))
+            self.change_tab_six_search_sold_table_text(index, 4, str(days_in_shop))
+            self.change_tab_six_search_sold_table_text(index, 5, str(row[SOLD_FOR_INDEX]))
+            self.change_tab_six_search_sold_table_text(index, 6, str(price_sold-price_paid))
+            self.change_tab_six_search_sold_table_text(index, 7, row[ARTIST_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 8, row[TITLE_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 9, row[DISTRIBUTOR_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 10, row[FORMAT_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 11, str(row[PRICE_PAID_INDEX]))
+            self.change_tab_six_search_sold_table_text(index, 12, row[NEW_USED_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 13, row[LABEL_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 14, row[GENRE_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 15, row[SOLD_NOTES_INDEX])
+            self.change_tab_six_search_sold_table_text(index, 16, row[UPC_INDEX])
+            index += 1
+        self.tab_six_search_sold_table.resizeColumnsToContents()
+        
     def tab_five_more_info_requested(self, row):
         placeholder = 0
 
@@ -6951,6 +7043,24 @@ class Ui_Form(QtGui.QWidget):
             for jj in range(self.tab_five_results_table.columnCount()):
                 self.change_tab_five_results_table_text(ii, jj, "")
 
+    def clear_tab_six_search_sold_table(self):
+        for ii in range(self.tab_six_search_sold_table.rowCount()):
+            for jj in  range(self.tab_six_search_sold_table.columnCount()):
+                self.change_tab_six_search_sold_table_text(ii, jj, "")
+        self.tab_six_search_sold_table.setRowCount(self.tab_six_search_sold_num_displayed_spinbox.value())
+
+    def clear_tab_six_po_table(self):
+        for ii in range(self.tab_six_po_table.rowCount()):
+            for jj in range(self.tab_six_po_table.columnCount()):
+                self.change_tab_six_po_table_text(ii, jj, "")
+        self.tab_six_po_table.setRowCount(len(self.po_list))
+        
+    def clear_tab_six_done_table(self):
+        for ii in range(self.tab_six_done_table.rowCount()):
+            for jj in range(self.tab_six_done_table.columnCount()):
+                self.change_tab_six_done_table_text(ii, jj, "")
+        self.tab_six_done_table.setRowCount(self.tab_six_done_num_displayed_spinbox.value())
+
     def change_tab_three_checkout_table_text(self, row, col, text):
         text = str(filter(lambda x: x in string.printable, text))
         item = self.tab_three_checkout_table.item(row, col)
@@ -6991,6 +7101,36 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_five_results_table.setItem(row, col, item)
+    
+    def change_tab_six_search_sold_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable, text))
+        item = self.tab_six_search_sold_table.cellWidget(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_six_search_sold_table.setItem(row, col, item)        
+
+    def change_tab_six_po_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable, text))
+        item = self.tab_six_po_table.cellWidget(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_six_po_table.setItem(row, col, item)
+        
+    def change_tab_six_done_table_text(self, row, col, text):
+        text = str(filter(lambda x: x in string.printable, text))
+        item = self.tab_six_done_table.cellWidget(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_six_done_table.setItem(row, col, item)
         
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
