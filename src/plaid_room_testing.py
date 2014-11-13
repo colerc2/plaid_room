@@ -115,7 +115,7 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
-        self.db_cursor.execute('DROP table IF EXISTS sold_inventory')
+        #self.db_cursor.execute('DROP table IF EXISTS sold_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_inventory
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, inventory_id integer, sold_for real, percent_discount real, date_sold text, sold_notes text, reorder_state integer, transaction_id integer, id integer primary key autoincrement)
         """)
@@ -5691,7 +5691,75 @@ class Ui_Form(QtGui.QWidget):
         #connect tab six stuff
         self.tab_six_search_sold_reset.clicked.connect(self.tab_six_search_reset)
         self.tab_six_done_search_reset_button.clicked.connect(self.tab_six_done_reset)
+        self.tab_six_search_sold_qline.returnPressed.connect(self.tab_six_search)
+        self.tab_six_search_sold_button.clicked.connect(self.tab_six_search)
 
+    def tab_six_search_sold_more_info_requested(self, row):
+        if row <= len(self.po_search_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.po_search_list[row])
+            more_info.exec_()
+
+    def tab_six_search_sold_add_requested(self, row):
+        print row
+
+    def tab_six_search_sold_ignore_requested(self, row):
+        print row
+
+    def tab_six_search(self):
+        query = self.tab_six_search_sold_qline.text()
+        
+        if ((query != '') and (query is not None)):
+            #TODO: idiotic round 3
+            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.po_search_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges specified
+                if self.tab_six_search_sold_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_six_search_sold_start_date.date().toPyDate()
+                    end = self.tab_six_search_sold_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_six_search_sold_filter_dist_checkbox.isChecked():
+                    dist = self.tab_six_search_sold_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.po_search_list.append(list(row))
+        else:
+            self.po_search_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check date ranges specified
+                if self.tab_six_search_sold_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_six_search_sold_start_date.date().toPyDate()
+                    end = self.tab_six_search_sold_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_six_search_sold_filter_dist_checkbox.isChecked():
+                    dist = self.tab_six_search_sold_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.po_search_list.append(list(row))
+        #update UI
+        self.tab_six_refresh()
 
     def tab_six_search_reset(self):
         self.tab_six_search_sold_qline.setText('')
@@ -5740,6 +5808,9 @@ class Ui_Form(QtGui.QWidget):
         self.clear_tab_six_po_table()
         self.clear_tab_six_done_table()
         #GENERATE ALL THE BUTTONS!!!!!
+        self.generate_search_sold_more_info_buttons_tab_six()
+        self.generate_search_sold_add_buttons_tab_six()
+        self.generate_search_sold_ignore_buttons_tab_six()
         
         #populate/resize search inventory table
         index = 0
@@ -5770,6 +5841,17 @@ class Ui_Form(QtGui.QWidget):
             self.change_tab_six_search_sold_table_text(index, 16, row[UPC_INDEX])
             index += 1
         self.tab_six_search_sold_table.resizeColumnsToContents()
+        self.tab_six_search_sold_table.setColumnWidth(0,50)
+        self.tab_six_search_sold_table.setColumnWidth(1,50)
+        self.tab_six_search_sold_table.setColumnWidth(2,50)
+        self.tab_six_search_sold_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.po_search_list)))
+        #update inventory count
+        items_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+            if row[REORDER_STATE] == NEEDS_REORDERED:
+               items_in_history += 1
+        self.tab_six_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
+        
         
     def tab_five_more_info_requested(self, row):
         placeholder = 0
@@ -7212,6 +7294,33 @@ class Ui_Form(QtGui.QWidget):
             self.more_info_mapper.setMapping(button, ii)
             self.tab_two_results_table.setCellWidget(ii,0,button)
         self.connect(self.more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
+
+    def generate_search_sold_more_info_buttons_tab_six(self):
+        self.search_sold_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_more_info_mapper, QtCore.SLOT("map()"))
+            self.search_sold_more_info_mapper.setMapping(button, ii)
+            self.tab_six_search_sold_table.setCellWidget(ii, 0, button)
+        self.connect(self.search_sold_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_search_sold_more_info_requested)
+
+    def generate_search_sold_add_buttons_tab_six(self):
+        self.search_sold_add_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('+')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_add_mapper, QtCore.SLOT("map()"))
+            self.search_sold_add_mapper.setMapping(button, ii)
+            self.tab_six_search_sold_table.setCellWidget(ii, 1, button)
+        self.connect(self.search_sold_add_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_search_sold_add_requested)
+            
+    def generate_search_sold_ignore_buttons_tab_six(self):
+        self.search_sold_ignore_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('X')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_ignore_mapper, QtCore.SLOT("map()"))
+            self.search_sold_ignore_mapper.setMapping(button, ii)
+            self.tab_six_search_sold_table.setCellWidget(ii, 2, button)
+        self.connect(self.search_sold_ignore_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_search_sold_ignore_requested)
 
     def generate_more_info_buttons_tab_four(self):
         self.more_info_mapper_tab_four = QtCore.QSignalMapper(self)
