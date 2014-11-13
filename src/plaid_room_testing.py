@@ -47,8 +47,9 @@ SOLD_FOR_INDEX = 20
 PERCENT_DISCOUNT_INDEX = 21
 DATE_SOLD_INDEX = 22
 SOLD_NOTES_INDEX = 23
-TRANSACTION_ID_INDEX = 24
-NEW_ID_INDEX = 25
+REORDER_STATE = 24
+TRANSACTION_ID_INDEX = 25
+NEW_ID_INDEX = 26
 
 TRANS_NUM_ITEMS_INDEX = 0
 TRANS_DATE_SOLD_INDEX = 1
@@ -106,9 +107,9 @@ class Ui_Form(QtGui.QWidget):
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, id integer primary key autoincrement)
         """)
-        #self.db_cursor.execute('DROP table IF EXISTS sold_inventory')
+        self.db_cursor.execute('DROP table IF EXISTS sold_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_inventory
-        (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, inventory_id integer, sold_for real, percent_discount real, date_sold text, sold_notes text, transaction_id integer, id integer primary key autoincrement)
+        (upc text, artist text, title text, format text, price real, price_paid real, new_used text, distributor text, label text, genre text, year integer, date_added text, discogs_release_number integer, real_name text, profile text, variations text, aliases text, track_list text, notes text, inventory_id integer, sold_for real, percent_discount real, date_sold text, sold_notes text, reorder_state integer, transaction_id integer, id integer primary key autoincrement)
         """)
         #self.db_cursor.execute('DROP table IF EXISTS sold_transactions')        
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_transactions
@@ -5900,8 +5901,9 @@ class Ui_Form(QtGui.QWidget):
                                self.xint(percent_discount),
                                curr_time,
                                self.xstr(row[21]),
-                               0)
-                    self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, inventory_id, sold_for, percent_discount, date_sold, sold_notes, transaction_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+                               0,#reorder_state
+                               0)#transaction id
+                    self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
                     self.db.commit()
                     sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
                 #add to transactions DB
