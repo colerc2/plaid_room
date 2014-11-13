@@ -3959,7 +3959,7 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>Item History</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -6362,7 +6362,7 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>Create PO</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -7377,6 +7377,11 @@ p, li { white-space: pre-wrap; }
             </column>
             <column>
              <property name="text">
+              <string>In Stock</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>Sold For</string>
              </property>
             </column>
@@ -7435,17 +7440,17 @@ p, li { white-space: pre-wrap; }
               <string>UPC/SKU/EAN</string>
              </property>
             </column>
-            <item row="0" column="7">
-             <property name="text">
-              <string/>
-             </property>
-            </item>
             <item row="0" column="8">
              <property name="text">
               <string/>
              </property>
             </item>
-            <item row="0" column="16">
+            <item row="0" column="9">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="17">
              <property name="text">
               <string/>
              </property>

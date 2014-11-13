@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Thu Nov 13 13:02:25 2014
+# Created: Thu Nov 13 15:21:03 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -3383,9 +3383,15 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_28.addWidget(self.tab_six_po_combobox)
         spacerItem113 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_28.addItem(spacerItem113)
+        self.verticalLayout_33 = QtGui.QVBoxLayout()
+        self.verticalLayout_33.setObjectName(_fromUtf8("verticalLayout_33"))
         self.tab_six_po_item_count_label = QtGui.QLabel(self.widget1)
         self.tab_six_po_item_count_label.setObjectName(_fromUtf8("tab_six_po_item_count_label"))
-        self.horizontalLayout_28.addWidget(self.tab_six_po_item_count_label)
+        self.verticalLayout_33.addWidget(self.tab_six_po_item_count_label)
+        self.tab_six_po_item_count_shown_label = QtGui.QLabel(self.widget1)
+        self.tab_six_po_item_count_shown_label.setObjectName(_fromUtf8("tab_six_po_item_count_shown_label"))
+        self.verticalLayout_33.addWidget(self.tab_six_po_item_count_shown_label)
+        self.horizontalLayout_28.addLayout(self.verticalLayout_33)
         spacerItem114 = QtGui.QSpacerItem(17, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_28.addItem(spacerItem114)
         self.verticalLayout_31.addLayout(self.horizontalLayout_28)
@@ -5399,6 +5405,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_done_table.setSortingEnabled(__sortingEnabled)
         self.tab_six_current_po_label.setText(_translate("Form", "Current Purchase Order", None))
         self.tab_six_po_item_count_label.setText(_translate("Form", "XX Total Items", None))
+        self.tab_six_po_item_count_shown_label.setText(_translate("Form", "XX Shown", None))
         self.tab_six_po_table.setSortingEnabled(False)
         item = self.tab_six_po_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
@@ -5595,9 +5602,9 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_six_po_table.verticalHeaderItem(96)
         item.setText(_translate("Form", "99", None))
         item = self.tab_six_po_table.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "Back", None))
-        item = self.tab_six_po_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "More...", None))
+        item = self.tab_six_po_table.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "Back", None))
         item = self.tab_six_po_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Qty", None))
         item = self.tab_six_po_table.horizontalHeaderItem(3)
@@ -5908,6 +5915,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_table.setColumnWidth(0,50)
         self.tab_six_po_table.setColumnWidth(1,50)
         self.tab_six_po_item_count_label.setText('%s Total Items' % str(len(self.po_list)))
+        self.tab_six_po_item_count_shown_label.setText('%s Shown' % str(index))
         
         
     def tab_five_more_info_requested(self, row):
