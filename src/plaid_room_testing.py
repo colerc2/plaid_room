@@ -21,6 +21,7 @@ import sqlite3
 import re
 import string
 from threading import Thread
+import csv
 
 
 UPC_INDEX = 0
@@ -100,6 +101,7 @@ class Ui_Form(QtGui.QWidget):
         self.transaction_list = []
         self.po_search_list = []
         self.po_list = []
+        self.filtered_po_list = []
         self.po_done_list = []
         self.checkout_subtotal = 0
         self.checkout_discount = 0
@@ -5705,7 +5707,31 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_done_search_reset_button.clicked.connect(self.tab_six_done_reset)
         self.tab_six_search_sold_qline.returnPressed.connect(self.tab_six_search)
         self.tab_six_search_sold_button.clicked.connect(self.tab_six_search)
+        self.tab_six_po_combobox.currentIndexChanged.connect(self.tab_six_po_combobox_changed)
+        self.tab_six_generate_po_button.clicked.connect(self.tab_six_create_po)
+
+    def tab_six_create_po(self):
+        #grab only the info necessary to make a PO (this could be different for each Distributor)
+        temp_list = []
+        for row in self.filtered_po_list:
+            temp_row = []
+            temp_row.append(row[UPC_INDEX])
+            temp_row.append('1')
+            temp_row.append(row[ARTIST_INDEX])
+            temp_row.append(row[TITLE_INDEX])
+            temp_list.append(temp_row)
         
+        #grab the custom filename if necessary, else make one
+        file_name = self.tab_six_csv_qline.text()
+        file_name = file_name + '.csv'
+        with open(file_name, "wb") as f:
+            writer = csv.writer(f)
+            writer.writerows(temp_list)
+        
+
+    def tab_six_po_combobox_changed(self, index):
+        self.tab_six_refresh()
+
     def tab_six_po_back_requested(self, row):
         if row < len(self.po_list):
             id = self.po_list[row][NEW_ID_INDEX]
@@ -5723,7 +5749,7 @@ class Ui_Form(QtGui.QWidget):
     def tab_six_po_more_info_requested(self, row):
         if row < len(self.po_list):
             more_info = Ui_more_info_dialog()
-            more_info.add_text(self.po_list[row])
+            more_info.add_text(self.filtered_po_list[row])
             more_info.exec_()
 
     def tab_six_search_sold_more_info_requested(self, row):
@@ -5851,7 +5877,16 @@ class Ui_Form(QtGui.QWidget):
                 self.po_list.append(list(row))
         self.tab_six_refresh()
         
+    def tab_six_filter_po_list(self):
+        self.filtered_po_list = []
+        selected_distributor = self.tab_six_po_combobox.currentText()
+        #check distributor
+        for row in self.po_list:
+            if (selected_distributor == row[DISTRIBUTOR_INDEX]) or (selected_distributor == 'Any'):
+                self.filtered_po_list.append(row)
+    
     def tab_six_refresh(self):
+        self.tab_six_filter_po_list()
         self.clear_tab_six_search_sold_table()
         self.clear_tab_six_po_table()
         self.clear_tab_six_done_table()
@@ -5910,7 +5945,7 @@ class Ui_Form(QtGui.QWidget):
 
         #populate/resize current PO list
         index = 0
-        for row in self.po_list:
+        for row in self.filtered_po_list:
             if index > (self.tab_six_po_table.rowCount()-1):
                 index += 1
                 continue
@@ -5924,7 +5959,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_table.setColumnWidth(0,50)
         self.tab_six_po_table.setColumnWidth(1,50)
         self.tab_six_po_item_count_label.setText('%s Total Items' % str(len(self.po_list)))
-        self.tab_six_po_item_count_shown_label.setText('%s Shown' % str(index))
+        self.tab_six_po_item_count_shown_label.setText('%s Shown' % str(len(self.filtered_po_list)))
         
         
     def tab_five_more_info_requested(self, row):
@@ -7223,7 +7258,7 @@ class Ui_Form(QtGui.QWidget):
         for ii in range(self.tab_six_po_table.rowCount()):
             for jj in range(self.tab_six_po_table.columnCount()):
                 self.change_tab_six_po_table_text(ii, jj, "")
-        self.tab_six_po_table.setRowCount(len(self.po_list))
+        self.tab_six_po_table.setRowCount(len(self.filtered_po_list))
         
     def clear_tab_six_done_table(self):
         for ii in range(self.tab_six_done_table.rowCount()):
