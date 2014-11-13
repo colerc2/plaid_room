@@ -5696,13 +5696,13 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_search_sold_button.clicked.connect(self.tab_six_search)
 
     def tab_six_search_sold_more_info_requested(self, row):
-        if row <= len(self.po_search_list):
+        if row < len(self.po_search_list):
             more_info = Ui_more_info_dialog()
             more_info.add_text(self.po_search_list[row])
             more_info.exec_()
 
     def tab_six_search_sold_add_requested(self, row):
-        if row <= len(self.po_search_list):
+        if row < len(self.po_search_list):
             id = self.po_search_list[row][NEW_ID_INDEX]
             new_state = ON_CURRENT_PO_LIST
             query = (new_state, id)
@@ -5713,6 +5713,7 @@ class Ui_Form(QtGui.QWidget):
             del self.po_search_list[row]
             temp_row[REORDER_STATE] = ON_CURRENT_PO_LIST
             self.po_list.append(temp_row)
+            self.tab_six_refresh()
 
     def tab_six_search_sold_ignore_requested(self, row):
         print row
@@ -5816,10 +5817,11 @@ class Ui_Form(QtGui.QWidget):
         self.po_list = []
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             if row[REORDER_STATE] == ON_CURRENT_PO_LIST:
+                print 'adding item'
                 self.po_list.append(list(row))
+        self.tab_six_refresh()
         
     def tab_six_refresh(self):
-        self.tab_six_po_refresh()
         self.clear_tab_six_search_sold_table()
         self.clear_tab_six_po_table()
         self.clear_tab_six_done_table()
@@ -5890,7 +5892,7 @@ class Ui_Form(QtGui.QWidget):
         placeholder = 0
 
     def tab_five_transaction_button_pressed(self, row):
-        if row <= self.transaction_list:
+        if row < self.transaction_list:
             trans_id = self.transaction_list[row][TRANS_ID_INDEX]
             self.history_list = []
             for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE transaction_id = ?', (trans_id,)):
@@ -5936,7 +5938,7 @@ class Ui_Form(QtGui.QWidget):
 
 
     def tab_four_transaction_button_pressed(self, row):
-        if row <= len(self.history_list):
+        if row < len(self.history_list):
             trans_id = self.history_list[row][TRANSACTION_ID_INDEX]
             self.tab_five_search_by_transaction_number(int(trans_id))
             self.main_menu_tabs.setCurrentIndex(4)
@@ -5950,7 +5952,7 @@ class Ui_Form(QtGui.QWidget):
             
 
     def tab_four_more_info_requested(self, row):
-        if row <= len(self.history_list):
+        if row < len(self.history_list):
             try:
                 more_info = Ui_more_info_dialog()
                 more_info.add_text(self.history_list[row])
