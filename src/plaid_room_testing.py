@@ -5622,6 +5622,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_reset()
         self.tab_six_search_reset()
         self.tab_six_done_reset()
+        self.tab_six_po_reset()
 
         #make shift,-> a shortcut for adding stuff from search to checkout
         self.add_to_checkout_shortcut = QtGui.QShortcut(self)
@@ -5701,7 +5702,17 @@ class Ui_Form(QtGui.QWidget):
             more_info.exec_()
 
     def tab_six_search_sold_add_requested(self, row):
-        print row
+        if row <= len(self.po_search_list):
+            id = self.po_search_list[row][NEW_ID_INDEX]
+            new_state = ON_CURRENT_PO_LIST
+            query = (new_state, id)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists and then update UI
+            temp_row = self.po_search_list[row]
+            del self.po_search_list[row]
+            temp_row[REORDER_STATE] = ON_CURRENT_PO_LIST
+            self.po_list.append(temp_row)
 
     def tab_six_search_sold_ignore_requested(self, row):
         print row
@@ -5796,7 +5807,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_refresh()
 
 
-    def tab_six_po_refresh(self):
+    def tab_six_po_reset(self):
+        while self.tab_six_po_combobox.count() != 0:
+            self.tab_six_po_combobox.removeItem(0)
+        self.tab_six_po_combobox.addItem('Any')
+        for distributor in self.distributors.get_distributors():
+            self.tab_six_po_combobox.addItem(distributor)
         self.po_list = []
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             if row[REORDER_STATE] == ON_CURRENT_PO_LIST:
@@ -5851,6 +5867,23 @@ class Ui_Form(QtGui.QWidget):
             if row[REORDER_STATE] == NEEDS_REORDERED:
                items_in_history += 1
         self.tab_six_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
+
+        #populate/resize current PO list
+        index = 0
+        for row in self.po_list:
+            if index > (self.tab_six_po_table.rowCount()-1):
+                index += 1
+                continue
+            self.change_tab_six_po_table_text(index, 2, str(1))
+            self.change_tab_six_po_table_text(index, 3, row[ARTIST_INDEX])
+            self.change_tab_six_po_table_text(index, 4, row[TITLE_INDEX])
+            self.change_tab_six_po_table_text(index, 5, row[DISTRIBUTOR_INDEX])
+            self.change_tab_six_po_table_text(index, 6, row[UPC_INDEX])
+            index += 1
+        self.tab_six_po_table.resizeColumnsToContents()
+        self.tab_six_po_table.setColumnWidth(0,50)
+        self.tab_six_po_table.setColumnWidth(1,50)
+        self.tab_six_po_item_count_label.setText('%s Total Items' % str(len(self.po_list)))
         
         
     def tab_five_more_info_requested(self, row):
