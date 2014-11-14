@@ -5977,15 +5977,22 @@ class Ui_Form(QtGui.QWidget):
         #populate/resize done list
         index = 0
         for row in self.done_list:
+            date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            price_sold = float(row[SOLD_FOR_INDEX])
+            price_paid = float(row[PRICE_PAID_INDEX])
+            time_delta = date_time_sold - date_time_added
+            days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
             if index > (self.tab_six_done_table.rowCount()-1):
                 index += 1
                 continue
-            self.change_tab_six_done_table_text(index, 2, row[])
-            self.change_tab_six_done_table_text(index, 3, row[])
-            self.change_tab_six_done_table_text(index, 4, row[])
-            self.change_tab_six_done_table_text(index, 5, row[])
-            self.change_tab_six_done_table_text(index, 6, row[])
-            self.change_tab_six_done_table_text(index, 7, row[])
+            self.change_tab_six_done_table_text(index, 2, row[DATE_SOLD])
+            self.change_tab_six_done_table_text(index, 3, str(days_in_shop))
+            self.change_tab_six_done_table_text(index, 4, str(row[SOLD_FOR_INDEX]))
+            self.change_tab_six_done_table_text(index, 5, str(price_sold-price_paid))
+            self.change_tab_six_done_table_text(index, 6, row[ARTIST_INDEX])
+            self.change_tab_six_done_table_text(index, 7, row[TITLE_INDEX])
             self.change_tab_six_done_table_text(index, 8, row[])
             self.change_tab_six_done_table_text(index, 9, row[])
             self.change_tab_six_done_table_text(index, 10, row[])
