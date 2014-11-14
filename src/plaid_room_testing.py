@@ -5873,7 +5873,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_done_num_displayed_spinbox.setValue(15)
         self.po_done_list = []
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
-            if row[REORDER_STATE] == REORDERED:
+            if row[REORDER_STATE] == REORDERED or row[REORDER_STATE] == NOT_REORDERING:
                 self.po_done_list.append(list(row))
         self.tab_six_refresh()
 
@@ -5977,6 +5977,7 @@ class Ui_Form(QtGui.QWidget):
         #populate/resize done list
         index = 0
         for row in self.po_done_list:
+            print 'here'
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
             date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -5995,7 +5996,7 @@ class Ui_Form(QtGui.QWidget):
             self.change_tab_six_done_table_text(index, 7, row[TITLE_INDEX])
             self.change_tab_six_done_table_text(index, 8, row[DISTRIBUTOR_INDEX])
             self.change_tab_six_done_table_text(index, 9, row[FORMAT_INDEX])
-            self.change_tab_six_done_table_text(index, 10, row[PRICE_PAID_INDEX])
+            self.change_tab_six_done_table_text(index, 10, str(row[PRICE_PAID_INDEX]))
             self.change_tab_six_done_table_text(index, 11, row[NEW_USED_INDEX])
             self.change_tab_six_done_table_text(index, 12, row[LABEL_INDEX])
             self.change_tab_six_done_table_text(index, 13, row[GENRE_INDEX])
