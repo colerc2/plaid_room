@@ -5710,6 +5710,26 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_combobox.currentIndexChanged.connect(self.tab_six_po_combobox_changed)
         self.tab_six_generate_po_button.clicked.connect(self.tab_six_create_po)
 
+    def tab_six_done_back_requested(self):
+        if row < len(self.done_po_list):
+            id = self.done_po_list[row][NEW_ID_INDEX]
+            new_state = NEEDS_REORDERED
+            query = (new_state, id)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists and then update UI
+            temp_row = self.done_po_list[row]
+            del self.done_po_list[row]
+            temp_row[REORDER_STATE] = NEEDS_REORDERED
+            self.po_search_list.append(temp_row)
+            self.tab_six_refresh()
+        
+    def tab_six_done_more_info_requested(self):
+        if row < len(self.done_po_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.done_po_list[row])
+            more_info.exec_()
+
     def tab_six_create_po(self):
         #grab only the info necessary to make a PO (this could be different for each Distributor)
         temp_list = []
@@ -5749,7 +5769,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_six_refresh()
         
     def tab_six_po_more_info_requested(self, row):
-        if row < len(self.po_list):
+        if row < len(self.filtered_po_list):
             more_info = Ui_more_info_dialog()
             more_info.add_text(self.filtered_po_list[row])
             more_info.exec_()
