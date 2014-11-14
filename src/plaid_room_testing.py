@@ -5909,6 +5909,8 @@ class Ui_Form(QtGui.QWidget):
         self.generate_search_sold_ignore_buttons_tab_six()
         self.generate_po_more_info_buttons_tab_six()
         self.generate_po_back_buttons_tab_six()
+        self.generate_done_more_info_buttons_tab_six()
+        self.generate_done_back_buttons_tab_six()
         
         #populate/resize search inventory table
         index = 0
@@ -7489,6 +7491,24 @@ class Ui_Form(QtGui.QWidget):
             self.po_back_mapper.setMapping(button, ii)
             self.tab_six_po_table.setCellWidget(ii, 1, button)
         self.connect(self.po_back_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_po_back_requested)
+
+    def generate_done_more_info_buttons_tab_six(self):
+        self.done_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_done_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.done_more_info_mapper, QtCore.SLOT("map()"))
+            self.done_more_info_mapper.setMapping(button, ii)
+            self.tab_six_done_table.setCellWidget(ii, 0, button)
+        self.connect(self.done_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_done_more_info_requested)
+
+    def generate_done_back_buttons_tab_six(self):
+        self.done_back_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_done_table.rowCount()):
+            button = QtGui.QPushButton('<-')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.done_back_mapper, QtCore.SLOT("map()"))
+            self.done_back_mapper.setMapping(button, ii)
+            self.tab_six_done_table.setCellWidget(ii, 1, button)
+        self.connect(self.done_back_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_done_back_requested)
 
     def generate_more_info_buttons_tab_four(self):
         self.more_info_mapper_tab_four = QtCore.QSignalMapper(self)
