@@ -5780,12 +5780,12 @@ class Ui_Form(QtGui.QWidget):
             new_state = NOT_REORDERING
             query = (new_state, id)
             self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
-            self.db_commit()
+            self.db.commit()
             #fix lists
             temp_row = self.po_search_list[row]
             del self.po_search_list[row]
             temp_row[REORDER_STATE] = NOT_REORDERING
-            self.done_list.append(temp_row)
+            self.po_done_list.append(temp_row)
             self.tab_six_refresh()
 
     def tab_six_search(self):
@@ -5976,7 +5976,7 @@ class Ui_Form(QtGui.QWidget):
         
         #populate/resize done list
         index = 0
-        for row in self.done_list:
+        for row in self.po_done_list:
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
             date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -5987,20 +5987,20 @@ class Ui_Form(QtGui.QWidget):
             if index > (self.tab_six_done_table.rowCount()-1):
                 index += 1
                 continue
-            self.change_tab_six_done_table_text(index, 2, row[DATE_SOLD])
+            self.change_tab_six_done_table_text(index, 2, row[DATE_SOLD_INDEX])
             self.change_tab_six_done_table_text(index, 3, str(days_in_shop))
             self.change_tab_six_done_table_text(index, 4, str(row[SOLD_FOR_INDEX]))
             self.change_tab_six_done_table_text(index, 5, str(price_sold-price_paid))
             self.change_tab_six_done_table_text(index, 6, row[ARTIST_INDEX])
             self.change_tab_six_done_table_text(index, 7, row[TITLE_INDEX])
-            self.change_tab_six_done_table_text(index, 8, row[])
-            self.change_tab_six_done_table_text(index, 9, row[])
-            self.change_tab_six_done_table_text(index, 10, row[])
-            self.change_tab_six_done_table_text(index, 11, row[])
-            self.change_tab_six_done_table_text(index, 12, row[])
-            self.change_tab_six_done_table_text(index, 13, row[])
-            self.change_tab_six_done_table_text(index, 14, row[])
-            self.change_tab_six_done_table_text(index, 15, row[])
+            self.change_tab_six_done_table_text(index, 8, row[DISTRIBUTOR_INDEX])
+            self.change_tab_six_done_table_text(index, 9, row[FORMAT_INDEX])
+            self.change_tab_six_done_table_text(index, 10, row[PRICE_PAID_INDEX])
+            self.change_tab_six_done_table_text(index, 11, row[NEW_USED_INDEX])
+            self.change_tab_six_done_table_text(index, 12, row[LABEL_INDEX])
+            self.change_tab_six_done_table_text(index, 13, row[GENRE_INDEX])
+            self.change_tab_six_done_table_text(index, 14, row[SOLD_NOTES_INDEX])
+            self.change_tab_six_done_table_text(index, 15, row[UPC_INDEX])
         
         
     def tab_five_more_info_requested(self, row):
