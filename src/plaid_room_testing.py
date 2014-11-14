@@ -5748,8 +5748,19 @@ class Ui_Form(QtGui.QWidget):
             writer = csv.writer(f)
             writer.writerows(temp_list)
 
-        #take them out of the filtered_po_list, add them to the 
-        
+        #take them out of the filtered_po_list, add them to the done ish
+        for row in self.filtered_po_list:
+            id = row[NEW_ID_INDEX]
+            new_state = REORDERED
+            query = (new_state, id)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists brej
+            row[REORDER_STATE] = REORDERED
+            self.po_done_list.append(row)
+        self.tab_six_po_reset()
+        self.filtered_po_list = []
+        self.tab_six_refresh()
         
 
     def tab_six_po_combobox_changed(self, index):
