@@ -5709,6 +5709,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_search_sold_button.clicked.connect(self.tab_six_search)
         self.tab_six_po_combobox.currentIndexChanged.connect(self.tab_six_po_combobox_changed)
         self.tab_six_generate_po_button.clicked.connect(self.tab_six_create_po)
+        self.tab_six_done_search_qline.returnPressed.connect(self.tab_six_search_done)
+        self.tab_six_done_search_button.clicked.connect(self.tab_six_search_done)
+
 
     def tab_six_done_back_requested(self, row):
         if row < len(self.po_done_list):
@@ -5851,6 +5854,9 @@ class Ui_Form(QtGui.QWidget):
                     dist = self.tab_six_search_sold_dist_combo_box.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
+                #check state
+                if row[REORDER_STATE] != NEEDS_REORDERED:
+                    continue
                 self.po_search_list.append(list(row))
         else:
             self.po_search_list = []
@@ -5871,9 +5877,74 @@ class Ui_Form(QtGui.QWidget):
                     dist = self.tab_six_search_sold_dist_combo_box.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
+                #check state
+                if row[REORDER_STATE] != NEEDS_REORDERED:
+                    continue
                 self.po_search_list.append(list(row))
         #update UI
         self.tab_six_refresh()
+
+    def tab_six_search_done(self):
+        query = self.tab_six_done_search_qline.text()
+        
+        if ((query != '') and (query is not None)):
+            #TODO: idiotic round 4
+            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.po_done_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges specified
+                if self.tab_six_done_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_six_done_start_date.date().toPyDate()
+                    end = self.tab_six_done_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_six_done_filter_dist_checkbox.isChecked():
+                    dist = self.tab_six_done_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE] != NEEDS_REORDERED or row[REORDER_STATE] != ON_CURRENT_PO_LIST:
+                    continue
+                self.po_done_list.append(list(row))
+        else:
+            self.po_done_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check date ranges specified
+                if self.tab_six_done_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_six_done_start_date.date().toPyDate()
+                    end = self.tab_six_done_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_six_done_filter_dist_checkbox.isChecked():
+                    dist = self.tab_six_done_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE] == NEEDS_REORDERED or row[REORDER_STATE] == ON_CURRENT_PO_LIST:
+                    continue
+                self.po_done_list.append(list(row))
+        #update UI
+        self.tab_six_refresh()
+
 
     def tab_six_search_reset(self):
         self.tab_six_search_sold_qline.setText('')
@@ -6011,7 +6082,6 @@ class Ui_Form(QtGui.QWidget):
         #populate/resize done list
         index = 0
         for row in self.po_done_list:
-            print 'here'
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
             date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -6022,7 +6092,7 @@ class Ui_Form(QtGui.QWidget):
             if index > (self.tab_six_done_table.rowCount()-1):
                 index += 1
                 continue
-            self.change_tab_six_done_table_text(index, 2, row[DATE_SOLD_INDEX])
+            self.change_tab_six_done_table_text(index, 2, str(date_sold))
             self.change_tab_six_done_table_text(index, 3, str(days_in_shop))
             self.change_tab_six_done_table_text(index, 4, str(row[SOLD_FOR_INDEX]))
             self.change_tab_six_done_table_text(index, 5, str(price_sold-price_paid))
