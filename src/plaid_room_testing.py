@@ -5710,24 +5710,24 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_combobox.currentIndexChanged.connect(self.tab_six_po_combobox_changed)
         self.tab_six_generate_po_button.clicked.connect(self.tab_six_create_po)
 
-    def tab_six_done_back_requested(self):
-        if row < len(self.done_po_list):
-            id = self.done_po_list[row][NEW_ID_INDEX]
+    def tab_six_done_back_requested(self, row):
+        if row < len(self.po_done_list):
+            id = self.po_done_list[row][NEW_ID_INDEX]
             new_state = NEEDS_REORDERED
             query = (new_state, id)
             self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
             self.db.commit()
             #fix lists and then update UI
-            temp_row = self.done_po_list[row]
-            del self.done_po_list[row]
+            temp_row = self.po_done_list[row]
+            del self.po_done_list[row]
             temp_row[REORDER_STATE] = NEEDS_REORDERED
             self.po_search_list.append(temp_row)
             self.tab_six_refresh()
         
-    def tab_six_done_more_info_requested(self):
-        if row < len(self.done_po_list):
+    def tab_six_done_more_info_requested(self, row):
+        if row < len(self.po_done_list):
             more_info = Ui_more_info_dialog()
-            more_info.add_text(self.done_po_list[row])
+            more_info.add_text(self.po_done_list[row])
             more_info.exec_()
 
     def tab_six_create_po(self):
@@ -5749,6 +5749,7 @@ class Ui_Form(QtGui.QWidget):
             writer.writerows(temp_list)
 
         #take them out of the filtered_po_list, add them to the 
+        
         
 
     def tab_six_po_combobox_changed(self, index):
@@ -6024,6 +6025,18 @@ class Ui_Form(QtGui.QWidget):
             self.change_tab_six_done_table_text(index, 13, row[GENRE_INDEX])
             self.change_tab_six_done_table_text(index, 14, row[SOLD_NOTES_INDEX])
             self.change_tab_six_done_table_text(index, 15, row[UPC_INDEX])
+            index += 1
+
+        self.tab_six_done_table.resizeColumnsToContents()
+        self.tab_six_done_table.setColumnWidth(0,50)
+        self.tab_six_done_table.setColumnWidth(1,50)
+        #update inventory count
+        items_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+            if row[REORDER_STATE] == REORDERED or row[REORDER_STATE] == NOT_REORDERING:
+               items_in_history += 1
+        self.tab_six_done_item_history_label.setText('%s Items in History' % str(items_in_history))
+        self.tab_six_done_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.po_done_list)))
         
         
     def tab_five_more_info_requested(self, row):
