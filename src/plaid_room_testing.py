@@ -5727,6 +5727,8 @@ class Ui_Form(QtGui.QWidget):
         with open(file_name, "wb") as f:
             writer = csv.writer(f)
             writer.writerows(temp_list)
+
+        #take them out of the filtered_po_list, add them to the 
         
 
     def tab_six_po_combobox_changed(self, index):
@@ -5773,7 +5775,18 @@ class Ui_Form(QtGui.QWidget):
             self.tab_six_refresh()
 
     def tab_six_search_sold_ignore_requested(self, row):
-        print row
+        if row < len(self.po_search_list):
+            id = self.po_search_list[row][NEW_ID_INDEX]
+            new_state = NOT_REORDERING
+            query = (new_state, id)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db_commit()
+            #fix lists
+            temp_row = self.po_search_list[row]
+            del self.po_search_list[row]
+            temp_row[REORDER_STATE] = NOT_REORDERING
+            self.done_list.append(temp_row)
+            self.tab_six_refresh()
 
     def tab_six_search(self):
         query = self.tab_six_search_sold_qline.text()
@@ -5960,6 +5973,27 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_po_table.setColumnWidth(1,50)
         self.tab_six_po_item_count_label.setText('%s Total Items' % str(len(self.po_list)))
         self.tab_six_po_item_count_shown_label.setText('%s Shown' % str(len(self.filtered_po_list)))
+        
+        #populate/resize done list
+        index = 0
+        for row in self.done_list:
+            if index > (self.tab_six_done_table.rowCount()-1):
+                index += 1
+                continue
+            self.change_tab_six_done_table_text(index, 2, row[])
+            self.change_tab_six_done_table_text(index, 3, row[])
+            self.change_tab_six_done_table_text(index, 4, row[])
+            self.change_tab_six_done_table_text(index, 5, row[])
+            self.change_tab_six_done_table_text(index, 6, row[])
+            self.change_tab_six_done_table_text(index, 7, row[])
+            self.change_tab_six_done_table_text(index, 8, row[])
+            self.change_tab_six_done_table_text(index, 9, row[])
+            self.change_tab_six_done_table_text(index, 10, row[])
+            self.change_tab_six_done_table_text(index, 11, row[])
+            self.change_tab_six_done_table_text(index, 12, row[])
+            self.change_tab_six_done_table_text(index, 13, row[])
+            self.change_tab_six_done_table_text(index, 14, row[])
+            self.change_tab_six_done_table_text(index, 15, row[])
         
         
     def tab_five_more_info_requested(self, row):
