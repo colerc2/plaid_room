@@ -15,6 +15,7 @@ from discogs_interface import DiscogsClient
 from distributors import Distributors
 from more_info_dialog import Ui_more_info_dialog
 from cash_dialog import Ui_CashDialog
+from barcode_printer import BarcodePrinter
 import time
 import datetime
 import sqlite3
@@ -92,6 +93,7 @@ class Ui_Form(QtGui.QWidget):
         #declare global stuff here?
         self.discogs = DiscogsClient()
         self.distributors = Distributors()
+        self.barcode_printer = BarcodePrinter()
         self.search_discogs_list = []
         self.from_inventory_db_list = []
         self.what_index_in_list = []
@@ -6952,6 +6954,9 @@ class Ui_Form(QtGui.QWidget):
 
         #display in that young box as recently added
         self.tab_one_update_recently_added_table()
+
+        #print label if necessary
+        self.barcode_printer.print_barcode(db_item[0],db_item[1],db_item[2],db_item[4])
 
         #clear upc and artist/title search terms and give focus back to upc search box
         self.tab_one_search_upc_qline.setText('')
