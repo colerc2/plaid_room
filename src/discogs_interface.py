@@ -11,7 +11,7 @@ import datetime
 class DiscogsClient():
     def __init__(self):
         #get info from .key file
-        key_file = open('/Users/bccole1989/Documents/plaid_room_records/plaid_room/discogs.key')
+        key_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/discogs.key')
         self.consumer_key = key_file.readline().rstrip('\n')
         self.consumer_secret = key_file.readline().rstrip('\n')
         self.access_token = key_file.readline().rstrip('\n')

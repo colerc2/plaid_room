@@ -4,7 +4,7 @@ import csv
 
 class Distributors():
     def __init__(self):
-        self.dist_file_name = '/Users/bccole1989/Documents/plaid_room_records/plaid_room/distributors.csv'
+        self.dist_file_name = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/distributors.csv'
         distributor_file = open(self.dist_file_name)
         before_split = distributor_file.readline().rstrip('\n')
         distributor_file.close()
