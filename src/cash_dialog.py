@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+import locale
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -26,6 +27,7 @@ except AttributeError:
 class Ui_CashDialog(QtGui.QDialog):
     def __init__(self, total_):
         QtGui.QDialog.__init__(self)
+        locale.setlocale( locale.LC_ALL, '')
         self.total = total_
         self.setupUi(self)
 
@@ -99,7 +101,7 @@ class Ui_CashDialog(QtGui.QDialog):
         #initialize stuff
         #self.cash_dialog_button_box.setDefault(False)
         #self.cash_dialog_button_box.setAutoDefault(False)
-        self.total_label_cash.setText(str('$'+str(self.total)))
+        self.total_label_cash.setText(locale.currency(self.total))
         
         #connect stuff
         self.connect(self.tendered_qline,QtCore.SIGNAL("editingFinished()"), self.display_change)
@@ -114,8 +116,16 @@ class Ui_CashDialog(QtGui.QDialog):
         try:
             tendered = float(self.tendered_qline.text())
             change_due = tendered - self.total
-            self.change_due_label_cash.setText(str('$'+str(change_due)))
+            self.change_due_label_cash.setText(locale.currency(change_due))
             #self.cash_dialog_button_box.setFocus()
         except Exception as e:
             placeholder = 'bad coding'
+
+    def get_tendered(self):
+        return float(self.tendered_qline.text())
+
+    def get_change(self):
+        tendered = float(self.tendered_qline.text())
+        return (tendered - self.total)
+    
         

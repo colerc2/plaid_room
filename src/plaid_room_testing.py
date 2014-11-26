@@ -24,6 +24,7 @@ import re
 import string
 from threading import Thread
 import csv
+import locale
 
 
 UPC_INDEX = 0
@@ -88,9 +89,9 @@ except AttributeError:
 class Ui_Form(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
-        #self.thread().setPriority(QtCore.QThread.TimeCriticalPriority)
         self.thread().setPriority(QtCore.QThread.HighestPriority)
-
+        locale.setlocale( locale.LC_ALL, '')
+        
         #declare global stuff here?
         self.discogs = DiscogsClient()
         self.distributors = Distributors()
@@ -5699,6 +5700,7 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_checkout_table,QtCore.SIGNAL("cellChanged(int, int)"),self.tab_three_percent_changed)
         self.connect(self.tab_three_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_discount_qline_edited)
         self.connect(self.tab_three_percent_discount_qline,QtCore.SIGNAL("returnPressed()"),self.tab_three_percent_discount_qline_edited)
+        self.connect(self.tab_three_shipping_qline,QtCore.SIGNAL("returnPressed()"), self.tab_three_shipping_qline_edited)
         self.tab_three_CREAM_button.clicked.connect(self.tab_three_make_a_cash_dialog)
 
         #connect tab four stuff
@@ -6331,6 +6333,8 @@ class Ui_Form(QtGui.QWidget):
             cream = Ui_CashDialog(self.checkout_total)
             paid_or_naaa = cream.exec_()
             if paid_or_naaa == QtGui.QDialog.Accepted:
+                tendered = cream.get_tendered()
+                change = cream.get_change()
                 curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 sold_inventory_new_ids = []
                 receipt_list = []
@@ -6399,7 +6403,7 @@ class Ui_Form(QtGui.QWidget):
                 #print receipt
                 trans_with_id = list(trans_item)
                 trans_with_id.append(trans_id)
-                self.receipt_printer.print_receipt(receipt_list, trans_with_id)
+                self.receipt_printer.print_receipt(receipt_list, trans_with_id, (tendered, change))
                     
                 self.checkout_list = []
                 self.tab_three_refresh_checkout_table()
@@ -6414,10 +6418,17 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_three_discount_qline_edited(self):
         text = self.tab_three_discount_qline.text()
-        new_price = float(text)
+        new_price = self.string_with_dollar_sign_to_float(text)
         if new_price >= 0 and self.checkout_subtotal != 0:
             self.checkout_discount = ((self.checkout_subtotal-new_price)/self.checkout_subtotal)*100
         self.tab_three_refresh_checkout_table()
+
+    def tab_three_shipping_qline_edited(self):
+        text = self.tab_three_shipping_qline.text()
+        new_price = self.string_with_dollar_sign_to_float(text)
+        if new_price >= 0 and self.checkout_subtotal != 0:
+            self.checkout_shipping = new_price
+        self.tab_three_refresh_checkout_table()        
 
     def tab_three_percent_changed(self, row, col):
         if col == 5:
@@ -6445,6 +6456,14 @@ class Ui_Form(QtGui.QWidget):
             return int(string)
         except Exception as e:
             print 'something happened when casting'
+            return -1
+
+    def string_with_dollar_sign_to_float(self, string):
+        string = string.replace('$','')
+        try:
+            return float(string)
+        except Exception as e:
+            print 'something happened while casting'
             return -1
 
     def tab_two_ctrl_a_shortcut(self):
@@ -6546,11 +6565,11 @@ class Ui_Form(QtGui.QWidget):
         tax_amount = round(discounted_price * 0.07,2)
         self.tab_three_subtotal_qline.setText(str(self.checkout_subtotal))
         self.tab_three_percent_discount_qline.setText(str('%d%%' % int(self.checkout_discount)))
-        self.tab_three_discount_qline.setText(str(discounted_price))
-        self.tab_three_tax_amount_label.setText('$'+str(tax_amount))
-        self.tab_three_shipping_qline.setText(str(round(self.checkout_shipping,2)))
-        self.checkout_total = round(discounted_price+tax_amount,2)
-        self.tab_three_total_qline.setText(str(self.checkout_total))
+        self.tab_three_discount_qline.setText(locale.currency(discounted_price))
+        self.tab_three_tax_amount_label.setText(locale.currency(tax_amount))
+        self.tab_three_shipping_qline.setText(locale.currency(round(self.checkout_shipping,2)))
+        self.checkout_total = round(discounted_price+tax_amount,2)+round(self.checkout_shipping,2)
+        self.tab_three_total_qline.setText(locale.currency(self.checkout_total))
         self.tab_three_set_checkout_table_widths()
         how_many = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):

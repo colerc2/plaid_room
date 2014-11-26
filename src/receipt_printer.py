@@ -49,23 +49,23 @@ TRANS_CASH_CREDIT_INDEX = 8
 TRANS_SOLD_IDS_INDEX = 9
 TRANS_ID_INDEX = 10
 
+CHARS_IN_A_LINE = 36
 
 class ReceiptPrinter():
     def __init__(self):
         self.file = '/Users/plaidroomrecords/Desktop/receipt_test.pdf'
         locale.setlocale( locale.LC_ALL, '')
         
-    def print_receipt(self, items, transaction):
+    def print_receipt(self, items, transaction, extra_info):
         footer = 30
         lines = []
-        #first loop through and find out how many lines we'll need, this will determine the size of the canvas
+        #sub-header
         lines.append(['-----------------------------------',True])
         lines.append(['Transaction #%06d' % transaction[TRANS_ID_INDEX],True])
         date_sold = (datetime.datetime.strptime(str(transaction[TRANS_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S"))
         lines.append(['%s' % date_sold.strftime("%A %b %d, %Y %I:%M %p"),True])
         lines.append(['-----------------------------------',True])
-        #36
-        CHARS_IN_A_LINE = 36
+        #items
         for item in items:
             temp = '%s - %s' % (item[ARTIST_INDEX], item[TITLE_INDEX])
             if len(temp) < 25: #fill in the price at the end of the line
@@ -114,7 +114,7 @@ class ReceiptPrinter():
             discount += (' '*spaces_to_add) + price
             lines.append([discount,False])
             #after discount
-            total = (' '*13) + 'New Subtotal'
+            total = (' '*13) + 'After Discount'
             price = locale.currency(transaction[TRANS_DISCOUNTED_PRICE_INDEX])
             spaces_to_add = CHARS_IN_A_LINE - len(total) - len(price)
             total = total + (' '*spaces_to_add) + price
@@ -125,6 +125,13 @@ class ReceiptPrinter():
         spaces_to_add = CHARS_IN_A_LINE - len(tax) - len(price)
         tax = tax + (' '*spaces_to_add) + price
         lines.append([tax,False])
+        #shipping
+        if(transaction[TRANS_SHIPPING_INDEX] != 0):
+            shipping = (' '*13) + 'Shipping'
+            price = locale.currency(transaction[TRANS_SHIPPING_INDEX])
+            spaces_to_add = CHARS_IN_A_LINE - len(shipping) - len(price)
+            shipping = shipping + (' '*spaces_to_add) + price
+            lines.append([shipping,False])
         #total
         total = (' '*13) + 'Total'
         price = locale.currency(transaction[TRANS_TOTAL_INDEX])
@@ -133,13 +140,27 @@ class ReceiptPrinter():
         lines.append([total,False])        
         #split between totals and transaction
         lines.append(['-----------------------------------',True])
+        #cash or credit
         if transaction[TRANS_CASH_CREDIT_INDEX] == 'Cash':
-            todo = 0
+            tendered = (' '*13) + 'Cash Tendered'
+            price = locale.currency(extra_info[0])
+            spaces_to_add = CHARS_IN_A_LINE - len(tendered) - len(price)
+            tendered = tendered + (' '*spaces_to_add) + price
+            lines.append([tendered,False])
+            change = (' '*13) + 'Change Due'
+            price = locale.currency(extra_info[1])
+            spaces_to_add = CHARS_IN_A_LINE - len(change) - len(price)
+            change = change + (' '*spaces_to_add) + price
+            lines.append([change,False])
         elif transaction[TRANS_CASH_CREDIT_INDEX] == 'Credit':
             todo = 0
         else:
             print 'something went wrong'
+        lines.append(['-----------------------------------',True])
+        lines.append(['Thank you for shopping with us!',True])
+        lines.append(['Hope to see you again soon!',True])
         
+            
         canvas_size = 40 + 4*len(lines) + footer
             
 
