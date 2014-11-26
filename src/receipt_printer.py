@@ -70,9 +70,23 @@ class ReceiptPrinter():
                 price = locale.currency(item[PRICE_INDEX])
                 spaces_to_add = CHARS_IN_A_LINE - len(price) - len(temp)
                 temp += (' '*spaces_to_add) + price
+                lines.append([temp, False])
             else:
-                todo = 0
-            lines.append([temp, False])
+                #start grabbing words off of the end until it's less than 25
+                split_temp = temp.split(' ')
+                first_line = ''
+                second_line = '    '
+                for word in split_temp:
+                    if (len(first_line)+len(word)+1) < 25:
+                        first_line  = first_line + word + ' '
+                    else:
+                        second_line = second_line + word + ' '
+                second_line = second_line[0:25]
+                price = locale.currency(item[PRICE_INDEX])
+                spaces_to_add = CHARS_IN_A_LINE - len(price) - len(second_line)
+                second_line += (' '*spaces_to_add) + price
+                lines.append([first_line,False])
+                lines.append([second_line,False])
             #if there was a discount, add this to receipt
             if item[PERCENT_DISCOUNT_INDEX] != 0:
                 temp = ('    - %d%%' % int(item[PERCENT_DISCOUNT_INDEX]))
@@ -82,18 +96,48 @@ class ReceiptPrinter():
                 temp += (' '*spaces_to_add) + price
                 lines.append([temp, False])
 
-        #totals
+        break_between_items_and_total = ' '*28 + '-'*8
+        lines.append([break_between_items_and_total,False])
+        #subtotal
         total = (' '*13) + 'Subtotal'
         price = locale.currency(transaction[TRANS_SUBTOTAL_INDEX])
         spaces_to_add = CHARS_IN_A_LINE - len(total) - len(price)
         total = total + (' '*spaces_to_add) + price
         lines.append([total,False])
+        #discount (if necessary)
+        if(transaction[TRANS_DISCOUNT_INDEX] != 0):
+            discount = (' '*13) + ('-%d%%' % transaction[TRANS_DISCOUNT_INDEX])
+            price = '-' + locale.currency(transaction[TRANS_SUBTOTAL_INDEX]-transaction[TRANS_DISCOUNTED_PRICE_INDEX])
+            spaces_to_add = CHARS_IN_A_LINE - len(discount) - len(price)
+            discount += (' '*spaces_to_add) + price
+            lines.append([discount,False])
+            #after discount
+            total = (' '*13) + 'New Subtotal'
+            price = locale.currency(transaction[TRANS_DISCOUNTED_PRICE_INDEX])
+            spaces_to_add = CHARS_IN_A_LINE - len(total) - len(price)
+            total = total + (' '*spaces_to_add) + price
+            lines.append([total,False])
         #tax
         tax = (' '*13) + 'Tax @ 7%'
         price = locale.currency(transaction[TRANS_TAX_INDEX])
         spaces_to_add = CHARS_IN_A_LINE - len(tax) - len(price)
         tax = tax + (' '*spaces_to_add) + price
         lines.append([tax,False])
+        #total
+        total = (' '*13) + 'Total'
+        price = locale.currency(transaction[TRANS_TOTAL_INDEX])
+        spaces_to_add = CHARS_IN_A_LINE - len(total) - len(price)
+        total = total + (' '*spaces_to_add) + price
+        lines.append([total,False])        
+        #split between totals and transaction
+        lines.append(['-----------------------------------',True])
+        if transaction[TRANS_CASH_CREDIT_INDEX] == 'Cash':
+            todo = 0
+        elif transaction[TRANS_CASH_CREDIT_INDEX] == 'Credit':
+            todo = 0
+        else:
+            print 'something went wrong'
+        
         canvas_size = 120 + 5*len(lines) + footer
             
 
