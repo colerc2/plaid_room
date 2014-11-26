@@ -16,6 +16,7 @@ from distributors import Distributors
 from more_info_dialog import Ui_more_info_dialog
 from cash_dialog import Ui_CashDialog
 from barcode_printer import BarcodePrinter
+from receipt_printer import ReceiptPrinter
 import time
 import datetime
 import sqlite3
@@ -94,6 +95,7 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()
         self.distributors = Distributors()
         self.barcode_printer = BarcodePrinter()
+        self.receipt_printer = ReceiptPrinter()
         self.search_discogs_list = []
         self.from_inventory_db_list = []
         self.what_index_in_list = []
@@ -6331,6 +6333,7 @@ class Ui_Form(QtGui.QWidget):
             if paid_or_naaa == QtGui.QDialog.Accepted:
                 curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 sold_inventory_new_ids = []
+                receipt_list = []
                 for row in self.checkout_list:
                     percent_discount = row[20]
                     sold_for = round(((100-percent_discount)*.01)*row[PRICE_INDEX],2)
@@ -6361,6 +6364,7 @@ class Ui_Form(QtGui.QWidget):
                                self.xstr(row[21]),
                                0,#reorder_state
                                0)#transaction id
+                    receipt_list.append(db_item)
                     self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
                     self.db.commit()
                     sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
@@ -6392,6 +6396,11 @@ class Ui_Form(QtGui.QWidget):
                     self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key,date))
                     self.db.commit()
 
+                #print receipt
+                trans_with_id = list(trans_item)
+                trans_with_id.append(trans_id)
+                self.receipt_printer.print_receipt(receipt_list, trans_with_id)
+                    
                 self.checkout_list = []
                 self.tab_three_refresh_checkout_table()
                 self.tab_four_reset()
@@ -6944,7 +6953,7 @@ class Ui_Form(QtGui.QWidget):
                        self.xstr(aliases_db),
                        self.xstr(tracks_db),
                        self.xstr(notes_db))
-            
+
             self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
             self.db.commit()
             #print self.db_cursor.lastrowid
@@ -6952,11 +6961,22 @@ class Ui_Form(QtGui.QWidget):
         except Exception as e:
             self.print_to_console('Problem adding item to DB: %s' % e)
 
+        #print label if necessary
+        if db_item[0] == 'BLANK' or db_item[0] == '':
+            last_row_id = self.db_cursor.lastrowid
+            code = 'PLAID%06d' % last_row_id
+            #update DB
+            self.db_cursor.execute('UPDATE inventory SET upc = ? WHERE id = ?', (code, last_row_id))
+            self.db.commit()
+        else:
+            code = db_item[0]
+        if self.tab_one_print_sticker_check_box.isChecked():
+            self.barcode_printer.print_barcode(code,db_item[1],db_item[2],db_item[4])
+
+            
         #display in that young box as recently added
         self.tab_one_update_recently_added_table()
 
-        #print label if necessary
-        self.barcode_printer.print_barcode(db_item[0],db_item[1],db_item[2],db_item[4])
 
         #clear upc and artist/title search terms and give focus back to upc search box
         self.tab_one_search_upc_qline.setText('')
