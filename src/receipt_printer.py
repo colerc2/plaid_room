@@ -7,6 +7,7 @@ from reportlab.pdfgen import canvas
 import reportlab
 import locale
 import subprocess
+import datetime
 
 UPC_INDEX = 0
 ARTIST_INDEX = 1
@@ -60,7 +61,8 @@ class ReceiptPrinter():
         #first loop through and find out how many lines we'll need, this will determine the size of the canvas
         lines.append(['-----------------------------------',True])
         lines.append(['Transaction #%06d' % transaction[TRANS_ID_INDEX],True])
-        lines.append(['%s' % transaction[TRANS_DATE_SOLD_INDEX],True])
+        date_sold = (datetime.datetime.strptime(str(transaction[TRANS_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S"))
+        lines.append(['%s' % date_sold.strftime("%A %b %d, %Y %I:%M %p"),True])
         lines.append(['-----------------------------------',True])
         #36
         CHARS_IN_A_LINE = 36
@@ -138,7 +140,7 @@ class ReceiptPrinter():
         else:
             print 'something went wrong'
         
-        canvas_size = 120 + 5*len(lines) + footer
+        canvas_size = 40 + 4*len(lines) + footer
             
 
         
