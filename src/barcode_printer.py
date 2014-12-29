@@ -16,7 +16,7 @@ class BarcodePrinter():
     def print_barcode(self, code, artist, title, price):
         c = canvas.Canvas(self.file, pagesize=(62 * mm, 29 * mm))
 
-        if(code[0:5] == 'PLAID'):
+        if(code[0:5] == 'PLAID' or code[0:5] == 'PRRGC'):
             code = reportlab.graphics.barcode.createBarcodeDrawing('Code128',value=code,barHeight=8*mm,width=60*mm,humanReadable=True)
         else:
         #upca sucks so i convert to ean13

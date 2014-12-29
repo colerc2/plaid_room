@@ -157,8 +157,8 @@ class ReceiptPrinter():
         else:
             print 'something went wrong'
         lines.append(['-----------------------------------',True])
-        lines.append(['Thank you for shopping with us!',True])
-        lines.append(['Hope to see you again soon!',True])
+        lines.append(['Have a great day!',True])
+        #lines.append(['Hope to see you again soon!',True])
         
             
         canvas_size = 40 + 4*len(lines) + footer
