@@ -3,8 +3,8 @@
 import csv
 
 class Distributors():
-    def __init__(self, distributor_file):
-        self.dist_file_name = distributor_file
+    def __init__(self):
+        self.dist_file_name = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/distributors.csv'
         distributor_file = open(self.dist_file_name)
         before_split = distributor_file.readline().rstrip('\n')
         distributor_file.close()
