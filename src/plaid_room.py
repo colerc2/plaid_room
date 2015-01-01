@@ -7362,11 +7362,68 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_clear_all_button.clicked.connect(self.tab_one_results_table_clear_all)
         self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
         self.connect(self.tab_one_results_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_one_results_table_add_new_distributor)
+        self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
+        self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
         
 
 
     ################### tab one starts ##################################
 
+    def tab_one_remove_from_inventory(self):
+        row = self.tab_one_recently_added_table.currentRow()
+        key = ''
+        date = ''
+        for ix, db_row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
+            if ix == row:
+                key = db_row[ID_INDEX]
+                date = db_row[DATE_ADDED_INDEX]
+                break
+        #remove her
+        self.db_cursor.execute('DELETE FROM inventory WHERE id = ? and date_added = ?', (key, date))
+        #commit
+        self.db.commit()
+        self.tab_one_print_to_console('%s item removed from inventory\n' % db_row[ARTIST_INDEX])
+        self.tab_one_recently_added_table_refresh()
+        
+    def tab_one_edit_inventory(self):
+        row = self.tab_one_recently_added_table.currentRow()
+        key = ''
+        date = ''
+        for ix, db_row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
+            if ix == row:
+                key = db_row[ID_INDEX]
+                date = db_row[DATE_ADDED_INDEX]
+                break
+
+        db_item = [''] * 14
+        try:
+            db_item[UPC_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,0))
+            db_item[ARTIST_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,1))
+            db_item[TITLE_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,2))
+            db_item[FORMAT_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,3))
+            db_item[PRICE_INDEX] = self.xfloat(self.tab_one_recently_added_table_get_text(row,4))
+            db_item[PRICE_PAID_INDEX] = self.xfloat(self.tab_one_recently_added_table_get_text(row,5))
+            db_item[NEW_USED_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,6))
+            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,7))
+            db_item[LABEL_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,8))
+            db_item[GENRE_INDEX] = self.xstr(self.tab_one_recently_added_table_get_text(row,9))
+            db_item[YEAR_INDEX] = self.xint(self.tab_one_recently_added_table_get_text(row,10))
+            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.tab_one_recently_added_table_get_text(row,12))
+            db_item[12] = key
+            db_item[13] = date
+            
+        except Exception as e:
+            print 'tab_one_edit inventory, extraction from spreadsheet: %s' % e
+            self.tab_one_print_to_console('Problem editing item, try again.\n')
+            return
+
+        #edit her
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ? WHERE id = ? and date_added = ?', tuple(db_item))
+        self.db.commit()
+        #update gui
+        self.tab_one_print_to_console('%s item edited\n' % db_item[ARTIST_INDEX])
+        self.tab_one_recently_added_table_refresh()
+        
     def tab_one_add_to_inventory(self):
         #what row is selected
         row = self.tab_one_results_table.currentRow()
@@ -7437,7 +7494,6 @@ class Ui_Form(QtGui.QWidget):
                 print 'tab_one_add_to_inventory, calling discogs, real name: %s' % e
             db_item[REAL_NAME_INDEX] = self.xstr(self.filter_unprintable(", ".join(real_names)))
             #14 - profile
-            print '14'
             profiles = []
             try:
                 for jj in range(len(result.artists)):
@@ -7449,7 +7505,6 @@ class Ui_Form(QtGui.QWidget):
                 print 'tab_one_add_to_inventory, calling discogs, profile: %s' % e
             db_item[PROFILE_INDEX] = self.xstr(self.filter_unprintable("\n\n".join(profiles)))
             #15 - variations
-            print '15'
             variations = []
             try:
                 for jj in range(len(result.artists)):
@@ -7522,6 +7577,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_upc_qline.setFocus()
 
     def tab_one_recently_added_table_refresh(self):
+        self.tab_one_recently_added_table_clear()
         for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
             if ix > 19:#hard coded limit, recently added table only has 20 rows
                 break
@@ -7742,6 +7798,13 @@ class Ui_Form(QtGui.QWidget):
         else:
             return None
 
+    def tab_one_recently_added_table_get_text(self, row, col):
+        item = self.tab_one_recently_added_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
     def tab_one_results_table_add_new_used_combos(self):
         for ii in range(max(1,len(self.tab_one_results_table_list))):
             box = self.generate_new_used_combobox()
@@ -7795,7 +7858,7 @@ class Ui_Form(QtGui.QWidget):
         return str(s)
     
     def xint(self, i):
-        if i is None:
+        if (i is None) or (i == ''):
             return -1
         return int(i)
 
