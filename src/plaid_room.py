@@ -44,10 +44,12 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()#discogs api
         self.distributors = Distributors(DIST_FILE_NAME)
 
-        #lists corresponding to each table
+        #tab one stuff
         self.tab_one_results_table_list = []
         self.tab_one_recently_added_table_list = []
-
+        self.tab_one_results_table_list_tracker = []
+        self.tab_one_results_table_combobox_cols = [6, 7]
+        
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
         self.db_cursor = self.db.cursor()
@@ -7354,8 +7356,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
         self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
-        self.tab_one_clear_all_button.clicked.connect(self.tab_one_results_table_clear)
+        self.tab_one_clear_all_button.clicked.connect(self.tab_one_results_table_clear_all)
+        self.connect(self.tab_one_results_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_one_results_table_add_new_distributor)
 
+
+    ################### tab one starts ##################################
+        
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
         upc = str(self.tab_one_search_upc_qline.text())
@@ -7365,7 +7371,13 @@ class Ui_Form(QtGui.QWidget):
         artist_title = str(self.tab_one_search_artist_title_title_qline.text())
         self.tab_one_search_for_release(artist_title, True)
 
-    def tab_one_results_table_clear(self):
+    def tab_one_results_table_clear_all(self):
+#        self.tab_one_results_table_clear_text()
+        self.tab_one_results_table_list = []
+        self.tab_one_results_table_list_tracker = []
+        self.tab_one_results_table_refresh()
+        
+    def tab_one_results_table_clear_text(self):
         for ii in range(self.tab_one_results_table.rowCount()):
             for jj in range(self.tab_one_results_table.columnCount()):
                 self.tab_one_results_table_change_text(ii,jj,"")
@@ -7384,16 +7396,23 @@ class Ui_Form(QtGui.QWidget):
     def tab_one_search_for_release(self, search_query, upc_needed):
         #clear list
         self.tab_one_results_table_list = []
-
+        self.tab_one_results_table_list_tracker = []
+        
         #add "cd", "vinyl", or "" to search term
         search_query_with_format = search_query + self.tab_one_get_radio_button_input()
 
         #search current inventory and sold inventory before searching discogs
+        formats = []
         for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
-            self.tab_one_results_table_list.append(list(row[0:22]))
+            if row[FORMAT_INDEX] not in formats:
+                self.tab_one_results_table_list.append(list(row[0:22]))
+                self.tab_one_results_table_list_tracker.append([True,row])
+                formats.append(row[FORMAT_INDEX])
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
-            self.tab_one_results_table_list.append(list(row[0:22]))
-
+            if row[FORMAT_INDEX] not in formats:
+                self.tab_one_results_table_list.append(list(row[0:22]))
+                self.tab_one_results_table_list_tracker.append([True,row])
+                formats.append(row[FORMAT_INDEX])            
         #search discogs
         self.tab_one_print_to_console('Searching discogs...')
         try:
@@ -7409,7 +7428,6 @@ class Ui_Form(QtGui.QWidget):
 
                     try:
                         #0 - upc
-                        print '0'
                         if upc_needed:
                             temp_row.append('BLANK')
                         else:
@@ -7420,7 +7438,6 @@ class Ui_Form(QtGui.QWidget):
                         #2 - title
                         temp_row.append(title_.lstrip())
                         #3 - format
-                        print '3'
                         format_ = ''
                         try:
                             for jj in range(len(result.formats)):
@@ -7436,32 +7453,23 @@ class Ui_Form(QtGui.QWidget):
                             pass
                         temp_row.append(format_)
                         #4 - price
-                        print '4'
                         temp_row.append('14.99')
                         #5 - price_paid
-                        print '5'
                         temp_row.append('9.99')
                         #6 - new_used
-                        print '6'
                         temp_row.append('New')
                         #7 - dist
-                        print '7'
                         #TODO: select distributor based on most recent DB item
                         temp_row.append('Fat Beats')
                         #8 - label
-                        print '8'
                         temp_row.append(result.labels[0].name)
                         #9 - genre
-                        print '9'
                         temp_row.append(", ".join(result.genres))
                         #10 - year
-                        print '10'
                         temp_row.append(str(result.year))
                         #11 - date_added
-                        print '11'
                         temp_row.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                         #12 - discogs_release_number
-                        print '12'
                         temp_row.append(result.id)
                         # #13 - real_name
                         # print '13'
@@ -7533,6 +7541,7 @@ class Ui_Form(QtGui.QWidget):
                         # temp_row.append('')
 
                         self.tab_one_results_table_list.append(temp_row)
+                        self.tab_one_results_table_list_tracker.append([False,result])
                         
                     except Exception as e:
                         print e
@@ -7548,14 +7557,74 @@ class Ui_Form(QtGui.QWidget):
             
 
     def tab_one_results_table_refresh(self):
-        self.tab_one_results_table_clear()
+        self.tab_one_results_table_clear_text()
         self.tab_one_results_table.setRowCount(max(1,len(self.tab_one_results_table_list)))
 
         for ix, row in enumerate(self.tab_one_results_table_list):
             self.tab_one_results_table_change_text(ix, 0, row[UPC_INDEX])
             self.tab_one_results_table_change_text(ix, 1, row[ARTIST_INDEX])
             self.tab_one_results_table_change_text(ix, 2, row[TITLE_INDEX])
+            self.tab_one_results_table_change_text(ix, 3, row[FORMAT_INDEX])
+            self.tab_one_results_table_change_text(ix, 4, self.xstr(row[PRICE_INDEX]))
+            self.tab_one_results_table_change_text(ix, 5, self.xstr(row[PRICE_PAID_INDEX]))
+            #self.tab_one_results_table_change_text(ix, 6, row[NEW_USED_INDEX])
+            #self.tab_one_results_table_change_text(ix, 7, row[DISTRIBUTOR_INDEX])
+            self.tab_one_results_table_change_text(ix, 8, row[LABEL_INDEX])
+            self.tab_one_results_table_change_text(ix, 9, row[GENRE_INDEX])
+            self.tab_one_results_table_change_text(ix, 10, self.xstr(row[YEAR_INDEX]))
+            self.tab_one_results_table_change_text(ix, 11, self.xstr(row[DISCOGS_RELEASE_NUMBER_INDEX]))
+
+        #add in combo boxes
+        self.tab_one_results_table_add_dist_combos()
+        self.tab_one_results_table_add_new_used_combos()
+            
+        #make less ugly
+        self.tab_one_results_table.selectRow(0)
+        self.tab_one_results_table.scrollToTop()
+        self.tab_one_results_table.setFocus()
+        if self.tab_one_results_table_list:
+            self.tab_one_results_table.resizeColumnsToContents()
+
+    def tab_one_results_table_add_new_distributor(self, row, col):
+        if col == 7:
+            text = self.tab_one_results_table.item(row, col).text()
+            self.distributors.add_distributor(str(text))
+            self.tab_one_results_table_refresh()
         
+    def tab_one_results_table_add_dist_combos(self):
+        self.tab_one_dist_mapper = QtCore.QSignalMapper(self)
+        for ii in range(len(self.tab_one_results_table_list)):
+            box = self.generate_distributor_combobox(self.tab_one_results_table_list[ii][DISTRIBUTOR_INDEX])
+            self.connect(box, QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_one_dist_mapper, QtCore.SLOT("map()"))
+            self.tab_one_dist_mapper.setMapping(box, ii)
+            self.tab_one_results_table.setCellWidget(ii,7,box)
+        self.connect(self.tab_one_dist_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_one_new_dist_entered)
+
+    def tab_one_new_dist_entered(self, row):
+        if self.tab_one_get_results_table_text(row,7) == 'Add Distributor':
+            item = QtGui.QTableWidgetItem()
+            item.setText("")
+            if self.tab_one_results_table.cellWidget(row,7) is not None:
+                self.tab_one_results_table.removeCellWidget(row,7)
+            self.tab_one_results_table.blockSignals(True)
+            self.tab_one_results_table.setItem(row, 7, item)
+            self.tab_one_results_table.blockSignals(False)
+            self.tab_one_results_table.editItem(self.tab_one_results_table.item(row, 7))#why did this line take me 10 minutes?
+
+    def tab_one_get_results_table_text(self, row, col):
+        if col in self.tab_one_results_table_combobox_cols:
+            widget = self.tab_one_results_table.cellWidget(row, col)
+            return widget.currentText()
+        item = self.tab_one_results_table.item(row, col)
+        if(item is not None):
+            return item.text()
+        else:
+            return None
+
+    def tab_one_results_table_add_new_used_combos(self):
+        for ii in range(len(self.tab_one_results_table_list)):
+            box = self.generate_new_used_combobox()
+            self.tab_one_results_table.setCellWidget(ii,6,box)    
 
         
     def tab_one_get_radio_button_input(self):
@@ -7572,9 +7641,44 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
 
 
+    ################### tab one over ##################################
+        
+    def generate_new_used_combobox(self):
+        combobox = QtGui.QComboBox()
+        combobox.addItem("New")
+        combobox.addItem("Used")
+        return combobox
+
+    def generate_distributor_combobox(self, which_dist):
+        combobox = QtGui.QComboBox()
+        for distributor in self.distributors.get_distributors():
+            combobox.addItem(distributor)
+        combobox.addItem("Add Distributor")
+        try:
+            where_in_combo = self.distributors.get_distributors().index(which_dist)
+            combobox.setCurrentIndex(where_in_combo)
+        except Exception:
+            pass
+        return combobox
+
         
     def filter_unprintable(self, str_):
         return filter(lambda x: x in string.printable, str_)
+
+    def xstr(self,s):
+        if s is None:
+            return ''
+        return str(s)
+    
+    def xint(self, i):
+        if i is None:
+            return -1
+        return int(i)
+
+    def xfloat(self, f):
+        if f is None:
+            return -1
+        return float(f)
 
         
 
