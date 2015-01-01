@@ -16,7 +16,7 @@ import string
 from threading import Thread
 import csv
 import locale
-import config_stuff
+from config_stuff import * #probably a bad idea
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -76,6 +76,7 @@ class Ui_Form(QtGui.QWidget):
         reserved_two text,
         id integer primary key autoincrement)
         """)
+        
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_inventory
         (upc text,
         artist text,
@@ -7353,7 +7354,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
         self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
-        self.tab_one_clear_all_button.clicked.connect(self.clear_tab_one_search_table)
+        self.tab_one_clear_all_button.clicked.connect(self.tab_one_results_table_clear)
 
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
@@ -7361,10 +7362,26 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_for_release(upc, False)
 
     def tab_one_search_for_artist_title(self):
+        artist_title = str(self.tab_one_search_artist_title_title_qline.text())
+        self.tab_one_search_for_release(artist_title, True)
 
-    def tab_one_clear_search_table(self):
+    def tab_one_results_table_clear(self):
+        for ii in range(self.tab_one_results_table.rowCount()):
+            for jj in range(self.tab_one_results_table.columnCount()):
+                self.tab_one_results_table_change_text(ii,jj,"")
 
-    def tab_one_search_for_release(self, search_term, upc_needed):
+    def tab_one_results_table_change_text(self,row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_one_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_one_results_table.setItem(row, col, item)
+        
+
+    def tab_one_search_for_release(self, search_query, upc_needed):
         #clear list
         self.tab_one_results_table_list = []
 
@@ -7373,9 +7390,171 @@ class Ui_Form(QtGui.QWidget):
 
         #search current inventory and sold inventory before searching discogs
         for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
-            self.tab_one_results_table_list.append(list(row))
+            self.tab_one_results_table_list.append(list(row[0:22]))
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
-            self.tab_one_results_table_list.append(list(row))
+            self.tab_one_results_table_list.append(list(row[0:22]))
+
+        #search discogs
+        self.tab_one_print_to_console('Searching discogs...')
+        try:
+            results = self.discogs.search_for_release(search_query_with_format)
+            if (results is not None) and (len(results) != 0):
+                self.tab_one_print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
+
+
+                for result in results:
+                    if len(self.tab_one_results_table_list) >= 20:
+                        break
+                    temp_row = []
+
+                    try:
+                        #0 - upc
+                        print '0'
+                        if upc_needed:
+                            temp_row.append('BLANK')
+                        else:
+                            temp_row.append(search_query)
+                        #1 - artist
+                        artists_, title_ = result.title.rsplit('-',1)
+                        temp_row.append(artists_.rstrip())
+                        #2 - title
+                        temp_row.append(title_.lstrip())
+                        #3 - format
+                        print '3'
+                        format_ = ''
+                        try:
+                            for jj in range(len(result.formats)):
+                                if 'qty' in (result.formats[jj]):
+                                    format_ = format_ + (result.formats[jj])['qty'] + 'x'
+                                if 'name' in (result.formats[jj]):
+                                    format_ = format_ + (result.formats[jj])['name'] + ', '
+                                if 'descriptions' in (result.formats[jj]):
+                                    format_ = format_ + ", ".join((result.formats[jj])['descriptions'])
+                                if jj != (len(result.formats)-1):
+                                    format_ = format_ + ' + '
+                        except Exception:
+                            pass
+                        temp_row.append(format_)
+                        #4 - price
+                        print '4'
+                        temp_row.append('14.99')
+                        #5 - price_paid
+                        print '5'
+                        temp_row.append('9.99')
+                        #6 - new_used
+                        print '6'
+                        temp_row.append('New')
+                        #7 - dist
+                        print '7'
+                        #TODO: select distributor based on most recent DB item
+                        temp_row.append('Fat Beats')
+                        #8 - label
+                        print '8'
+                        temp_row.append(result.labels[0].name)
+                        #9 - genre
+                        print '9'
+                        temp_row.append(", ".join(result.genres))
+                        #10 - year
+                        print '10'
+                        temp_row.append(str(result.year))
+                        #11 - date_added
+                        print '11'
+                        temp_row.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                        #12 - discogs_release_number
+                        print '12'
+                        temp_row.append(result.id)
+                        # #13 - real_name
+                        # print '13'
+                        # real_names = []
+                        # try:
+                        #     for jj in range(len(result.artists)):
+                        #         print 'jj -> %d' % jj
+                        #         print result.artists[jj].real_name
+                        #         if result.artists[jj].real_name is not None:
+                        #             real_names.append(result.artists[jj].real_name)
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable(", ".join(real_names)))
+                        # #14 - profile
+                        # print '14'
+                        # profiles = []
+                        # try:
+                        #     for jj in range(len(result.artists)):
+                        #         if result.artists[jj].profile is not None:
+                        #             profile = result.artists[jj].name
+                        #             profile = profile + ' - ' + result.artists[jj].profile
+                        #             profiles.append(profile)
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable("\n\n".join(profiles)))
+                        # #15 - variations
+                        # print '15'
+                        # variations = []
+                        # try:
+                        #     for jj in range(len(result.artists)):
+                        #         if result.artists[jj].name_variations is not None:
+                        #             variation = ", ".join(result.artists[jj].name_variations)
+                        #             variations.append(variation)
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable(",".join(variations)))
+                        # #16 - aliases
+                        # aliases = []
+                        # try:
+                        #     for jj in range(len(result.artists)):
+                        #         temp = []
+                        #         for artist in result.artists[jj].aliases:
+                        #             temp.append(artist.name)
+                        #         alias = ", ".join(temp)
+                        #     aliases.append(alias)
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable(",".join(aliases)))
+                        # #17 - track_list
+                        # tracks = []
+                        # try:
+                        #     if result.tracklist is not None:
+                        #         for t in result.tracklist:
+                        #             tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable("\n".join(tracks)))
+                        # #18 - notes
+                        # notes = []
+                        # try:
+                        #     if result.notes is not None:
+                        #         notes = result.notes
+                        # except Exception:
+                        #     pass
+                        # temp_row.append(self.filter_unprintable(notes))
+                        # #19,20,21 - taxable, reserved_one, reserved_two
+                        # temp_row.append(1)
+                        # temp_row.append('')
+                        # temp_row.append('')
+
+                        self.tab_one_results_table_list.append(temp_row)
+                        
+                    except Exception as e:
+                        print e
+                        temp_row = []
+                        pass
+                    
+        except Exception as e:
+            print e
+            pass
+
+        #now that we have search results, update the table
+        self.tab_one_results_table_refresh()
+            
+
+    def tab_one_results_table_refresh(self):
+        self.tab_one_results_table_clear()
+        self.tab_one_results_table.setRowCount(max(1,len(self.tab_one_results_table_list)))
+
+        for ix, row in enumerate(self.tab_one_results_table_list):
+            self.tab_one_results_table_change_text(ix, 0, row[UPC_INDEX])
+            self.tab_one_results_table_change_text(ix, 1, row[ARTIST_INDEX])
+            self.tab_one_results_table_change_text(ix, 2, row[TITLE_INDEX])
         
 
         
@@ -7386,6 +7565,16 @@ class Ui_Form(QtGui.QWidget):
             return ' cd'
         if self.tab_one_any_radio_button.isChecked():
             return ''
+        
+    def tab_one_print_to_console(self, text):
+        current_text = str(self.tab_one_text_browser.toPlainText())
+        self.tab_one_text_browser.setPlainText(current_text + text)
+        self.tab_one_text_browser.moveCursor(QtGui.QTextCursor.End)
+
+
+        
+    def filter_unprintable(self, str_):
+        return filter(lambda x: x in string.printable, str_)
 
         
 
