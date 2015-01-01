@@ -14,6 +14,7 @@ class BarcodePrinter():
         locale.setlocale( locale.LC_ALL, '')
 
     def print_barcode(self, code, artist, title, price):
+        print price
         c = canvas.Canvas(self.file, pagesize=(62 * mm, 29 * mm))
 
         if code.isdigit():
@@ -24,11 +25,11 @@ class BarcodePrinter():
         
         code.drawOn(c,1*mm, 3*mm)
         c.setFont('Courier', 8)
-        artist = artist[0:40]
-        title = title[0:40]
+        artist = artist[0:22]
+        title = title[0:22]
         c.drawString(2*mm, 19*mm,artist)#19
         c.drawString(2*mm, 16*mm,title)#16
-        c.setFont('Courier',18)
+        c.setFont('Courier',16)
         c.drawString(40*mm, 16*mm, locale.currency(price))
         
         c.showPage()

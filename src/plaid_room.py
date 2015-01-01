@@ -43,7 +43,8 @@ class Ui_Form(QtGui.QWidget):
         #declaration of global variables
         self.discogs = DiscogsClient()#discogs api
         self.distributors = Distributors(DIST_FILE_NAME)
-
+        self.barcode_printer = BarcodePrinter()
+        
         #tab one stuff
         self.tab_one_results_table_list = []
         self.tab_one_recently_added_table_list = []
@@ -7375,19 +7376,19 @@ class Ui_Form(QtGui.QWidget):
         #regardless of where it came from, the first piece of the db row will be extracted from
         #the current selected row
         try:
-            db_item[UPC_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,0))
-            db_item[ARTIST_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,1))
-            db_item[TITLE_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,2))
-            db_item[FORMAT_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,3))
-            db_item[PRICE_INDEX] = self.xfloat(self.get_tab_one_results_table_text(row,4))
-            db_item[PRICE_PAID_INDEX] = self.xfloat(self.get_tab_one_results_table_text(row,5))
-            db_item[NEW_USED_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,6))
-            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,7))
-            db_item[LABEL_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,8))
-            db_item[GENRE_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,9))
-            db_item[YEAR_INDEX] = self.xint(self.get_tab_one_results_table_text(row,10))
+            db_item[UPC_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,0))
+            db_item[ARTIST_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,1))
+            db_item[TITLE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,2))
+            db_item[FORMAT_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,3))
+            db_item[PRICE_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,4))
+            db_item[PRICE_PAID_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,5))
+            db_item[NEW_USED_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,6))
+            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,7))
+            db_item[LABEL_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,8))
+            db_item[GENRE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,9))
+            db_item[YEAR_INDEX] = self.xint(self.tab_one_get_results_table_text(row,10))
             db_item[DATE_ADDED_INDEX] = curr_time
-            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.get_tab_one_results_table_text(row,11))
+            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.tab_one_get_results_table_text(row,11))
         except Exception as e:
             print 'tab_one_add_to_inventory, extraction from spreadsheet: %s' % e
 
@@ -7507,7 +7508,7 @@ class Ui_Form(QtGui.QWidget):
             #update db
             self.db_cursor.execute('UPDATE inventory SET upc = ? WHERE id = ?', (code, last_row_id))
             self.db.commit()
-        if self.tab_one_print_sticker_checkbox.isChecked():
+        if self.tab_one_print_sticker_check_box.isChecked():
             self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX]) 
 
         
