@@ -7352,6 +7352,7 @@ class Ui_Form(QtGui.QWidget):
         #tab one
         self.tab_one_text_browser.setPlainText('\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
+        self.tab_one_recently_added_table_refresh()
         #connectors
         self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
         self.tab_one_search_upc_qline.returnPressed.connect(self.tab_one_search_for_upc)
@@ -7511,9 +7512,43 @@ class Ui_Form(QtGui.QWidget):
         if self.tab_one_print_sticker_check_box.isChecked():
             self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX]) 
 
+        #display in recently added table
+        self.tab_one_recently_added_table_refresh()
+
+        #clear upc and artist/title search terms and give focus back to upc search box
+        self.tab_one_search_upc_qline.setText('')
+        self.tab_one_search_artist_title_title_qline.setText('')
+        self.tab_one_search_upc_qline.setFocus()
+
+    def tab_one_recently_added_table_refresh(self):
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
+            if ix > 19:#hard coded limit, recently added table only has 20 rows
+                break
+            for col in range(DISCOGS_RELEASE_NUMBER_INDEX):
+                self.tab_one_recently_added_table_change_text(ix, col, str(row[col]))
+        self.tab_one_recently_added_table.resizeColumnsToContents()
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_one_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+            
+
+    def tab_one_recently_added_table_clear(self):
+        for ii in range(self.tab_one_recently_added_table.rowCount()):
+            for jj in range(self.tab_one_recently_added_table.columnCount()):
+                self.tab_one_recently_added_table_change_text(ii,jj,"")
         
         
-        
+    def tab_one_recently_added_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_one_recently_added_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_one_recently_added_table.setItem(row, col, item)        
+    
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
         upc = str(self.tab_one_search_upc_qline.text())
