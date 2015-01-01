@@ -7352,6 +7352,7 @@ class Ui_Form(QtGui.QWidget):
         #tab one
         self.tab_one_text_browser.setPlainText('\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
+        self.tab_one_results_table_refresh()
         self.tab_one_recently_added_table_refresh()
         #connectors
         self.tab_one_search_upc_button.clicked.connect(self.tab_one_search_for_upc)
@@ -7401,8 +7402,19 @@ class Ui_Form(QtGui.QWidget):
         #local db - data taken from local db
         #discogs - call made to discogs api for additional info
         #manually entered - extra info left blank
-
-        if self.tab_one_results_table_list_tracker[row][0]:#came from local DB
+        
+        if various_found or not self.tab_one_results_table_list:#list was entered manually or various was found in artist category
+            #most of this isn't necessary, but i'm doing it anyway in case i need to change it in the future
+            db_item[REAL_NAME_INDEX] = ''
+            db_item[PROFILE_INDEX] = ''
+            db_item[VARIATIONS_INDEX] = ''
+            db_item[ALIASES_INDEX] = ''
+            db_item[TRACK_LIST_INDEX] = '' 
+            db_item[NOTES_INDEX] = ''
+            db_item[TAXABLE_INDEX] = 1
+            db_item[RESERVED_ONE_INDEX] = '' 
+            db_item[RESERVED_TWO_INDEX] = ''
+        elif self.tab_one_results_table_list_tracker[row][0]:#came from local DB
             local_db_row = self.tab_one_results_table_list_tracker[row][1]
             db_item[REAL_NAME_INDEX] = self.xstr(local_db_row[REAL_NAME_INDEX])
             db_item[PROFILE_INDEX] = self.xstr(local_db_row[PROFILE_INDEX])
@@ -7413,7 +7425,7 @@ class Ui_Form(QtGui.QWidget):
             db_item[TAXABLE_INDEX] = self.xint(local_db_row[TAXABLE_INDEX])
             db_item[RESERVED_ONE_INDEX] = self.xstr(local_db_row[RESERVED_ONE_INDEX])
             db_item[RESERVED_TWO_INDEX] = self.xstr(local_db_row[RESERVED_TWO_INDEX])
-        elif (not self.tab_one_results_table_list_tracker[row][0]) and (not various_found):#came from discogs, oh joy, time to hate life
+        elif (not self.tab_one_results_table_list_tracker[row][0]):#came from discogs, oh joy, time to hate life
             result = self.tab_one_results_table_list_tracker[row][1]#contains the result from earlier call to discogs
             #13 - real_name
             real_names = []
@@ -7480,17 +7492,6 @@ class Ui_Form(QtGui.QWidget):
             db_item[TAXABLE_INDEX] = 1
             db_item[RESERVED_ONE_INDEX] = '' 
             db_item[RESERVED_TWO_INDEX] = ''
-        else:#list was entered manually or various was found in artist category
-            #most of this isn't necessary, but i'm doing it anyway in case i need to change it in the future
-            db_item[REAL_NAME_INDEX] = ''
-            db_item[PROFILE_INDEX] = ''
-            db_item[VARIATIONS_INDEX] = ''
-            db_item[ALIASES_INDEX] = ''
-            db_item[TRACK_LIST_INDEX] = '' 
-            db_item[NOTES_INDEX] = ''
-            db_item[TAXABLE_INDEX] = 1
-            db_item[RESERVED_ONE_INDEX] = '' 
-            db_item[RESERVED_TWO_INDEX] = ''
 
         #add item to database
         try:
@@ -7524,7 +7525,7 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
             if ix > 19:#hard coded limit, recently added table only has 20 rows
                 break
-            for col in range(DISCOGS_RELEASE_NUMBER_INDEX):
+            for col in range(DISCOGS_RELEASE_NUMBER_INDEX+1):
                 self.tab_one_recently_added_table_change_text(ix, col, str(row[col]))
         self.tab_one_recently_added_table.resizeColumnsToContents()
         how_many = 0
@@ -7709,8 +7710,12 @@ class Ui_Form(QtGui.QWidget):
         
     def tab_one_results_table_add_dist_combos(self):
         self.tab_one_dist_mapper = QtCore.QSignalMapper(self)
-        for ii in range(len(self.tab_one_results_table_list)):
-            box = self.generate_distributor_combobox(self.tab_one_results_table_list[ii][DISTRIBUTOR_INDEX])
+        for ii in range(max(1,len(self.tab_one_results_table_list))):
+            box = None
+            try:
+                box = self.generate_distributor_combobox(self.tab_one_results_table_list[ii][DISTRIBUTOR_INDEX])
+            except Exception as e:
+                box = self.generate_distributor_combobox('Fat Beats')
             self.connect(box, QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_one_dist_mapper, QtCore.SLOT("map()"))
             self.tab_one_dist_mapper.setMapping(box, ii)
             self.tab_one_results_table.setCellWidget(ii,7,box)
@@ -7738,7 +7743,7 @@ class Ui_Form(QtGui.QWidget):
             return None
 
     def tab_one_results_table_add_new_used_combos(self):
-        for ii in range(len(self.tab_one_results_table_list)):
+        for ii in range(max(1,len(self.tab_one_results_table_list))):
             box = self.generate_new_used_combobox()
             self.tab_one_results_table.setCellWidget(ii,6,box)    
 
