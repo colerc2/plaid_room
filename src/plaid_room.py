@@ -7357,10 +7357,138 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_artist_title_button.clicked.connect(self.tab_one_search_for_artist_title)
         self.tab_one_search_artist_title_title_qline.returnPressed.connect(self.tab_one_search_for_artist_title)
         self.tab_one_clear_all_button.clicked.connect(self.tab_one_results_table_clear_all)
+        self.tab_one_add_selected_to_inventory.clicked.connect(self.tab_one_add_to_inventory)
         self.connect(self.tab_one_results_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_one_results_table_add_new_distributor)
+        
 
 
     ################### tab one starts ##################################
+
+    def tab_one_add_to_inventory(self):
+        #what row is selected
+        row = self.tab_one_results_table.currentRow()
+        #get current time
+        curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        db_item = [''] * 22
+        #the item came from one of three places: the local db, discogs, or it was manually entered
+        #regardless of where it came from, the first piece of the db row will be extracted from
+        #the current selected row
+        try:
+            db_item[UPC_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,0))
+            db_item[ARTIST_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,1))
+            db_item[TITLE_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,2))
+            db_item[FORMAT_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,3))
+            db_item[PRICE_INDEX] = self.xfloat(self.get_tab_one_results_table_text(row,4))
+            db_item[PRICE_PAID_INDEX] = self.xfloat(self.get_tab_one_results_table_text(row,5))
+            db_item[NEW_USED_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,6))
+            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,7))
+            db_item[LABEL_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,8))
+            db_item[GENRE_INDEX] = self.xstr(self.get_tab_one_results_table_text(row,9))
+            db_item[YEAR_INDEX] = self.xint(self.get_tab_one_results_table_text(row,10))
+            db_item[DATE_ADDED_INDEX] = curr_time
+            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.get_tab_one_results_table_text(row,11))
+        except Exception as e:
+            print 'tab_one_add_to_inventory, extraction from spreadsheet: %s' % e
+
+        #Various artists cause a huge problem so i've harcoded things to ignore stuff when it finds 'Various'
+        various_found = ('Various' in db_item[ARTIST_INDEX])
+            
+        #now the rest of the info must be filled in, where the info comes from
+        #depends on where this item came from
+        #local db - data taken from local db
+        #discogs - call made to discogs api for additional info
+        #manually entered - extra info left blank
+
+        if self.tab_one_results_table_list_tracker[row][0]:#came from local DB
+            local_db_row = self.tab_one_results_table_list_tracker[row][1]
+            db_item[REAL_NAME_INDEX] = self.xstr(local_db_row[REAL_NAME_INDEX])
+            db_item[PROFILE_INDEX] = self.xstr(local_db_row[PROFILE_INDEX])
+            db_item[VARIATIONS_INDEX] = self.xstr(local_db_row[VARIATIONS_INDEX])
+            db_item[ALIASES_INDEX] = self.xstr(local_db_row[ALIASES_INDEX])
+            db_item[TRACK_LIST_INDEX] = self.xstr(local_db_row[TRACK_LIST_INDEX])
+            db_item[NOTES_INDEX] = self.xstr(local_db_row[NOTES_INDEX])
+            db_item[TAXABLE_INDEX] = self.xint(local_db_row[TAXABLE_INDEX])
+            db_item[RESERVED_ONE_INDEX] = self.xstr(local_db_row[RESERVED_ONE_INDEX])
+            db_item[RESERVED_TWO_INDEX] = self.xstr(local_db_row[RESERVED_TWO_INDEX])
+        elif (not self.tab_one_results_table_list_tracker[row][0]) and (not various_found):#came from discogs, oh joy, time to hate life
+            result = self.tab_one_results_table_list_tracker[row][1]#contains the result from earlier call to discogs
+            #13 - real_name
+            real_names = []
+            try:
+                for jj in range(len(result.artists)):
+                    if result.artists[jj].real_name is not None:
+                        real_names.append(result.artists[jj].real_name)
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, real name: %s' % e
+            db_item[REAL_NAME_INDEX] = self.xstr(self.filter_unprintable(", ".join(real_names)))
+            #14 - profile
+            print '14'
+            profiles = []
+            try:
+                for jj in range(len(result.artists)):
+                    if result.artists[jj].profile is not None:
+                        profile = result.artists[jj].name
+                        profile = profile + ' - ' + result.artists[jj].profile
+                        profiles.append(profile)
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, profile: %s' % e
+            db_item[PROFILE_INDEX] = self.xstr(self.filter_unprintable("\n\n".join(profiles)))
+            #15 - variations
+            print '15'
+            variations = []
+            try:
+                for jj in range(len(result.artists)):
+                    if result.artists[jj].name_variations is not None:
+                        variation = ", ".join(result.artists[jj].name_variations)
+                        variations.append(variation)
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, variations: %s' % e
+            db_item[VARIATIONS_INDEX] = self.xstr(self.filter_unprintable(",".join(variations)))
+            #16 - aliases
+            aliases = []
+            try:
+                for jj in range(len(result.artists)):
+                    temp = []
+                    for artist in result.artists[jj].aliases:
+                        temp.append(artist.name)
+                    alias = ", ".join(temp)
+                aliases.append(alias)
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, aliases: %s' % e
+            db_item[ALIASES_INDEX] = self.xstr(self.filter_unprintable(",".join(aliases)))
+            #17 - track_list
+            tracks = []
+            try:
+                if result.tracklist is not None:
+                    for t in result.tracklist:
+                        tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, track list: %s' %e
+            db_item[TRACK_LIST_INDEX] = self.xstr(self.filter_unprintable("\n".join(tracks)))
+            #18 - notes
+            notes = []
+            try:
+                if result.notes is not None:
+                    notes = result.notes
+            except Exception as e:
+                print 'tab_one_add_to_inventory, calling discogs, notes: %s' % e
+            db_item[NOTES_INDEX] = self.xstr(self.filter_unprintable(notes))
+            #19,20,21 - taxable, reserved_one, reserved_two
+            db_item[TAXABLE_INDEX] = 1
+            db_item[RESERVED_ONE_INDEX] = '' 
+            db_item[RESERVED_TWO_INDEX] = ''
+        else:#list was entered manually or various was found in artist category
+            #most of this isn't necessary, but i'm doing it anyway in case i need to change it in the future
+            db_item[REAL_NAME_INDEX] = ''
+            db_item[PROFILE_INDEX] = ''
+            db_item[VARIATIONS_INDEX] = ''
+            db_item[ALIASES_INDEX] = ''
+            db_item[TRACK_LIST_INDEX] = '' 
+            db_item[NOTES_INDEX] = ''
+            db_item[TAXABLE_INDEX] = 1
+            db_item[RESERVED_ONE_INDEX] = '' 
+            db_item[RESERVED_TWO_INDEX] = ''
         
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
@@ -7372,7 +7500,6 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_for_release(artist_title, True)
 
     def tab_one_results_table_clear_all(self):
-#        self.tab_one_results_table_clear_text()
         self.tab_one_results_table_list = []
         self.tab_one_results_table_list_tracker = []
         self.tab_one_results_table_refresh()
@@ -7471,75 +7598,7 @@ class Ui_Form(QtGui.QWidget):
                         temp_row.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                         #12 - discogs_release_number
                         temp_row.append(result.id)
-                        # #13 - real_name
-                        # print '13'
-                        # real_names = []
-                        # try:
-                        #     for jj in range(len(result.artists)):
-                        #         print 'jj -> %d' % jj
-                        #         print result.artists[jj].real_name
-                        #         if result.artists[jj].real_name is not None:
-                        #             real_names.append(result.artists[jj].real_name)
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable(", ".join(real_names)))
-                        # #14 - profile
-                        # print '14'
-                        # profiles = []
-                        # try:
-                        #     for jj in range(len(result.artists)):
-                        #         if result.artists[jj].profile is not None:
-                        #             profile = result.artists[jj].name
-                        #             profile = profile + ' - ' + result.artists[jj].profile
-                        #             profiles.append(profile)
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable("\n\n".join(profiles)))
-                        # #15 - variations
-                        # print '15'
-                        # variations = []
-                        # try:
-                        #     for jj in range(len(result.artists)):
-                        #         if result.artists[jj].name_variations is not None:
-                        #             variation = ", ".join(result.artists[jj].name_variations)
-                        #             variations.append(variation)
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable(",".join(variations)))
-                        # #16 - aliases
-                        # aliases = []
-                        # try:
-                        #     for jj in range(len(result.artists)):
-                        #         temp = []
-                        #         for artist in result.artists[jj].aliases:
-                        #             temp.append(artist.name)
-                        #         alias = ", ".join(temp)
-                        #     aliases.append(alias)
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable(",".join(aliases)))
-                        # #17 - track_list
-                        # tracks = []
-                        # try:
-                        #     if result.tracklist is not None:
-                        #         for t in result.tracklist:
-                        #             tracks.append(('%s - %s - %s' % (t.position, t.duration, t.title)))
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable("\n".join(tracks)))
-                        # #18 - notes
-                        # notes = []
-                        # try:
-                        #     if result.notes is not None:
-                        #         notes = result.notes
-                        # except Exception:
-                        #     pass
-                        # temp_row.append(self.filter_unprintable(notes))
-                        # #19,20,21 - taxable, reserved_one, reserved_two
-                        # temp_row.append(1)
-                        # temp_row.append('')
-                        # temp_row.append('')
-
+                        
                         self.tab_one_results_table_list.append(temp_row)
                         self.tab_one_results_table_list_tracker.append([False,result])
                         
@@ -7567,8 +7626,6 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table_change_text(ix, 3, row[FORMAT_INDEX])
             self.tab_one_results_table_change_text(ix, 4, self.xstr(row[PRICE_INDEX]))
             self.tab_one_results_table_change_text(ix, 5, self.xstr(row[PRICE_PAID_INDEX]))
-            #self.tab_one_results_table_change_text(ix, 6, row[NEW_USED_INDEX])
-            #self.tab_one_results_table_change_text(ix, 7, row[DISTRIBUTOR_INDEX])
             self.tab_one_results_table_change_text(ix, 8, row[LABEL_INDEX])
             self.tab_one_results_table_change_text(ix, 9, row[GENRE_INDEX])
             self.tab_one_results_table_change_text(ix, 10, self.xstr(row[YEAR_INDEX]))
@@ -7582,7 +7639,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.selectRow(0)
         self.tab_one_results_table.scrollToTop()
         self.tab_one_results_table.setFocus()
-        if self.tab_one_results_table_list:
+        if self.tab_one_results_table_list:#only resize columns if there were results
             self.tab_one_results_table.resizeColumnsToContents()
 
     def tab_one_results_table_add_new_distributor(self, row, col):
@@ -7634,6 +7691,8 @@ class Ui_Form(QtGui.QWidget):
             return ' cd'
         if self.tab_one_any_radio_button.isChecked():
             return ''
+        else:
+            return ''
         
     def tab_one_print_to_console(self, text):
         current_text = str(self.tab_one_text_browser.toPlainText())
@@ -7657,7 +7716,8 @@ class Ui_Form(QtGui.QWidget):
         try:
             where_in_combo = self.distributors.get_distributors().index(which_dist)
             combobox.setCurrentIndex(where_in_combo)
-        except Exception:
+        except Exception as e:
+            print 'generate_distributor_combobox: %s' % e
             pass
         return combobox
 
