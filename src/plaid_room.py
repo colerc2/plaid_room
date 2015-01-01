@@ -7489,6 +7489,29 @@ class Ui_Form(QtGui.QWidget):
             db_item[TAXABLE_INDEX] = 1
             db_item[RESERVED_ONE_INDEX] = '' 
             db_item[RESERVED_TWO_INDEX] = ''
+
+        #add item to database
+        try:
+            self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', tuple(db_item))
+            self.db.commit()
+            self.tab_one_print_to_console('%s item added to database\n' % (db_item[ARTIST_INDEX]))
+        except Exception as e:
+            print 'tab_one_add_to_inventory, adding item to db: %s' % e
+            return
+
+        #print label if necessary
+        code = db_item[0]
+        if code == 'BLANK' or code == '':
+            last_row_id = self.db_cursor.lastrowid
+            code = 'PLAID%06d' % last_row_id
+            #update db
+            self.db_cursor.execute('UPDATE inventory SET upc = ? WHERE id = ?', (code, last_row_id))
+            self.db.commit()
+        if self.tab_one_print_sticker_checkbox.isChecked():
+            self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX]) 
+
+        
+        
         
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks

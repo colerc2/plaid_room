@@ -16,20 +16,19 @@ class BarcodePrinter():
     def print_barcode(self, code, artist, title, price):
         c = canvas.Canvas(self.file, pagesize=(62 * mm, 29 * mm))
 
-        if(code[0:5] == 'PLAID' or code[0:5] == 'PRRGC'):
-            code = reportlab.graphics.barcode.createBarcodeDrawing('Code128',value=code,barHeight=8*mm,width=60*mm,humanReadable=True)
-        else:
-        #upca sucks so i convert to ean13
-            code = '0' + code
+        if code.isdigit():
+            code = '%013d' % int(code)
             code = reportlab.graphics.barcode.createBarcodeDrawing('EAN13',value=code,barHeight=10*mm,width=60*mm)
+        else:
+            code = reportlab.graphics.barcode.createBarcodeDrawing('Code128',value=code,barHeight=8*mm,width=60*mm,humanReadable=True)
         
         code.drawOn(c,1*mm, 3*mm)
-        c.setFont('Helvetica', 8)
-        artist = artist[0:25]
-        title = title[0:25]
+        c.setFont('Courier', 8)
+        artist = artist[0:40]
+        title = title[0:40]
         c.drawString(2*mm, 19*mm,artist)#19
         c.drawString(2*mm, 16*mm,title)#16
-        c.setFont('Helvetica',18)
+        c.setFont('Courier',18)
         c.drawString(40*mm, 16*mm, locale.currency(price))
         
         c.showPage()
