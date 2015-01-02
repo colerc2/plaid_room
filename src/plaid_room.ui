@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="iconSize">
     <size>
@@ -2479,7 +2479,7 @@ p, li { white-space: pre-wrap; }
         </column>
         <column>
          <property name="text">
-          <string>Key</string>
+          <string>Taxable</string>
          </property>
         </column>
         <item row="0" column="1">
@@ -2506,7 +2506,7 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>Add/Search/Edit Misc.</string>
     </attribute>
-    <widget class="QTableWidget" name="tab_two_results_table_2">
+    <widget class="QTableWidget" name="tab_three_results_table">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -3105,7 +3105,7 @@ p, li { white-space: pre-wrap; }
       </property>
      </item>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -3199,7 +3199,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_one_add_selected_to_inventory_2">
+           <widget class="QPushButton" name="tab_three_add_selected_to_inventory">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3212,7 +3212,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="tab_one_print_sticker_check_box_2">
+           <widget class="QCheckBox" name="tab_three_print_sticker_checkbox">
             <property name="text">
              <string>Print Sticker</string>
             </property>
@@ -3222,7 +3222,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="tab_two_results_table_3">
+           <widget class="QTableWidget" name="tab_three_new_item_table">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -3402,7 +3402,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="tab_two_search_artist_title_qline_2">
+           <widget class="QLineEdit" name="tab_three_search_misc_qline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3434,7 +3434,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_search_artist_title_button_2">
+           <widget class="QPushButton" name="tab_three_search_misc_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3460,7 +3460,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_reset_button_2">
+           <widget class="QPushButton" name="tab_three_search_misc_reset">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3506,7 +3506,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_remove_selected_item_from_inventory_2">
+           <widget class="QPushButton" name="tab_three_remove_selected_item_from_inventory">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3535,7 +3535,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_edit_selected_item_2">
+           <widget class="QPushButton" name="tab_three_edit_selected_item">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3564,7 +3564,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_reset_button_3">
+           <widget class="QPushButton" name="tab_three_copy_to_above_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3593,7 +3593,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_two_add_item_to_checkout_2">
+           <widget class="QPushButton" name="tab_three_add_item_to_checkout">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -3706,7 +3706,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="filter_by_date_added_checkbox_3">
+         <widget class="QCheckBox" name="tab_three_filter_by_date_added_checkbox">
           <property name="text">
            <string>Filter by Date Added</string>
           </property>
@@ -3737,7 +3737,7 @@ p, li { white-space: pre-wrap; }
            <enum>QLayout::SetFixedSize</enum>
           </property>
           <item>
-           <widget class="QDateEdit" name="tab_two_date_start_3">
+           <widget class="QDateEdit" name="tab_three_date_start">
             <property name="calendarPopup">
              <bool>true</bool>
             </property>
@@ -3776,7 +3776,7 @@ p, li { white-space: pre-wrap; }
            <enum>QLayout::SetFixedSize</enum>
           </property>
           <item>
-           <widget class="QDateEdit" name="tab_two_date_end_3">
+           <widget class="QDateEdit" name="tab_three_date_end">
             <property name="calendarPopup">
              <bool>true</bool>
             </property>
@@ -3846,7 +3846,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="tab_two_filter_by_dist_3">
+         <widget class="QCheckBox" name="tab_three_filter_by_dist">
           <property name="text">
            <string>Filter By Distributor</string>
           </property>
@@ -3869,7 +3869,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QComboBox" name="tab_two_dist_combo_box_3"/>
+         <widget class="QComboBox" name="tab_three_dist_combo_box"/>
         </item>
         <item>
          <spacer name="horizontalSpacer_143">
@@ -3911,7 +3911,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="tab_two_filter_by_dist_4">
+         <widget class="QCheckBox" name="tab_three_filter_by_type">
           <property name="text">
            <string>Filter By Type</string>
           </property>
@@ -3934,7 +3934,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QComboBox" name="tab_two_dist_combo_box_4"/>
+         <widget class="QComboBox" name="tab_three_type_combo_box"/>
         </item>
         <item>
          <spacer name="horizontalSpacer_149">
@@ -3983,7 +3983,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="tab_two_num_displayed_spin_box_3">
+         <widget class="QSpinBox" name="tab_three_num_displayed_spin_box">
           <property name="correctionMode">
            <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
           </property>
@@ -4048,7 +4048,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="tab_two_items_found_label_3">
+         <widget class="QLabel" name="tab_three_items_found_label">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -4153,7 +4153,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="tab_three_scan_barcode_qline">
+         <widget class="QLineEdit" name="tab_four_scan_barcode_qline">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
