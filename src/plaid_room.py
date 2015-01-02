@@ -7369,12 +7369,16 @@ class Ui_Form(QtGui.QWidget):
 
         #tab two
         self.tab_two_results_table_reset()
+        #connectors
+        self.tab_two_search_artist_title_qline.returnPressed.connect(self.tab_two_search_inventory)
+        self.tab_two_search_artist_title_button.clicked.connect(self.tab_two_search_inventory)
+        self.tab_two_reset_button.clicked.connect(self.tab_two_results_table_reset)
         
         
 
 
     ################### tab one starts ##################################
-
+    
     def tab_one_remove_from_inventory(self):
         row = self.tab_one_recently_added_table.currentRow()
         key = ''
@@ -7836,6 +7840,62 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_search_inventory(self):
+        query = self.tab_two_search_artist_title_qline.text()
+
+        if ((query != '') and (query is not None)):
+            #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
+            self.db_cursor.execute('DROP table IF EXISTS virt_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.tab_two_results_table_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges if specified
+                if self.filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_two_date_start.date().toPyDate()
+                    end = self.tab_two_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                #check distributor
+                if self.tab_two_filter_by_dist.isChecked():
+                    dist = self.tab_two_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.tab_two_results_table_list.append(list(row))
+        else:
+            self.tab_two_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+                #check date ranges if specified
+                if self.filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_two_date_start.date().toPyDate()
+                    end = self.tab_two_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                #check distributor
+                if self.tab_two_filter_by_dist.isChecked():
+                    dist = self.tab_two_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                self.tab_two_results_table_list.append(list(row))
+
+        self.tab_two_results_table_refresh()
+        
+            
     def tab_two_results_table_refresh(self):
         self.tab_two_results_table_clear()
         #TODO: generate more info buttons
@@ -7853,7 +7913,7 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.tab_two_results_table_list)))
         
     def tab_two_results_table_reset(self):
         self.tab_two_results_table_clear()
