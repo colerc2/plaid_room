@@ -81,6 +81,26 @@ class Ui_Form(QtGui.QWidget):
         reserved_two text,
         id integer primary key autoincrement)
         """)
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_inventory
+        (upc text,
+        type text,
+        item text,
+        description text,
+        size text,
+        sale_price real,
+        price_paid real,
+        date_added text,
+        new_used text,
+        code text
+        distributor text,
+        taxable integer,
+        reserved_one text,
+        reserved_two text,
+        reserved_three text,
+        reserved_four text,
+        id integer primary key autoincrement)
+        """)
         
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_inventory
         (upc text,
@@ -7375,6 +7395,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_reset_button.clicked.connect(self.tab_two_results_table_reset)
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
         self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
+
+        #tab three
+        
         
 
 
