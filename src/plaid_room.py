@@ -7837,7 +7837,24 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab two begins ##################################
     def tab_two_results_table_refresh(self):
-
+        self.tab_two_results_table_clear()
+        #TODO: generate more info buttons
+        for ix, row in enumerate(self.tab_two_results_table_list):
+            if ix > (self.tab_two_results_table.rowCount()-1):
+                continue
+            #fill in table
+            for col in range(RESERVED_ONE_INDEX):
+                self.tab_two_results_table_change_text(ix, (col+1), str(row[col]))
+        self.tab_two_results_table.resizeColumnsToContents()
+        self.tab_two_results_table.setColumnWidth(0,50)#make more info button the size i like
+        self.tab_two_results_table.setColumnWidth(4,200)#keep format column under control
+        #update inventory count
+        how_many = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            how_many = how_many + 1
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(how_many))
+        
     def tab_two_results_table_reset(self):
         self.tab_two_results_table_clear()
         self.tab_two_num_displayed_spin_box.setValue(50)
@@ -7852,13 +7869,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_filter_by_dist.setCheckState(False)
         self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
         self.tab_two_results_table_list = []
-        
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+            self.tab_two_results_table_list.append(row)
+        self.tab_two_results_table_refresh()
         
     def tab_two_results_table_clear(self):
         for ii in range(self.tab_two_results_table.rowCount()):
             for jj in range(self.tab_two_results_table.columnCount()):
                 self.tab_two_results_table_change_text(ii,jj,"")
-        #self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
+        self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
 
     def tab_two_results_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
