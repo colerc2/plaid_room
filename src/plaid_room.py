@@ -7374,7 +7374,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_button.clicked.connect(self.tab_two_search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_results_table_reset)
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
-        
+        self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
         
 
 
@@ -7841,6 +7841,41 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_edit_inventory(self):
+        row = self.tab_two_results_table.currentRow()
+        key = self.tab_two_results_table_list[row][ID_INDEX]
+
+        try:
+            db_query = (self.xstr(self.tab_two_results_table_get_text(row, 1)),
+                        self.xstr(self.tab_two_results_table_get_text(row,2)),
+                        self.xstr(self.tab_two_results_table_get_text(row,3)),
+                        self.xstr(self.tab_two_results_table_get_text(row,4)),
+                        self.xfloat(self.tab_two_results_table_get_text(row,5)),
+                        self.xfloat(self.tab_two_results_table_get_text(row,6)),
+                        self.xstr(self.tab_two_results_table_get_text(row,7)),
+                        self.xstr(self.tab_two_results_table_get_text(row,8)),
+                        self.xstr(self.tab_two_results_table_get_text(row,9)),
+                        self.xstr(self.tab_two_results_table_get_text(row,10)),
+                        self.xint(self.tab_two_results_table_get_text(row,11)),
+                        self.xint(self.tab_two_results_table_get_text(row,13)),
+                        self.xstr(self.tab_two_results_table_get_text(row,14)),
+                        self.xstr(self.tab_two_results_table_get_text(row,15)),
+                        self.xstr(self.tab_two_results_table_get_text(row,16)),
+                        self.xstr(self.tab_two_results_table_get_text(row,17)),
+                        self.xstr(self.tab_two_results_table_get_text(row,18)),
+                        self.xstr(self.tab_two_results_table_get_text(row,19)),
+                        self.xint(self.tab_two_results_table_get_text(row,20)), key)
+        except Exception as e:
+            print 'tab_two_edit_inventory: %s' % e
+        #edit her
+        self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, track_list = ?, notes = ?, taxable = ? WHERE id = ?', db_query)
+        
+        #commit
+        self.db.commit()
+
+        #redo search so that the table updates
+        self.tab_two_search_inventory()
+    
     def tab_two_remove_from_inventory(self):
         row = self.tab_two_results_table.currentRow()
         key = self.tab_two_results_table_list[row][ID_INDEX]
@@ -7958,7 +7993,13 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_two_results_table.setItem(row, col, item)
-        
+
+    def tab_two_results_table_get_text(self, row, col):
+        item = self.tab_two_results_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
     
     
     ################### tab two ends ##################################
