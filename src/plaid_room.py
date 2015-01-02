@@ -47,9 +47,11 @@ class Ui_Form(QtGui.QWidget):
         
         #tab one stuff
         self.tab_one_results_table_list = []
-        self.tab_one_recently_added_table_list = []
         self.tab_one_results_table_list_tracker = []
         self.tab_one_results_table_combobox_cols = [6, 7]
+
+        #tab two stuff
+        self.tab_two_results_table_list = []
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -7364,6 +7366,10 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_one_results_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_one_results_table_add_new_distributor)
         self.tab_one_remove_selected_item_from_inventory.clicked.connect(self.tab_one_remove_from_inventory)
         self.tab_one_edit_selected_item.clicked.connect(self.tab_one_edit_inventory)
+
+        #tab two
+        self.tab_two_results_table_reset()
+        
         
 
 
@@ -7828,7 +7834,46 @@ class Ui_Form(QtGui.QWidget):
 
 
     ################### tab one over ##################################
+    ###################################################################
+    ################### tab two begins ##################################
+    def tab_two_results_table_refresh(self):
+
+    def tab_two_results_table_reset(self):
+        self.tab_two_results_table_clear()
+        self.tab_two_num_displayed_spin_box.setValue(50)
+        self.tab_two_date_start.setDateTime(datetime.datetime.today())
+        self.tab_two_date_end.setDateTime(datetime.datetime.today())
+        self.filter_by_date_added_checkbox.setCheckState(False)
+        #refresh_distributors in combobox
+        while self.tab_two_dist_combo_box.count() != 0:
+            self.tab_two_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_two_dist_combo_box.addItem(distributor)
+        self.tab_two_filter_by_dist.setCheckState(False)
+        self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
+        self.tab_two_results_table_list = []
         
+        
+    def tab_two_results_table_clear(self):
+        for ii in range(self.tab_two_results_table.rowCount()):
+            for jj in range(self.tab_two_results_table.columnCount()):
+                self.tab_two_results_table_change_text(ii,jj,"")
+        #self.tab_two_results_table.setRowCount(self.tab_two_num_displayed_spin_box.value())
+
+    def tab_two_results_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_two_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_two_results_table.setItem(row, col, item)
+        
+    
+    
+    ################### tab two ends ##################################
+
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
         combobox.addItem("New")
