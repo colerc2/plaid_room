@@ -52,6 +52,11 @@ class Ui_Form(QtGui.QWidget):
 
         #tab two stuff
         self.tab_two_results_table_list = []
+
+        #tab three stuff
+        #tab_three_new_item_table_combobox_cols = [1, 4, 7, 9]
+        self.tab_three_new_item_table_combobox_cols = []
+        self.tab_three_results_table_list = []
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -82,6 +87,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
+        self.db_cursor.execute('DROP table IF EXISTS misc_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_inventory
         (upc text,
         type text,
@@ -92,7 +98,7 @@ class Ui_Form(QtGui.QWidget):
         price_paid real,
         date_added text,
         new_used text,
-        code text
+        code text,
         distributor text,
         taxable integer,
         reserved_one text,
@@ -1361,7 +1367,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_new_item_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_three_new_item_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_three_new_item_table.setObjectName(_fromUtf8("tab_three_new_item_table"))
-        self.tab_three_new_item_table.setColumnCount(11)
+        self.tab_three_new_item_table.setColumnCount(10)
         self.tab_three_new_item_table.setRowCount(1)
         item = QtGui.QTableWidgetItem()
         self.tab_three_new_item_table.setVerticalHeaderItem(0, item)
@@ -5355,12 +5361,10 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_three_new_item_table.horizontalHeaderItem(6)
         item.setText(_translate("Form", "Price Paid", None))
         item = self.tab_three_new_item_table.horizontalHeaderItem(7)
-        item.setText(_translate("Form", "Date Added", None))
-        item = self.tab_three_new_item_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "New/Used", None))
-        item = self.tab_three_new_item_table.horizontalHeaderItem(9)
+        item = self.tab_three_new_item_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Code", None))
-        item = self.tab_three_new_item_table.horizontalHeaderItem(10)
+        item = self.tab_three_new_item_table.horizontalHeaderItem(9)
         item.setText(_translate("Form", "Distributor", None))
         __sortingEnabled = self.tab_three_new_item_table.isSortingEnabled()
         self.tab_three_new_item_table.setSortingEnabled(False)
@@ -7397,6 +7401,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
 
         #tab three
+        self.tab_three_results_table_reset()
+        #connectors
+        self.tab_three_add_selected_to_inventory.clicked.connect(self.tab_three_add_to_inventory)
         
         
 
@@ -8026,7 +8033,99 @@ class Ui_Form(QtGui.QWidget):
     
     
     ################### tab two ends ##################################
+    ###################################################################
+    ################### tab three begins ##################################
+    
+    def tab_three_add_to_inventory(self):
+        curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #certain requirements will be needed before the item is added to the DB
+        #type, item, description, sale price, price paid, new/used
+        try:
+            db_item = (self.xstr(self.tab_three_new_item_table_get_text(0)),
+                       self.xstr(self.tab_three_new_item_table_get_text(1)),
+                       self.xstr(self.tab_three_new_item_table_get_text(2)),
+                       self.xstr(self.tab_three_new_item_table_get_text(3)),
+                       self.xstr(self.tab_three_new_item_table_get_text(4)),
+                       self.xfloat(self.tab_three_new_item_table_get_text(5)),
+                       self.xfloat(self.tab_three_new_item_table_get_text(6)),
+                       curr_time,
+                       self.xstr(self.tab_three_new_item_table_get_text(7)),
+                       self.xstr(self.tab_three_new_item_table_get_text(8)),
+                       self.xstr(self.tab_three_new_item_table_get_text(9)),
+                       self.xint(1),
+                       self.xstr(''),
+                       self.xstr(''),
+                       self.xstr(''),
+                       self.xstr(''))
+                       
+        except Exception as e:
+            print 'tab_three_add_to_inventory: %s' % e
+            return
 
+        self.db_cursor.execute('INSERT INTO misc_inventory (upc, type, item, description, size, sale_price, price_paid, date_added, new_used, code, distributor, taxable, reserved_one, reserved_two, reserved_three, reserved_four) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', db_item)
+        self.db.commit()
+
+        #print label if necessary
+        code = db_item[0]
+        if code == 'BLANK' or code == '':
+            last_row_id = self.db_cursor.lastrowid
+            code = 'PRRMC%06d' % last_row_id
+            #update db
+            self.db_cursor.execute('UPDATE misc_inventory SET upc = ? WHERE id = ?', (code, last_row_id))
+            self.db.commit()
+        if self.tab_three_print_sticker_checkbox.isChecked():
+            self.barcode_printer.print_barcode(code, db_item[MISC_ITEM_INDEX], db_item[MISC_DESCRIPTION_INDEX], db_item[MISC_PRICE_INDEX]) 
+
+        #TODO: update tab_three_results_table_list
+            
+        #display in recently added table
+        self.tab_three_results_table_reset()#TODO: fix me
+
+    def tab_three_results_table_reset(self):
+        #TODO: tons of other stuff here
+        for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
+            self.tab_three_results_table_list.append(row)
+        self.tab_three_results_table_refresh()
+        
+    def tab_three_results_table_refresh(self):
+        self.tab_three_results_table_clear()
+        for ix, row in enumerate(self.tab_three_results_table_list):
+            if ix > (self.tab_three_results_table.rowCount()-1):
+                continue
+            #fill in table
+            for col in range(MISC_TAXABLE_INDEX):
+                self.tab_three_results_table_change_text(ix, (col+1), str(row[col]))
+        self.tab_three_results_table.resizeColumnsToContents()
+        self.tab_three_results_table.setColumnWidth(0,50)#make more info button the size i like
+        #TODO: update inventory count
+        
+    def tab_three_results_table_clear(self):
+        for ii in range(self.tab_three_results_table.rowCount()):
+            for jj in range(self.tab_three_results_table.columnCount()):
+                self.tab_three_results_table_change_text(ii, jj, "")
+        self.tab_three_results_table.setRowCount(self.tab_three_num_displayed_spin_box.value())
+
+    def tab_three_results_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_two_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_three_results_table.setItem(row, col, item)
+        
+    def tab_three_new_item_table_get_text(self, col):
+        if col in self.tab_three_new_item_table_combobox_cols:
+            widget = self.tab_three_new_item_table.cellWidget(0, col)
+            return widget.currentText()
+        item = self.tab_three_new_item_table.item(0, col)
+        if(item is not None):
+            return item.text()
+        else:
+            return ''        
+        
+    
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
         combobox.addItem("New")
