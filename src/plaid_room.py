@@ -7373,6 +7373,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_search_artist_title_qline.returnPressed.connect(self.tab_two_search_inventory)
         self.tab_two_search_artist_title_button.clicked.connect(self.tab_two_search_inventory)
         self.tab_two_reset_button.clicked.connect(self.tab_two_results_table_reset)
+        self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
         
         
 
@@ -7840,6 +7841,15 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_remove_from_inventory(self):
+        row = self.tab_two_results_table.currentRow()
+        key = self.tab_two_results_table_list[row][ID_INDEX]
+
+        self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (key,))
+        self.db.commit()
+        #research for current query so that table resets itself with chosen item removed
+        self.tab_two_search_inventory()
+
     def tab_two_search_inventory(self):
         query = self.tab_two_search_artist_title_qline.text()
 
