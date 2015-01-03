@@ -8,6 +8,7 @@ from more_info_dialog import Ui_more_info_dialog
 from cash_dialog import Ui_CashDialog
 from barcode_printer import BarcodePrinter
 from receipt_printer import ReceiptPrinter
+from misc_types import MiscTypes
 import time
 import datetime
 import sqlite3
@@ -43,6 +44,7 @@ class Ui_Form(QtGui.QWidget):
         #declaration of global variables
         self.discogs = DiscogsClient()#discogs api
         self.distributors = Distributors(DIST_FILE_NAME)
+        self.misc_types = MiscTypes(MISC_TYPES_FILE_NAME)
         self.barcode_printer = BarcodePrinter()
         
         #tab one stuff
@@ -7404,6 +7406,11 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_results_table_reset()
         #connectors
         self.tab_three_add_selected_to_inventory.clicked.connect(self.tab_three_add_to_inventory)
+        self.tab_three_search_misc_qline.returnPressed.connect(self.tab_three_search_inventory)
+        self.tab_three_search_misc_button.clicked.connect(self.tab_three_search_inventory)
+        self.tab_three_search_misc_reset.clicked.connect(self.tab_three_results_table_reset)
+        self.tab_three_remove_selected_item_from_inventory.clicked.connect(self.tab_three_remove_from_inventory)
+        self.tab_three_edit_selected_item.clicked.connect(self.tab_three_copy_to_above)
         
         
 
@@ -8035,6 +8042,20 @@ class Ui_Form(QtGui.QWidget):
     ################### tab two ends ##################################
     ###################################################################
     ################### tab three begins ##################################
+
+    def tab_three_copy_to_above(self):
+        row = self.tab_three_results_table.currentRow()
+        #self.tab_three_new_item_table_change_text(col, text)
+        
+    
+    def tab_three_remove_from_inventory(self):
+        row = self.tab_three_results_table.currentRow()
+        key = self.tab_three_results_table_list[row][MISC_ID_INDEX]
+
+        self.db_cursor.execute('DELETE FROM misc_inventory WHERE id = ?', (key,))
+        self.db.commit()
+        #re-search for current query so that table resets itself with chosen item removed
+        self.tab_three_search_inventory()
     
     def tab_three_add_to_inventory(self):
         curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -8194,6 +8215,16 @@ class Ui_Form(QtGui.QWidget):
             return item.text()
         else:
             return ''        
+
+    def tab_three_new_item_table_change_text(self, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_three_new_item_table.item(0, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_three_new_item_table.setItem(0, col, item)
         
     
     def generate_new_used_combobox(self):

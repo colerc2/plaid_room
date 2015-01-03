@@ -49,5 +49,6 @@ MISC_RESERVED_FOUR_INDEX = 15
 MISC_ID_INDEX = 16
 
 
-#config for distributor object
+#config stuff for all kinds of combo boxes
 DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/distributors.csv'
+MISC_TYPES_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/misc_types.csv'
