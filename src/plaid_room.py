@@ -87,7 +87,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute('DROP table IF EXISTS misc_inventory')
+        #self.db_cursor.execute('DROP table IF EXISTS misc_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_inventory
         (upc text,
         type text,
@@ -8081,8 +8081,78 @@ class Ui_Form(QtGui.QWidget):
         #display in recently added table
         self.tab_three_results_table_reset()#TODO: fix me
 
+    #TODO: this method is poorly structured, make it better when you get free time
+    def tab_three_search_inventory(self):
+        query = self.tab_three_search_misc_qline.text()
+
+        if((query != '') and (query is not None)):
+            #TODO: deleting this and recreating this every time is fucking idiotic, but #yolo for now since DB is small
+            self.db_cursor.execute('DROP table IF EXISTS virt_misc_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_misc_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_misc_inventory (key, content) SELECT id, upc || ' ' || type || ' ' || item || ' ' || description || ' ' || size || ' ' || code FROM misc_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_misc_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.tab_three_results_table_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges if specified
+                if self.tab_three_filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[MISC_DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_three_date_start.date().toPyDate()
+                    end = self.tab_three_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                #check distributor
+                if self.tab_three_filter_by_dist.isChecked():
+                    dist = self.tab_three_dist_combo_box.currentText()
+                    if dist != row[MISC_DISTRIBUTOR_INDEX]:
+                        #wrong distributor
+                        continue
+                self.tab_three_results_table_list.append(list(row))
+        else:
+            self.tab_three_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
+                #check date ranges if specified
+                if self.tab_three_filter_by_date_added_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[MISC_DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_three_date_start.date().toPyDate()
+                    end = self.tab_three_date_end.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #current row is out of range
+                        continue
+                #check distributor
+                if self.tab_three_filter_by_dist.isChecked():
+                    dist = self.tab_three_dist_combo_box.currentText()
+                    if dist != row[MISC_DISTRIBUTOR_INDEX]:
+                        #wrong distributor
+                        continue
+                self.tab_three_results_table_list.append(list(row))
+        self.tab_three_results_table_refresh()
+            
+                    
     def tab_three_results_table_reset(self):
-        #TODO: tons of other stuff here
+        self.tab_three_results_table_clear()
+        self.tab_three_num_displayed_spin_box.setValue(50)
+        self.tab_three_date_start.setDateTime(datetime.datetime.today())
+        self.tab_three_date_end.setDateTime(datetime.datetime.today())
+        self.filter_by_date_added_checkbox.setCheckState(False)
+        while self.tab_three_dist_combo_box.count() != 0:
+            self.tab_three_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_three_dist_combo_box.addItem(distributor)
+        self.tab_three_filter_by_dist.setCheckState(False)
+        self.tab_three_results_table.setRowCount(self.tab_three_num_displayed_spin_box.value())
+        self.tab_three_results_table_list = []
+        #TODO: filter by type stuff
         for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
             self.tab_three_results_table_list.append(row)
         self.tab_three_results_table_refresh()
@@ -8107,7 +8177,7 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_three_results_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
-        item = self.tab_two_results_table.item(row, col)
+        item = self.tab_three_results_table.item(row, col)
         if item is not None:
             item.setText(text)
         else:
