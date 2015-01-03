@@ -19,6 +19,6 @@ class MiscTypes():
             if addition not in self.misc_types_list:
                 with open(self.misc_types_file_name, "a") as misc_types_file:
                     misc_types_file.write(',%s' % addition)
-                    self.misc_typeslist.append(addition)
+                    self.misc_types_list.append(addition)
                 
                 

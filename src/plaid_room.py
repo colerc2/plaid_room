@@ -57,7 +57,7 @@ class Ui_Form(QtGui.QWidget):
 
         #tab three stuff
         #tab_three_new_item_table_combobox_cols = [1, 4, 7, 9]
-        self.tab_three_new_item_table_combobox_cols = []
+        self.tab_three_new_item_table_combobox_cols = [1,7]
         self.tab_three_results_table_list = []
         
         #create/connect to database
@@ -7411,6 +7411,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_search_misc_reset.clicked.connect(self.tab_three_results_table_reset)
         self.tab_three_remove_selected_item_from_inventory.clicked.connect(self.tab_three_remove_from_inventory)
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_copy_to_above)
+        self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
         
         
 
@@ -8177,6 +8178,44 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
             self.tab_three_results_table_list.append(row)
         self.tab_three_results_table_refresh()
+        #also resets the new item table combo boxes because i didn't want to make a separate function for that
+        #new/used combos
+        box = self.generate_new_used_combobox()
+        self.tab_three_new_item_table.setCellWidget(0,7,box)
+        self.tab_three_refresh_misc_types_combos()
+        
+    def tab_three_refresh_misc_types_combos(self, misc_type=None):
+        #misc types
+        self.tab_three_misc_types_mapper = QtCore.QSignalMapper(self)
+        box = None
+        try:
+            box = self.generate_misc_types_combobox(misc_type)
+        except Exception as e:
+            box = self.generate_misc_types_combobox('Clothing')
+        self.connect(box,QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_three_misc_types_mapper, QtCore.SLOT("map()"))
+        self.tab_three_misc_types_mapper.setMapping(box, 0)
+        self.tab_three_new_item_table.setCellWidget(0,1,box)
+        self.connect(self.tab_three_misc_types_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_new_misc_type_entered)
+        
+    def tab_three_new_misc_type_entered(self, row):
+        if self.tab_three_new_item_table_get_text(1) == 'Add New Type':
+            item = QtGui.QTableWidgetItem()
+            item.setText("")
+            if self.tab_three_new_item_table.cellWidget(0,1) is not None:
+                self.tab_three_new_item_table.removeCellWidget(0,1)
+            self.tab_three_new_item_table.blockSignals(True)
+            self.tab_three_new_item_table.setItem(0,1,item)
+            self.tab_three_new_item_table.blockSignals(False)
+            self.tab_three_new_item_table.editItem(self.tab_three_new_item_table.item(0,1))
+
+    def tab_three_new_item_table_add_new_to_combobox(self,row,col):
+        if col == 1:#adding a new type of misc item
+            text = self.tab_three_new_item_table.item(0,col).text()
+            self.misc_types.add_misc_type(str(text))
+            self.tab_three_refresh_misc_types_combos(str(text))
+
+        #self.tab_three_results_table_reset()
+        
         
     def tab_three_results_table_refresh(self):
         self.tab_three_results_table_clear()
@@ -8246,7 +8285,19 @@ class Ui_Form(QtGui.QWidget):
             pass
         return combobox
 
-        
+    def generate_misc_types_combobox(self, which_misc_type):
+        combobox = QtGui.QComboBox()
+        for misc_type in self.misc_types.get_misc_types():
+            combobox.addItem(misc_type)
+        combobox.addItem("Add New Type")
+        try:
+            where_in_combo = self.misc_types.get_misc_types().index(which_misc_type)
+            combobox.setCurrentIndex(where_in_combo)
+        except Exception as e:
+            print 'generate_misc_types_combobox: %s' % e
+            pass
+        return combobox
+            
     def filter_unprintable(self, str_):
         return filter(lambda x: x in string.printable, str_)
 
