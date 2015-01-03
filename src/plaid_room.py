@@ -9,6 +9,7 @@ from cash_dialog import Ui_CashDialog
 from barcode_printer import BarcodePrinter
 from receipt_printer import ReceiptPrinter
 from misc_types import MiscTypes
+from misc_distributors import MiscDistributors
 import time
 import datetime
 import sqlite3
@@ -46,6 +47,7 @@ class Ui_Form(QtGui.QWidget):
         self.distributors = Distributors(DIST_FILE_NAME)
         self.misc_types = MiscTypes(MISC_TYPES_FILE_NAME)
         self.barcode_printer = BarcodePrinter()
+        self.misc_distributors = MiscDistributors(MISC_DIST_FILE_NAME)
         
         #tab one stuff
         self.tab_one_results_table_list = []
@@ -57,7 +59,7 @@ class Ui_Form(QtGui.QWidget):
 
         #tab three stuff
         #tab_three_new_item_table_combobox_cols = [1, 4, 7, 9]
-        self.tab_three_new_item_table_combobox_cols = [1,7]
+        self.tab_three_new_item_table_combobox_cols = [1,7,9]
         self.tab_three_results_table_list = []
         
         #create/connect to database
@@ -8182,7 +8184,32 @@ class Ui_Form(QtGui.QWidget):
         #new/used combos
         box = self.generate_new_used_combobox()
         self.tab_three_new_item_table.setCellWidget(0,7,box)
-        self.tab_three_refresh_misc_types_combos()
+        self.tab_three_refresh_misc_types_combos('Clothing')
+        self.tab_three_refresh_distributor_combos('JakPrints')
+
+    def tab_three_refresh_distributor_combos(self, distributor=None):
+        self.tab_three_dist_mapper = QtCore.QSignalMapper(self)
+        box = None
+        try:
+            box = self.generate_misc_distributor_combobox(distributor)
+        except Exception as e:
+            box = self.generate_misc_distributor_combobox('JakPrints')
+        self.connect(box,QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_three_dist_mapper, QtCore.SLOT("map()"))
+        self.tab_three_dist_mapper.setMapping(box,0)
+        self.tab_three_new_item_table.setCellWidget(0,9,box)
+        self.connect(self.tab_three_dist_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_new_dist_entered)
+
+    def tab_three_new_dist_entered(self, row):
+        if self.tab_three_new_item_table_get_text(9) == 'Add New Distributor':
+            item = QtGui.QTableWidgetItem()
+            item.setText("")
+            if self.tab_three_new_item_table.cellWidget(0,9) is not None:
+                self.tab_three_new_item_table.removeCellWidget(0,9)
+            self.tab_three_new_item_table.blockSignals(True)
+            self.tab_three_new_item_table.setItem(0,9,item)
+            self.tab_three_new_item_table.blockSignals(False)
+            self.tab_three_new_item_table.editItem(self.tab_three_new_item_table.item(0,9))
+        
         
     def tab_three_refresh_misc_types_combos(self, misc_type=None):
         #misc types
@@ -8213,7 +8240,11 @@ class Ui_Form(QtGui.QWidget):
             text = self.tab_three_new_item_table.item(0,col).text()
             self.misc_types.add_misc_type(str(text))
             self.tab_three_refresh_misc_types_combos(str(text))
-
+        elif col == 9:#add new misc distributor
+            text = self.tab_three_new_item_table.item(0,col).text()
+            self.misc_distributors.add_misc_distributor(str(text))
+            self.tab_three_refresh_distributor_combos(str(text))
+            
         #self.tab_three_results_table_reset()
         
         
@@ -8297,7 +8328,20 @@ class Ui_Form(QtGui.QWidget):
             print 'generate_misc_types_combobox: %s' % e
             pass
         return combobox
-            
+
+    def generate_misc_distributor_combobox(self, which_distributor):
+        combobox = QtGui.QComboBox()
+        for dist in self.misc_distributors.get_misc_distributors():
+            combobox.addItem(dist)
+        combobox.addItem("Add New Distributor")
+        try:
+            where_in_combo = self.misc_distributors.get_misc_distributors().index(which_distributor)
+            combobox.setCurrentIndex(where_in_combo)
+        except Exception as e:
+            print 'generate_misc_distributor_combobox: %s' % e
+            pass
+        return combobox
+    
     def filter_unprintable(self, str_):
         return filter(lambda x: x in string.printable, str_)
 
