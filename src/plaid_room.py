@@ -8473,7 +8473,16 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[MISC_SOLD_NOTES_INDEX])) 
             self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
             self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[MISC_PRICE_PAID_INDEX]))
-        
+
+        #make better looking
+        self.tab_four_misc_checkout_table.resizeColumnsToContents()
+        self.tab_four_misc_checkout_table.setColumnWidth(0,50)#remove button
+        self.tab_four_misc_checkout_table.setColumnWidth(1,50)#taxable button
+        self.tab_four_misc_checkout_table.setColumnWidth(8,50)#+5% button
+        self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#Item
+        self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(5, QtGui.QHeaderView.Stretch)#description
+        self.tab_four_misc_checkout_table.setColumnWidth(12,250)#sold notes
+            
     
     def tab_four_checkout_table_cell_changed(self, row, col):
         if col == 5: #amount changed
@@ -8490,7 +8499,8 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = to_number
             self.tab_four_checkout_table_refresh()
         if col == 10: # sold notes
-            self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
+            #TODO
+            #self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
             self.tab_four_checkout_table_refresh()
     
     def tab_four_search_inventory_checkout(self):
@@ -8549,8 +8559,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
         self.tab_four_generate_5_perc_buttons()
         self.tab_four_generate_remove_buttons()
-        self.tab_four_checkout_table.setColumnWidth(0,50)
-        self.tab_four_checkout_table.setColumnWidth(7,50)
+        self.tab_four_generate_taxable_buttons()
         for ix, row in enumerate(self.tab_four_checkout_table_list):
             self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
@@ -8565,6 +8574,15 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
             self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
 
+        #make better looking
+        self.tab_four_checkout_table.resizeColumnsToContents()
+        self.tab_four_checkout_table.setColumnWidth(0,50)#remove button
+        self.tab_four_checkout_table.setColumnWidth(1,50)#taxable button
+        self.tab_four_checkout_table.setColumnWidth(7,50)#+5% button
+        self.tab_four_checkout_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#artist
+        self.tab_four_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#title
+        self.tab_four_checkout_table.setColumnWidth(10,250)#sold notes
+            
 
     def tab_four_misc_checkout_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
@@ -8593,6 +8611,11 @@ class Ui_Form(QtGui.QWidget):
     def tab_four_remove_item_request(self, row):
         del self.tab_four_checkout_table_list[row]
         self.tab_four_checkout_table_refresh()
+
+    def tab_four_taxable_clicked(self, row):
+        #next line is dumb, if zero, makes it one, else if one, makes it zero
+        self.tab_four_checkout_table_list[row][TAXABLE_INDEX] = (self.tab_four_checkout_table_list[row][TAXABLE_INDEX]+1)%2
+        self.tab_four_checkout_table_refresh()
         
     def tab_four_generate_5_perc_buttons(self):
         self.tab_four_percent_mapper = QtCore.QSignalMapper(self)
@@ -8611,7 +8634,18 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_remove_mapper.setMapping(button, ii)
             self.tab_four_checkout_table.setCellWidget(ii,0,button)
         self.connect(self.tab_four_remove_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_remove_item_request)
-        
+
+    def tab_four_generate_taxable_buttons(self):
+        self.tab_four_taxable_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_checkout_table.rowCount()):
+            button = QtGui.QPushButton('Yes')
+            if self.tab_four_checkout_table_list[ii][TAXABLE_INDEX] == 0:
+                button = QtGui.QPushButton('No')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_taxable_mapper, QtCore.SLOT("map()"))
+            self.tab_four_taxable_mapper.setMapping(button, ii)
+            self.tab_four_checkout_table.setCellWidget(ii,1,button)
+        self.connect(self.tab_four_taxable_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_taxable_clicked)
+            
     
     ################### tab four ends ##################################
 
