@@ -61,6 +61,9 @@ class Ui_Form(QtGui.QWidget):
         #tab_three_new_item_table_combobox_cols = [1, 4, 7, 9]
         self.tab_three_new_item_table_combobox_cols = [1,4,7,9]
         self.tab_three_results_table_list = []
+
+        #tab four stuff
+        self.tab_four_checkout_table_list = []
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -7433,7 +7436,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_copy_to_above_button.clicked.connect(self.tab_three_copy_to_above)
         self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
-        
+
+        #tab four
+        self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
 
 
     ################### tab one starts ##################################
@@ -8392,7 +8397,60 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_three_new_item_table.setItem(0, col, item)
+
+    ################### tab three ends ##################################
+    ###################################################################
+    ################### tab four begins ##################################
+
+    def tab_four_search_inventory_checkout(self):
+        barcode_query = str(self.tab_four_scan_barcode_qline.text())
+
+        #first search inventory, then search misc_inventory
+        count = 0
+        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+            count = count + 1
+
+        #if only one item is found, add it to list, otherwise, let user choose which item to add
+        if count == 1:
+            for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+                row_list = list(row)
+                #construct a row of the form used in sold_inventory table
+                row_list += [-1, -1, '', '', -1, -1, '', -1]
+                #TODO: check for duplicate here!?
+                self.tab_four_checkout_table_list.append(row_list)
+            self.tab_four_checkout_table_refresh()
+            self.tab_four_scan_barcode_qline.clear()
+            self.tab_four_scan_barcode_qline.setFocus()
+        else:
+            self.tab_two_results_table_list = []
+            #TODO: more stuff
+        self.tab_four_checkout_table_refresh()
+
+    def tab_four_checkout_table_refresh(self):
+        self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
+        for ix, row in enumerate(self.tab_four_checkout_table_list):
+            self.tab_four_checkout_table_change_text(ix, 1, str(row[UPC_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 2, str(row[ARTIST_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 3, str(row[TITLE_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 4, str(row[PRICE_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+
+    def tab_four_checkout_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_four_checkout_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_four_checkout_table.setItem(row, col, item)
         
+    
+    ################### tab four ends ##################################
+    
     
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
