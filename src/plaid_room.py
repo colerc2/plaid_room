@@ -7438,8 +7438,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
 
         #tab four
+        #connectors
         self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
-
+        self.connect(self.tab_four_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_checkout_table_cell_changed)
+        
 
     ################### tab one starts ##################################
     
@@ -8421,6 +8423,14 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab four begins ##################################
 
+    def tab_four_checkout_table_cell_changed(self, row, col):
+        if col == 5:
+            text = self.tab_four_checkout_table.item(row, col).text()
+            to_number = self.string_with_percent_sign_to_int(text)
+            if to_number != int(self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX]) and to_number != -1 and to_number <= 100 and to_number >= 0:
+                self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = to_number
+            self.tab_four_checkout_table_refresh()
+    
     def tab_four_search_inventory_checkout(self):
         barcode_query = str(self.tab_four_scan_barcode_qline.text())
 
@@ -8450,6 +8460,10 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_checkout_table_refresh(self):
         self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
+        self.tab_four_generate_5_perc_buttons()
+        self.tab_four_generate_remove_buttons()
+        self.tab_four_checkout_table.setColumnWidth(0,50)
+        self.tab_four_checkout_table.setColumnWidth(6,50)
         for ix, row in enumerate(self.tab_four_checkout_table_list):
             self.tab_four_checkout_table_change_text(ix, 1, str(row[UPC_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 2, str(row[ARTIST_INDEX]))
@@ -8478,7 +8492,11 @@ class Ui_Form(QtGui.QWidget):
     def tab_four_5_percent_request(self, row):
         self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] += 5
         self.tab_four_checkout_table_refresh()
-            
+
+    def tab_four_remove_item_request(self, row):
+        del self.tab_four_checkout_table_list[row]
+        self.tab_four_checkout_table_refresh()
+        
     def tab_four_generate_5_perc_buttons(self):
         self.tab_four_percent_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_four_checkout_table.rowCount()):
@@ -8487,10 +8505,26 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_percent_mapper.setMapping(button, ii)
             self.tab_four_checkout_table.setCellWidget(ii,6,button)
         self.connect(self.tab_four_percent_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_5_percent_request)
+
+    def tab_four_generate_remove_buttons(self):
+        self.tab_four_remove_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_checkout_table.rowCount()):
+            button = QtGui.QPushButton('X')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_remove_mapper, QtCore.SLOT("map()"))
+            self.tab_four_remove_mapper.setMapping(button, ii)
+            self.tab_four_checkout_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_four_remove_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_remove_item_request)
         
     
     ################### tab four ends ##################################
-    
+
+    def string_with_percent_sign_to_int(self, string):
+        string = string.replace('%','')
+        try:
+            return int(string)
+        except Exception as e:
+            print 'something happened when casting'
+            return -1
     
     def generate_new_used_combobox(self):
         combobox = QtGui.QComboBox()
