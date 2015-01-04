@@ -7467,6 +7467,7 @@ class Ui_Form(QtGui.QWidget):
 
         #tab four
         self.tab_four_checkout_table_refresh()
+        self.tab_four_misc_checkout_table_refresh()
         #connectors
         self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
         self.connect(self.tab_four_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_checkout_table_cell_changed)
@@ -8458,40 +8459,37 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_misc_checkout_table.setColumnWidth(0,50)
         self.tab_four_misc_checkout_table.setColumnWidth(6,50)
         for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
-            self.tab_four_misc_checkout_table_change_text(ix, 1, str(row[MISC_UPC_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_TYPE_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_ITEM_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 4, str(row[MISC_DESCRIPTION_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_SIZE_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_UPC_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_TYPE_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 4, str(row[MISC_ITEM_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_DESCRIPTION_INDEX]))
             percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_misc_checkout_table.blockSignals(True)
             self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_SALE_PRICE_INDEX]*percent_of_price,2)))
-            #self.tab_four_misc_checkout_table_change_text(ix, 5, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
-            # self.tab_four_misc_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
-            # self.tab_four_misc_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
-            # self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
+            self.tab_four_misc_checkout_table_change_text(ix, 7, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
+            self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[MISC_SIZE_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[NEW_USED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[DATE_ADDED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[SOLD_NOTES_INDEX])) 
             self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            # self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
-            # self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[PRICE_PAID_INDEX]))
         
     
-
-    
     def tab_four_checkout_table_cell_changed(self, row, col):
-        if col == 4: #amount changed
+        if col == 5: #amount changed
             new_price = float(self.tab_four_checkout_table.item(row, col).text())
             if new_price > 0:
                 new_percent = new_price / self.tab_four_checkout_table_list[row][PRICE_INDEX]
                 new_percent = (1-new_percent)*100
                 self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = new_percent
             self.tab_four_checkout_table_refresh()
-        if col == 5: #discount changed
+        if col == 6: #discount changed
             text = self.tab_four_checkout_table.item(row, col).text()
             to_number = self.string_with_percent_sign_to_int(text)
             if to_number != int(self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX]) and to_number != -1 and to_number <= 100 and to_number >= 0:
                 self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = to_number
             self.tab_four_checkout_table_refresh()
-        if col == 9: # sold notes
+        if col == 10: # sold notes
             self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
             self.tab_four_checkout_table_refresh()
     
@@ -8527,20 +8525,19 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_generate_5_perc_buttons()
         self.tab_four_generate_remove_buttons()
         self.tab_four_checkout_table.setColumnWidth(0,50)
-        self.tab_four_checkout_table.setColumnWidth(6,50)
+        self.tab_four_checkout_table.setColumnWidth(7,50)
         for ix, row in enumerate(self.tab_four_checkout_table_list):
-            self.tab_four_checkout_table_change_text(ix, 1, str(row[UPC_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 2, str(row[ARTIST_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 3, str(row[TITLE_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 4, str(row[TITLE_INDEX]))
             percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_checkout_table.blockSignals(True)
-            self.tab_four_checkout_table_change_text(ix, 4, str(round(row[PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_checkout_table_change_text(ix, 5, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
-            self.tab_four_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
+            self.tab_four_checkout_table_change_text(ix, 5, str(round(row[PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_checkout_table_change_text(ix, 6, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
+            self.tab_four_checkout_table_change_text(ix, 8, str(row[NEW_USED_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 9, str(row[DATE_ADDED_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 10, str(row[SOLD_NOTES_INDEX])) 
             self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            self.tab_four_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
 
     def tab_four_checkout_table_change_text(self, row, col, text):
@@ -8567,7 +8564,7 @@ class Ui_Form(QtGui.QWidget):
             button = QtGui.QPushButton('+5%')
             self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_percent_mapper, QtCore.SLOT("map()"))
             self.tab_four_percent_mapper.setMapping(button, ii)
-            self.tab_four_checkout_table.setCellWidget(ii,6,button)
+            self.tab_four_checkout_table.setCellWidget(ii,7,button)
         self.connect(self.tab_four_percent_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_5_percent_request)
 
     def tab_four_generate_remove_buttons(self):
