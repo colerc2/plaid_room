@@ -8438,14 +8438,14 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_SIZE_INDEX]))
             percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_misc_checkout_table.blockSignals(True)
-            self.tab_four_misc_checkout_table_change_text(ix, 4, str(round(row[PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_misc_checkout_table_change_text(ix, 5, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
-            self.tab_four_misc_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
+            #self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_SALE_PRICE_INDEX]*percent_of_price,2)))
+            #self.tab_four_misc_checkout_table_change_text(ix, 5, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
+            # self.tab_four_misc_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
+            # self.tab_four_misc_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
+            # self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
             self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+            # self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
+            # self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
         
     
 
