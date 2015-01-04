@@ -8465,14 +8465,14 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_DESCRIPTION_INDEX]))
             percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_misc_checkout_table.blockSignals(True)
-            self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_SALE_PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
             self.tab_four_misc_checkout_table_change_text(ix, 7, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
             self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[MISC_SIZE_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[NEW_USED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[DATE_ADDED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[SOLD_NOTES_INDEX])) 
+            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[MISC_NEW_USED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[MISC_DATE_ADDED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[MISC_SOLD_NOTES_INDEX])) 
             self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[PRICE_PAID_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[MISC_PRICE_PAID_INDEX]))
         
     
     def tab_four_checkout_table_cell_changed(self, row, col):
@@ -8499,7 +8499,7 @@ class Ui_Form(QtGui.QWidget):
         #first search inventory, then search misc_inventory
         count = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
-            count = count + 1
+            count += 1
 
         keys = []
         for row in self.tab_four_checkout_table_list:
@@ -8520,6 +8520,31 @@ class Ui_Form(QtGui.QWidget):
             #TODO: more stuff
         self.tab_four_checkout_table_refresh()
 
+        #now search misc_inventory
+        count = 0
+        for row in self.db_cursor.execute('SELECT * FROM misc_inventory WHERE upc = ?', (barcode_query,)):
+            count += 1
+
+        keys = []
+        for row in self.tab_four_misc_checkout_table_list:
+            keys.append(row[MISC_ID_INDEX])
+        #if only one item is found, add it to the list, otherwise, let user choose which item to add
+        if count == 1:
+            for row in self.db_cursor.execute('SELECT * FROM misc_inventory WHERE upc = ?', (barcode_query,)):
+                row_list = list(row)
+                #construct a row of the form used in the misc_sold_inventory_table
+                row_list += [-1, 0, '', '', -1, -1, '', '', -1]
+                if(row[MISC_ID_INDEX] not in keys):
+                    self.tab_four_misc_checkout_table_list.append(row_list)
+            self.tab_four_misc_checkout_table_refresh()
+            self.tab_four_scan_barcode_qline.clear()
+            self.tab_four_scan_barcode_qline.setFocus()
+        else:
+            self.tab_three_results_table_list = []
+            #TODO: more stuff
+        self.tab_four_misc_checkout_table_refresh()
+            
+        
     def tab_four_checkout_table_refresh(self):
         self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
         self.tab_four_generate_5_perc_buttons()
@@ -8539,6 +8564,17 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_checkout_table_change_text(ix, 10, str(row[SOLD_NOTES_INDEX])) 
             self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
             self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+
+
+    def tab_four_misc_checkout_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_four_misc_checkout_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_four_misc_checkout_table.setItem(row, col, item)
 
     def tab_four_checkout_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
