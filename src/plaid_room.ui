@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>3</number>
    </property>
    <property name="iconSize">
     <size>
@@ -1385,6 +1385,32 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text">
              <string>Save Changes To Selected Item</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_126">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="tab_two_reprint_sticker_button">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reprint Sticker</string>
             </property>
            </widget>
           </item>
@@ -3212,6 +3238,22 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer_150">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QCheckBox" name="tab_three_print_sticker_checkbox">
             <property name="text">
              <string>Print Sticker</string>
@@ -3300,11 +3342,6 @@ p, li { white-space: pre-wrap; }
             <column>
              <property name="text">
               <string>Price Paid</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Date Added</string>
              </property>
             </column>
             <column>
@@ -3578,6 +3615,35 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <spacer name="horizontalSpacer_123">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>28</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="tab_three_reprint_sticker_button">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Reprint Sticker</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_124">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -4198,7 +4264,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="tab_three_CREAM_button_2">
+         <widget class="QPushButton" name="tab_four_add_custom_item_button">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -4227,7 +4293,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="tab_three_CREAM_button">
+         <widget class="QPushButton" name="tab_four_CREAM_button">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -4256,7 +4322,7 @@ p, li { white-space: pre-wrap; }
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="tab_three_card_button">
+         <widget class="QPushButton" name="tab_four_credit_button">
           <property name="minimumSize">
            <size>
             <width>150</width>
@@ -4275,7 +4341,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
-           <widget class="QTableWidget" name="tab_three_checkout_table">
+           <widget class="QTableWidget" name="tab_four_checkout_table">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -4883,7 +4949,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="tab_three_checkout_table_2">
+           <widget class="QTableWidget" name="tab_four_misc_checkout_table">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -5468,6 +5534,11 @@ p, li { white-space: pre-wrap; }
               <string>Distributor</string>
              </property>
             </column>
+            <column>
+             <property name="text">
+              <string>Taxable</string>
+             </property>
+            </column>
             <item row="0" column="1">
              <property name="text">
               <string/>
@@ -5512,7 +5583,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QTableWidget" name="tab_three_final_checkout_table">
+           <widget class="QTableWidget" name="tab_four_final_checkout_table">
             <property name="minimumSize">
              <size>
               <width>360</width>
@@ -5831,7 +5902,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="tab_three_subtotal_qline">
+             <widget class="QLineEdit" name="tab_four_subtotal_qline">
               <property name="minimumSize">
                <size>
                 <width>100</width>
@@ -5885,7 +5956,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
-               <widget class="QLineEdit" name="tab_three_percent_discount_qline">
+               <widget class="QLineEdit" name="tab_four_percent_discount_qline">
                 <property name="maximumSize">
                  <size>
                   <width>100</width>
@@ -5898,7 +5969,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="tab_three_discount_qline">
+               <widget class="QLineEdit" name="tab_four_discount_qline">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -5923,7 +5994,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
-             <widget class="QLabel" name="tab_three_tax_label">
+             <widget class="QLabel" name="tab_four_tax_label">
               <property name="font">
                <font>
                 <family>Lucida Grande</family>
@@ -5949,7 +6020,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="tab_three_tax_amount_label">
+             <widget class="QLabel" name="tab_four_tax_amount_label">
               <property name="font">
                <font>
                 <family>Lucida Grande</family>
@@ -5992,7 +6063,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="tab_three_shipping_qline">
+             <widget class="QLineEdit" name="tab_four_shipping_qline">
               <property name="minimumSize">
                <size>
                 <width>100</width>
@@ -6057,7 +6128,7 @@ p, li { white-space: pre-wrap; }
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="tab_three_total_qline">
+             <widget class="QLineEdit" name="tab_four_total_qline">
               <property name="minimumSize">
                <size>
                 <width>100</width>
