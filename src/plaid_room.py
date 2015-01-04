@@ -64,6 +64,7 @@ class Ui_Form(QtGui.QWidget):
 
         #tab four stuff
         self.tab_four_checkout_table_list = []
+        self.tab_four_misc_checkout_table_list = []
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -7438,6 +7439,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
 
         #tab four
+        self.tab_four_checkout_table_refresh()
         #connectors
         self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
         self.connect(self.tab_four_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_checkout_table_cell_changed)
@@ -8422,13 +8424,48 @@ class Ui_Form(QtGui.QWidget):
     ################### tab three ends ##################################
     ###################################################################
     ################### tab four begins ##################################
+    def tab_four_misc_checkout_table_refresh(self):
+        self.tab_four_misc_checkout_table.setRowCount(len(self.tab_four_misc_checkout_table_list))
+        #self.tab_four_generate_5_perc_buttons()
+        #self.tab_four_generate_remove_buttons()
+        self.tab_four_misc_checkout_table.setColumnWidth(0,50)
+        self.tab_four_misc_checkout_table.setColumnWidth(6,50)
+        for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
+            self.tab_four_misc_checkout_table_change_text(ix, 1, str(row[MISC_UPC_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_TYPE_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_ITEM_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 4, str(row[MISC_DESCRIPTION_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_SIZE_INDEX]))
+            percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
+            self.tab_four_misc_checkout_table.blockSignals(True)
+            self.tab_four_misc_checkout_table_change_text(ix, 4, str(round(row[PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_misc_checkout_table_change_text(ix, 5, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
+            self.tab_four_misc_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
+            self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
+            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
+            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+        
+    
 
+    
     def tab_four_checkout_table_cell_changed(self, row, col):
-        if col == 5:
+        if col == 4: #amount changed
+            new_price = float(self.tab_four_checkout_table.item(row, col).text())
+            if new_price > 0:
+                new_percent = new_price / self.tab_four_checkout_table_list[row][PRICE_INDEX]
+                new_percent = (1-new_percent)*100
+                self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = new_percent
+            self.tab_four_checkout_table_refresh()
+        if col == 5: #discount changed
             text = self.tab_four_checkout_table.item(row, col).text()
             to_number = self.string_with_percent_sign_to_int(text)
             if to_number != int(self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX]) and to_number != -1 and to_number <= 100 and to_number >= 0:
                 self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = to_number
+            self.tab_four_checkout_table_refresh()
+        if col == 9: # sold notes
+            self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
             self.tab_four_checkout_table_refresh()
     
     def tab_four_search_inventory_checkout(self):
