@@ -8,34 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-
-UPC_INDEX = 0
-ARTIST_INDEX = 1
-TITLE_INDEX = 2
-FORMAT_INDEX = 3
-PRICE_INDEX = 4
-PRICE_PAID_INDEX = 5
-NEW_USED_INDEX = 6
-DISTRIBUTOR_INDEX = 7
-LABEL_INDEX = 8
-GENRE_INDEX = 9
-YEAR_INDEX = 10
-DATE_ADDED_INDEX = 11
-DISCOGS_RELEASE_NUMBER_INDEX = 12
-REAL_NAME_INDEX = 13
-PROFILE_INDEX = 14
-VARIATIONS_INDEX = 15
-ALIASES_INDEX = 16
-TRACK_LIST_INDEX = 17
-NOTES_INDEX = 18
-ID_INDEX = 19
-SOLD_FOR_INDEX = 20
-PERCENT_DISCOUNT_INDEX = 21
-DATE_SOLD_INDEX = 22
-SOLD_NOTES_INDEX = 23
-REORDER_STATE = 24
-TRANSACTION_ID_INDEX = 25
-NEW_ID_INDEX = 26
+from config_stuff import *
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -100,7 +73,7 @@ class Ui_more_info_dialog(QtGui.QDialog):
         all_the_stuff.append('Track List:\n\t%s' % track_list)
         all_the_stuff.append('Notes:\t%s' % row[NOTES_INDEX])
         all_the_stuff.append('Primary Key:\t%s' % row[ID_INDEX])
-        if len(row) > 20:
+        if len(row) > 23:
             all_the_stuff.append('Sold For:\t%s' % row[SOLD_FOR_INDEX])
             all_the_stuff.append('Percent Discount:\t%s' % row[PERCENT_DISCOUNT_INDEX])
             all_the_stuff.append('Date Sold: \t%s' % row[DATE_SOLD_INDEX])

@@ -7904,6 +7904,24 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_more_info_requested(self, row):
+        if row <= len(self.tab_two_results_table_list):
+            try:
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.tab_two_results_table_list[row])
+                more_info.exec_()
+            except Exception as e:
+                print 'tab_two_more_info_requested: %s' % e
+        
+    def tab_two_generate_more_info_buttons(self):
+        self.tab_two_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_two_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_two_more_info_mapper, QtCore.SLOT("map()"))
+            self.tab_two_more_info_mapper.setMapping(button, ii)
+            self.tab_two_results_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_two_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_two_more_info_requested)
+    
     def tab_two_edit_inventory(self):
         row = self.tab_two_results_table.currentRow()
         key = self.tab_two_results_table_list[row][ID_INDEX]
@@ -8007,6 +8025,7 @@ class Ui_Form(QtGui.QWidget):
             
     def tab_two_results_table_refresh(self):
         self.tab_two_results_table_clear()
+        self.tab_two_generate_more_info_buttons()
         #TODO: generate more info buttons
         for ix, row in enumerate(self.tab_two_results_table_list):
             if ix > (self.tab_two_results_table.rowCount()-1):
@@ -8415,7 +8434,7 @@ class Ui_Form(QtGui.QWidget):
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
                 row_list = list(row)
                 #construct a row of the form used in sold_inventory table
-                row_list += [-1, -1, '', '', -1, -1, '', -1]
+                row_list += [-1, 0, '', '', -1, -1, '', -1]
                 #TODO: check for duplicate here!?
                 self.tab_four_checkout_table_list.append(row_list)
             self.tab_four_checkout_table_refresh()
@@ -8432,9 +8451,14 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_checkout_table_change_text(ix, 1, str(row[UPC_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 2, str(row[ARTIST_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 3, str(row[TITLE_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 4, str(row[PRICE_INDEX]))
+            percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
+            self.tab_four_checkout_table.blockSignals(True)
+            self.tab_four_checkout_table_change_text(ix, 4, str(round(row[PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_checkout_table_change_text(ix, 5, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
             self.tab_four_checkout_table_change_text(ix, 7, str(row[NEW_USED_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 8, str(row[DATE_ADDED_INDEX]))
+            self.tab_four_checkout_table_change_text(ix, 9, str(row[SOLD_NOTES_INDEX])) 
+            self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
             self.tab_four_checkout_table_change_text(ix, 10, str(row[ID_INDEX]))
             self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
 
