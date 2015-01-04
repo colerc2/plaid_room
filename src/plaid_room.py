@@ -8429,14 +8429,17 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
             count = count + 1
 
+        keys = []
+        for row in self.tab_four_checkout_table_list:
+            keys.append(row[ID_INDEX])
         #if only one item is found, add it to list, otherwise, let user choose which item to add
         if count == 1:
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
                 row_list = list(row)
                 #construct a row of the form used in sold_inventory table
                 row_list += [-1, 0, '', '', -1, -1, '', -1]
-                #TODO: check for duplicate here!?
-                self.tab_four_checkout_table_list.append(row_list)
+                if(row[ID_INDEX] not in keys):
+                    self.tab_four_checkout_table_list.append(row_list)
             self.tab_four_checkout_table_refresh()
             self.tab_four_scan_barcode_qline.clear()
             self.tab_four_scan_barcode_qline.setFocus()
@@ -8471,6 +8474,19 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_four_checkout_table.setItem(row, col, item)
+
+    def tab_four_5_percent_request(self, row):
+        self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] += 5
+        self.tab_four_checkout_table_refresh()
+            
+    def tab_four_generate_5_perc_buttons(self):
+        self.tab_four_percent_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_checkout_table.rowCount()):
+            button = QtGui.QPushButton('+5%')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_percent_mapper, QtCore.SLOT("map()"))
+            self.tab_four_percent_mapper.setMapping(button, ii)
+            self.tab_four_checkout_table.setCellWidget(ii,6,button)
+        self.connect(self.tab_four_percent_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_5_percent_request)
         
     
     ################### tab four ends ##################################
