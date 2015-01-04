@@ -7412,7 +7412,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_search_misc_button.clicked.connect(self.tab_three_search_inventory)
         self.tab_three_search_misc_reset.clicked.connect(self.tab_three_results_table_reset)
         self.tab_three_remove_selected_item_from_inventory.clicked.connect(self.tab_three_remove_from_inventory)
-        self.tab_three_edit_selected_item.clicked.connect(self.tab_three_copy_to_above)
+        self.tab_three_copy_to_above_button.clicked.connect(self.tab_three_copy_to_above)
         self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
         
         
@@ -8047,8 +8047,23 @@ class Ui_Form(QtGui.QWidget):
     ################### tab three begins ##################################
 
     def tab_three_copy_to_above(self):
-        row = self.tab_three_results_table.currentRow()
-        #self.tab_three_new_item_table_change_text(col, text)
+        row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
+
+        if('PRR' in row[MISC_UPC_INDEX]):
+            self.tab_three_new_item_table_change_text(0, '')
+        else:
+            self.tab_three_new_item_table_change_text(0,row[MISC_UPC_INDEX])
+        box = self.generate_new_used_combobox()
+        self.tab_three_new_item_table.setCellWidget(0,7,box)
+        box = self.generate_sizes_combobox()
+        self.tab_three_new_item_table.setCellWidget(0,4,box)
+        self.tab_three_refresh_misc_types_combos(row[MISC_TYPE_INDEX])
+        self.tab_three_refresh_distributor_combos(row[MISC_DISTRIBUTOR_INDEX])
+        self.tab_three_new_item_table_change_text(2, row[MISC_ITEM_INDEX])
+        self.tab_three_new_item_table_change_text(3, row[MISC_DESCRIPTION_INDEX])
+        self.tab_three_new_item_table_change_text(5, self.xstr(row[MISC_PRICE_INDEX]))
+        self.tab_three_new_item_table_change_text(6, self.xstr(row[MISC_PRICE_PAID_INDEX]))
+        self.tab_three_new_item_table_change_text(8, row[MISC_CODE_INDEX])
         
     
     def tab_three_remove_from_inventory(self):
@@ -8138,6 +8153,12 @@ class Ui_Form(QtGui.QWidget):
                     if dist != row[MISC_DISTRIBUTOR_INDEX]:
                         #wrong distributor
                         continue
+                #check type
+                if self.tab_three_filter_by_type.isChecked():
+                    misc_type = self.tab_three_type_combo_box.currentText()
+                    if misc_type != row[MISC_TYPE_INDEX]:
+                        #wrong type brej
+                        continue
                 self.tab_three_results_table_list.append(list(row))
         else:
             self.tab_three_results_table_list = []
@@ -8159,6 +8180,12 @@ class Ui_Form(QtGui.QWidget):
                     if dist != row[MISC_DISTRIBUTOR_INDEX]:
                         #wrong distributor
                         continue
+                #check type
+                if self.tab_three_filter_by_type.isChecked():
+                    misc_type = self.tab_three_type_combo_box.currentText()
+                    if misc_type != row[MISC_TYPE_INDEX]:
+                        #wrong type brej
+                        continue
                 self.tab_three_results_table_list.append(list(row))
         self.tab_three_results_table_refresh()
             
@@ -8171,12 +8198,15 @@ class Ui_Form(QtGui.QWidget):
         self.filter_by_date_added_checkbox.setCheckState(False)
         while self.tab_three_dist_combo_box.count() != 0:
             self.tab_three_dist_combo_box.removeItem(0)
-        for distributor in self.distributors.get_distributors():
+        for distributor in self.misc_distributors.get_misc_distributors():
             self.tab_three_dist_combo_box.addItem(distributor)
+        while self.tab_three_type_combo_box.count() != 0:
+            self.tab_three_type_combo_box.removeItem(0)
+        for misc_type in self.misc_types.get_misc_types():
+            self.tab_three_type_combo_box.addItem(misc_type)
         self.tab_three_filter_by_dist.setCheckState(False)
         self.tab_three_results_table.setRowCount(self.tab_three_num_displayed_spin_box.value())
         self.tab_three_results_table_list = []
-        #TODO: filter by type stuff
         for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
             self.tab_three_results_table_list.append(row)
         self.tab_three_results_table_refresh()
@@ -8188,6 +8218,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_new_item_table.setCellWidget(0,4,box)
         self.tab_three_refresh_misc_types_combos('Clothing')
         self.tab_three_refresh_distributor_combos('JakPrints')
+        self.tab_three_new_item_table_change_text(0, '')
+        self.tab_three_new_item_table_change_text(2, '')
+        self.tab_three_new_item_table_change_text(3, '')
+        self.tab_three_new_item_table_change_text(5, '')
+        self.tab_three_new_item_table_change_text(6, '')
+        self.tab_three_new_item_table_change_text(8, '')
         self.tab_three_new_item_table.setColumnWidth(1,140)
         self.tab_three_new_item_table.setColumnWidth(2,200)
         self.tab_three_new_item_table.setColumnWidth(3,200)
@@ -8250,9 +8286,6 @@ class Ui_Form(QtGui.QWidget):
             self.misc_distributors.add_misc_distributor(str(text))
             self.tab_three_refresh_distributor_combos(str(text))
             
-        #self.tab_three_results_table_reset()
-        
-        
     def tab_three_results_table_refresh(self):
         self.tab_three_results_table_clear()
         for ix, row in enumerate(self.tab_three_results_table_list):
@@ -8263,6 +8296,7 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_three_results_table_change_text(ix, (col+1), str(row[col]))
         self.tab_three_results_table.resizeColumnsToContents()
         self.tab_three_results_table.setColumnWidth(0,50)#make more info button the size i like
+        self.tab_three_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.tab_three_results_table_list)))
         #TODO: update inventory count
         
     def tab_three_results_table_clear(self):
