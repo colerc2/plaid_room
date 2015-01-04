@@ -7414,7 +7414,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_remove_selected_item_from_inventory.clicked.connect(self.tab_three_remove_from_inventory)
         self.tab_three_copy_to_above_button.clicked.connect(self.tab_three_copy_to_above)
         self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
-        
+        self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
         
 
 
@@ -7907,6 +7907,7 @@ class Ui_Form(QtGui.QWidget):
                         self.xint(self.tab_two_results_table_get_text(row,20)), key)
         except Exception as e:
             print 'tab_two_edit_inventory: %s' % e
+            return
         #edit her
         self.db_cursor.execute('UPDATE inventory SET upc = ?, artist = ?, title = ?, format = ?, price = ?, price_paid = ?, new_used = ?, distributor = ?, label = ?, genre = ?, year = ?, discogs_release_number = ?, real_name = ?, profile = ?, variations = ?, aliases = ?, track_list = ?, notes = ?, taxable = ? WHERE id = ?', db_query)
         
@@ -8046,6 +8047,32 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab three begins ##################################
 
+    def tab_three_edit_inventory(self):
+        row = self.tab_three_results_table.currentRow()
+        key = self.tab_three_results_table_list[row][MISC_ID_INDEX]
+
+        try:
+            db_query = (self.xstr(self.tab_three_results_table_get_text(row,1)),
+                        self.xstr(self.tab_three_results_table_get_text(row,2)),
+                        self.xstr(self.tab_three_results_table_get_text(row,3)),
+                        self.xstr(self.tab_three_results_table_get_text(row,4)),
+                        self.xstr(self.tab_three_results_table_get_text(row,5)),
+                        self.xfloat(self.tab_three_results_table_get_text(row,6)),
+                        self.xfloat(self.tab_three_results_table_get_text(row,7)),
+                        self.xstr(self.tab_three_results_table_get_text(row,9)),
+                        self.xstr(self.tab_three_results_table_get_text(row,10)),
+                        self.xstr(self.tab_three_results_table_get_text(row,11)), key)
+        except Exception as e:
+            print 'tab_three_edit_inventory: %s' % e
+            return
+        #edit her
+        self.db_cursor.execute('UPDATE misc_inventory SET upc = ?, type = ?, item = ?, description = ?, size = ?, sale_price = ?, price_paid = ?, new_used = ?, code = ?, distributor = ? WHERE id = ?', db_query)
+        self.db.commit()
+        #redo search so that table updates
+        self.tab_three_search_inventory()
+
+        
+    
     def tab_three_copy_to_above(self):
         row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
 
@@ -8105,13 +8132,19 @@ class Ui_Form(QtGui.QWidget):
         self.db.commit()
 
         #print label if necessary
-        code = db_item[0]
+        code = db_item[MISC_UPC_INDEX]
         if code == 'BLANK' or code == '':
             last_row_id = self.db_cursor.lastrowid
-            code = 'PRRMC%06d' % last_row_id
-            #update db
-            self.db_cursor.execute('UPDATE misc_inventory SET upc = ? WHERE id = ?', (code, last_row_id))
-            self.db.commit()
+            if db_item[MISC_TYPE_INDEX] == 'Gift Card':
+                code = 'PRRGC%06d' % last_row_id
+                #update db
+                self.db_cursor.execute('UPDATE misc_inventory SET upc = ?, taxable = ? WHERE id = ?', (code, 0, last_row_id))
+                self.db.commit()
+            else:
+                code = 'PRRMC%06d' % last_row_id
+                #update db
+                self.db_cursor.execute('UPDATE misc_inventory SET upc = ? WHERE id = ?', (code, last_row_id))
+                self.db.commit()
         if self.tab_three_print_sticker_checkbox.isChecked():
             self.barcode_printer.print_barcode(code, db_item[MISC_ITEM_INDEX], db_item[MISC_DESCRIPTION_INDEX], db_item[MISC_PRICE_INDEX]) 
 
@@ -8305,6 +8338,13 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_three_results_table_change_text(ii, jj, "")
         self.tab_three_results_table.setRowCount(self.tab_three_num_displayed_spin_box.value())
 
+    def tab_three_results_table_get_text(self, row, col):
+        item = self.tab_three_results_table.item(row, col)
+        if item is not None:
+            return item.text()
+        else:
+            return None
+        
     def tab_three_results_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
         item = self.tab_three_results_table.item(row, col)
@@ -8402,7 +8442,7 @@ class Ui_Form(QtGui.QWidget):
         return int(i)
 
     def xfloat(self, f):
-        if f is None:
+        if (f is None) or (f == ''):
             return -1
         return float(f)
 

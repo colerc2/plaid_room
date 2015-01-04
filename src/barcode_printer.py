@@ -14,9 +14,9 @@ class BarcodePrinter():
         locale.setlocale( locale.LC_ALL, '')
 
     def print_barcode(self, code, artist, title, price):
-        print price
         c = canvas.Canvas(self.file, pagesize=(62 * mm, 29 * mm))
-
+        code_copy = code #this is terrible i hate myself
+        
         if code.isdigit():
             code = '%013d' % int(code)
             code = reportlab.graphics.barcode.createBarcodeDrawing('EAN13',value=code,barHeight=10*mm,width=60*mm)
@@ -30,8 +30,8 @@ class BarcodePrinter():
         c.drawString(2*mm, 19*mm,artist)#19
         c.drawString(2*mm, 16*mm,title)#16
         c.setFont('Courier',16)
-        c.drawString(40*mm, 16*mm, locale.currency(price))
-        
+        if 'PRRGC' not in code_copy:
+            c.drawString(40*mm, 16*mm, locale.currency(price))
         c.showPage()
         c.save()
 
