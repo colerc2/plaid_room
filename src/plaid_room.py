@@ -59,7 +59,7 @@ class Ui_Form(QtGui.QWidget):
 
         #tab three stuff
         #tab_three_new_item_table_combobox_cols = [1, 4, 7, 9]
-        self.tab_three_new_item_table_combobox_cols = [1,7,9]
+        self.tab_three_new_item_table_combobox_cols = [1,4,7,9]
         self.tab_three_results_table_list = []
         
         #create/connect to database
@@ -8100,12 +8100,12 @@ class Ui_Form(QtGui.QWidget):
         if self.tab_three_print_sticker_checkbox.isChecked():
             self.barcode_printer.print_barcode(code, db_item[MISC_ITEM_INDEX], db_item[MISC_DESCRIPTION_INDEX], db_item[MISC_PRICE_INDEX]) 
 
-        #TODO: update tab_three_results_table_list
-            
+        self.tab_three_search_inventory()
+        
         #display in recently added table
-        self.tab_three_results_table_reset()#TODO: fix me
+        #self.tab_three_results_table_reset()#TODO: fix me
 
-    #TODO: this method is poorly structured, make it better when you get free time
+    #TODO: this method is poorly structured, make it better when you get free time(string free_time = "non existent")
     def tab_three_search_inventory(self):
         query = self.tab_three_search_misc_qline.text()
 
@@ -8117,7 +8117,7 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute("""INSERT INTO virt_misc_inventory (key, content) SELECT id, upc || ' ' || type || ' ' || item || ' ' || description || ' ' || size || ' ' || code FROM misc_inventory""")
             self.db.commit()
             #get search term
-            SEARCH_FTS = """SELECT * FROM inventory WHERE id IN (SELECT key FROM virt_misc_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+            SEARCH_FTS = """SELECT * FROM misc_inventory WHERE id IN (SELECT key FROM virt_misc_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
             self.db_cursor.execute(SEARCH_FTS, (str(query),))
             self.tab_three_results_table_list = []
             for row in self.db_cursor.fetchall():
@@ -8180,13 +8180,18 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM misc_inventory ORDER BY date_added DESC'):
             self.tab_three_results_table_list.append(row)
         self.tab_three_results_table_refresh()
-        #also resets the new item table combo boxes because i didn't want to make a separate function for that
+        #also resets some stuff in the top tablex
         #new/used combos
         box = self.generate_new_used_combobox()
         self.tab_three_new_item_table.setCellWidget(0,7,box)
+        box = self.generate_sizes_combobox()
+        self.tab_three_new_item_table.setCellWidget(0,4,box)
         self.tab_three_refresh_misc_types_combos('Clothing')
         self.tab_three_refresh_distributor_combos('JakPrints')
-
+        self.tab_three_new_item_table.setColumnWidth(1,140)
+        self.tab_three_new_item_table.setColumnWidth(2,200)
+        self.tab_three_new_item_table.setColumnWidth(3,200)
+        
     def tab_three_refresh_distributor_combos(self, distributor=None):
         self.tab_three_dist_mapper = QtCore.QSignalMapper(self)
         box = None
@@ -8303,6 +8308,13 @@ class Ui_Form(QtGui.QWidget):
         combobox.addItem("Used")
         return combobox
 
+    def generate_sizes_combobox(self):
+        combobox = QtGui.QComboBox()
+        sizes = ['N/A','XS','S','M','L','XL','XXL','XXL','KS','KM','KL','Other']
+        for size in sizes:
+            combobox.addItem(size)
+        return combobox
+    
     def generate_distributor_combobox(self, which_dist):
         combobox = QtGui.QComboBox()
         for distributor in self.distributors.get_distributors():
