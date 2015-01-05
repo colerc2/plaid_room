@@ -8595,7 +8595,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_checkout_table_refresh()
             self.tab_four_scan_barcode_qline.clear()
             self.tab_four_scan_barcode_qline.setFocus()
-        else:
+            self.tab_four_checkout_table_refresh()
+            return
+        elif count > 1:
             self.tab_two_results_table_list = []
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
                 self.tab_two_results_table_list.append(list(row))
@@ -8604,7 +8606,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_two_results_table.selectRow(0)
             self.tab_two_results_table.scrollToTop()
             self.tab_two_results_table.setFocus()
-        self.tab_four_checkout_table_refresh()
+            return
 
         #now search misc_inventory
         count = 0
@@ -8625,10 +8627,18 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_misc_checkout_table_refresh()
             self.tab_four_scan_barcode_qline.clear()
             self.tab_four_scan_barcode_qline.setFocus()
-        else:
+            self.tab_four_misc_checkout_table_refresh()
+            return        
+        elif count > 1:
             self.tab_three_results_table_list = []
-            #TODO: more stuff
-        self.tab_four_misc_checkout_table_refresh()
+            for row in self.db_cursor.execute('SELECT * FROM misc_inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
+                self.tab_three_results_table_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(2)
+            self.tab_three_results_table_refresh()
+            self.tab_three_results_table.selectRow(0)
+            self.tab_three_results_table.scrollToTop()
+            self.tab_three_results_table.setFocus()
+            return
             
         
     def tab_four_checkout_table_refresh(self):
