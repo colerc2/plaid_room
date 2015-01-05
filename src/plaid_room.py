@@ -7473,6 +7473,7 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
         self.tab_three_reprint_sticker_button.clicked.connect(self.tab_three_reprint_sticker)
+        self.tab_three_add_item_to_checkout.clicked.connect(self.tab_three_add_to_checkout)
         
         #tab four
         self.tab_four_checkout_table_refresh()
@@ -8154,6 +8155,24 @@ class Ui_Form(QtGui.QWidget):
     ################### tab two ends ##################################
     ###################################################################
     ################### tab three begins ##################################
+    def tab_three_add_to_checkout(self):
+        keys = []
+        for row in self.tab_four_misc_checkout_table_list:
+            keys.append(row[MISC_ID_INDEX])
+
+        row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
+        row_list = list(row)
+        row_list += [-1, 0, '', '', -1, -1, '', -1]
+        if(row[MISC_ID_INDEX] not in keys):
+            self.tab_four_misc_checkout_table_list.append(row_list)
+        else:
+            print row[MISC_ID_INDEX]
+            print keys
+        self.main_menu_tabs.setCurrentIndex(3)
+        self.tab_four_misc_checkout_table_refresh()
+        self.tab_four_scan_barcode_qline.clear()
+        self.tab_four_scan_barcode_qline.setFocus()
+
     def tab_three_reprint_sticker(self):
         row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
         self.barcode_printer.print_barcode(row[MISC_UPC_INDEX], row[MISC_ITEM_INDEX], row[MISC_DESCRIPTION_INDEX], row[MISC_PRICE_INDEX]) 
@@ -8767,7 +8786,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_add_to_inventory()
         elif self.main_menu_tabs.currentIndex() == 1:
             self.tab_two_add_to_checkout()
-    
+        elif self.main_menu_tabs.currentIndex() == 2:
+            self.tab_three_add_to_checkout()
+            
     def string_with_percent_sign_to_int(self, string):
         string = string.replace('%','')
         try:
