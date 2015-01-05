@@ -3,6 +3,8 @@ plaid_room
 
 Point of sale and inventory management software for Plaid Room Records.
 
-![Add inventory screen cap](images/11_08_add_inventory.png)
-![Search Screen Cap](images/11_08_edit_inventory.png)
-![Checkout Screen Cap](images/11_08_checkout.png)
+![Tab One Screen Cap](images/01_05_tab_one.png)
+![Tab Two Screen Cap](images/01_05_tab_two.png)
+![Tab Three Screen Cap](images/01_05_tab_three.png)
+![Tab Four Screen Cap](images/01_05_tab_four.png)
+
