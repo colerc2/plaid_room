@@ -8555,85 +8555,90 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_four_final_checkout_table_change_text(ii,jj,'')
     
     def tab_four_final_checkout_table_refresh(self):
-        #first loop through and put inventory items, then misc_inventory_items
-        self.tab_four_final_checkout_table_clear()
-        self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list))
+        try:
+            #first loop through and put inventory items, then misc_inventory_items
+            self.tab_four_final_checkout_table_clear()
+            self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list))
 
-        self.tab_four_subtotal = 0.0
-        self.tab_four_non_taxable_subtotal = 0.0
-        self.tab_four_total = 0.0
-        
-        for ix, row in enumerate(self.tab_four_checkout_table_list):
-            self.tab_four_final_checkout_table_change_text(ix, 0, '%s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX]))
-            percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
-            #self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_final_checkout_table_change_text(ix,1,locale.currency(row[PRICE_INDEX]*percent_of_price))
-            self.tab_four_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
-            if row[TAXABLE_INDEX] == 0:
-                self.tab_four_non_taxable_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
-        offset = len(self.tab_four_checkout_table_list)
-        for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
-            self.tab_four_final_checkout_table_change_text(ix+offset,0, ('%s - %s' % (row[MISC_ITEM_INDEX],row[MISC_DESCRIPTION_INDEX])))
-            percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
-            #self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_final_checkout_table_change_text(ix+offset,1,locale.currency(row[MISC_PRICE_INDEX]*percent_of_price))
-            self.tab_four_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
-            if row[MISC_TAXABLE_INDEX] == 0:
-                self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
-        self.tab_four_final_checkout_table.setColumnWidth(0,275)  
+            self.tab_four_subtotal = 0.0
+            self.tab_four_non_taxable_subtotal = 0.0
+            self.tab_four_total = 0.0
 
-        #if there's no items being checked out, make sure everything else is cleared too
-        if self.tab_four_final_checkout_table.rowCount() == 0:
-            self.tab_four_shipping = 0.0
-            self.tab_four_percent_discount = 0.0
-            
-        
-        #fill in other stuff
-        self.tab_four_subtotal_qline.setText(locale.currency(self.tab_four_subtotal))
-        self.tab_four_percent_discount_qline.setText('%d%%' % int(self.tab_four_percent_discount))
-        percent_of_price = ((100-self.tab_four_percent_discount)*0.01)
-        discounted_price = percent_of_price * self.tab_four_subtotal
-        non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
-        sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
-        self.tab_four_discount_qline.setText(locale.currency(discounted_price))
-        self.tab_four_shipping_qline.setText(locale.currency(self.tab_four_shipping))
-        self.tab_four_tax_amount_label.setText(locale.currency(sales_tax))
-        self.tab_four_total = round(discounted_price + sales_tax + self.tab_four_shipping,2)
-        self.tab_four_total_qline.setText(locale.currency(self.tab_four_total))
-        
+            for ix, row in enumerate(self.tab_four_checkout_table_list):
+                self.tab_four_final_checkout_table_change_text(ix, 0, '%s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX]))
+                percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
+                #self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
+                self.tab_four_final_checkout_table_change_text(ix,1,locale.currency(row[PRICE_INDEX]*percent_of_price))
+                self.tab_four_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
+                if row[TAXABLE_INDEX] == 0:
+                    self.tab_four_non_taxable_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
+            offset = len(self.tab_four_checkout_table_list)
+            for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
+                self.tab_four_final_checkout_table_change_text(ix+offset,0, ('%s - %s' % (row[MISC_ITEM_INDEX],row[MISC_DESCRIPTION_INDEX])))
+                percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
+                #self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
+                self.tab_four_final_checkout_table_change_text(ix+offset,1,locale.currency(row[MISC_PRICE_INDEX]*percent_of_price))
+                self.tab_four_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
+                if row[MISC_TAXABLE_INDEX] == 0:
+                    self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
+            self.tab_four_final_checkout_table.setColumnWidth(0,275)  
+
+            #if there's no items being checked out, make sure everything else is cleared too
+            if self.tab_four_final_checkout_table.rowCount() == 0:
+                self.tab_four_shipping = 0.0
+                self.tab_four_percent_discount = 0.0
+
+
+            #fill in other stuff
+            self.tab_four_subtotal_qline.setText(locale.currency(self.tab_four_subtotal))
+            self.tab_four_percent_discount_qline.setText('%d%%' % int(self.tab_four_percent_discount))
+            percent_of_price = ((100-self.tab_four_percent_discount)*0.01)
+            discounted_price = percent_of_price * self.tab_four_subtotal
+            non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
+            sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
+            self.tab_four_discount_qline.setText(locale.currency(discounted_price))
+            self.tab_four_shipping_qline.setText(locale.currency(self.tab_four_shipping))
+            self.tab_four_tax_amount_label.setText(locale.currency(sales_tax))
+            self.tab_four_total = round(discounted_price + sales_tax + self.tab_four_shipping,2)
+            self.tab_four_total_qline.setText(locale.currency(self.tab_four_total))
+        except Exception as e:
+            print 'tab_four_final_checkout_table_refresh(): %s' % e
 
     def tab_four_misc_checkout_table_refresh(self):
-        self.tab_four_misc_checkout_table_clear()
-        self.tab_four_misc_checkout_table.setRowCount(len(self.tab_four_misc_checkout_table_list))
-        self.tab_four_misc_generate_5_perc_buttons()
-        self.tab_four_misc_generate_remove_buttons()
-        self.tab_four_misc_generate_taxable_buttons()
-        for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
-            self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_UPC_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_TYPE_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 4, str(row[MISC_ITEM_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_DESCRIPTION_INDEX]))
-            percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
-            self.tab_four_misc_checkout_table.blockSignals(True)
-            self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_misc_checkout_table_change_text(ix, 7, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
-            self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[MISC_SIZE_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[MISC_NEW_USED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[MISC_DATE_ADDED_INDEX]))
-            self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[MISC_SOLD_NOTES_INDEX])) 
-            self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[MISC_PRICE_PAID_INDEX]))
+        try:
+            self.tab_four_misc_checkout_table_clear()
+            self.tab_four_misc_checkout_table.setRowCount(len(self.tab_four_misc_checkout_table_list))
+            self.tab_four_misc_generate_5_perc_buttons()
+            self.tab_four_misc_generate_remove_buttons()
+            self.tab_four_misc_generate_taxable_buttons()
+            for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
+                self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_UPC_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_TYPE_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 4, str(row[MISC_ITEM_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 5, str(row[MISC_DESCRIPTION_INDEX]))
+                percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
+                self.tab_four_misc_checkout_table.blockSignals(True)
+                self.tab_four_misc_checkout_table_change_text(ix, 6, str(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
+                self.tab_four_misc_checkout_table_change_text(ix, 7, str('%d%%' % int(row[MISC_PERCENT_DISCOUNT_INDEX])))
+                self.tab_four_misc_checkout_table_change_text(ix, 9, str(row[MISC_SIZE_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 10, str(row[MISC_NEW_USED_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 11, str(row[MISC_DATE_ADDED_INDEX]))
+                self.tab_four_misc_checkout_table_change_text(ix, 12, str(row[MISC_SOLD_NOTES_INDEX])) 
+                self.tab_four_misc_checkout_table.blockSignals(False)#danger lies here, tread lightly
+                self.tab_four_misc_checkout_table_change_text(ix, 13, str(row[MISC_PRICE_PAID_INDEX]))
 
-        #make better looking
-        self.tab_four_misc_checkout_table.resizeColumnsToContents()
-        self.tab_four_misc_checkout_table.setColumnWidth(0,50)#remove button
-        self.tab_four_misc_checkout_table.setColumnWidth(1,50)#taxable button
-        self.tab_four_misc_checkout_table.setColumnWidth(8,50)#+5% button
-        self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#Item
-        self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(5, QtGui.QHeaderView.Stretch)#description
-        self.tab_four_misc_checkout_table.setColumnWidth(12,250)#sold notes
-        self.tab_four_final_checkout_table_refresh()
-        
+            #make better looking
+            self.tab_four_misc_checkout_table.resizeColumnsToContents()
+            self.tab_four_misc_checkout_table.setColumnWidth(0,50)#remove button
+            self.tab_four_misc_checkout_table.setColumnWidth(1,50)#taxable button
+            self.tab_four_misc_checkout_table.setColumnWidth(8,50)#+5% button
+            self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#Item
+            self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(5, QtGui.QHeaderView.Stretch)#description
+            self.tab_four_misc_checkout_table.setColumnWidth(12,250)#sold notes
+            self.tab_four_final_checkout_table_refresh()
+        except Exception as e:
+            print 'tab_four_misc_checkout_table_refresh(): %s' % e
+            
     def tab_four_misc_checkout_table_cell_changed(self, row, col):
         if col == 6: #amount changed
             new_price = float(self.tab_four_misc_checkout_table.item(row, col).text())
@@ -8742,34 +8747,37 @@ class Ui_Form(QtGui.QWidget):
             
         
     def tab_four_checkout_table_refresh(self):
-        self.tab_four_checkout_table_clear()
-        self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
-        self.tab_four_generate_5_perc_buttons()
-        self.tab_four_generate_remove_buttons()
-        self.tab_four_generate_taxable_buttons()
-        for ix, row in enumerate(self.tab_four_checkout_table_list):
-            self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 4, str(row[TITLE_INDEX]))
-            percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
-            self.tab_four_checkout_table.blockSignals(True)
-            self.tab_four_checkout_table_change_text(ix, 5, str(round(row[PRICE_INDEX]*percent_of_price,2)))
-            self.tab_four_checkout_table_change_text(ix, 6, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
-            self.tab_four_checkout_table_change_text(ix, 8, str(row[NEW_USED_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 9, str(row[DATE_ADDED_INDEX]))
-            self.tab_four_checkout_table_change_text(ix, 10, str(row[SOLD_NOTES_INDEX])) 
-            self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
-            self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
+        try:
+            self.tab_four_checkout_table_clear()
+            self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
+            self.tab_four_generate_5_perc_buttons()
+            self.tab_four_generate_remove_buttons()
+            self.tab_four_generate_taxable_buttons()
+            for ix, row in enumerate(self.tab_four_checkout_table_list):
+                self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
+                self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
+                self.tab_four_checkout_table_change_text(ix, 4, str(row[TITLE_INDEX]))
+                percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
+                self.tab_four_checkout_table.blockSignals(True)
+                self.tab_four_checkout_table_change_text(ix, 5, str(round(row[PRICE_INDEX]*percent_of_price,2)))
+                self.tab_four_checkout_table_change_text(ix, 6, str('%d%%' % int(row[PERCENT_DISCOUNT_INDEX])))
+                self.tab_four_checkout_table_change_text(ix, 8, str(row[NEW_USED_INDEX]))
+                self.tab_four_checkout_table_change_text(ix, 9, str(row[DATE_ADDED_INDEX]))
+                self.tab_four_checkout_table_change_text(ix, 10, str(row[SOLD_NOTES_INDEX])) 
+                self.tab_four_checkout_table.blockSignals(False)#danger lies here, tread lightly
+                self.tab_four_checkout_table_change_text(ix, 11, str(row[PRICE_PAID_INDEX]))
 
-        #make better looking
-        self.tab_four_checkout_table.resizeColumnsToContents()
-        self.tab_four_checkout_table.setColumnWidth(0,50)#remove button
-        self.tab_four_checkout_table.setColumnWidth(1,50)#taxable button
-        self.tab_four_checkout_table.setColumnWidth(7,50)#+5% button
-        self.tab_four_checkout_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#artist
-        self.tab_four_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#title
-        self.tab_four_checkout_table.setColumnWidth(10,250)#sold notes
-        self.tab_four_final_checkout_table_refresh()
+            #make better looking
+            self.tab_four_checkout_table.resizeColumnsToContents()
+            self.tab_four_checkout_table.setColumnWidth(0,50)#remove button
+            self.tab_four_checkout_table.setColumnWidth(1,50)#taxable button
+            self.tab_four_checkout_table.setColumnWidth(7,50)#+5% button
+            self.tab_four_checkout_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#artist
+            self.tab_four_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#title
+            self.tab_four_checkout_table.setColumnWidth(10,250)#sold notes
+            self.tab_four_final_checkout_table_refresh()
+        except Exception as e:
+            print 'tab_four_checkout_table_refresh(): %s' % e
             
     def tab_four_checkout_table_clear(self):
         for ii in range(self.tab_four_checkout_table.rowCount()):
@@ -9003,11 +9011,43 @@ class Ui_Form(QtGui.QWidget):
             return -1
         return float(f)
 
-        
+    def clean_up(self):
+        # Clean up everything
+        for ii in self.__dict__:
+            item = self.__dict__[ii]
+            clean(item)
 
+#modified version of some stuff i found on SO. application was throwing a seg fault: 11 at close
+# and updating to newest version of pyqt didn't help so this function along with "clean_up" go
+# through and manually delete everything right before the application closes, it seems to be
+# working, but still needs to be tested
+def clean(item):
+    if isinstance(item, sqlite3.Connection):
+        print 'clean: skipping db stuff'
+        return
+    
+    """Clean up the memory by closing and deleting the item if possible."""
+    if isinstance(item, list) or isinstance(item, dict):
+        for _ in range(len(item)):
+            clean(item.pop())
+    else:
+        try:
+            item.close()
+        except (RuntimeError, AttributeError): # deleted or no close method
+            pass
+        except Exception as e:
+            print 'clean some other error: %s' % e
+        try:
+            item.deleteLater()
+        except (RuntimeError, AttributeError): # deleted or no deleteLater method
+            pass
+            
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     app.thread().setPriority(QtCore.QThread.HighestPriority)
     ex = Ui_Form()
     ex.show()
+
+    app.aboutToQuit.connect(ex.clean_up)
+    
     sys.exit(app.exec_())
