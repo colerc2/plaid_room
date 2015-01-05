@@ -7452,6 +7452,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_reset_button.clicked.connect(self.tab_two_results_table_reset)
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
         self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
+        self.tab_two_reprint_sticker_button.clicked.connect(self.tab_two_reprint_sticker)
 
         #tab three
         self.tab_three_results_table_reset()
@@ -7464,7 +7465,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_three_copy_to_above_button.clicked.connect(self.tab_three_copy_to_above)
         self.connect(self.tab_three_new_item_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_three_new_item_table_add_new_to_combobox)
         self.tab_three_edit_selected_item.clicked.connect(self.tab_three_edit_inventory)
-
+        self.tab_three_reprint_sticker_button.clicked.connect(self.tab_three_reprint_sticker)
+        
         #tab four
         self.tab_four_checkout_table_refresh()
         self.tab_four_misc_checkout_table_refresh()
@@ -7863,6 +7865,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.setFocus()
         if self.tab_one_results_table_list:#only resize columns if there were results
             self.tab_one_results_table.resizeColumnsToContents()
+            self.tab_one_results_table.horizontalHeader().setResizeMode(1, QtGui.QHeaderView.Stretch)#artist
+            self.tab_one_results_table.horizontalHeader().setResizeMode(2, QtGui.QHeaderView.Stretch)#title
+
 
     def tab_one_results_table_add_new_distributor(self, row, col):
         if col == 7:
@@ -7936,6 +7941,10 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_reprint_sticker(self):
+        row = self.tab_two_results_table_list[self.tab_two_results_table.currentRow()]
+        self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX]) 
+    
     def tab_two_more_info_requested(self, row):
         if row <= len(self.tab_two_results_table_list):
             try:
@@ -8120,6 +8129,9 @@ class Ui_Form(QtGui.QWidget):
     ################### tab two ends ##################################
     ###################################################################
     ################### tab three begins ##################################
+    def tab_three_reprint_sticker(self):
+        row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
+        self.barcode_printer.print_barcode(row[MISC_UPC_INDEX], row[MISC_ITEM_INDEX], row[MISC_DESCRIPTION_INDEX], row[MISC_PRICE_INDEX]) 
 
     def tab_three_edit_inventory(self):
         row = self.tab_three_results_table.currentRow()
