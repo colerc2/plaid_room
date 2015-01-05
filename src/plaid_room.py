@@ -156,7 +156,36 @@ class Ui_Form(QtGui.QWidget):
         reserved_three text,
         id integer primary key autoincrement)
         """) 
-        
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_sold_inventory
+        (upc text,
+        type text,
+        item text,
+        description text,
+        size text,
+        sale_price real,
+        price_paid real,
+        date_added text,
+        new_used text,
+        code text,
+        distributor text,
+        taxable integer,
+        reserved_one text,
+        reserved_two text,
+        reserved_three text,
+        reserved_four text,
+        inventory_id integer,
+        sold_for real,
+        percent_discount real,
+        date_sold text,
+        sold_notes text,
+        reorder_state integer,
+        transaction_id integer,
+        reserved_five text,
+        reserved_six text,
+        id integer primary key autoincrement)
+        """)
+
         self.setupUi(self)
 
     def setupUi(self, Form):
@@ -8543,8 +8572,9 @@ class Ui_Form(QtGui.QWidget):
                     self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used,distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_three) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                     self.db.commit()
                     sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
-                
-                # 2. Delete items from inventory
+                    # 2. Delete items from inventory
+                    self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (row[ID_INDEX],))
+                    self.db.commit()
                 
                 # 3. Add items to misc sold inventory
 
