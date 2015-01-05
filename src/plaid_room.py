@@ -7493,6 +7493,7 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_four_percent_discount_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_percent_discount_qline_edited)
         self.connect(self.tab_four_discount_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_discount_qline_edited)
         self.connect(self.tab_four_shipping_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_shipping_qline_edited)
+        self.tab_four_CREAM_button.clicked.connect(self.tab_four_make_a_cash_dialog)
         
     ################### tab one starts ##################################
     
@@ -8517,6 +8518,46 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab four begins ##################################
 
+    def tab_four_make_a_cash_dialog(self):
+        if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
+            cream = Ui_CashDialog(self.checkout_total)
+            paid_or_naaa = cream.exec_()
+            if paid_or_naaa == QtGui.QDialog.Accepted:
+                tendered = cream.get_tendered()
+                change = cream.get_change()
+                curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                inventory_receipt_list = []
+                misc_inventory_receipt_list = []
+                sold_inventory_new_ids = []
+                misc_sold_inventory_new_ids = []
+                # 1. Add items to sold inventory (numbered these so i wouldn't lose track of what i'm doing)
+                for row in self.tab_four_checkout_table_list:
+                    percent_discount = row[PERCENT_DISCOUNT_INDEX]
+                    sold_for = round(((100-percent_discount)*0.01)*row[PRICE_INDEX],2)
+                    row[SOLD_FOR_INDEX] = self.xfloat(sold_for)
+                    row[PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
+                    row[DATE_SOLD_INDEX] = self.xstr(curr_time)
+                    row[REORDER_STATE_INDEX] = 0
+                    row[TRANSACTION_ID_INDEX] = 0
+                    self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used,distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_three) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                    self.db.commit()
+                    sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                
+                # 2. Delete items from inventory
+                
+                # 3. Add items to misc sold inventory
+
+                # 4. Delete items from misc inventory
+                
+                # 5. Add items to transaction history
+
+                # 6. Go back and update all items with new transaction number
+
+                # 7. Print receipt
+
+                # 8. Clean up
+            
     def tab_four_shipping_qline_edited(self):
         text = self.tab_four_shipping_qline.text()
         text = float(self.filter_non_numeric(str(text)))
@@ -9023,6 +9064,7 @@ class Ui_Form(QtGui.QWidget):
 # working, but still needs to be tested
 def clean(item):
     if isinstance(item, sqlite3.Connection):
+        #skipping db stuff because i'm afraid (and it was throwing an Exception)
         print 'clean: skipping db stuff'
         return
     
