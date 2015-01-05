@@ -8540,7 +8540,8 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(self.tab_four_checkout_table_list):
             self.tab_four_final_checkout_table_change_text(ix, 0, '%s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX]))
             percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
-            self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
+            #self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_final_checkout_table_change_text(ix,1,locale.currency(row[PRICE_INDEX]*percent_of_price))
             self.tab_four_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
             if row[TAXABLE_INDEX] == 0:
                 self.tab_four_non_taxable_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
@@ -8548,7 +8549,8 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
             self.tab_four_final_checkout_table_change_text(ix+offset,0, ('%s - %s' % (row[MISC_ITEM_INDEX],row[MISC_DESCRIPTION_INDEX])))
             percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
-            self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
+            #self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_final_checkout_table_change_text(ix+offset,1,locale.currency(row[MISC_PRICE_INDEX]*percent_of_price))
             self.tab_four_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
             if row[MISC_TAXABLE_INDEX] == 0:
                 self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
@@ -8556,9 +8558,14 @@ class Ui_Form(QtGui.QWidget):
 
         #fill in other stuff
         self.tab_four_subtotal_qline.setText(locale.currency(self.tab_four_subtotal))
-        sales_tax = (self.tab_four_subtotal - self.tab_four_non_taxable_subtotal) * (LOVELAND_TAX_RATE*0.01)
+        self.tab_four_percent_discount_qline.setText('%d%%' % int(self.tab_four_percent_discount))
+        percent_of_price = ((100-self.tab_four_percent_discount)*0.01)
+        discounted_price = percent_of_price * self.tab_four_subtotal
+        non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
+        sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
+        self.tab_four_discount_qline.setText(locale.currency(discounted_price))
         self.tab_four_tax_amount_label.setText(locale.currency(sales_tax))
-        self.tab_four_total = round(self.tab_four_subtotal + sales_tax,2)
+        self.tab_four_total = round(discounted_price + sales_tax,2)
         self.tab_four_total_qline.setText(locale.currency(self.tab_four_total))
         
 
