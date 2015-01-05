@@ -8505,7 +8505,42 @@ class Ui_Form(QtGui.QWidget):
     ################### tab three ends ##################################
     ###################################################################
     ################### tab four begins ##################################
+
+    def tab_four_final_checkout_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_four_final_checkout_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_four_final_checkout_table.setItem(row, col, item)
+
+    
+    def tab_four_final_checkout_table_clear(self):
+        for ii in range(self.tab_four_final_checkout_table.rowCount()):
+            for jj in range(self.tab_four_final_checkout_table.rowCount()):
+                self.tab_four_final_checkout_table_change_text(ii,jj,'')
+    
+    def tab_four_final_checkout_table_refresh(self):
+        #first loop through and put inventory items, then misc_inventory_items
+        self.tab_four_final_checkout_table_clear()
+        self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list))
+        for ix, row in enumerate(self.tab_four_checkout_table_list):
+            self.tab_four_final_checkout_table_change_text(ix, 0, '%s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX]))
+            percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
+            self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
+        offset = len(self.tab_four_checkout_table_list)
+        for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
+            self.tab_four_final_checkout_table_change_text(ix+offset,0, ('%s - %s' % (row[MISC_ITEM_INDEX],row[MISC_DESCRIPTION_INDEX])))
+            percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
+            self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
+        self.tab_four_final_checkout_table.resizeColumnsToContents()    
+        self.tab_four_final_checkout_table.horizontalHeader().setResizeMode(0,QtGui.QHeaderView.Stretch)
+        
+
     def tab_four_misc_checkout_table_refresh(self):
+        self.tab_four_misc_checkout_table_clear()
         self.tab_four_misc_checkout_table.setRowCount(len(self.tab_four_misc_checkout_table_list))
         self.tab_four_misc_generate_5_perc_buttons()
         self.tab_four_misc_generate_remove_buttons()
@@ -8534,6 +8569,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#Item
         self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(5, QtGui.QHeaderView.Stretch)#description
         self.tab_four_misc_checkout_table.setColumnWidth(12,250)#sold notes
+        self.tab_four_final_checkout_table_refresh()
         
     def tab_four_misc_checkout_table_cell_changed(self, row, col):
         if col == 6: #amount changed
@@ -8556,6 +8592,7 @@ class Ui_Form(QtGui.QWidget):
     
     def tab_four_checkout_table_cell_changed(self, row, col):
         if col == 5: #amount changed
+            print self.tab_four_checkout_table.item(row,col).text()
             new_price = float(self.tab_four_checkout_table.item(row, col).text())
             if new_price > 0:
                 new_percent = new_price / self.tab_four_checkout_table_list[row][PRICE_INDEX]
@@ -8642,6 +8679,7 @@ class Ui_Form(QtGui.QWidget):
             
         
     def tab_four_checkout_table_refresh(self):
+        self.tab_four_checkout_table_clear()
         self.tab_four_checkout_table.setRowCount(len(self.tab_four_checkout_table_list))
         self.tab_four_generate_5_perc_buttons()
         self.tab_four_generate_remove_buttons()
@@ -8668,8 +8706,29 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_checkout_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#artist
         self.tab_four_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#title
         self.tab_four_checkout_table.setColumnWidth(10,250)#sold notes
+        self.tab_four_final_checkout_table_refresh()
             
+    def tab_four_checkout_table_clear(self):
+        for ii in range(self.tab_four_checkout_table.rowCount()):
+            for jj in range(self.tab_four_checkout_table.columnCount()):
+                if jj >= 5 and jj <= 10:
+                    self.tab_four_checkout_table.blockSignals(True)
+                self.tab_four_checkout_table_change_text(ii, jj, "")
+                if jj >= 5 and jj <= 10:
+                    self.tab_four_checkout_table.blockSignals(True)
+                
 
+                
+    def tab_four_misc_checkout_table_clear(self):
+        for ii in range(self.tab_four_misc_checkout_table.rowCount()):
+            for jj in range(self.tab_four_misc_checkout_table.columnCount()):
+                if jj >= 6 and jj <= 12:
+                    self.tab_four_misc_checkout_table.blockSignals(True)
+                self.tab_four_misc_checkout_table_change_text(ii, jj, "")        
+                if jj >= 6 and jj <= 12:
+                    self.tab_four_misc_checkout_table.blockSignals(False)
+                
+                
     def tab_four_misc_checkout_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
         item = self.tab_four_misc_checkout_table.item(row, col)
