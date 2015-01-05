@@ -7428,6 +7428,12 @@ class Ui_Form(QtGui.QWidget):
         
         #other stuff
 
+        #make keyboard shortcut (shift,->) that adds stuff from search tabs (2 & 3) to the checkout
+        self.add_to_checkout_shortcut = QtGui.QShortcut(self)
+        self.add_to_checkout_shortcut.setKey(QtGui.QKeySequence.SelectNextChar)
+        self.main_menu_tabs.connect(self.add_to_checkout_shortcut,QtCore.SIGNAL("activated()"), self.shift_right_shortcut)
+        
+        
         #tab one
         self.tab_one_text_browser.setPlainText('\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
@@ -7453,7 +7459,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_remove_selected_item_from_inventory.clicked.connect(self.tab_two_remove_from_inventory)
         self.tab_two_edit_selected_item.clicked.connect(self.tab_two_edit_inventory)
         self.tab_two_reprint_sticker_button.clicked.connect(self.tab_two_reprint_sticker)
-
+        self.tab_two_add_item_to_checkout.clicked.connect(self.tab_two_add_to_checkout)
+        
         #tab three
         self.tab_three_results_table_reset()
         #connectors
@@ -7941,6 +7948,24 @@ class Ui_Form(QtGui.QWidget):
     ################### tab one over ##################################
     ###################################################################
     ################### tab two begins ##################################
+    def tab_two_add_to_checkout(self):
+        keys = []
+        for row in self.tab_four_checkout_table_list:
+            keys.append(row[ID_INDEX])
+
+        row = self.tab_two_results_table_list[self.tab_two_results_table.currentRow()]
+        row_list = list(row)
+        row_list += [-1, 0, '', '', -1, -1, '', -1]
+        if(row[ID_INDEX] not in keys):
+            self.tab_four_checkout_table_list.append(row_list)
+        else:
+            print row[ID_INDEX]
+            print keys
+        self.main_menu_tabs.setCurrentIndex(3)
+        self.tab_four_checkout_table_refresh()
+        self.tab_four_scan_barcode_qline.clear()
+        self.tab_four_scan_barcode_qline.setFocus()
+
     def tab_two_reprint_sticker(self):
         row = self.tab_two_results_table_list[self.tab_two_results_table.currentRow()]
         self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX]) 
@@ -8737,6 +8762,12 @@ class Ui_Form(QtGui.QWidget):
     
     ################### tab four ends ##################################
 
+    def shift_right_shortcut(self):
+        if self.main_menu_tabs.currentIndex() == 0:
+            self.tab_one_add_to_inventory()
+        elif self.main_menu_tabs.currentIndex() == 1:
+            self.tab_two_add_to_checkout()
+    
     def string_with_percent_sign_to_int(self, string):
         string = string.replace('%','')
         try:
