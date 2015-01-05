@@ -62,3 +62,6 @@ MISC_NEW_ID_INDEX = 25
 DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/distributors.csv'
 MISC_TYPES_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/misc_types.csv'
 MISC_DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/misc_distributors.csv'
+
+#other stuff
+LOVELAND_TAX_RATE = 6.5 #percent

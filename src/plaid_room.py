@@ -65,6 +65,12 @@ class Ui_Form(QtGui.QWidget):
         #tab four stuff
         self.tab_four_checkout_table_list = []
         self.tab_four_misc_checkout_table_list = []
+        self.tab_four_subtotal = 0.0
+        self.tab_four_non_taxable_subtotal = 0.0
+        self.tab_four_percent_discount = 0.0
+        self.tab_four_shipping = 0.0
+        self.tab_four_total = 0.0
+
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -8526,17 +8532,34 @@ class Ui_Form(QtGui.QWidget):
         #first loop through and put inventory items, then misc_inventory_items
         self.tab_four_final_checkout_table_clear()
         self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list))
+
+        self.tab_four_subtotal = 0.0
+        self.tab_four_non_taxable_subtotal = 0.0
+        self.tab_four_total = 0.0
+        
         for ix, row in enumerate(self.tab_four_checkout_table_list):
             self.tab_four_final_checkout_table_change_text(ix, 0, '%s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX]))
             percent_of_price = ((100-row[PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_final_checkout_table_change_text(ix,1,self.xstr(round(row[PRICE_INDEX]*percent_of_price,2)))
+            self.tab_four_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
+            if row[TAXABLE_INDEX] == 0:
+                self.tab_four_non_taxable_subtotal += round(row[PRICE_INDEX]*percent_of_price,2)
         offset = len(self.tab_four_checkout_table_list)
         for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
             self.tab_four_final_checkout_table_change_text(ix+offset,0, ('%s - %s' % (row[MISC_ITEM_INDEX],row[MISC_DESCRIPTION_INDEX])))
             percent_of_price = ((100-row[MISC_PERCENT_DISCOUNT_INDEX])*0.01)
             self.tab_four_final_checkout_table_change_text(ix+offset,1,self.xstr(round(row[MISC_PRICE_INDEX]*percent_of_price,2)))
-        self.tab_four_final_checkout_table.resizeColumnsToContents()    
-        self.tab_four_final_checkout_table.horizontalHeader().setResizeMode(0,QtGui.QHeaderView.Stretch)
+            self.tab_four_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
+            if row[MISC_TAXABLE_INDEX] == 0:
+                self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
+        self.tab_four_final_checkout_table.setColumnWidth(0,275)  
+
+        #fill in other stuff
+        self.tab_four_subtotal_qline.setText(locale.currency(self.tab_four_subtotal))
+        sales_tax = (self.tab_four_subtotal - self.tab_four_non_taxable_subtotal) * (LOVELAND_TAX_RATE*0.01)
+        self.tab_four_tax_amount_label.setText(locale.currency(sales_tax))
+        self.tab_four_total = round(self.tab_four_subtotal + sales_tax,2)
+        self.tab_four_total_qline.setText(locale.currency(self.tab_four_total))
         
 
     def tab_four_misc_checkout_table_refresh(self):
@@ -8716,8 +8739,6 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_four_checkout_table_change_text(ii, jj, "")
                 if jj >= 5 and jj <= 10:
                     self.tab_four_checkout_table.blockSignals(True)
-                
-
                 
     def tab_four_misc_checkout_table_clear(self):
         for ii in range(self.tab_four_misc_checkout_table.rowCount()):
