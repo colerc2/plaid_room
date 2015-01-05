@@ -157,7 +157,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """) 
 
-        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_sold_inventory
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_misc_inventory
         (upc text,
         type text,
         item text,
@@ -186,6 +186,25 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS transactions
+        (number_of_items integer,
+        date_sold text,
+        subtotal real,
+        discount_percent real,
+        discounted_price real,
+        tax real,
+        shipping real,
+        total real,
+        cash_credit text,
+        sold_inventory_ids text,
+        sold_misc_inventory_ids text,
+        reserved_one text,
+        reserved_two text,
+        reserved_three text,
+        reserved_four text,
+        id integer primary key autoincrement)
+        
+        
         self.setupUi(self)
 
     def setupUi(self, Form):
@@ -8557,7 +8576,7 @@ class Ui_Form(QtGui.QWidget):
                 curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                 sold_inventory_new_ids = []
-                misc_sold_inventory_new_ids = []
+                sold_misc_inventory_new_ids = []
                 # 1. Add items to sold inventory (numbered these so i wouldn't lose track of what i'm doing)
                 for row in self.tab_four_checkout_table_list:
                     percent_discount = row[PERCENT_DISCOUNT_INDEX]
@@ -8583,7 +8602,7 @@ class Ui_Form(QtGui.QWidget):
                     row[MISC_DATE_SOLD_INDEX] = self.xstr(curr_time)
                     row[MISC_REORDER_STATE_INDEX] = 0
                     row[MISC_TRANSACTION_ID_INDEX] = 0
-                    self.db_cursor.execute('INSERT INTO misc_sold_inventory (upc, type, item, description, size, sale_price, price_paid, date_added, new_used, code, distributor, taxable, reserved_one, reserved_two, reserved_three, reserved_four, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_five, reserved_six) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                    self.db_cursor.execute('INSERT INTO sold_misc_inventory (upc, type, item, description, size, sale_price, price_paid, date_added, new_used, code, distributor, taxable, reserved_one, reserved_two, reserved_three, reserved_four, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_five, reserved_six) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                     self.db.commit()
                     sold_misc_inventory_new_ids.append(str(self.db_cursor.lastrowid))
                     # 4. Delete items from misc inventory
