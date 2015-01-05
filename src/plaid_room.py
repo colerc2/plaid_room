@@ -7471,7 +7471,7 @@ class Ui_Form(QtGui.QWidget):
         #connectors
         self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
         self.connect(self.tab_four_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_checkout_table_cell_changed)
-        
+        self.connect(self.tab_four_misc_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_misc_checkout_table_cell_changed)
 
     ################### tab one starts ##################################
     
@@ -8481,6 +8481,24 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(4, QtGui.QHeaderView.Stretch)#Item
         self.tab_four_misc_checkout_table.horizontalHeader().setResizeMode(5, QtGui.QHeaderView.Stretch)#description
         self.tab_four_misc_checkout_table.setColumnWidth(12,250)#sold notes
+        
+    def tab_four_misc_checkout_table_cell_changed(self, row, col):
+        if col == 6: #amount changed
+            new_price = float(self.tab_four_misc_checkout_table.item(row, col).text())
+            if new_price > 0:
+                new_percent = new_price / self.tab_four_misc_checkout_table_list[row][MISC_PRICE_INDEX]
+                new_percent = (1-new_percent)*100
+                self.tab_four_misc_checkout_table_list[row][MISC_PERCENT_DISCOUNT_INDEX] = new_percent
+            self.tab_four_misc_checkout_table_refresh()
+        if col == 7: #discount changed
+            text = self.tab_four_misc_checkout_table.item(row, col).text()
+            to_number = self.string_with_percent_sign_to_int(text)
+            if to_number != int(self.tab_four_misc_checkout_table_list[row][MISC_PERCENT_DISCOUNT_INDEX]) and to_number != -1 and to_number <= 100 and to_number >= 0:
+                self.tab_four_misc_checkout_table_list[row][MISC_PERCENT_DISCOUNT_INDEX] = to_number
+            self.tab_four_misc_checkout_table_refresh()
+        if col == 12: # sold notes
+            self.tab_four_misc_checkout_table_list[row][MISC_SOLD_NOTES_INDEX] = str(self.tab_four_misc_checkout_table_get_text(row, col))
+            self.tab_four_misc_checkout_table_refresh()
             
     
     def tab_four_checkout_table_cell_changed(self, row, col):
@@ -8498,10 +8516,10 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] = to_number
             self.tab_four_checkout_table_refresh()
         if col == 10: # sold notes
-            #TODO
-            #self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
+            self.tab_four_checkout_table_list[row][SOLD_NOTES_INDEX] = str(self.tab_four_checkout_table_get_text(row, col))
             self.tab_four_checkout_table_refresh()
-    
+
+
     def tab_four_search_inventory_checkout(self):
         barcode_query = str(self.tab_four_scan_barcode_qline.text())
 
@@ -8603,6 +8621,23 @@ class Ui_Form(QtGui.QWidget):
             item.setText(text)
             self.tab_four_checkout_table.setItem(row, col, item)
 
+    def tab_four_misc_checkout_table_get_text(self, row, col):
+        item = self.tab_four_misc_checkout_table.item(row, col)
+        try:
+            return item.text()
+        except Exception as e:
+            print 'tab_four_misc_checkout_table_get_text: %s' % e
+            return ''
+
+    def tab_four_checkout_table_get_text(self, row, col):
+        item = self.tab_four_checkout_table.item(row, col)
+        try:
+            return item.text()
+        except Exception as e:
+            print 'tab_four_checkout_table_get_text: %s' % e
+            return ''
+        
+
     def tab_four_5_percent_request(self, row):
         self.tab_four_checkout_table_list[row][PERCENT_DISCOUNT_INDEX] += 5
         self.tab_four_checkout_table_refresh()
@@ -8625,6 +8660,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_misc_checkout_table_refresh()
 
     def tab_four_misc_taxable_clicked(self, row):
+        print self.tab_four_misc_checkout_table_list[row][MISC_TAXABLE_INDEX]
         self.tab_four_misc_checkout_table_list[row][MISC_TAXABLE_INDEX] = (self.tab_four_misc_checkout_table_list[row][MISC_TAXABLE_INDEX]+1)%2
         self.tab_four_misc_checkout_table_refresh()
         
@@ -8650,7 +8686,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_misc_taxable_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_four_misc_checkout_table.rowCount()):
             button = QtGui.QPushButton('Yes')
-            if self.tab_four_misc_checkout_table_list[ii][TAXABLE_INDEX] == 0:
+            if self.tab_four_misc_checkout_table_list[ii][MISC_TAXABLE_INDEX] == 0:
                 button = QtGui.QPushButton('No')
             self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_misc_taxable_mapper, QtCore.SLOT("map()"))
             self.tab_four_misc_taxable_mapper.setMapping(button, ii)
