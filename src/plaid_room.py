@@ -7959,9 +7959,6 @@ class Ui_Form(QtGui.QWidget):
         row_list += [-1, 0, '', '', -1, -1, '', -1]
         if(row[ID_INDEX] not in keys):
             self.tab_four_checkout_table_list.append(row_list)
-        else:
-            print row[ID_INDEX]
-            print keys
         self.main_menu_tabs.setCurrentIndex(3)
         self.tab_four_checkout_table_refresh()
         self.tab_four_scan_barcode_qline.clear()
@@ -8600,7 +8597,13 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_scan_barcode_qline.setFocus()
         else:
             self.tab_two_results_table_list = []
-            #TODO: more stuff
+            for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
+                self.tab_two_results_table_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(1)
+            self.tab_two_results_table_refresh()
+            self.tab_two_results_table.selectRow(0)
+            self.tab_two_results_table.scrollToTop()
+            self.tab_two_results_table.setFocus()
         self.tab_four_checkout_table_refresh()
 
         #now search misc_inventory
