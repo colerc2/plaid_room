@@ -8454,10 +8454,9 @@ class Ui_Form(QtGui.QWidget):
     ################### tab four begins ##################################
     def tab_four_misc_checkout_table_refresh(self):
         self.tab_four_misc_checkout_table.setRowCount(len(self.tab_four_misc_checkout_table_list))
-        #self.tab_four_generate_5_perc_buttons()
-        #self.tab_four_generate_remove_buttons()
-        self.tab_four_misc_checkout_table.setColumnWidth(0,50)
-        self.tab_four_misc_checkout_table.setColumnWidth(6,50)
+        self.tab_four_misc_generate_5_perc_buttons()
+        self.tab_four_misc_generate_remove_buttons()
+        self.tab_four_misc_generate_taxable_buttons()
         for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
             self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_UPC_INDEX]))
             self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_TYPE_INDEX]))
@@ -8616,6 +8615,47 @@ class Ui_Form(QtGui.QWidget):
         #next line is dumb, if zero, makes it one, else if one, makes it zero
         self.tab_four_checkout_table_list[row][TAXABLE_INDEX] = (self.tab_four_checkout_table_list[row][TAXABLE_INDEX]+1)%2
         self.tab_four_checkout_table_refresh()
+
+    def tab_four_misc_5_percent_request(self, row):
+        self.tab_four_misc_checkout_table_list[row][MISC_PERCENT_DISCOUNT_INDEX] += 5
+        self.tab_four_misc_checkout_table_refresh()
+
+    def tab_four_misc_remove_item_request(self, row):
+        del self.tab_four_misc_checkout_table_list[row]
+        self.tab_four_misc_checkout_table_refresh()
+
+    def tab_four_misc_taxable_clicked(self, row):
+        self.tab_four_misc_checkout_table_list[row][MISC_TAXABLE_INDEX] = (self.tab_four_misc_checkout_table_list[row][MISC_TAXABLE_INDEX]+1)%2
+        self.tab_four_misc_checkout_table_refresh()
+        
+    def tab_four_misc_generate_5_perc_buttons(self):
+        self.tab_four_misc_percent_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_misc_checkout_table.rowCount()):
+            button = QtGui.QPushButton('+5%')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_misc_percent_mapper, QtCore.SLOT("map()"))
+            self.tab_four_misc_percent_mapper.setMapping(button, ii)
+            self.tab_four_misc_checkout_table.setCellWidget(ii,8,button)
+        self.connect(self.tab_four_misc_percent_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_misc_5_percent_request)
+
+    def tab_four_misc_generate_remove_buttons(self):
+        self.tab_four_misc_remove_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_misc_checkout_table.rowCount()):
+            button = QtGui.QPushButton('X')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_misc_remove_mapper, QtCore.SLOT("map()"))
+            self.tab_four_misc_remove_mapper.setMapping(button, ii)
+            self.tab_four_misc_checkout_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_four_misc_remove_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_misc_remove_item_request)
+
+    def tab_four_misc_generate_taxable_buttons(self):
+        self.tab_four_misc_taxable_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_four_misc_checkout_table.rowCount()):
+            button = QtGui.QPushButton('Yes')
+            if self.tab_four_misc_checkout_table_list[ii][TAXABLE_INDEX] == 0:
+                button = QtGui.QPushButton('No')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_four_misc_taxable_mapper, QtCore.SLOT("map()"))
+            self.tab_four_misc_taxable_mapper.setMapping(button, ii)
+            self.tab_four_misc_checkout_table.setCellWidget(ii,1,button)
+        self.connect(self.tab_four_misc_taxable_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_four_misc_taxable_clicked)
         
     def tab_four_generate_5_perc_buttons(self):
         self.tab_four_percent_mapper = QtCore.QSignalMapper(self)
