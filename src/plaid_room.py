@@ -8556,8 +8556,6 @@ class Ui_Form(QtGui.QWidget):
                 change = cream.get_change()
                 curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                inventory_receipt_list = []
-                misc_inventory_receipt_list = []
                 sold_inventory_new_ids = []
                 misc_sold_inventory_new_ids = []
                 # 1. Add items to sold inventory (numbered these so i wouldn't lose track of what i'm doing)
@@ -8577,11 +8575,24 @@ class Ui_Form(QtGui.QWidget):
                     self.db.commit()
                 
                 # 3. Add items to misc sold inventory
-
-                # 4. Delete items from misc inventory
-                
+                for row in self.tab_four_misc_checkout_table_list:
+                    percent_discount = row[MISC_PERCENT_DISCOUNT_INDEX]
+                    sold_for = round(((100-percent_discount)*0.01)*row[MISC_PRICE_INDEX],2)
+                    row[MISC_SOLD_FOR_INDEX] = self.xfloat(sold_for)
+                    row[MISC_PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
+                    row[MISC_DATE_SOLD_INDEX] = self.xstr(curr_time)
+                    row[MISC_REORDER_STATE_INDEX] = 0
+                    row[MISC_TRANSACTION_ID_INDEX] = 0
+                    self.db_cursor.execute('INSERT INTO misc_sold_inventory (upc, type, item, description, size, sale_price, price_paid, date_added, new_used, code, distributor, taxable, reserved_one, reserved_two, reserved_three, reserved_four, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_five, reserved_six) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                    self.db.commit()
+                    sold_misc_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                    # 4. Delete items from misc inventory
+                    self.db_cursor.execute('DELETE FROM misc_inventory WHERE id = ?', (row[MISC_ID_INDEX],))
+                    self.db.commit()
+                    
                 # 5. Add items to transaction history
-
+                
+                
                 # 6. Go back and update all items with new transaction number
 
                 # 7. Print receipt
