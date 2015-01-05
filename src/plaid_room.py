@@ -41,8 +41,9 @@ class Ui_Form(QtGui.QWidget):
         #few setup things
         self.thread().setPriority(QtCore.QThread.HighestPriority)
         locale.setlocale( locale.LC_ALL, '')
-
+        
         #declaration of global variables
+        self.non_decimal = re.compile(r'[^\d.]+')
         self.discogs = DiscogsClient()#discogs api
         self.distributors = Distributors(DIST_FILE_NAME)
         self.misc_types = MiscTypes(MISC_TYPES_FILE_NAME)
@@ -70,7 +71,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_percent_discount = 0.0
         self.tab_four_shipping = 0.0
         self.tab_four_total = 0.0
-
+        self.tab_four_shipping = 0.0
         
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
@@ -7484,11 +7485,15 @@ class Ui_Form(QtGui.QWidget):
         #tab four
         self.tab_four_checkout_table_refresh()
         self.tab_four_misc_checkout_table_refresh()
+        
         #connectors
         self.tab_four_scan_barcode_qline.returnPressed.connect(self.tab_four_search_inventory_checkout)
         self.connect(self.tab_four_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_checkout_table_cell_changed)
         self.connect(self.tab_four_misc_checkout_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_four_misc_checkout_table_cell_changed)
-
+        self.connect(self.tab_four_percent_discount_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_percent_discount_qline_edited)
+        self.connect(self.tab_four_discount_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_discount_qline_edited)
+        self.connect(self.tab_four_shipping_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_shipping_qline_edited)
+        
     ################### tab one starts ##################################
     
     def tab_one_remove_from_inventory(self):
@@ -8512,6 +8517,27 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab four begins ##################################
 
+    def tab_four_shipping_qline_edited(self):
+        text = self.tab_four_shipping_qline.text()
+        text = float(self.filter_non_numeric(str(text)))
+        if text > 0 and text < 1000:
+            self.tab_four_shipping = text
+        self.tab_four_final_checkout_table_refresh()
+    
+    def tab_four_percent_discount_qline_edited(self):
+        text = self.tab_four_percent_discount_qline.text()
+        text = float(self.filter_non_numeric(str(text)))
+        if text > 0 and text < 100:
+            self.tab_four_percent_discount = text
+        self.tab_four_final_checkout_table_refresh()
+        
+    def tab_four_discount_qline_edited(self):
+        text = self.tab_four_discount_qline.text()
+        text = self.filter_non_numeric(str(text))
+        percent_of_subtotal = float(text)/self.tab_four_subtotal
+        self.tab_four_percent_discount = 100-(100*percent_of_subtotal)
+        self.tab_four_final_checkout_table_refresh()
+        
     def tab_four_final_checkout_table_change_text(self, row, col, text):
         text = self.filter_unprintable(text)
         item = self.tab_four_final_checkout_table.item(row, col)
@@ -8556,6 +8582,12 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
         self.tab_four_final_checkout_table.setColumnWidth(0,275)  
 
+        #if there's no items being checked out, make sure everything else is cleared too
+        if self.tab_four_final_checkout_table.rowCount() == 0:
+            self.tab_four_shipping = 0.0
+            self.tab_four_percent_discount = 0.0
+            
+        
         #fill in other stuff
         self.tab_four_subtotal_qline.setText(locale.currency(self.tab_four_subtotal))
         self.tab_four_percent_discount_qline.setText('%d%%' % int(self.tab_four_percent_discount))
@@ -8564,8 +8596,9 @@ class Ui_Form(QtGui.QWidget):
         non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
         sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
         self.tab_four_discount_qline.setText(locale.currency(discounted_price))
+        self.tab_four_shipping_qline.setText(locale.currency(self.tab_four_shipping))
         self.tab_four_tax_amount_label.setText(locale.currency(sales_tax))
-        self.tab_four_total = round(discounted_price + sales_tax,2)
+        self.tab_four_total = round(discounted_price + sales_tax + self.tab_four_shipping,2)
         self.tab_four_total_qline.setText(locale.currency(self.tab_four_total))
         
 
@@ -8952,6 +8985,9 @@ class Ui_Form(QtGui.QWidget):
     def filter_unprintable(self, str_):
         return filter(lambda x: x in string.printable, str_)
 
+    def filter_non_numeric(self, str_):
+        return self.non_decimal.sub('', str_)
+    
     def xstr(self,s):
         if s is None:
             return ''
