@@ -198,12 +198,14 @@ class Ui_Form(QtGui.QWidget):
         cash_credit text,
         sold_inventory_ids text,
         sold_misc_inventory_ids text,
+        tendered real,
+        change real,
         reserved_one text,
         reserved_two text,
         reserved_three text,
         reserved_four text,
         id integer primary key autoincrement)
-        
+        """)
         
         self.setupUi(self)
 
@@ -8607,13 +8609,39 @@ class Ui_Form(QtGui.QWidget):
                     sold_misc_inventory_new_ids.append(str(self.db_cursor.lastrowid))
                     # 4. Delete items from misc inventory
                     self.db_cursor.execute('DELETE FROM misc_inventory WHERE id = ?', (row[MISC_ID_INDEX],))
-                    self.db.commit()
-                    
+                    self.db.commit()                    
                 # 5. Add items to transaction history
-                
-                
+                percent_of_price = ((100-self.tab_four_percent_discount)*0.01)
+                discounted_price = percent_of_price * self.tab_four_subtotal
+                non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
+                sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
+                trans_item = (self.xint(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)),
+                              curr_time,
+                              self.xfloat(self.tab_four_subtotal),
+                              self.xfloat(self.tab_four_percent_discount),
+                              self.xfloat(discounted_price),
+                              self.xfloat(sales_tax),
+                              self.xfloat(self.tab_four_shipping),
+                              self.xfloat(self.tab_four_total),
+                              self.xstr('Cash'),
+                              self.xstr(",".join(sold_inventory_new_ids)),
+                              self.xstr(",".join(sold_misc_inventory_new_ids)),
+                              self.xfloat(tendered),
+                              self.xfloat(change),
+                              self.xstr(''),
+                              self.xstr(''),
+                              self.xstr(''),
+                              self.xstr(''))
+                self.db_cursor.execute('INSERT INTO transactions (number_of_items, date_sold, subtotal, discount_percent, discounted_price, tax, shipping, total, cash_credit, sold_inventory_ids, sold_misc_inventory_ids, tendered, change, reserved_one, reserved_two, reserved_three, reserved_four) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
+                self.db.commit()
+                trans_id = self.db_cursor.lastrowid
                 # 6. Go back and update all items with new transaction number
-
+                for key in sold_inventory_new_ids:
+                    self.db_cursor.execute('UPDATE sold_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
+                    self.db.commit()
+                for key in sold_misc_inventory_new_ids:
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
+                    self.db.commit()
                 # 7. Print receipt
 
                 # 8. Clean up
