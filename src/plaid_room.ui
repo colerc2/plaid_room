@@ -8092,6 +8092,11 @@ p, li { white-space: pre-wrap; }
           <string>Reserved One</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>Sold Notes</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
