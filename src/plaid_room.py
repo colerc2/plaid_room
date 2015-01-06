@@ -74,6 +74,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_total = 0.0
         self.tab_four_shipping = 0.0
         
+        #tab five stuff
+        self.tab_five_results_table_list = []
+        self.tab_five_results_table_2_list = []
+
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
         self.db_cursor = self.db.cursor()
@@ -7544,7 +7548,11 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_four_shipping_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_shipping_qline_edited)
         self.tab_four_CREAM_button.clicked.connect(self.tab_four_make_a_cash_dialog)
 
-        #
+        #tab five
+        self.tab_five_results_tables_reset()
+        #connectors
+        self.tab_five_search_qline.returnPressed.connect(self.tab_five_search_sold_inventory)
+        self.tab_five_search_button.clicked.connect(self.tab_five_search_sold_inventory)
         
         
     ################### tab one starts ##################################
@@ -9060,6 +9068,107 @@ class Ui_Form(QtGui.QWidget):
             
     
     ################### tab four ends ##################################
+    ###################################################################
+    ################### tab five begins ##################################
+
+    def tab_five_results_tables_reset(self):
+        self.tab_five_results_table_clear()
+        self.tab_five_results_table_2_clear()
+        self.tab_five_num_displayed_spin_box.setValue(50)
+        self.tab_five_start_date.setDateTime(datetime.datetime.today())
+        self.tab_five_end_date.setDateTime(datetime.datetime.today())
+        self.tab_five_filter_date_checkbox.setCheckState(False)
+        self.tab_five_filter_dist_checkbox.setCheckState(False)
+        while self.tab_five_dist_combo_box.count() != 0:
+            self.tab_five_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_five_dist_combo_box.addItem(distributor)
+        for distributor in self.misc_distributors.get_misc_distributors():
+            self.tab_five_dist_combo_box.addItem(distributor)
+        self.tab_five_results_table.setRowCount(self.tab_five_num_displayed_spin_box.value())
+        self.tab_five_results_table_2.setRowCount(self.tab_five_num_displayed_spin_box.value())
+        self.tab_five_results_table_list = []
+        self.tab_five_results_table_2_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            self.tab_five_results_table_2_list.append(list(row))
+        for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory ORDER BY date_sold DESC'):
+            self.tab_five_results_table_list.append(list(row))    
+        self.tab_five_results_tables_refresh()
+
+    def tab_five_results_tables_refresh(self):
+        self.tab_five_results_table_clear()
+        self.tab_five_results_table_2_clear()
+        for ix, row in enumerate(self.tab_five_results_table_2_list):
+            if ix > (self.tab_five_results_table_2.rowCount()-1):
+                continue
+            #fill in table
+            self.tab_five_results_table_2_change_text(ix, 2, row[DATE_SOLD_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 3, row[SOLD_FOR_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 4, row[ARTIST_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 5, row[TITLE_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 6, row[UPC_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 7, row[PRICE_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 8, row[PRICE_PAID_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 9, row[NEW_USED_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 10, row[DISTRIBUTOR_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 11, row[LABEL_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 12, row[FORMAT_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 13, row[GENRE_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 14, row[YEAR_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 15, row[DATE_ADDED_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 16, row[DISCOGS_RELEASE_NUMBER_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 17, row[REAL_NAME_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 18, row[PROFILE_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 19, row[VARIATIONS_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 20, row[ALIASES_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 21, row[TRACK_LIST_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 22, row[NOTES_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 23, row[ID_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 24, row[SOLD_NOTES_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 25, row[PERCENT_DISCOUNT_INDEX])
+            self.tab_five_results_table_2_change_text(ix, 26, row[NEW_ID_INDEX])        
+            
+        
+    def tab_five_search_sold_inventory(self):
+        PLACEHOLDER = 9
+        
+    def tab_five_results_table_clear(self):
+        for ii in range(self.tab_five_results_table.rowCount()):
+            for jj in range(self.tab_five_results_table.columnCount()):
+                self.tab_five_results_table_change_text(ii, jj, "")
+        self.tab_five_results_table.setRowCount(self.tab_five_num_displayed_spin_box.value())
+
+    def tab_five_results_table_2_clear(self):
+        for ii in range(self.tab_five_results_table_2.rowCount()):
+            for jj in range(self.tab_five_results_table_2.columnCount()):
+                self.tab_five_results_table_2_change_text(ii, jj, "")
+        self.tab_five_results_table_2.setRowCount(self.tab_five_num_displayed_spin_box.value())
+
+    def tab_five_results_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_five_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_five_results_table.setItem(row, col, item)
+
+    def tab_five_results_table_2_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_five_results_table_2.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_five_results_table_2.setItem(row, col, item)
+
+
+    
+    ################### tab five ends ##################################
+    ###################################################################
+    ################### tab six begins ##################################
 
     def shift_right_shortcut(self):
         if self.main_menu_tabs.currentIndex() == 0:
