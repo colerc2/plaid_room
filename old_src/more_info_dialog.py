@@ -8,7 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from config_stuff import *
+#from config_stuff import *
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
