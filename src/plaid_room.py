@@ -8613,11 +8613,11 @@ class Ui_Form(QtGui.QWidget):
                 
                 # 3. Add items to misc sold inventory
                 for row in self.tab_four_misc_checkout_table_list:
-                    #make exceptions for gift cards
-                    if 'PRRGC' in row[UPC_INDEX]:
-                        row[MISC_RESERVED_ONE_INDEX] = 'remaining=%f' % round(row[MISC_SOLD_FOR_INDEX],2)
                     percent_discount = row[MISC_PERCENT_DISCOUNT_INDEX]
                     sold_for = round(((100-percent_discount)*0.01)*row[MISC_PRICE_INDEX],2)
+                    #make exceptions for gift cards
+                    if 'PRRGC' in row[UPC_INDEX]:
+                        row[MISC_RESERVED_ONE_INDEX] = 'remaining=%f' % sold_for
                     row[MISC_SOLD_FOR_INDEX] = self.xfloat(sold_for)
                     row[MISC_PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
                     row[MISC_DATE_SOLD_INDEX] = self.xstr(curr_time)
