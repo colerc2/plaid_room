@@ -8,55 +8,14 @@ import reportlab
 import locale
 import subprocess
 import datetime
-
-UPC_INDEX = 0
-ARTIST_INDEX = 1
-TITLE_INDEX = 2
-FORMAT_INDEX = 3
-PRICE_INDEX = 4
-PRICE_PAID_INDEX = 5
-NEW_USED_INDEX = 6
-DISTRIBUTOR_INDEX = 7
-LABEL_INDEX = 8
-GENRE_INDEX = 9
-YEAR_INDEX = 10
-DATE_ADDED_INDEX = 11
-DISCOGS_RELEASE_NUMBER_INDEX = 12
-REAL_NAME_INDEX = 13
-PROFILE_INDEX = 14
-VARIATIONS_INDEX = 15
-ALIASES_INDEX = 16
-TRACK_LIST_INDEX = 17
-NOTES_INDEX = 18
-ID_INDEX = 19
-SOLD_FOR_INDEX = 20
-PERCENT_DISCOUNT_INDEX = 21
-DATE_SOLD_INDEX = 22
-SOLD_NOTES_INDEX = 23
-REORDER_STATE = 24
-TRANSACTION_ID_INDEX = 25
-NEW_ID_INDEX = 26
-
-TRANS_NUM_ITEMS_INDEX = 0
-TRANS_DATE_SOLD_INDEX = 1
-TRANS_SUBTOTAL_INDEX = 2
-TRANS_DISCOUNT_INDEX = 3
-TRANS_DISCOUNTED_PRICE_INDEX = 4
-TRANS_TAX_INDEX = 5
-TRANS_SHIPPING_INDEX = 6
-TRANS_TOTAL_INDEX = 7
-TRANS_CASH_CREDIT_INDEX = 8
-TRANS_SOLD_IDS_INDEX = 9
-TRANS_ID_INDEX = 10
-
-CHARS_IN_A_LINE = 36
+from config_stuff import *
 
 class ReceiptPrinter():
-    def __init__(self):
-        self.file = '/Users/plaidroomrecords/Desktop/receipt_test.pdf'
+    def __init__(self, temp_receipt_file):
+        self.file = temp_receipt_file
         locale.setlocale( locale.LC_ALL, '')
         
-    def print_receipt(self, items, transaction, extra_info):
+    def print_receipt(self, items, misc_items, transaction):
         footer = 30
         lines = []
         #sub-header
@@ -107,8 +66,8 @@ class ReceiptPrinter():
         total = total + (' '*spaces_to_add) + price
         lines.append([total,False])
         #discount (if necessary)
-        if(transaction[TRANS_DISCOUNT_INDEX] != 0):
-            discount = (' '*13) + ('-%d%%' % transaction[TRANS_DISCOUNT_INDEX])
+        if(transaction[TRANS_DISCOUNT_PERCENT_INDEX] != 0):
+            discount = (' '*13) + ('-%d%%' % transaction[TRANS_DISCOUNT_PERCENT_INDEX])
             price = '-' + locale.currency(transaction[TRANS_SUBTOTAL_INDEX]-transaction[TRANS_DISCOUNTED_PRICE_INDEX])
             spaces_to_add = CHARS_IN_A_LINE - len(discount) - len(price)
             discount += (' '*spaces_to_add) + price
@@ -120,7 +79,7 @@ class ReceiptPrinter():
             total = total + (' '*spaces_to_add) + price
             lines.append([total,False])
         #tax
-        tax = (' '*13) + 'Tax @ 7%'
+        tax = (' '*13) + 'Tax @ 6.5%%'
         price = locale.currency(transaction[TRANS_TAX_INDEX])
         spaces_to_add = CHARS_IN_A_LINE - len(tax) - len(price)
         tax = tax + (' '*spaces_to_add) + price
@@ -143,12 +102,12 @@ class ReceiptPrinter():
         #cash or credit
         if transaction[TRANS_CASH_CREDIT_INDEX] == 'Cash':
             tendered = (' '*13) + 'Cash Tendered'
-            price = locale.currency(extra_info[0])
+            price = locale.currency(transaction[TRANS_TENDERED_INDEX])
             spaces_to_add = CHARS_IN_A_LINE - len(tendered) - len(price)
             tendered = tendered + (' '*spaces_to_add) + price
             lines.append([tendered,False])
             change = (' '*13) + 'Change Due'
-            price = locale.currency(extra_info[1])
+            price = locale.currency(transaction[TRANS_CHANGE_INDEX])
             spaces_to_add = CHARS_IN_A_LINE - len(change) - len(price)
             change = change + (' '*spaces_to_add) + price
             lines.append([change,False])
@@ -168,7 +127,7 @@ class ReceiptPrinter():
         c = canvas.Canvas(self.file,pagesize=(80 * mm, canvas_size * mm))
 
         c.setFont('Courier', 9)
-        c.drawImage('/Users/plaidroomrecords/Desktop/plaid_room.jpg',2*mm,(canvas_size-110)*mm,width=70*mm,preserveAspectRatio=True)
+        c.drawImage(RECEIPT_HEADER_FILE_NAME,2*mm,(canvas_size-110)*mm,width=70*mm,preserveAspectRatio=True)
         y_pos = canvas_size - 55
         for line in lines:
             if line[1]:
@@ -186,7 +145,7 @@ class ReceiptPrinter():
         c.save()
 
         #make call to subprocess to talk to CUPS to print her
-        command = 'lp -d EPSON_TM_T20 -o media=Custom.80x%dmm /Users/plaidroomrecords/Desktop/receipt_test.pdf' % canvas_size
+        command = 'lp -d EPSON_TM_T20 -o media=Custom.80x%dmm %s' % (canvas_size, TEMP_RECEIPT_FILE_NAME)
         subprocess.call(command, shell=True)
 
         

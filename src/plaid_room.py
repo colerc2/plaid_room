@@ -49,6 +49,7 @@ class Ui_Form(QtGui.QWidget):
         self.misc_types = MiscTypes(MISC_TYPES_FILE_NAME)
         self.barcode_printer = BarcodePrinter()
         self.misc_distributors = MiscDistributors(MISC_DIST_FILE_NAME)
+        self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
         
         #tab one stuff
         self.tab_one_results_table_list = []
@@ -8643,8 +8644,15 @@ class Ui_Form(QtGui.QWidget):
                     self.db_cursor.execute('UPDATE sold_misc_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
                     self.db.commit()
                 # 7. Print receipt
-
+                trans_with_id = None
+                for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
+                    trans_with_id = row
+                self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
                 # 8. Clean up
+                self.checkout_list = []
+                self.tab_three_refresh_checkout_table()
+                self.tab_four_reset()
+
             
     def tab_four_shipping_qline_edited(self):
         text = self.tab_four_shipping_qline.text()
