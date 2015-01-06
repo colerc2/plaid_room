@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>5</number>
+    <number>4</number>
    </property>
    <property name="iconSize">
     <size>
@@ -6304,7 +6304,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="tab_five_search_qline_2">
+           <widget class="QLineEdit" name="tab_five_search_qline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6336,7 +6336,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_five_search_button_2">
+           <widget class="QPushButton" name="tab_five_search_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -6362,7 +6362,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_four_reset_button">
+           <widget class="QPushButton" name="tab_five_reset_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -6431,7 +6431,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_four_item_history_label">
+           <widget class="QLabel" name="tab_five_item_history_label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -6512,7 +6512,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="tab_four_filter_date_checkbox">
+           <widget class="QCheckBox" name="tab_five_filter_date_checkbox">
             <property name="text">
              <string>Filter by Date Sold</string>
             </property>
@@ -6543,7 +6543,7 @@ p, li { white-space: pre-wrap; }
              <enum>QLayout::SetFixedSize</enum>
             </property>
             <item>
-             <widget class="QDateEdit" name="tab_four_start_date">
+             <widget class="QDateEdit" name="tab_five_start_date">
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -6582,7 +6582,7 @@ p, li { white-space: pre-wrap; }
              <enum>QLayout::SetFixedSize</enum>
             </property>
             <item>
-             <widget class="QDateEdit" name="tab_four_end_date">
+             <widget class="QDateEdit" name="tab_five_end_date">
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -6652,7 +6652,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="tab_four_filter_dist_checkbox">
+           <widget class="QCheckBox" name="tab_five_filter_dist_checkbox">
             <property name="text">
              <string>Filter By Distributor</string>
             </property>
@@ -6675,7 +6675,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QComboBox" name="tab_four_dist_combo_box"/>
+           <widget class="QComboBox" name="tab_five_dist_combo_box"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_97">
@@ -6721,7 +6721,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="tab_four_num_displayed_spin_box">
+           <widget class="QSpinBox" name="tab_five_num_displayed_spin_box">
             <property name="correctionMode">
              <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
             </property>
@@ -6786,7 +6786,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_four_search_items_label">
+           <widget class="QLabel" name="tab_five_search_items_label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -6809,7 +6809,7 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="tab_four_results_table_2">
+       <widget class="QTableWidget" name="tab_five_results_table_2">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -7487,7 +7487,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="tab_four_results_table">
+       <widget class="QTableWidget" name="tab_five_results_table">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
