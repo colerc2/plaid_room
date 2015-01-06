@@ -9126,7 +9126,24 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_2_change_text(ix, 23, row[ID_INDEX])
             self.tab_five_results_table_2_change_text(ix, 24, row[SOLD_NOTES_INDEX])
             self.tab_five_results_table_2_change_text(ix, 25, row[PERCENT_DISCOUNT_INDEX])
-            self.tab_five_results_table_2_change_text(ix, 26, row[NEW_ID_INDEX])        
+            self.tab_five_results_table_2_change_text(ix, 26, row[NEW_ID_INDEX])
+        for ix, row in enumerate(self.tab_five_results_table_list):
+            if ix > (self.tab_five_results_table.rowCount()-1):
+                continue
+            #fill in table
+            self.tab_five_results_table_change_text(ix, 2, row[MISC_DATE_SOLD_INDEX])
+            self.tab_five_results_table_change_text(ix, 3, row[MISC_SOLD_FOR_INDEX])
+            self.tab_five_results_table_change_text(ix, 4, row[MISC_TYPE_INDEX])
+            self.tab_five_results_table_change_text(ix, 5, row[MISC_ITEM_INDEX])
+            self.tab_five_results_table_change_text(ix, 6, row[MISC_DESCRIPTION_INDEX])
+            self.tab_five_results_table_change_text(ix, 7, row[MISC_UPC_INDEX])
+            self.tab_five_results_table_change_text(ix, 8, row[MISC_SIZE_INDEX])
+            self.tab_five_results_table_change_text(ix, 9, row[MISC_PRICE_INDEX])
+            self.tab_five_results_table_change_text(ix, 10, row[MISC_PRICE_PAID_INDEX])
+            self.tab_five_results_table_change_text(ix, 11, row[MISC_DATE_ADDED_INDEX])
+            self.tab_five_results_table_change_text(ix, 12, row[MISC_NEW_USED_INDEX])
+            self.tab_five_results_table_change_text(ix, 13, row[MISC_CODE_INDEX])
+            self.tab_five_results_table_change_text(ix, 14, row[MISC_DISTRIBUTOR_INDEX])
             
         
     def tab_five_search_sold_inventory(self):
