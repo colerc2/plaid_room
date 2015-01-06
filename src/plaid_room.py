@@ -8571,7 +8571,7 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_make_a_cash_dialog(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
-            cream = Ui_CashDialog(self.checkout_total)
+            cream = Ui_CashDialog(self.tab_four_total)
             paid_or_naaa = cream.exec_()
             if paid_or_naaa == QtGui.QDialog.Accepted:
                 tendered = cream.get_tendered()
@@ -8649,22 +8649,23 @@ class Ui_Form(QtGui.QWidget):
                     trans_with_id = row
                 self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
                 # 8. Clean up
-                self.checkout_list = []
-                self.tab_three_refresh_checkout_table()
-                self.tab_four_reset()
+                self.tab_four_checkout_table_list = []
+                self.tab_four_misc_checkout_table_list = []
+                self.tab_four_checkout_table_refresh()
+                self.tab_four_misc_checkout_table_refresh()
 
             
     def tab_four_shipping_qline_edited(self):
         text = self.tab_four_shipping_qline.text()
         text = float(self.filter_non_numeric(str(text)))
-        if text > 0 and text < 1000:
+        if text >= 0 and text < 1000:
             self.tab_four_shipping = text
         self.tab_four_final_checkout_table_refresh()
     
     def tab_four_percent_discount_qline_edited(self):
         text = self.tab_four_percent_discount_qline.text()
         text = float(self.filter_non_numeric(str(text)))
-        if text > 0 and text < 100:
+        if text >= 0 and text < 100:
             self.tab_four_percent_discount = text
         self.tab_four_final_checkout_table_refresh()
         
@@ -8831,7 +8832,7 @@ class Ui_Form(QtGui.QWidget):
             for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
                 row_list = list(row)
                 #construct a row of the form used in sold_inventory table
-                row_list += [-1, 0, '', '', -1, -1, '', -1]
+                row_list += [-1, 0, '', '', -1, -1, '']
                 if(row[ID_INDEX] not in keys):
                     self.tab_four_checkout_table_list.append(row_list)
             self.tab_four_checkout_table_refresh()
@@ -8863,7 +8864,7 @@ class Ui_Form(QtGui.QWidget):
             for row in self.db_cursor.execute('SELECT * FROM misc_inventory WHERE upc = ?', (barcode_query,)):
                 row_list = list(row)
                 #construct a row of the form used in the misc_sold_inventory_table
-                row_list += [-1, 0, '', '', -1, -1, '', '', -1]
+                row_list += [-1, 0, '', '', -1, -1, '', '']
                 if(row[MISC_ID_INDEX] not in keys):
                     self.tab_four_misc_checkout_table_list.append(row_list)
             self.tab_four_misc_checkout_table_refresh()

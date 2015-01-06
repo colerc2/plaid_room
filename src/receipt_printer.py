@@ -10,6 +10,8 @@ import subprocess
 import datetime
 from config_stuff import *
 
+CHARS_IN_A_LINE = 36
+
 class ReceiptPrinter():
     def __init__(self, temp_receipt_file):
         self.file = temp_receipt_file
@@ -79,7 +81,7 @@ class ReceiptPrinter():
             total = total + (' '*spaces_to_add) + price
             lines.append([total,False])
         #tax
-        tax = (' '*13) + 'Tax @ 6.5%%'
+        tax = (' '*13) + 'Tax @ 6.5%'
         price = locale.currency(transaction[TRANS_TAX_INDEX])
         spaces_to_add = CHARS_IN_A_LINE - len(tax) - len(price)
         tax = tax + (' '*spaces_to_add) + price
