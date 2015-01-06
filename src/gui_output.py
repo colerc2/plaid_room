@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Mon Jan  5 21:56:09 2015
+# Created: Mon Jan  5 23:24:51 2015
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -2814,7 +2814,7 @@ class Ui_Form(object):
         self.tab_five_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_five_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_five_results_table.setObjectName(_fromUtf8("tab_five_results_table"))
-        self.tab_five_results_table.setColumnCount(16)
+        self.tab_five_results_table.setColumnCount(17)
         self.tab_five_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.tab_five_results_table.setVerticalHeaderItem(0, item)
@@ -3042,6 +3042,8 @@ class Ui_Form(object):
         self.tab_five_results_table.setHorizontalHeaderItem(14, item)
         item = QtGui.QTableWidgetItem()
         self.tab_five_results_table.setHorizontalHeaderItem(15, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_five_results_table.setHorizontalHeaderItem(16, item)
         self.tab_five_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_five_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_five_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -6364,6 +6366,8 @@ class Ui_Form(object):
         item.setText(_translate("Form", "Distributor", None))
         item = self.tab_five_results_table.horizontalHeaderItem(15)
         item.setText(_translate("Form", "Reserved One", None))
+        item = self.tab_five_results_table.horizontalHeaderItem(16)
+        item.setText(_translate("Form", "Sold Notes", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "Item History", None))
         self.tab_five_search_item_label.setText(_translate("Form", "Search for Transaction", None))
         self.tab_six_by_transaction_id.setText(_translate("Form", "By Transaction ID", None))

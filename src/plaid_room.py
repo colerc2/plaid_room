@@ -3005,7 +3005,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_five_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_five_results_table.setObjectName(_fromUtf8("tab_five_results_table"))
-        self.tab_five_results_table.setColumnCount(16)
+        self.tab_five_results_table.setColumnCount(17)
         self.tab_five_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.tab_five_results_table.setVerticalHeaderItem(0, item)
@@ -3233,6 +3233,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table.setHorizontalHeaderItem(14, item)
         item = QtGui.QTableWidgetItem()
         self.tab_five_results_table.setHorizontalHeaderItem(15, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_five_results_table.setHorizontalHeaderItem(16, item)
         self.tab_five_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_five_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_five_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -6555,6 +6557,8 @@ class Ui_Form(QtGui.QWidget):
         item.setText(_translate("Form", "Distributor", None))
         item = self.tab_five_results_table.horizontalHeaderItem(15)
         item.setText(_translate("Form", "Reserved One", None))
+        item = self.tab_five_results_table.horizontalHeaderItem(16)
+        item.setText(_translate("Form", "Sold Notes", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.history_tab), _translate("Form", "Item History", None))
         self.tab_five_search_item_label.setText(_translate("Form", "Search for Transaction", None))
         self.tab_six_by_transaction_id.setText(_translate("Form", "By Transaction ID", None))
@@ -8714,7 +8718,7 @@ class Ui_Form(QtGui.QWidget):
         try:
             #first loop through and put inventory items, then misc_inventory_items
             self.tab_four_final_checkout_table_clear()
-            self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list))
+            self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)+len(self.tab_four_gift_card_list))
 
             self.tab_four_subtotal = 0.0
             self.tab_four_non_taxable_subtotal = 0.0
@@ -8738,9 +8742,15 @@ class Ui_Form(QtGui.QWidget):
                 if row[MISC_TAXABLE_INDEX] == 0:
                     self.tab_four_non_taxable_subtotal += round(row[MISC_PRICE_INDEX]*percent_of_price,2)
             self.tab_four_final_checkout_table.setColumnWidth(0,275)  
+            offset = len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)
+            for ix, row in enumerate(self.tab_four_gift_card_list):
+                self.tab_four_final_checkout_table_change_text(ix+offset,0, 'Gift Card')
+                self.tab_four_final_checkout_table_change_text(ix+offset,1, ('-%s' % locale.currency(row[MISC_PRICE_INDEX]))) 
 
+            
             #if there's no items being checked out, make sure everything else is cleared too
             if self.tab_four_final_checkout_table.rowCount() == 0:
+                self.tab_four_gift_card_list = []
                 self.tab_four_shipping = 0.0
                 self.tab_four_percent_discount = 0.0
 
@@ -8842,7 +8852,20 @@ class Ui_Form(QtGui.QWidget):
         #as normal
         if 'PRRGC' in barcode_query:
             for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
+                row = list(row)
+                value_remaining = float(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX]))
+                row[MISC_PRICE_INDEX] = value_remaining
+                for item in self.tab_four_gift_card_list:
+                    if item[MISC_UPC_INDEX] == row[MISC_UPC_INDEX]:
+                        self.tab_four_final_checkout_table_refresh()
+                        self.tab_four_scan_barcode_qline.clear()
+                        self.tab_four_scan_barcode_qline.setFocus()
+                        return
                 self.tab_four_gift_card_list.append(list(row))
+                self.tab_four_final_checkout_table_refresh()
+                self.tab_four_scan_barcode_qline.clear()
+                self.tab_four_scan_barcode_qline.setFocus()
+                return
 
         #first search inventory, then search misc_inventory
         count = 0
@@ -9161,6 +9184,8 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_change_text(ix, 13, row[MISC_CODE_INDEX])
             self.tab_five_results_table_change_text(ix, 14, row[MISC_DISTRIBUTOR_INDEX])
             self.tab_five_results_table_change_text(ix, 15, row[MISC_RESERVED_ONE_INDEX])
+            self.tab_five_results_table_change_text(ix, 16, row[MISC_SOLD_NOTES_INDEX])
+            
             
         
     def tab_five_search_sold_inventory(self):
