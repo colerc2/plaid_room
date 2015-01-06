@@ -8615,7 +8615,7 @@ class Ui_Form(QtGui.QWidget):
                 for row in self.tab_four_misc_checkout_table_list:
                     #make exceptions for gift cards
                     if 'PRRGC' in row[UPC_INDEX]:
-                        row[MISC_RESERVED_ONE] = 'remaining=%f' % round(row[MISC_SOLD_FOR],2)
+                        row[MISC_RESERVED_ONE_INDEX] = 'remaining=%f' % round(row[MISC_SOLD_FOR_INDEX],2)
                     percent_discount = row[MISC_PERCENT_DISCOUNT_INDEX]
                     sold_for = round(((100-percent_discount)*0.01)*row[MISC_PRICE_INDEX],2)
                     row[MISC_SOLD_FOR_INDEX] = self.xfloat(sold_for)
@@ -9160,6 +9160,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_change_text(ix, 12, row[MISC_NEW_USED_INDEX])
             self.tab_five_results_table_change_text(ix, 13, row[MISC_CODE_INDEX])
             self.tab_five_results_table_change_text(ix, 14, row[MISC_DISTRIBUTOR_INDEX])
+            self.tab_five_results_table_change_text(ix, 15, row[MISC_RESERVED_ONE_INDEX])
             
         
     def tab_five_search_sold_inventory(self):

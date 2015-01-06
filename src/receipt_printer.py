@@ -64,36 +64,43 @@ class ReceiptPrinter():
                 lines.append([temp,False])
         #misc items
         for item in misc_items:
-            temp = '%s - %s' % (item[MISC_ITEM_INDEX], item[MISC_DESCRIPTION_INDEX])
-            if len(temp) < 25: #fill in the price at the end of the line
-                price = locale.currency(item[MISC_PRICE_INDEX])
+            if 'PRRGC' in item[MISC_UPC_INDEX]:#gift cards exception, man these are annoying
+                temp  = 'Gift Card - %s' % item[MISC_UPC_INDEX]
+                price = locale.currency(item[MISC_SOLD_FOR_INDEX])
                 spaces_to_add = CHARS_IN_A_LINE - len(price) - len(temp)
                 temp += (' '*spaces_to_add) + price
                 lines.append([temp, False])
             else:
-                #start grabbing words off of the end until it's less than 25
-                split_temp = temp.split(' ')
-                first_line = ''
-                second_line = '    '
-                for word in split_temp:
-                    if (len(first_line)+len(word)+1) < 25:
-                        first_line  = first_line + word + ' '
-                    else:
-                        second_line = second_line + word + ' '
-                second_line = second_line[0:25]
-                price = locale.currency(item[MISC_PRICE_INDEX])
-                spaces_to_add = CHARS_IN_A_LINE - len(price) - len(second_line)
-                second_line += (' '*spaces_to_add) + price
-                lines.append([first_line,False])
-                lines.append([second_line,False])
-            #if there was a discount, add this to receipt
-            if item[MISC_PERCENT_DISCOUNT_INDEX] != 0:
-                temp = ('    - %d%%' % int(item[MISC_PERCENT_DISCOUNT_INDEX]))
-                price = locale.currency(item[MISC_PRICE_INDEX] - item[MISC_SOLD_FOR_INDEX])
-                price = '-' + price
-                spaces_to_add = CHARS_IN_A_LINE - len(temp) - len(price)
-                temp += (' '*spaces_to_add) + price
-                lines.append([temp, False])
+                temp = '%s - %s' % (item[MISC_ITEM_INDEX], item[MISC_DESCRIPTION_INDEX])
+                if len(temp) < 25: #fill in the price at the end of the line
+                    price = locale.currency(item[MISC_PRICE_INDEX])
+                    spaces_to_add = CHARS_IN_A_LINE - len(price) - len(temp)
+                    temp += (' '*spaces_to_add) + price
+                    lines.append([temp, False])
+                else:
+                    #start grabbing words off of the end until it's less than 25
+                    split_temp = temp.split(' ')
+                    first_line = ''
+                    second_line = '    '
+                    for word in split_temp:
+                        if (len(first_line)+len(word)+1) < 25:
+                            first_line  = first_line + word + ' '
+                        else:
+                            second_line = second_line + word + ' '
+                    second_line = second_line[0:25]
+                    price = locale.currency(item[MISC_PRICE_INDEX])
+                    spaces_to_add = CHARS_IN_A_LINE - len(price) - len(second_line)
+                    second_line += (' '*spaces_to_add) + price
+                    lines.append([first_line,False])
+                    lines.append([second_line,False])
+                #if there was a discount, add this to receipt
+                if item[MISC_PERCENT_DISCOUNT_INDEX] != 0:
+                    temp = ('    - %d%%' % int(item[MISC_PERCENT_DISCOUNT_INDEX]))
+                    price = locale.currency(item[MISC_PRICE_INDEX] - item[MISC_SOLD_FOR_INDEX])
+                    price = '-' + price
+                    spaces_to_add = CHARS_IN_A_LINE - len(temp) - len(price)
+                    temp += (' '*spaces_to_add) + price
+                    lines.append([temp, False])
             #if this item is tax exempt, make a note of this on receipt
             if item[MISC_TAXABLE_INDEX] == 0:
                 temp = '    (Tax-exempt)'
