@@ -8590,8 +8590,21 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_make_a_cash_dialog(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
-            cream = Ui_CashDialog(self.tab_four_total)
-            paid_or_naaa = cream.exec_()
+            cream = None
+            paid_or_naaa = None
+            #another place i have to break all normal logic for gift cards
+            if self.tab_four_gift_card_list:
+                for row in self.tab_four_gift_card_list:
+                    new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
+                    if new_total < 0:
+                        cream = Ui_CashDialog(0)
+                        paid_or_naaa = cream.exec_()
+                    else:
+                        cream = Ui_CashDialog(round(new_total,2))
+                        paid_or_naaa = cream.exec_()
+            else:
+                cream = Ui_CashDialog(self.tab_four_total)
+                paid_or_naaa = cream.exec_()
             if paid_or_naaa == QtGui.QDialog.Accepted:
                 tendered = cream.get_tendered()
                 change = cream.get_change()
