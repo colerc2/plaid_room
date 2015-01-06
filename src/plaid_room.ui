@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>6</number>
    </property>
    <property name="iconSize">
     <size>
@@ -6304,7 +6304,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="tab_four_search_qline">
+           <widget class="QLineEdit" name="tab_five_search_qline_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6336,7 +6336,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_four_search_button">
+           <widget class="QPushButton" name="tab_five_search_button_2">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -9280,7 +9280,7 @@ p, li { white-space: pre-wrap; }
                <enum>QLayout::SetMinimumSize</enum>
               </property>
               <item>
-               <widget class="QLabel" name="tab_six_recently_sold_label">
+               <widget class="QLabel" name="tab_seven_recently_sold_label">
                 <property name="font">
                  <font>
                   <family>Lucida Grande</family>
@@ -9309,7 +9309,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLineEdit" name="tab_six_search_sold_qline">
+               <widget class="QLineEdit" name="tab_seven_search_sold_qline">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -9344,7 +9344,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="tab_six_search_sold_button">
+               <widget class="QPushButton" name="tab_seven_search_sold_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -9388,7 +9388,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="tab_six_search_sold_reset">
+               <widget class="QPushButton" name="tab_seven_search_sold_reset">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -9420,7 +9420,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="tab_six_search_sold_filter_dist_checkbox">
+               <widget class="QCheckBox" name="tab_seven_search_sold_filter_dist_checkbox">
                 <property name="text">
                  <string>Filter By Distributor</string>
                 </property>
@@ -9443,7 +9443,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QComboBox" name="tab_six_search_sold_dist_combo_box"/>
+               <widget class="QComboBox" name="tab_seven_search_sold_dist_combo_box"/>
               </item>
               <item>
                <spacer name="horizontalSpacer_76">
@@ -9459,7 +9459,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="tab_six_search_sold_item_history_label">
+               <widget class="QLabel" name="tab_seven_search_sold_item_history_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -9498,7 +9498,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="tab_six_search_sold_filter_date_checkbox">
+               <widget class="QCheckBox" name="tab_seven_search_sold_filter_date_checkbox">
                 <property name="text">
                  <string>Filter by Date Sold</string>
                 </property>
@@ -9529,7 +9529,7 @@ p, li { white-space: pre-wrap; }
                  <enum>QLayout::SetFixedSize</enum>
                 </property>
                 <item>
-                 <widget class="QDateEdit" name="tab_six_search_sold_start_date">
+                 <widget class="QDateEdit" name="tab_seven_search_sold_start_date">
                   <property name="calendarPopup">
                    <bool>true</bool>
                   </property>
@@ -9568,7 +9568,7 @@ p, li { white-space: pre-wrap; }
                  <enum>QLayout::SetFixedSize</enum>
                 </property>
                 <item>
-                 <widget class="QDateEdit" name="tab_six_search_sold_end_date">
+                 <widget class="QDateEdit" name="tab_seven_search_sold_end_date">
                   <property name="calendarPopup">
                    <bool>true</bool>
                   </property>
@@ -9653,7 +9653,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="tab_six_search_sold_num_displayed_spinbox">
+               <widget class="QSpinBox" name="tab_seven_search_sold_num_displayed_spinbox">
                 <property name="correctionMode">
                  <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                 </property>
@@ -9692,7 +9692,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="tab_six_search_sold_search_items_label">
+               <widget class="QLabel" name="tab_seven_search_sold_search_items_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -9715,7 +9715,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item>
-           <widget class="QTableWidget" name="tab_six_search_sold_table">
+           <widget class="QTableWidget" name="tab_seven_search_sold_table">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -10359,7 +10359,7 @@ p, li { white-space: pre-wrap; }
                <enum>QLayout::SetMinimumSize</enum>
               </property>
               <item>
-               <widget class="QLabel" name="tab_six_done_label">
+               <widget class="QLabel" name="tab_seven_done_label">
                 <property name="font">
                  <font>
                   <family>Lucida Grande</family>
@@ -10388,7 +10388,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLineEdit" name="tab_six_done_search_qline">
+               <widget class="QLineEdit" name="tab_seven_done_search_qline">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -10423,7 +10423,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="tab_six_done_search_button">
+               <widget class="QPushButton" name="tab_seven_done_search_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -10473,7 +10473,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="tab_six_done_search_reset_button">
+               <widget class="QPushButton" name="tab_seven_done_search_reset_button">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -10511,7 +10511,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="tab_six_done_filter_dist_checkbox">
+               <widget class="QCheckBox" name="tab_seven_done_filter_dist_checkbox">
                 <property name="text">
                  <string>Filter By Distributor</string>
                 </property>
@@ -10534,7 +10534,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QComboBox" name="tab_six_done_dist_combo_box"/>
+               <widget class="QComboBox" name="tab_seven_done_dist_combo_box"/>
               </item>
               <item>
                <spacer name="horizontalSpacer_102">
@@ -10550,7 +10550,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="tab_six_done_item_history_label">
+               <widget class="QLabel" name="tab_seven_done_item_history_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -10589,7 +10589,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="tab_six_done_filter_date_checkbox">
+               <widget class="QCheckBox" name="tab_seven_done_filter_date_checkbox">
                 <property name="text">
                  <string>Filter by Date Sold</string>
                 </property>
@@ -10620,7 +10620,7 @@ p, li { white-space: pre-wrap; }
                  <enum>QLayout::SetFixedSize</enum>
                 </property>
                 <item>
-                 <widget class="QDateEdit" name="tab_six_done_start_date">
+                 <widget class="QDateEdit" name="tab_seven_done_start_date">
                   <property name="calendarPopup">
                    <bool>true</bool>
                   </property>
@@ -10659,7 +10659,7 @@ p, li { white-space: pre-wrap; }
                  <enum>QLayout::SetFixedSize</enum>
                 </property>
                 <item>
-                 <widget class="QDateEdit" name="tab_six_done_end_date">
+                 <widget class="QDateEdit" name="tab_seven_done_end_date">
                   <property name="calendarPopup">
                    <bool>true</bool>
                   </property>
@@ -10738,7 +10738,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="tab_six_done_num_displayed_spinbox">
+               <widget class="QSpinBox" name="tab_seven_done_num_displayed_spinbox">
                 <property name="correctionMode">
                  <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                 </property>
@@ -10777,7 +10777,7 @@ p, li { white-space: pre-wrap; }
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="tab_six_done_search_items_label">
+               <widget class="QLabel" name="tab_seven_done_search_items_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -10800,7 +10800,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item>
-           <widget class="QTableWidget" name="tab_six_done_table">
+           <widget class="QTableWidget" name="tab_seven_done_table">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -11441,7 +11441,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_six_current_po_label">
+           <widget class="QLabel" name="tab_seven_current_po_label">
             <property name="font">
              <font>
               <family>Lucida Grande</family>
@@ -11470,7 +11470,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QComboBox" name="tab_six_po_combobox"/>
+           <widget class="QComboBox" name="tab_seven_po_combobox"/>
           </item>
           <item>
            <spacer name="horizontalSpacer_115">
@@ -11488,14 +11488,14 @@ p, li { white-space: pre-wrap; }
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_33">
             <item>
-             <widget class="QLabel" name="tab_six_po_item_count_label">
+             <widget class="QLabel" name="tab_seven_po_item_count_label">
               <property name="text">
                <string>XX Total Items</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="tab_six_po_item_count_shown_label">
+             <widget class="QLabel" name="tab_seven_po_item_count_shown_label">
               <property name="text">
                <string>XX Shown</string>
               </property>
@@ -11519,7 +11519,7 @@ p, li { white-space: pre-wrap; }
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="tab_six_po_table">
+         <widget class="QTableWidget" name="tab_seven_po_table">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -12108,7 +12108,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_29">
             <item>
-             <widget class="QLineEdit" name="tab_six_csv_qline"/>
+             <widget class="QLineEdit" name="tab_seven_csv_qline"/>
             </item>
             <item>
              <widget class="QLabel" name="label_25">
@@ -12120,7 +12120,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_six_generate_po_button">
+           <widget class="QPushButton" name="tab_seven_generate_po_button">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
