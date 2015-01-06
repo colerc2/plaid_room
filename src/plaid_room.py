@@ -67,6 +67,7 @@ class Ui_Form(QtGui.QWidget):
         #tab four stuff
         self.tab_four_checkout_table_list = []
         self.tab_four_misc_checkout_table_list = []
+        self.tab_four_gift_card_list = []
         self.tab_four_subtotal = 0.0
         self.tab_four_non_taxable_subtotal = 0.0
         self.tab_four_percent_discount = 0.0
@@ -7553,6 +7554,7 @@ class Ui_Form(QtGui.QWidget):
         #connectors
         self.tab_five_search_qline.returnPressed.connect(self.tab_five_search_sold_inventory)
         self.tab_five_search_button.clicked.connect(self.tab_five_search_sold_inventory)
+        self.tab_five_reset_button.clicked.connect(self.tab_five_results_tables_reset)
         
         
     ################### tab one starts ##################################
@@ -8607,6 +8609,9 @@ class Ui_Form(QtGui.QWidget):
                 
                 # 3. Add items to misc sold inventory
                 for row in self.tab_four_misc_checkout_table_list:
+                    #make exceptions for gift cards
+                    if 'PRRGC' in row[UPC_INDEX]:
+                        row[MISC_RESERVED_ONE] = 'remaining=%f' % round(row[MISC_SOLD_FOR],2)
                     percent_discount = row[MISC_PERCENT_DISCOUNT_INDEX]
                     sold_for = round(((100-percent_discount)*0.01)*row[MISC_PRICE_INDEX],2)
                     row[MISC_SOLD_FOR_INDEX] = self.xfloat(sold_for)
@@ -8827,6 +8832,13 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_search_inventory_checkout(self):
         barcode_query = str(self.tab_four_scan_barcode_qline.text())
+
+        #if it's a gift card (i.e. upc contains PRRGC) first search sold inventory, if it's in there,
+        #add it to a special list that will later be subtracted from total, if it's not been sold, just continue
+        #as normal
+        if 'PRRGC' in barcode_query:
+            for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory WHERE upc = ? ORDER BY date_added ASC', (barcode_query,)):
+                self.tab_four_gift_card_list.append(list(row))
 
         #first search inventory, then search misc_inventory
         count = 0
