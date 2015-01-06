@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>6</number>
+    <number>5</number>
    </property>
    <property name="iconSize">
     <size>
@@ -8187,7 +8187,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QRadioButton" name="tab_five_by_transaction_id">
+           <widget class="QRadioButton" name="tab_six_by_transaction_id">
             <property name="text">
              <string>By Transaction ID</string>
             </property>
@@ -8197,7 +8197,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="tab_five_by_keyword_radio_button">
+           <widget class="QRadioButton" name="tab_six_by_keyword_radio_button">
             <property name="text">
              <string>By Keyword</string>
             </property>
@@ -8220,7 +8220,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="tab_five_search_qline">
+           <widget class="QLineEdit" name="tab_six_search_qline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8252,7 +8252,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_five_search_button">
+           <widget class="QPushButton" name="tab_six_search_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -8278,7 +8278,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="tab_five_reset_button">
+           <widget class="QPushButton" name="tab_six_reset_button">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -8347,7 +8347,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_five_trans_in_history">
+           <widget class="QLabel" name="tab_six_trans_in_history">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -8428,7 +8428,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="tab_five_filter_by_date_checkbox">
+           <widget class="QCheckBox" name="tab_six_filter_by_date_checkbox">
             <property name="text">
              <string>Filter by Date Added</string>
             </property>
@@ -8459,7 +8459,7 @@ p, li { white-space: pre-wrap; }
              <enum>QLayout::SetFixedSize</enum>
             </property>
             <item>
-             <widget class="QDateEdit" name="tab_five_start_date">
+             <widget class="QDateEdit" name="tab_six_start_date">
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -8498,7 +8498,7 @@ p, li { white-space: pre-wrap; }
              <enum>QLayout::SetFixedSize</enum>
             </property>
             <item>
-             <widget class="QDateEdit" name="tab_five_end_date">
+             <widget class="QDateEdit" name="tab_six_end_date">
               <property name="calendarPopup">
                <bool>true</bool>
               </property>
@@ -8575,7 +8575,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="tab_five_num_displayed_spin_box">
+           <widget class="QSpinBox" name="tab_six_num_displayed_spin_box">
             <property name="correctionMode">
              <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
             </property>
@@ -8640,7 +8640,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="tab_five_trans_for_search_terms">
+           <widget class="QLabel" name="tab_six_trans_for_search_terms">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -8663,7 +8663,7 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="tab_five_results_table">
+       <widget class="QTableWidget" name="tab_six_results_table">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
