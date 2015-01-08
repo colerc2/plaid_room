@@ -9155,6 +9155,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table_clear()
         self.tab_five_results_table_2_clear()
         self.tab_five_results_table_2_generate_more_info_buttons()
+        self.tab_five_results_table_generate_more_info_buttons()
         
         for ix, row in enumerate(self.tab_five_results_table_2_list):
             if ix > (self.tab_five_results_table_2.rowCount()-1):
@@ -9215,6 +9216,23 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table.setColumnWidth(0,50)
         self.tab_five_results_table.setColumnWidth(1,50)
 
+    def tab_five_results_table_generate_more_info_buttons(self):
+        self.tab_five_misc_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_five_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_five_misc_more_info_mapper, QtCore.SLOT("map()"))
+            self.tab_five_misc_more_info_mapper.setMapping(button, ii)
+            self.tab_five_results_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_five_misc_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_misc_more_info_requested)
+                    
+    def tab_five_misc_more_info_requested(self, row):
+        if row <= len(self.tab_five_results_table_list):
+            try:
+                more_info = Ui_more_info_dialog()
+                more_info.add_misc_text(self.tab_five_results_table_list[row])
+                more_info.exec_()
+            except Exception as e:
+                print 'tab_five_misc_more_info_requested: %s' % e
         
     def tab_five_results_table_2_generate_more_info_buttons(self):
         self.tab_five_more_info_mapper = QtCore.QSignalMapper(self)

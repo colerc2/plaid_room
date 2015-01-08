@@ -43,7 +43,7 @@ class Ui_more_info_dialog(QtGui.QDialog):
         QtCore.QMetaObject.connectSlotsByName(more_info_dialog)
 
     def retranslateUi(self, more_info_dialog):
-        more_info_dialog.setWindowTitle(_translate("more_info_dialog", "Dialog", None))
+        more_info_dialog.setWindowTitle(_translate("more_info_dialog", "Details", None))
         self.ok_button.setText(_translate("more_info_dialog", "Cool", None))
         
         #connectors
@@ -86,23 +86,23 @@ class Ui_more_info_dialog(QtGui.QDialog):
 
     def add_misc_text(self, row):
         all_the_stuff = []
-        all_the_stuff.append('UPC            \t:\t%s' % row[MISC_UPC_INDEX])
-        all_the_stuff.append('Type           \t:\t%s' % row[MISC_TYPE_INDEX])
-        all_the_stuff.append('Item           \t:\t%s' % row[MISC_ITEM_INDEX])
-        all_the_stuff.append('Description    \t:\t%s' % row[MISC_DESCRIPTION_INDEX])
-        all_the_stuff.append('Size           \t:\t%s' % row[MISC_SIZE_INDEX])
-        all_the_stuff.append('Price          \t:\t%s' % row[MISC_PRICE_INDEX])
-        all_the_stuff.append('Price Paid     \t:\t%s' % row[MISC_PRICE_PAID_INDEX])
-        all_the_stuff.append('Date Added     \t:\t%s' % row[MISC_DATE_ADDED_INDEX])
-        all_the_stuff.append('New/Used       \t:\t%s' % row[MISC_NEW_USED_INDEX])
-        all_the_stuff.append('Code           \t:\t%s' % row[MISC_CODE_INDEX])
-        all_the_stuff.append('Distributor    \t:\t%s' % row[MISC_DISTRIBUTOR_INDEX])
-        all_the_stuff.append('Taxable        \t:\t%s' % row[MISC_TAXABLE_INDEX])
-        all_the_stuff.append('Reserved One   \t:\t%s' % row[MISC_RESERVED_ONE_INDEX])
-        all_the_stuff.append('Reserved Two   \t:\t%s' % row[MISC_RESERVED_TWO_INDEX])
-        all_the_stuff.append('Reserved Three \t:\t%s' % row[MISC_RESERVED_THREE_INDEX])
-        all_the_stuff.append('Reserved Four  \t:\t%s' % row[MISC_RESERVED_FOUR_INDEX])
-        all_the_stuff.append('Primary Key    \t:\t%s' % row[MISC_ID_INDEX])
+        all_the_stuff.append('UPC                \t:\t%s' % row[MISC_UPC_INDEX])
+        all_the_stuff.append('Type               \t:\t%s' % row[MISC_TYPE_INDEX])
+        all_the_stuff.append('Item               \t:\t%s' % row[MISC_ITEM_INDEX])
+        all_the_stuff.append('Description        \t:\t%s' % row[MISC_DESCRIPTION_INDEX])
+        all_the_stuff.append('Size               \t:\t%s' % row[MISC_SIZE_INDEX])
+        all_the_stuff.append('Price              \t:\t%s' % row[MISC_PRICE_INDEX])
+        all_the_stuff.append('Price Paid         \t:\t%s' % row[MISC_PRICE_PAID_INDEX])
+        all_the_stuff.append('Date Added         \t:\t%s' % row[MISC_DATE_ADDED_INDEX])
+        all_the_stuff.append('New/Used           \t:\t%s' % row[MISC_NEW_USED_INDEX])
+        all_the_stuff.append('Code               \t:\t%s' % row[MISC_CODE_INDEX])
+        all_the_stuff.append('Distributor        \t:\t%s' % row[MISC_DISTRIBUTOR_INDEX])
+        all_the_stuff.append('Taxable            \t:\t%s' % row[MISC_TAXABLE_INDEX])
+        all_the_stuff.append('Reserved One       \t:\t%s' % row[MISC_RESERVED_ONE_INDEX])
+        all_the_stuff.append('Reserved Two       \t:\t%s' % row[MISC_RESERVED_TWO_INDEX])
+        all_the_stuff.append('Reserved Three     \t:\t%s' % row[MISC_RESERVED_THREE_INDEX])
+        all_the_stuff.append('Reserved Four      \t:\t%s' % row[MISC_RESERVED_FOUR_INDEX])
+        all_the_stuff.append('Primary Key        \t:\t%s' % row[MISC_ID_INDEX])
         if len(row) > 17:
             all_the_stuff.append('Sold For         \t:\t%s' % row[MISC_SOLD_FOR_INDEX])
             all_the_stuff.append('Percent Discount \t:\t%s' % row[MISC_PERCENT_DISCOUNT_INDEX])
@@ -113,4 +113,5 @@ class Ui_more_info_dialog(QtGui.QDialog):
             all_the_stuff.append('Reserved Five    \t:\t%s' % row[MISC_RESERVED_FIVE_INDEX])
             all_the_stuff.append('Reserved Six     \t:\t%s' % row[MISC_RESERVED_SIX_INDEX])
             all_the_stuff.append('New Primary Key  \t:\t%s' % row[MISC_NEW_ID_INDEX])
+        self.more_info_text_browser.setPlainText('\n'.join(all_the_stuff))
             
