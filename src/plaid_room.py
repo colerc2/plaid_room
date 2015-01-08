@@ -8172,7 +8172,6 @@ class Ui_Form(QtGui.QWidget):
     def tab_two_results_table_refresh(self):
         self.tab_two_results_table_clear()
         self.tab_two_generate_more_info_buttons()
-        #TODO: generate more info buttons
         for ix, row in enumerate(self.tab_two_results_table_list):
             if ix > (self.tab_two_results_table.rowCount()-1):
                 continue
@@ -8595,7 +8594,12 @@ class Ui_Form(QtGui.QWidget):
             #another place i have to break all normal logic for gift cards
             if self.tab_four_gift_card_list:
                 for row in self.tab_four_gift_card_list:
-                    new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
+                    try:
+                        gift_card_remaining_balance = float(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX]))
+                    except Exception as e:
+                        print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float: %s' % e
+                    #new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
+                    new_total = self.tab_four_total - gift_card_remaining_balance
                     if new_total < 0:
                         cream = Ui_CashDialog(0)
                         paid_or_naaa = cream.exec_()
@@ -9150,6 +9154,8 @@ class Ui_Form(QtGui.QWidget):
     def tab_five_results_tables_refresh(self):
         self.tab_five_results_table_clear()
         self.tab_five_results_table_2_clear()
+        self.tab_five_results_table_2_generate_more_info_buttons()
+        
         for ix, row in enumerate(self.tab_five_results_table_2_list):
             if ix > (self.tab_five_results_table_2.rowCount()-1):
                 continue
@@ -9179,6 +9185,12 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_2_change_text(ix, 24, row[SOLD_NOTES_INDEX])
             self.tab_five_results_table_2_change_text(ix, 25, row[PERCENT_DISCOUNT_INDEX])
             self.tab_five_results_table_2_change_text(ix, 26, row[NEW_ID_INDEX])
+        #make table prettier
+        self.tab_five_results_table_2.resizeColumnsToContents()
+        self.tab_five_results_table_2.setColumnWidth(0,50)
+        self.tab_five_results_table_2.setColumnWidth(1,50)
+            
+
         for ix, row in enumerate(self.tab_five_results_table_list):
             if ix > (self.tab_five_results_table.rowCount()-1):
                 continue
@@ -9198,9 +9210,31 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_change_text(ix, 14, row[MISC_DISTRIBUTOR_INDEX])
             self.tab_five_results_table_change_text(ix, 15, row[MISC_RESERVED_ONE_INDEX])
             self.tab_five_results_table_change_text(ix, 16, row[MISC_SOLD_NOTES_INDEX])
-            
-            
+
+        self.tab_five_results_table.resizeColumnsToContents()
+        self.tab_five_results_table.setColumnWidth(0,50)
+        self.tab_five_results_table.setColumnWidth(1,50)
+
         
+    def tab_five_results_table_2_generate_more_info_buttons(self):
+        self.tab_five_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_five_results_table_2.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_five_more_info_mapper, QtCore.SLOT("map()"))
+            self.tab_five_more_info_mapper.setMapping(button, ii)
+            self.tab_five_results_table_2.setCellWidget(ii,0,button)
+        self.connect(self.tab_five_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_more_info_requested)
+
+    def tab_five_more_info_requested(self, row):
+        if row <= len(self.tab_five_results_table_2_list):
+            try:
+                more_info = Ui_more_info_dialog()
+                more_info.add_text(self.tab_five_results_table_2_list[row])
+                more_info.exec_()
+            except Exception as e:
+                print 'tab_five_more_info_requested: %s' % e
+    
+    
     def tab_five_search_sold_inventory(self):
         PLACEHOLDER = 9
         
