@@ -9386,8 +9386,17 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_six_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_more_info_requested)
 
     def tab_six_more_info_requested(self, row):
-        todo = 0
-
+        if row < len(self.tab_six_results_table_list):
+            trans_id = self.tab_six_results_table_list[row][TRANS_ID_INDEX]
+            self.tab_five_results_table_2_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE transaction_id = ?', (trans_id,)):
+                self.tab_five_results_table_2_list.append(list(row))
+            self.tab_five_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory WHERE transaction_id = ?', (trans_id,)):
+                self.tab_five_results_table_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(4)
+            self.tab_five_results_tables_refresh()
+                
     def tab_six_generate_items_buttons(self):
         self.tab_six_items_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_six_results_table.rowCount()):
