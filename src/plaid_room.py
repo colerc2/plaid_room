@@ -9149,9 +9149,9 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab five begins ##################################
 
-    def tab_five_search(self):
+    def tab_five_search_sold_inventory(self):
         query = self.tab_five_search_qline.text()
-
+        
         if ((query != '') and (query is not None)):
             #TODO: stop deleting and recreating table every time IDIOT
             self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
@@ -9180,6 +9180,7 @@ class Ui_Form(QtGui.QWidget):
                     dist = self.tab_five_filter_dist_checkbox.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
+                print 'found one'
                 self.tab_five_results_table_2_list.append(list(row))
             #TODO: stop deleting and recreating table every time IDIOT
             self.db_cursor.execute('DROP table IF EXISTS virt_sold_misc_inventory')
@@ -9248,7 +9249,7 @@ class Ui_Form(QtGui.QWidget):
                     if dist != row[MISC_DISTRIBUTOR_INDEX]:
                         continue
                 self.tab_five_results_table_list.append(list(row))
-            self.tab_five_results_tables_refresh()
+        self.tab_five_results_tables_refresh()
     
     def tab_five_results_tables_reset(self):
         self.tab_five_results_table_clear()
@@ -9419,10 +9420,6 @@ class Ui_Form(QtGui.QWidget):
             except Exception as e:
                 print 'tab_five_more_info_requested: %s' % e
     
-    
-    def tab_five_search_sold_inventory(self):
-        PLACEHOLDER = 9
-        
     def tab_five_results_table_clear(self):
         for ii in range(self.tab_five_results_table.rowCount()):
             for jj in range(self.tab_five_results_table.columnCount()):
