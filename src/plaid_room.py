@@ -7566,6 +7566,10 @@ class Ui_Form(QtGui.QWidget):
 
         #tab six
         self.tab_six_results_table_reset()
+        #connectors
+        self.tab_six_search_qline.returnPressed.connect(self.tab_six_search_transactions)
+        self.tab_six_search_button.clicked.connect(self.tab_six_search_transactions)
+        self.tab_six_reset_button.clicked.connect(self.tab_six_results_table_reset)
         
         
     ################### tab one starts ##################################
@@ -9177,7 +9181,7 @@ class Ui_Form(QtGui.QWidget):
                         continue
                 #check distributor
                 if self.tab_five_filter_dist_checkbox.isChecked():
-                    dist = self.tab_five_filter_dist_checkbox.currentText()
+                    dist = self.tab_five_dist_combo_box.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 print 'found one'
@@ -9206,7 +9210,7 @@ class Ui_Form(QtGui.QWidget):
                         continue
                 #check distributor
                 if self.tab_five_filter_dist_checkbox.isChecked():
-                    dist = self.tab_five_filter_dist_checkbox.currentText()
+                    dist = self.tab_five_dist_combo_box.currentText()
                     if dist != row[MISC_DISTRIBUTOR_INDEX]:
                         continue
                 self.tab_five_results_table_list.append(list(row))
@@ -9227,7 +9231,7 @@ class Ui_Form(QtGui.QWidget):
                         continue
                 #check distributor
                 if self.tab_five_filter_dist_checkbox.isChecked():
-                    dist = self.tab_five_filter_dist_checkbox.currentText()
+                    dist = self.tab_five_dist_combo_box.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 self.tab_five_results_table_2_list.append(list(row))
@@ -9245,7 +9249,7 @@ class Ui_Form(QtGui.QWidget):
                         continue
                 #check distributor
                 if self.tab_five_filter_dist_checkbox.isChecked():
-                    dist = self.tab_five_filter_dist_checkbox.currentText()
+                    dist = self.tab_five_dist_combo_box.currentText()
                     if dist != row[MISC_DISTRIBUTOR_INDEX]:
                         continue
                 self.tab_five_results_table_list.append(list(row))
@@ -9278,6 +9282,13 @@ class Ui_Form(QtGui.QWidget):
     def tab_five_results_tables_refresh(self):
         self.tab_five_results_table_clear()
         self.tab_five_results_table_2_clear()
+        self.tab_five_search_items_label.setText('%d Items Found For Search Terms' % (len(self.tab_five_results_table_2_list)+len(self.tab_five_results_table_list)))
+        counter = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            counter += 1
+        for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory ORDER BY date_sold DESC'):
+            counter += 1
+        self.tab_five_item_history_label.setText('%d Items in History' % counter)
         self.tab_five_results_table_2_generate_more_info_buttons()
         self.tab_five_results_table_generate_more_info_buttons()
         self.tab_five_results_table_2_generate_trans_id_buttons()
@@ -9458,6 +9469,24 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab six begins ##################################
 
+    def tab_six_search_transactions(self):
+        query = self.tab_six_search_qline.text()
+
+        if self.tab_six_by_transaction_id.isChecked():
+            query = int(query)
+            self.tab_six_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (query,)):
+                self.tab_six_results_table_list.append(list(row))
+        else:
+            todo = 'don\'t care about this search'
+            #if((query != '') and (query is not None)):
+            #TODO: stop deleting and recreating this table every time IDIOT
+            #    self.db_cursor.execute('DROP table IF EXISTS virt_transactions')
+            #    self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_transactions USING fts4(key, content)')
+            #    self.db.commit()
+            #    self.db_cursor.execute("""INSERT INTO virt_transactions (key, content) SELECT id, 
+        self.tab_six_results_table_refresh()
+    
     def tab_six_results_table_refresh(self):
         self.tab_six_results_table_clear()
         self.tab_six_generate_more_info_buttons()
