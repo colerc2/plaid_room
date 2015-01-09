@@ -9241,6 +9241,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table.setColumnWidth(1,50)
 
     def tab_five_results_table_generate_trans_id_buttons(self):
+        for ix in range(self.tab_five_results_table.rowCount()):
+            self.tab_five_results_table.setCellWidget(ix, 1, None)
+        
         self.tab_five_misc_trans_mapper = QtCore.QSignalMapper(self)
         for ix, row in enumerate(self.tab_five_results_table_list):
             button = QtGui.QPushButton('%d' % row[MISC_TRANSACTION_ID_INDEX])
@@ -9250,9 +9253,18 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_five_misc_trans_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_misc_trans_requested)
 
     def tab_five_misc_trans_requested(self, row):
-        todo = 0
+        if row < len(self.tab_five_results_table_list):
+            trans_id = self.tab_five_results_table_list[row][MISC_TRANSACTION_ID_INDEX]
+            self.tab_six_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
+                self.tab_six_results_table_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(5)
+            self.tab_six_results_table_refresh()
         
     def tab_five_results_table_2_generate_trans_id_buttons(self):
+        for ix in range(self.tab_five_results_table_2.rowCount()):
+            self.tab_five_results_table_2.setCellWidget(ix, 1, None)
+        
         self.tab_five_trans_mapper = QtCore.QSignalMapper(self)
         for ix, row in enumerate(self.tab_five_results_table_2_list):
             button = QtGui.QPushButton('%d' % row[TRANSACTION_ID_INDEX])
@@ -9262,8 +9274,13 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_five_trans_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_trans_requested)
 
     def tab_five_trans_requested(self, row):
-        #TODO
-        stuff = 0
+        if row < len(self.tab_five_results_table_2_list):
+            trans_id = self.tab_five_results_table_2_list[row][TRANSACTION_ID_INDEX]
+            self.tab_six_results_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
+                self.tab_six_results_table_list.append(list(row))
+            self.main_menu_tabs.setCurrentIndex(5)
+            self.tab_six_results_table_refresh() 
         
     def tab_five_results_table_generate_more_info_buttons(self):
         self.tab_five_misc_more_info_mapper = QtCore.QSignalMapper(self)
@@ -9385,7 +9402,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_six_results_table.setCellWidget(ii,0,button)
         self.connect(self.tab_six_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_more_info_requested)
 
-    def tab_six_more_info_requested(self, row):
+    def tab_six_items_requested(self, row):
         if row < len(self.tab_six_results_table_list):
             trans_id = self.tab_six_results_table_list[row][TRANS_ID_INDEX]
             self.tab_five_results_table_2_list = []
@@ -9406,7 +9423,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_six_results_table.setCellWidget(ii, 1, button)
         self.connect(self.tab_six_items_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_items_requested)
 
-    def tab_six_items_requested(self, row):
+    def tab_six_more_info_requested(self, row):
         todo = 0
     
         
