@@ -7563,6 +7563,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_search_qline.returnPressed.connect(self.tab_five_search_sold_inventory)
         self.tab_five_search_button.clicked.connect(self.tab_five_search_sold_inventory)
         self.tab_five_reset_button.clicked.connect(self.tab_five_results_tables_reset)
+
+        #tab six
+        self.tab_six_results_table_reset()
         
         
     ################### tab one starts ##################################
@@ -9340,6 +9343,88 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab six begins ##################################
 
+    def tab_six_results_table_refresh(self):
+        self.tab_six_results_table_clear()
+        self.tab_six_generate_more_info_buttons()
+        self.tab_six_generate_items_buttons()
+        for ix, row in enumerate(self.tab_six_results_table_list):
+            if ix > (self.tab_six_results_table.rowCount()-1):
+                continue
+            #fill in table
+            self.tab_six_results_table_change_text(ix, 2, row[TRANS_ID_INDEX])
+            self.tab_six_results_table_change_text(ix, 3, row[TRANS_DATE_SOLD_INDEX])
+            self.tab_six_results_table_change_text(ix, 4, row[TRANS_NUMBER_OF_ITEMS_INDEX])
+            self.tab_six_results_table_change_text(ix, 5, row[TRANS_SUBTOTAL_INDEX])
+            self.tab_six_results_table_change_text(ix, 6, row[TRANS_DISCOUNT_PERCENT_INDEX])
+            self.tab_six_results_table_change_text(ix, 7, row[TRANS_TAX_INDEX])
+            self.tab_six_results_table_change_text(ix, 8, row[TRANS_SHIPPING_INDEX])
+            self.tab_six_results_table_change_text(ix, 9, row[TRANS_TOTAL_INDEX])
+            self.tab_six_results_table_change_text(ix, 10, row[TRANS_CASH_CREDIT_INDEX])
+        self.tab_six_results_table.resizeColumnsToContents()
+        self.tab_six_results_table.setColumnWidth(0,50)
+        self.tab_six_results_table.setColumnWidth(1,50)
+        
+    def tab_six_results_table_reset(self):
+        self.tab_six_results_table_clear()
+        self.tab_six_num_displayed_spin_box.setValue(50)
+        self.tab_six_start_date.setDateTime(datetime.datetime.today())
+        self.tab_six_end_date.setDateTime(datetime.datetime.today())
+        self.tab_six_filter_by_date_checkbox.setCheckState(False)
+        self.tab_six_results_table.setRowCount(self.tab_six_num_displayed_spin_box.value())
+        self.tab_six_results_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM transactions ORDER BY date_sold DESC'):
+            self.tab_six_results_table_list.append(list(row))
+        self.tab_six_results_table_refresh()
+
+    def tab_six_generate_more_info_buttons(self):
+        self.tab_six_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_six_more_info_mapper, QtCore.SLOT("map()"))
+            self.tab_six_more_info_mapper.setMapping(button, ii)
+            self.tab_six_results_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_six_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_more_info_requested)
+
+    def tab_six_more_info_requested(self, row):
+        todo = 0
+
+    def tab_six_generate_items_buttons(self):
+        self.tab_six_items_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_six_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_six_items_mapper, QtCore.SLOT("map()"))
+            self.tab_six_items_mapper.setMapping(button, ii)
+            self.tab_six_results_table.setCellWidget(ii, 1, button)
+        self.connect(self.tab_six_items_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_items_requested)
+
+    def tab_six_items_requested(self, row):
+        todo = 0
+    
+        
+    def tab_six_results_table_clear(self):
+        for ii  in range(self.tab_six_results_table.rowCount()):
+            for jj in range(self.tab_six_results_table.columnCount()):
+                self.tab_six_results_table_change_text(ii, jj, "")
+        self.tab_six_results_table.setRowCount(self.tab_six_num_displayed_spin_box.value())
+
+        
+    def tab_six_results_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_six_results_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_six_results_table.setItem(row, col, item)
+    
+    
+    
+    ################### tab six ends ##################################
+    ###################################################################
+    ################### tab seven begins ##################################
+
+    
     def shift_right_shortcut(self):
         if self.main_menu_tabs.currentIndex() == 0:
             self.tab_one_add_to_inventory()
