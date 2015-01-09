@@ -8529,6 +8529,7 @@ class Ui_Form(QtGui.QWidget):
             
     def tab_three_results_table_refresh(self):
         self.tab_three_results_table_clear()
+        self.tab_three_generate_more_info_buttons()
         for ix, row in enumerate(self.tab_three_results_table_list):
             if ix > (self.tab_three_results_table.rowCount()-1):
                 continue
@@ -8546,6 +8547,24 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_three_results_table_change_text(ii, jj, "")
         self.tab_three_results_table.setRowCount(self.tab_three_num_displayed_spin_box.value())
 
+    def tab_three_generate_more_info_buttons(self):
+        self.tab_three_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_three_results_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_three_more_info_mapper, QtCore.SLOT("map()"))
+            self.tab_three_more_info_mapper.setMapping(button, ii)
+            self.tab_three_results_table.setCellWidget(ii,0,button)
+        self.connect(self.tab_three_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_three_more_info_requested)
+
+    def tab_three_more_info_requested(self, row):
+        if row <= len(self.tab_three_results_table_list):
+            try:
+                more_info = Ui_more_info_dialog()
+                more_info.add_misc_text(self.tab_three_results_table_list[row])
+                more_info.exec_()
+            except Exception as e:
+                print 'tab_three_more_info_requested: %s' % e
+        
     def tab_three_results_table_get_text(self, row, col):
         item = self.tab_three_results_table.item(row, col)
         if item is not None:
@@ -9156,6 +9175,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table_2_clear()
         self.tab_five_results_table_2_generate_more_info_buttons()
         self.tab_five_results_table_generate_more_info_buttons()
+        self.tab_five_results_table_2_generate_trans_id_buttons()
+        self.tab_five_results_table_generate_trans_id_buttons()
         
         for ix, row in enumerate(self.tab_five_results_table_2_list):
             if ix > (self.tab_five_results_table_2.rowCount()-1):
@@ -9216,6 +9237,31 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table.setColumnWidth(0,50)
         self.tab_five_results_table.setColumnWidth(1,50)
 
+    def tab_five_results_table_generate_trans_id_buttons(self):
+        self.tab_five_misc_trans_mapper = QtCore.QSignalMapper(self)
+        for ix, row in enumerate(self.tab_five_results_table_list):
+            button = QtGui.QPushButton('%d' % row[MISC_TRANSACTION_ID_INDEX])
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_five_misc_trans_mapper, QtCore.SLOT("map()"))
+            self.tab_five_misc_trans_mapper.setMapping(button, ix)
+            self.tab_five_results_table.setCellWidget(ix, 1, button)
+        self.connect(self.tab_five_misc_trans_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_misc_trans_requested)
+
+    def tab_five_misc_trans_requested(self, row):
+        todo = 0
+        
+    def tab_five_results_table_2_generate_trans_id_buttons(self):
+        self.tab_five_trans_mapper = QtCore.QSignalMapper(self)
+        for ix, row in enumerate(self.tab_five_results_table_2_list):
+            button = QtGui.QPushButton('%d' % row[TRANSACTION_ID_INDEX])
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_five_trans_mapper, QtCore.SLOT("map()"))
+            self.tab_five_trans_mapper.setMapping(button, ix)
+            self.tab_five_results_table_2.setCellWidget(ix, 1, button)
+        self.connect(self.tab_five_trans_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_five_trans_requested)
+
+    def tab_five_trans_requested(self, row):
+        #TODO
+        stuff = 0
+        
     def tab_five_results_table_generate_more_info_buttons(self):
         self.tab_five_misc_more_info_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_five_results_table.rowCount()):
