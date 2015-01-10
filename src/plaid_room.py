@@ -8068,7 +8068,7 @@ class Ui_Form(QtGui.QWidget):
 
         row = self.tab_two_results_table_list[self.tab_two_results_table.currentRow()]
         row_list = list(row)
-        row_list += [-1, 0, '', '', -1, -1, '', -1]
+        row_list += [-1, 0, '', '', -1, -1, '']
         if(row[ID_INDEX] not in keys):
             self.tab_four_checkout_table_list.append(row_list)
         self.main_menu_tabs.setCurrentIndex(3)
@@ -8270,7 +8270,7 @@ class Ui_Form(QtGui.QWidget):
 
         row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
         row_list = list(row)
-        row_list += [-1, 0, '', '', -1, -1, '', -1]
+        row_list += [-1, 0, '', '', -1, -1, '', '']
         if(row[MISC_ID_INDEX] not in keys):
             self.tab_four_misc_checkout_table_list.append(row_list)
         else:
@@ -9840,6 +9840,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_po_table_generate_more_info_buttons()
         self.tab_seven_po_table_generate_back_buttons()
         self.tab_seven_po_table_generate_quantity_buttons()
+        #gettin weird here, gonna try to estimate cost of current PO
+        total_cost = 0
+        for ix, row in enumerate(self.tab_seven_po_table_list):
+            total_cost += row[PRICE_PAID_INDEX]
+        filtered_cost = 0
+        for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
+            filtered_cost += row[PRICE_PAID_INDEX]
+        self.tab_seven_po_item_count_label.setText('%d Total Items (~$%d)' % (len(self.tab_seven_po_table_list),int(total_cost)))
+        self.tab_seven_po_item_count_shown_label.setText('%d Shown (~$%d)' % (len(self.tab_seven_po_table_list_filtered),int(filtered_cost)))
         for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
             self.tab_seven_po_table_change_text(ix, 3, row[ARTIST_INDEX])
             self.tab_seven_po_table_change_text(ix, 4, row[TITLE_INDEX])
@@ -9937,7 +9946,10 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_done_table.setItem(row, col, item)
 
     def tab_seven_search_sold_more_info_requested(self, row):
-        todo = 0
+        if row < len(self.tab_seven_search_sold_table_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.tab_seven_search_sold_table_list[row])
+            more_info.exec_()
 
     def tab_seven_search_sold_add_requested(self, row):
         if row < len(self.tab_seven_search_sold_table_list):
@@ -9972,8 +9984,11 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_refresh()
 
     def tab_seven_po_more_info_requested(self, row):
-        todo = 0
-
+        if row < len(self.tab_seven_po_table_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.tab_seven_po_table_list[row])
+            more_info.exec_()
+            
     def tab_seven_po_back_requested(self, row):
         if row < len(self.tab_seven_po_table_list_filtered):
             key = self.tab_seven_po_table_list_filtered[row][NEW_ID_INDEX]
@@ -9994,7 +10009,10 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_refresh()
             
     def tab_seven_done_more_info_requested(self, row):
-        todo = 0
+        if row < len(self.tab_seven_done_table_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_text(self.tab_seven_done_table_list[row])
+            more_info.exec_()
 
     def tab_seven_done_back_requested(self, row):
         if row < len(self.tab_seven_done_table_list):
