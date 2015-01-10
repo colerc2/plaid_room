@@ -9787,7 +9787,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_po_table_generate_back_buttons()
         self.tab_seven_done_table_generate_more_info_buttons()
         self.tab_seven_done_table_generate_back_buttons()
-        
+
+        #search sold table
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
                 continue
@@ -9824,6 +9825,24 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_table.setColumnWidth(1,50)
         self.tab_seven_search_sold_table.setColumnWidth(2,50)
         self.tab_seven_search_sold_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_search_sold_table_list)))
+        items_in_history = 0
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+            if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
+                items_in_history += 1
+        self.tab_seven_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
+
+        #po table
+        self.tab_seven_po_table.setRowCount(len(self.tab_seven_po_table_list_filtered))
+        self.tab_seven_po_table_generate_quantity_buttons()
+        for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
+            self.tab_seven_po_table_change_text(ix, 3, row[ARTIST_INDEX])
+            self.tab_seven_po_table_change_text(ix, 4, row[TITLE_INDEX])
+            self.tab_seven_po_table_change_text(ix, 5, row[DISTRIBUTOR_INDEX])
+            self.tab_seven_po_table_change_text(ix, 6, row[UPC_INDEX])
+        self.tab_seven_po_table.resizeColumnsToContents()
+        self.tab_seven_po_table.setColumnWidth(0,50)
+        self.tab_seven_po_table.setColumnWidth(1,50)
+    
         
     def tab_seven_search_sold_table_clear(self):
         for ii in range(self.tab_seven_search_sold_table.rowCount()):
@@ -9877,8 +9896,23 @@ class Ui_Form(QtGui.QWidget):
         todo = 0
 
     def tab_seven_search_sold_add_requested(self, row):
-        todo = 0
-
+        if row < len(self.tab_seven_search_sold_table_list):
+            key = self.tab_seven_search_sold_table_list[row][NEW_ID_INDEX]
+            new_state = ON_CURRENT_PO_LIST
+            qty = str(1)
+            query = (new_state, key)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            query = (qty, key)
+            self.db_cursor.execute('UPDATE sold_inventory SET reserved_three = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists brej
+            temp_row = self.tab_seven_search_sold_table_list[row]
+            del self.tab_seven_search_sold_table_list[row]
+            temp_row[REORDER_STATE_INDEX] = ON_CURRENT_PO_LIST
+            temp_row[RESERVED_THREE_INDEX] = qty
+            self.tab_seven_po_table_list.append(temp_row)
+            self.tab_seven_refresh()
+            
     def tab_seven_search_sold_ignore_requested(self, row):
         todo = 0
 
@@ -9893,7 +9927,33 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_seven_done_back_requested(self, row):
         todo = 0
-            
+
+    def tab_seven_po_table_quantity_requested(self, row):
+        if row < len(self.tab_seven_po_table_list_filtered):
+            key = self.tab_seven_po_table_list_filtered[row][NEW_ID_INDEX]
+            new_value = self.xstr(self.tab_seven_po_table.cellWidget(row,2).value())
+            query = (new_value, key)
+            self.db_cursor.execute('UPDATE sold_inventory SET reserved_three = ? WHERE id = ?', query)
+            self.db.commit()
+            self.tab_seven_po_table_list_filtered[row][RESERVED_THREE_INDEX] = new_value
+        self.tab_seven_refresh()
+        
+    def tab_seven_po_table_generate_quantity_buttons(self):
+        self.po_quantity_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_po_table.rowCount()):
+            spin = QtGui.QSpinBox()
+            value = 1
+            try:
+                value = int(self.filter_non_numeric(self.tab_seven_po_table_list_filtered[ii][RESERVED_THREE_INDEX]))
+            except Exception as e:
+                print 'tab_seven_po_table_generate_quantity_buttons: %s' % e
+                value = 1
+            spin.setValue(value)
+            self.connect(spin, QtCore.SIGNAL("valueChanged(int)"), self.po_quantity_mapper, QtCore.SLOT("map()"))
+            self.po_quantity_mapper.setMapping(spin, ii)
+            self.tab_seven_po_table.setCellWidget(ii,2,spin)
+        self.connect(self.po_quantity_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_po_table_quantity_requested)
+        
     def tab_seven_search_sold_table_generate_more_info_buttons(self):
         self.search_sold_more_info_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.tab_seven_search_sold_table.rowCount()):
