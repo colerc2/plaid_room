@@ -9843,10 +9843,20 @@ class Ui_Form(QtGui.QWidget):
         #gettin weird here, gonna try to estimate cost of current PO
         total_cost = 0
         for ix, row in enumerate(self.tab_seven_po_table_list):
-            total_cost += row[PRICE_PAID_INDEX]
+            try:
+                qty = int(self.filter_non_numeric(row[RESERVED_THREE_INDEX]))
+            except Exception as e:
+                print 'tab_seven_refresh: casting qty to int: %s' % e
+                qty = 1
+            total_cost += (row[PRICE_PAID_INDEX]*qty)
         filtered_cost = 0
         for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
-            filtered_cost += row[PRICE_PAID_INDEX]
+            try:
+                qty = int(self.filter_non_numeric(row[RESERVED_THREE_INDEX]))
+            except Exception as e:
+                print 'tab_seven_refresh: casting qty to int: %s' % e
+                qty = 1
+            filtered_cost += (row[PRICE_PAID_INDEX]*qty)
         self.tab_seven_po_item_count_label.setText('%d Total Items (~$%d)' % (len(self.tab_seven_po_table_list),int(total_cost)))
         self.tab_seven_po_item_count_shown_label.setText('%d Shown (~$%d)' % (len(self.tab_seven_po_table_list_filtered),int(filtered_cost)))
         for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
