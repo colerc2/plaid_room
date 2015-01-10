@@ -8854,7 +8854,10 @@ class Ui_Form(QtGui.QWidget):
         try:
             #first loop through and put inventory items, then misc_inventory_items
             self.tab_four_final_checkout_table_clear()
-            self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)+len(self.tab_four_gift_card_list))
+            if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:
+                self.tab_four_final_checkout_table.setRowCount(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)+len(self.tab_four_gift_card_list))
+            else:
+                self.tab_four_final_checkout_table.setRowCount(0)
 
             self.tab_four_subtotal = 0.0
             self.tab_four_non_taxable_subtotal = 0.0
