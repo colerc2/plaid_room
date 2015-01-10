@@ -9779,8 +9779,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table_clear()
         #filter distributors
         self.tab_seven_po_table_filter()
-        #TODO: generate all the buttons
-
+        #generate all the buttons
+        self.tab_seven_search_sold_table_generate_more_info_buttons()
+        self.tab_seven_search_sold_table_generate_add_buttons()
+        self.tab_seven_search_sold_table_generate_ignore_buttons()
+        self.tab_seven_po_table_generate_more_info_buttons()
+        self.tab_seven_po_table_generate_back_buttons()
+        self.tab_seven_done_table_generate_more_info_buttons()
+        self.tab_seven_done_table_generate_back_buttons()
+        
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
                 continue
@@ -9865,7 +9872,89 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_seven_done_table.setItem(row, col, item)
-    
+
+    def tab_seven_search_sold_more_info_requested(self, row):
+        todo = 0
+
+    def tab_seven_search_sold_add_requested(self, row):
+        todo = 0
+
+    def tab_seven_search_sold_ignore_requested(self, row):
+        todo = 0
+
+    def tab_seven_po_more_info_requested(self, row):
+        todo = 0
+
+    def tab_seven_po_back_requested(self, row):
+        todo = 0
+
+    def tab_seven_done_more_info_requested(self, row):
+        todo = 0
+
+    def tab_seven_done_back_requested(self, row):
+        todo = 0
+            
+    def tab_seven_search_sold_table_generate_more_info_buttons(self):
+        self.search_sold_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_more_info_mapper, QtCore.SLOT("map()"))
+            self.search_sold_more_info_mapper.setMapping(button, ii)
+            self.tab_seven_search_sold_table.setCellWidget(ii, 0, button)
+        self.connect(self.search_sold_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_search_sold_more_info_requested)
+    def tab_seven_search_sold_table_generate_add_buttons(self):
+        self.search_sold_add_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('+')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_add_mapper, QtCore.SLOT("map()"))
+            self.search_sold_add_mapper.setMapping(button, ii)
+            self.tab_seven_search_sold_table.setCellWidget(ii, 1, button)
+        self.connect(self.search_sold_add_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_search_sold_add_requested)
+        
+    def tab_seven_search_sold_table_generate_ignore_buttons(self):
+        self.search_sold_ignore_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_search_sold_table.rowCount()):
+            button = QtGui.QPushButton('X')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.search_sold_ignore_mapper, QtCore.SLOT("map()"))
+            self.search_sold_ignore_mapper.setMapping(button, ii)
+            self.tab_seven_search_sold_table.setCellWidget(ii, 2, button)
+        self.connect(self.search_sold_ignore_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_search_sold_ignore_requested)
+
+    def tab_seven_po_table_generate_more_info_buttons(self):
+        self.po_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_po_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.po_more_info_mapper, QtCore.SLOT("map()"))
+            self.po_more_info_mapper.setMapping(button, ii)
+            self.tab_seven_po_table.setCellWidget(ii, 0, button)
+        self.connect(self.po_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_po_more_info_requested)
+
+    def tab_seven_po_table_generate_back_buttons(self):
+        self.po_back_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_po_table.rowCount()):
+            button = QtGui.QPushButton('<-')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.po_back_mapper, QtCore.SLOT("map()"))
+            self.po_back_mapper.setMapping(button, ii)
+            self.tab_seven_po_table.setCellWidget(ii, 1, button)
+        self.connect(self.po_back_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_po_back_requested)
+
+    def tab_seven_done_table_generate_more_info_buttons(self):
+        self.done_more_info_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_done_table.rowCount()):
+            button = QtGui.QPushButton('...')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.done_more_info_mapper, QtCore.SLOT("map()"))
+            self.done_more_info_mapper.setMapping(button, ii)
+            self.tab_seven_done_table.setCellWidget(ii, 0, button)
+        self.connect(self.done_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_done_more_info_requested)
+
+    def tab_seven_done_table_generate_back_buttons(self):
+        self.done_back_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.tab_seven_done_table.rowCount()):
+            button = QtGui.QPushButton('<-')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.done_back_mapper, QtCore.SLOT("map()"))
+            self.done_back_mapper.setMapping(button, ii)
+            self.tab_seven_done_table.setCellWidget(ii, 1, button)
+        self.connect(self.done_back_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_done_back_requested)
 
 
 
