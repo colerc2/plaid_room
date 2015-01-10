@@ -7589,7 +7589,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_reset.clicked.connect(self.tab_seven_search_sold_table_reset)
         self.tab_seven_done_search_reset_button.clicked.connect(self.tab_seven_done_table_reset)
         self.tab_seven_po_combobox.currentIndexChanged.connect(self.tab_seven_refresh)
-        #self.tab_seven_search_sold_qline.returnPressed(
+        self.tab_seven_search_sold_qline.returnPressed.connect(self.tab_seven_refresh)
+        self.tab_seven_search_sold_button.clicked.connect(self.tab_seven_refresh)
+        self.tab_seven_done_search_qline.returnPressed.connect(self.tab_seven_refresh)
+        self.tab_seven_done_search_button.clicked.connect(self.tab_seven_refresh)
         
         
     ################### tab one starts ##################################
@@ -9656,7 +9659,7 @@ class Ui_Form(QtGui.QWidget):
                     continue
                 self.tab_seven_search_sold_table_list.append(list(row))
         #update UI
-        self.tab_seven_refresh()
+        #self.tab_seven_refresh()
 
 
     def tab_seven_done_table_search(self):
@@ -9691,7 +9694,7 @@ class Ui_Form(QtGui.QWidget):
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 #check state
-                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED or row[REORDER_STATE_INDEX] != ON_CURRENT_PO_LIST:
+                if row[REORDER_STATE_INDEX] == NEEDS_REORDERED or row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
                     continue
                 self.tab_seven_done_table_list.append(list(row))
         else:
@@ -9718,7 +9721,7 @@ class Ui_Form(QtGui.QWidget):
                     continue
                 self.tab_seven_done_table_list.append(list(row))
         #update UI
-        self.tab_seven_refresh()
+        #self.tab_seven_refresh()
 
     
     def tab_seven_done_table_reset(self):
@@ -9777,6 +9780,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_table_clear()
         self.tab_seven_po_table_clear()
         self.tab_seven_done_table_clear()
+        #perform search
+        self.tab_seven_search()
+        self.tab_seven_done_table_search()
         #filter distributors
         self.tab_seven_po_table_filter()
         #generate all the buttons
@@ -9844,7 +9850,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_po_table.setColumnWidth(1,50)
 
         #done list
-        for ix, row in self.tab_seven_done_table_list:
+        for ix, row in enumerate(self.tab_seven_done_table_list):
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
             date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -9852,24 +9858,22 @@ class Ui_Form(QtGui.QWidget):
             price_paid = float(row[PRICE_PAID_INDEX])
             time_delta = date_time_sold - date_time_added
             days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
-            if index > (self.tab_seven_done_table.rowCount()-1):
-                index += 1
+            if ix > (self.tab_seven_done_table.rowCount()-1):
                 continue
-            self.tab_seven_done_table_change_text(index, 2, str(date_sold))
-            self.tab_seven_done_table_change_text(index, 3, str(days_in_shop))
-            self.tab_seven_done_table_change_text(index, 4, str(row[SOLD_FOR_INDEX]))
-            self.tab_seven_done_table_change_text(index, 5, str(price_sold-price_paid))
-            self.tab_seven_done_table_change_text(index, 6, row[ARTIST_INDEX])
-            self.tab_seven_done_table_change_text(index, 7, row[TITLE_INDEX])
-            self.tab_seven_done_table_change_text(index, 8, row[DISTRIBUTOR_INDEX])
-            self.tab_seven_done_table_change_text(index, 9, row[FORMAT_INDEX])
-            self.tab_seven_done_table_change_text(index, 10, str(row[PRICE_PAID_INDEX]))
-            self.tab_seven_done_table_change_text(index, 11, row[NEW_USED_INDEX])
-            self.tab_seven_done_table_change_text(index, 12, row[LABEL_INDEX])
-            self.tab_seven_done_table_change_text(index, 13, row[GENRE_INDEX])
-            self.tab_seven_done_table_change_text(index, 14, row[SOLD_NOTES_INDEX])
-            self.tab_seven_done_table_change_text(index, 15, row[UPC_INDEX])
-            index += 1
+            self.tab_seven_done_table_change_text(ix, 2, str(date_sold))
+            self.tab_seven_done_table_change_text(ix, 3, str(days_in_shop))
+            self.tab_seven_done_table_change_text(ix, 4, str(row[SOLD_FOR_INDEX]))
+            self.tab_seven_done_table_change_text(ix, 5, str(price_sold-price_paid))
+            self.tab_seven_done_table_change_text(ix, 6, row[ARTIST_INDEX])
+            self.tab_seven_done_table_change_text(ix, 7, row[TITLE_INDEX])
+            self.tab_seven_done_table_change_text(ix, 8, row[DISTRIBUTOR_INDEX])
+            self.tab_seven_done_table_change_text(ix, 9, row[FORMAT_INDEX])
+            self.tab_seven_done_table_change_text(ix, 10, str(row[PRICE_PAID_INDEX]))
+            self.tab_seven_done_table_change_text(ix, 11, row[NEW_USED_INDEX])
+            self.tab_seven_done_table_change_text(ix, 12, row[LABEL_INDEX])
+            self.tab_seven_done_table_change_text(ix, 13, row[GENRE_INDEX])
+            self.tab_seven_done_table_change_text(ix, 14, row[SOLD_NOTES_INDEX])
+            self.tab_seven_done_table_change_text(ix, 15, row[UPC_INDEX])
 
         self.tab_seven_done_table.resizeColumnsToContents()
         self.tab_seven_done_table.setColumnWidth(0,50)
@@ -9964,7 +9968,7 @@ class Ui_Form(QtGui.QWidget):
             temp_row = self.tab_seven_search_sold_table_list[row]
             del self.tab_seven_search_sold_table_list[row]
             temp_row[REORDER_STATE_INDEX] = NOT_REORDERING
-            self.tab_seven_po_table_list.append(temp_row)
+            self.tab_seven_done_table_list.append(temp_row)
             self.tab_seven_refresh()
 
     def tab_seven_po_more_info_requested(self, row):
@@ -9993,8 +9997,19 @@ class Ui_Form(QtGui.QWidget):
         todo = 0
 
     def tab_seven_done_back_requested(self, row):
-        todo = 0
-
+        if row < len(self.tab_seven_done_table_list):
+            key = self.tab_seven_done_table_list[row][NEW_ID_INDEX]
+            new_state = NEEDS_REORDERED
+            query = (new_state, key)
+            self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+            self.db.commit()
+            #fix lists
+            temp_row = self.tab_seven_done_table_list[row]
+            del self.tab_seven_done_table_list[row]
+            temp_row[REORDER_STATE_INDEX] = NEEDS_REORDERED
+            self.tab_seven_search_sold_table_list.append(temp_row)
+            self.tab_seven_refresh()
+            
     def tab_seven_po_table_quantity_requested(self, row):
         if row < len(self.tab_seven_po_table_list_filtered):
             key = self.tab_seven_po_table_list_filtered[row][NEW_ID_INDEX]
