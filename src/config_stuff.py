@@ -76,6 +76,10 @@ TRANS_RESERVED_THREE_INDEX = 15
 TRANS_RESERVED_FOUR_INDEX = 16
 TRANS_ID_INDEX = 17
 
+NEEDS_REORDERED = 0
+ON_CURRENT_PO_LIST = 1
+REORDERED = 2
+NOT_REORDERING = 3
 
 #config stuff for all kinds of combo boxes
 DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/distributors.csv'

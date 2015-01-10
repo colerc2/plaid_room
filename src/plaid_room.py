@@ -9577,6 +9577,103 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab seven begins ##################################
 
+    def tab_six_refresh(self):
+        self.tab_seven_search_sold_table_clear()
+        self.tab_seven_po_table_clear()
+        self.tab_seven_done_table_clear()
+        #TODO: generate all the buttons
+
+        for ix, row in enumerate(self.tab_seven_search_sold_table_list):
+            if ix >= (self.tab_seven_search_sold_table.rowCount()):
+                continue
+            #do stuff to make display better for ordering
+            date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+            price_sold = float(row[SOLD_FOR_INDEX])
+            price_paid = float(row[PRICE_PAID_INDEX])
+            time_delta = date_time_sold - date_time_added
+            days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
+            #how many in stock still?
+            num_in_stock = 0
+            barcode_query = str(row[UPC_INDEX])
+            for copy in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+                num_in_stock += 1
+            self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
+            self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
+            self.tab_seven_search_sold_table_change_text(ix, 5, num_in_stock)
+            self.tab_seven_search_sold_table_change_text(ix, 6, row[SOLD_FOR_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 7, (price_sold-price_paid))
+            self.tab_seven_search_sold_table_change_text(ix, 8, row[ARTIST_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 9, row[TITLE_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 10, row[DISTRIBUTOR_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 11, row[FORMAT_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 12, row[PRICE_PAID_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 13, row[NEW_USED_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 14, row[LABEL_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 15, row[GENRE_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 16, row[SOLD_NOTES_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 17, row[UPC_INDEX])
+        self.tab_seven_search_sold_table.resizeColumnsToContents()
+        self.tab_seven_search_sold_table.setColumnWidth(0,50)
+        self.tab_seven_search_sold_table.setColumnWidth(1,50)
+        self.tab_seven_search_sold_table.setColumnWidth(2,50)
+        self.tab_seven_search_sold_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_search_sold_table_list)))
+        
+    def tab_seven_search_sold_table_clear(self):
+       for ii in range(self.tab_seven_search_sold_table.rowCount()):
+            for jj in range(self.tab_seven_search_sold_table.columnCount()):
+                self.tab_seven_search_sold_table_change_text(ii,jj,"")
+        self.tab_seven_search_sold_table.setRowCount(self.tab_seven_search_sold_num_displayed_spinbox.value())
+
+    def tab_seven_po_table_clear(self):
+       for ii in range(self.tab_seven_po_table.rowCount()):
+            for jj in range(self.tab_seven_po_table.columnCount()):
+                self.tab_seven_po_table_change_text(ii,jj,"")
+        #self.tab_seven_po_table.setRowCount(self.tab_seven_po_num_displayed_spinbox.value())
+
+    def tab_seven_done_table_clear(self):
+        for ii in range(self.tab_seven_done_table.rowCount()):
+            for jj in range(self.tab_seven_done_table.columnCount()):
+                self.tab_seven_done_table_change_text(ii,jj,"")
+        self.tab_seven_done_table.setRowCount(self.tab_seven_done_num_displayed_spinbox.value())
+
+    def tab_seven_search_sold_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_seven_search_sold_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_seven_search_sold_table.setItem(row, col, item)
+
+    def tab_seven_po_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_seven_po_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_seven_po_table.setItem(row, col, item)
+
+    def tab_seven_done_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(self.xstr(text))
+        item = self.tab_seven_done_table.item(row, col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_seven_done_table.setItem(row, col, item)
+    
+
+
+
+
+    ################### tab seven ends ##################################
+
     
     def shift_right_shortcut(self):
         if self.main_menu_tabs.currentIndex() == 0:
