@@ -68,7 +68,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table_list = []
         self.tab_one_results_table_list_tracker = []
         self.tab_one_results_table_combobox_cols = [7, 8]
-
+        self.tab_one_last_distributor = ''
+        
         #tab two stuff
         self.tab_two_results_table_list = []
 
@@ -7532,7 +7533,7 @@ class Ui_Form(QtGui.QWidget):
         
         
         #tab one
-        self.tab_one_text_browser.setPlainText('\n')
+        self.tab_one_text_browser.setPlainText('Is this the Beta Band?\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
         self.tab_one_results_table_refresh()
         self.tab_one_recently_added_table_refresh()
@@ -7610,6 +7611,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_button.clicked.connect(self.tab_seven_refresh)
         self.tab_seven_done_search_qline.returnPressed.connect(self.tab_seven_refresh)
         self.tab_seven_done_search_button.clicked.connect(self.tab_seven_refresh)
+        self.tab_seven_generate_po_button.clicked.connect(self.tab_seven_generate_po)
         
         
     ################### tab one starts ##################################
@@ -7696,6 +7698,9 @@ class Ui_Form(QtGui.QWidget):
         except Exception as e:
             print 'tab_one_add_to_inventory, extraction from spreadsheet: %s' % e
 
+        #save last distributor so if we're adding a bunch of stuff from the same distributor it defaults to that distributor
+        self.tab_one_last_distributor = db_item[DISTRIBUTOR_INDEX]
+            
         #Various artists cause a huge problem so i've harcoded things to ignore stuff when it finds 'Various'
         various_found = ('Various' in db_item[ARTIST_INDEX])
             
@@ -7948,7 +7953,7 @@ class Ui_Form(QtGui.QWidget):
                         temp_row.append('New')
                         #7 - dist
                         #TODO: select distributor based on most recent DB item
-                        temp_row.append('Fat Beats')
+                        temp_row.append(self.tab_one_last_distributor)
                         #8 - label
                         temp_row.append(result.labels[0].name)
                         #9 - genre
@@ -8021,7 +8026,7 @@ class Ui_Form(QtGui.QWidget):
             try:
                 box = self.generate_distributor_combobox(self.tab_one_results_table_list[ii][DISTRIBUTOR_INDEX])
             except Exception as e:
-                box = self.generate_distributor_combobox('Fat Beats')
+                box = self.generate_distributor_combobox('')
             self.connect(box, QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_one_dist_mapper, QtCore.SLOT("map()"))
             self.tab_one_dist_mapper.setMapping(box, ii)
             self.tab_one_results_table.setCellWidget(ii,8,box)
@@ -9676,6 +9681,108 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab seven begins ##################################
 
+    def tab_seven_generate_po(self):
+        distributor = self.tab_seven_po_combobox.currentText()
+        custom_filename = self.tab_seven_csv_qline.text()
+        if distributor == 'Any' and custom_filename != '':
+            #custom filenames are only applicable to single POs
+            return
+        date = datetime.datetime.now().strftime('_%m_%d_%y_')
+        #are we creating one PO or multiple?
+        if distributor == 'Any':
+            for distributor in self.distributors.get_distributors():
+                #create directories if necessary
+                directory = BASE_PATH + ('/Purchase Orders/%s' % distributor)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                filename = 'Plaid_Room%s%s.csv' % (date, distributor.replace(' ','_'))
+                if (custom_filename != ''):
+                    filename = custom_filename
+                filename = directory + '/' + filename
+
+                #generate stuff needed for PO
+                temp_list = []
+                temp_row = []
+                temp_row.append('Qty')
+                temp_row.append('UPC')
+                temp_row.append('Artist')
+                temp_row.append('Title')
+                temp_row.append('Format')
+                temp_list.append(temp_row)
+                for row in self.tab_seven_po_table_list:
+                    if row[DISTRIBUTOR_INDEX] == distributor:
+                        temp_row = []
+                        temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
+                        temp_row.append(self.xstr(row[UPC_INDEX]))
+                        temp_row.append(self.xstr(row[ARTIST_INDEX]))
+                        temp_row.append(self.xstr(row[TITLE_INDEX]))
+                        temp_row.append(self.xstr(row[FORMAT_INDEX]))
+                        temp_list.append(temp_row)
+
+                #write the file
+                if len(temp_list) > 1:
+                    with open(filename, "w+") as f:
+                        writer = csv.writer(f, quoting=csv.QUOTE_NONE, delimiter='\t')
+                        writer.writerows(temp_list)
+
+                    for ix, row in enumerate(self.tab_seven_po_table_list):
+                        key = row[NEW_ID_INDEX]    
+                        new_state = REORDERED
+                        query = (new_state, key)
+                        self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+                        self.db.commit()
+                        row[REORDER_STATE_INDEX] = REORDERED
+                        self.tab_seven_done_table_list.append(row)
+            self.tab_seven_po_table_list = []
+            self.tab_seven_refresh()
+        else:
+            #create directories if necessary
+            directory = BASE_PATH + ('/Purchase Orders/%s' % distributor)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            filename = 'Plaid_Room%s%s.csv' % (date, distributor.replace(' ','_'))
+            if (custom_filename != ''):
+                filename = custom_filename
+            filename = directory + '/' + filename
+
+            #generate list for stuff needed for PO
+            temp_list = []
+            temp_row = []
+            temp_row.append('Qty')
+            temp_row.append('UPC')
+            temp_row.append('Artist')
+            temp_row.append('Title')
+            temp_row.append('Format')
+            temp_list.append(temp_row)
+            for row in self.tab_seven_po_table_list_filtered:
+                temp_row = []
+                temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
+                temp_row.append(self.xstr(row[UPC_INDEX]))
+                temp_row.append(self.xstr(row[ARTIST_INDEX]))
+                temp_row.append(self.xstr(row[TITLE_INDEX]))
+                temp_row.append(self.xstr(row[FORMAT_INDEX]))
+                temp_list.append(temp_row)
+
+            #write the file
+            with open(filename, "w+") as f:
+                writer = csv.writer(f, quoting=csv.QUOTE_NONE, delimiter='\t')
+                writer.writerows(temp_list)
+
+            #take items out of filtered po list, add them to done ish
+            for ix, row in enumerate(self.tab_seven_po_table_list_filtered):
+                key = row[NEW_ID_INDEX]
+                new_state = REORDERED
+                query = (new_state, key)
+                self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', query)
+                self.db.commit()
+                #fix lists brej
+                row[REORDER_STATE_INDEX] = REORDERED
+                self.tab_seven_done_table_list.append(row)
+                for ix_unfiltered, unfiltered_row in enumerate(self.tab_seven_po_table_list):
+                    if unfiltered_row[NEW_ID_INDEX] == key:
+                        del self.tab_seven_po_table_list[ix_unfiltered]
+            self.tab_seven_refresh()
+                
     def tab_seven_search(self):
         query = self.tab_seven_search_sold_qline.text()
         
@@ -9888,13 +9995,13 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
             self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
             self.tab_seven_search_sold_table_change_text(ix, 5, num_in_stock)
-            self.tab_seven_search_sold_table_change_text(ix, 6, row[SOLD_FOR_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 7, (price_sold-price_paid))
+            self.tab_seven_search_sold_table_change_text(ix, 6, locale.currency(self.xfloat(row[SOLD_FOR_INDEX])))
+            self.tab_seven_search_sold_table_change_text(ix, 7, locale.currency(self.xfloat((price_sold-price_paid))))
             self.tab_seven_search_sold_table_change_text(ix, 8, row[ARTIST_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 9, row[TITLE_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 10, row[DISTRIBUTOR_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 11, row[FORMAT_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 12, row[PRICE_PAID_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 12, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
             self.tab_seven_search_sold_table_change_text(ix, 13, row[NEW_USED_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 14, row[LABEL_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 15, row[GENRE_INDEX])
@@ -9957,13 +10064,13 @@ class Ui_Form(QtGui.QWidget):
                 continue
             self.tab_seven_done_table_change_text(ix, 2, str(date_sold))
             self.tab_seven_done_table_change_text(ix, 3, str(days_in_shop))
-            self.tab_seven_done_table_change_text(ix, 4, str(row[SOLD_FOR_INDEX]))
-            self.tab_seven_done_table_change_text(ix, 5, str(price_sold-price_paid))
+            self.tab_seven_done_table_change_text(ix, 4, locale.currency(self.xfloat(str(row[SOLD_FOR_INDEX]))))
+            self.tab_seven_done_table_change_text(ix, 5, locale.currency(self.xfloat(str(price_sold-price_paid))))
             self.tab_seven_done_table_change_text(ix, 6, row[ARTIST_INDEX])
             self.tab_seven_done_table_change_text(ix, 7, row[TITLE_INDEX])
             self.tab_seven_done_table_change_text(ix, 8, row[DISTRIBUTOR_INDEX])
             self.tab_seven_done_table_change_text(ix, 9, row[FORMAT_INDEX])
-            self.tab_seven_done_table_change_text(ix, 10, str(row[PRICE_PAID_INDEX]))
+            self.tab_seven_done_table_change_text(ix, 10, locale.currency(self.xfloat(str(row[PRICE_PAID_INDEX]))))
             self.tab_seven_done_table_change_text(ix, 11, row[NEW_USED_INDEX])
             self.tab_seven_done_table_change_text(ix, 12, row[LABEL_INDEX])
             self.tab_seven_done_table_change_text(ix, 13, row[GENRE_INDEX])
@@ -10246,6 +10353,7 @@ class Ui_Form(QtGui.QWidget):
             where_in_combo = self.distributors.get_distributors().index(which_dist)
             combobox.setCurrentIndex(where_in_combo)
         except Exception as e:
+            combobox.setCurrentIndex(0)
             print 'generate_distributor_combobox: %s' % e
             pass
         return combobox
