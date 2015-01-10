@@ -79,6 +79,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table_list = []
         self.tab_five_results_table_2_list = []
 
+        #tab six stuff
+        self.tab_six_results_table_list = []
+
+        #tab seven stuff
+        self.tab_seven_search_sold_results_table_list = []
+        self.tab_seven_done_results_table_list = []
+        self.tab_seven_po_results_table_list = []
+        
+        
         #create/connect to database
         self.db = sqlite3.connect('inventory.db')
         self.db_cursor = self.db.cursor()
@@ -7570,6 +7579,14 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_search_qline.returnPressed.connect(self.tab_six_search_transactions)
         self.tab_six_search_button.clicked.connect(self.tab_six_search_transactions)
         self.tab_six_reset_button.clicked.connect(self.tab_six_results_table_reset)
+
+        #tab seven
+        self.tab_seven_search_sold_table_reset()
+        self.tab_seven_po_table_reset()
+        self.tab_seven_done_table_reset()
+        
+        #connectors
+        #self.tab_seven_search_sold_qline.returnPressed(
         
         
     ################### tab one starts ##################################
@@ -9577,7 +9594,51 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab seven begins ##################################
 
-    def tab_six_refresh(self):
+    def tab_seven_done_table_reset(self):
+        self.tab_seven_done_filter_dist_checkbox.setCheckState(False)
+        while self.tab_seven_done_dist_combo_box.count() != 0:
+            self.tab_seven_done_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_seven_done_dist_combo_box.addItem(distributor)
+        self.tab_seven_done_filter_date_checkbox.setCheckState(False)
+        self.tab_seven_done_start_date.setDateTime(datetime.datetime.today())
+        self.tab_seven_done_end_date.setDateTime(datetime.datetime.today())
+        self.tab_seven_done_num_displayed_spinbox.setValue(15)
+        self.tab_seven_done_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
+                self.tab_seven_done_table_list.append(list(row))
+        self.tab_seven_refresh()
+    
+    def tab_seven_po_table_reset(self):
+        while self.tab_seven_po_combobox.count() != 0:
+            self.tab_seven_po_combobox.removeItem(0)
+        self.tab_seven_po_combobox.addItem('Any')
+        for distributor in self.distributors.get_distributors():
+            self.tab_seven_po_combobox.addItem(distributor)
+        self.tab_seven_po_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE] == ON_CURRENT_PO_LIST:
+                self.tab_seven_po_table_list.append(list(row))
+        self.tab_six_refresh()
+            
+    def tab_seven_search_sold_table_reset(self):
+        self.tab_seven_search_sold_filter_dist_checkbox.setCheckState(False)
+        while self.tab_seven_search_sold_dist_combo_box.count() != 0:
+            self.tab_seven_search_sold_dist_combo_box.removeItem(0)
+        for distributor in self.distributors.get_distributors():
+            self.tab_seven_search_sold_dist_combo_box.addItem(distributor)
+        self.tab_seven_search_sold_filter_date_checkbox.setCheckState(False)
+        self.tab_seven_search_sold_start_date.setDateTime(datetime.datetime.today())
+        self.tab_seven_search_sold_end_date.setDateTime(datetime.datetime.today())
+        self.tab_seven_search_sold_num_displayed_spinbox.setValue(15)
+        self.tab_seven_search_sold_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+            if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
+                self.tab_seven_search_sold_table_list.append(list(row))
+        self.tab_seven_refresh()
+    
+    def tab_seven_refresh(self):
         self.tab_seven_search_sold_table_clear()
         self.tab_seven_po_table_clear()
         self.tab_seven_done_table_clear()
@@ -9621,15 +9682,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_search_sold_table_list)))
         
     def tab_seven_search_sold_table_clear(self):
-       for ii in range(self.tab_seven_search_sold_table.rowCount()):
-            for jj in range(self.tab_seven_search_sold_table.columnCount()):
-                self.tab_seven_search_sold_table_change_text(ii,jj,"")
+        for ii in range(self.tab_seven_search_sold_table.rowCount()):
+           for jj in range(self.tab_seven_search_sold_table.columnCount()):
+               self.tab_seven_search_sold_table_change_text(ii,jj,"")
         self.tab_seven_search_sold_table.setRowCount(self.tab_seven_search_sold_num_displayed_spinbox.value())
 
     def tab_seven_po_table_clear(self):
        for ii in range(self.tab_seven_po_table.rowCount()):
-            for jj in range(self.tab_seven_po_table.columnCount()):
-                self.tab_seven_po_table_change_text(ii,jj,"")
+           for jj in range(self.tab_seven_po_table.columnCount()):
+               self.tab_seven_po_table_change_text(ii,jj,"")
         #self.tab_seven_po_table.setRowCount(self.tab_seven_po_num_displayed_spinbox.value())
 
     def tab_seven_done_table_clear(self):
