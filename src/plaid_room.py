@@ -84,8 +84,9 @@ class Ui_Form(QtGui.QWidget):
 
         #tab seven stuff
         self.tab_seven_search_sold_results_table_list = []
-        self.tab_seven_done_results_table_list = []
-        self.tab_seven_po_results_table_list = []
+        self.tab_seven_done_table_list = []
+        self.tab_seven_po_table_list = []
+        self.tab_seven_po_table_list_filtered = []
         
         
         #create/connect to database
@@ -7584,8 +7585,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_table_reset()
         self.tab_seven_po_table_reset()
         self.tab_seven_done_table_reset()
-        
         #connectors
+        self.tab_seven_search_sold_reset.clicked.connect(self.tab_seven_search_sold_table_reset)
+        self.tab_seven_done_search_reset_button.clicked.connect(self.tab_seven_done_table_reset)
+        self.tab_seven_po_combobox.currentIndexChanged.connect(self.tab_seven_refresh)
         #self.tab_seven_search_sold_qline.returnPressed(
         
         
@@ -9594,6 +9597,130 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab seven begins ##################################
 
+    def tab_seven_search(self):
+        query = self.tab_seven_search_sold_qline.text()
+        
+        if ((query != '') and (query is not None)):
+            #TODO: idiotic round 3
+            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.tab_seven_search_sold_table_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges specified
+                if self.tab_seven_search_sold_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_seven_search_sold_start_date.date().toPyDate()
+                    end = self.tab_seven_search_sold_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
+                    continue
+                self.tab_seven_search_sold_table_list.append(list(row))
+        else:
+            self.tab_seven_search_sold_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check date ranges specified
+                if self.tab_seven_search_sold_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_seven_search_sold_start_date.date().toPyDate()
+                    end = self.tab_seven_search_sold_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
+                    continue
+                self.tab_seven_search_sold_table_list.append(list(row))
+        #update UI
+        self.tab_seven_refresh()
+
+
+    def tab_seven_done_table_search(self):
+        query = self.tab_seven_done_search_qline.text()
+        
+        if ((query != '') and (query is not None)):
+            #TODO: idiotic round 4534
+            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+            self.db.commit()
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+            self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            self.tab_seven_done_table_list = []
+            for row in self.db_cursor.fetchall():
+                #check date ranges specified
+                if self.tab_seven_done_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_seven_done_start_date.date().toPyDate()
+                    end = self.tab_seven_done_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_seven_done_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_done_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED or row[REORDER_STATE_INDEX] != ON_CURRENT_PO_LIST:
+                    continue
+                self.tab_seven_done_table_list.append(list(row))
+        else:
+            self.tab_seven_done_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check date ranges specified
+                if self.tab_seven_done_filter_date_checkbox.isChecked():
+                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                    start = self.tab_seven_done_start_date.date().toPyDate()
+                    end = self.tab_seven_done_end_date.date().toPyDate()
+                    range_delta = end - start
+                    compare_delta = end - compare
+                    zero_days = start - start
+                    if (compare_delta < zero_days) or (compare_delta > range_delta):
+                        #out of range
+                        continue
+                #check distributor
+                if self.tab_seven_done_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_done_dist_combo_box.currentText()
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
+                #check state
+                if row[REORDER_STATE_INDEX] == NEEDS_REORDERED or row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
+                    continue
+                self.tab_seven_done_table_list.append(list(row))
+        #update UI
+        self.tab_seven_refresh()
+
+    
     def tab_seven_done_table_reset(self):
         self.tab_seven_done_filter_dist_checkbox.setCheckState(False)
         while self.tab_seven_done_dist_combo_box.count() != 0:
@@ -9637,11 +9764,21 @@ class Ui_Form(QtGui.QWidget):
             if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
                 self.tab_seven_search_sold_table_list.append(list(row))
         self.tab_seven_refresh()
-    
+
+    def tab_seven_po_table_filter(self):
+        self.tab_seven_po_table_list_filtered = []
+        selected_distributor = self.tab_seven_po_combobox.currentText()
+        for row in self.tab_seven_po_table_list:
+            if (selected_distributor == row[DISTRIBUTOR_INDEX]) or (selected_distributor == 'Any'):
+                self.tab_seven_po_table_list_filtered.append(row)
+        
     def tab_seven_refresh(self):
+        #clear tables
         self.tab_seven_search_sold_table_clear()
         self.tab_seven_po_table_clear()
         self.tab_seven_done_table_clear()
+        #filter distributors
+        self.tab_seven_po_table_filter()
         #TODO: generate all the buttons
 
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
