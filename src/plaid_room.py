@@ -9618,9 +9618,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_po_combobox.addItem(distributor)
         self.tab_seven_po_table_list = []
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
-            if row[REORDER_STATE] == ON_CURRENT_PO_LIST:
+            if row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
                 self.tab_seven_po_table_list.append(list(row))
-        self.tab_six_refresh()
+        self.tab_seven_refresh()
             
     def tab_seven_search_sold_table_reset(self):
         self.tab_seven_search_sold_filter_dist_checkbox.setCheckState(False)
