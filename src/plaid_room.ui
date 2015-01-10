@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1916</width>
+    <width>1920</width>
     <height>1035</height>
    </rect>
   </property>
@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -451,6 +451,11 @@
         </column>
         <column>
          <property name="text">
+          <string>Get $</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>Artist</string>
          </property>
         </column>
@@ -509,12 +514,12 @@
           <string/>
          </property>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="2">
          <property name="text">
           <string/>
          </property>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="3">
          <property name="text">
           <string/>
          </property>
