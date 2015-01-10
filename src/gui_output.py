@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Mon Jan  5 23:24:51 2015
+# Created: Sat Jan 10 00:45:00 2015
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1916, 1035)
+        Form.resize(1920, 1035)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -152,7 +152,7 @@ class Ui_Form(object):
         self.tab_one_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_one_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_one_results_table.setObjectName(_fromUtf8("tab_one_results_table"))
-        self.tab_one_results_table.setColumnCount(12)
+        self.tab_one_results_table.setColumnCount(13)
         self.tab_one_results_table.setRowCount(15)
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setVerticalHeaderItem(0, item)
@@ -209,11 +209,13 @@ class Ui_Form(object):
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setHorizontalHeaderItem(11, item)
         item = QtGui.QTableWidgetItem()
+        self.tab_one_results_table.setHorizontalHeaderItem(12, item)
+        item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setItem(0, 1, item)
-        item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 2, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_one_results_table.setItem(0, 3, item)
         self.tab_one_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_one_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_one_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -4625,7 +4627,7 @@ class Ui_Form(object):
         self.main_menu_tabs.addTab(self.create_po_tab, _fromUtf8(""))
 
         self.retranslateUi(Form)
-        self.main_menu_tabs.setCurrentIndex(4)
+        self.main_menu_tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -4671,26 +4673,28 @@ class Ui_Form(object):
         item = self.tab_one_results_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "UPC/SKU/EAN", None))
         item = self.tab_one_results_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "Artist", None))
+        item.setText(_translate("Form", "Get $", None))
         item = self.tab_one_results_table.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "Title", None))
+        item.setText(_translate("Form", "Artist", None))
         item = self.tab_one_results_table.horizontalHeaderItem(3)
-        item.setText(_translate("Form", "Format", None))
+        item.setText(_translate("Form", "Title", None))
         item = self.tab_one_results_table.horizontalHeaderItem(4)
-        item.setText(_translate("Form", "Sale Price", None))
+        item.setText(_translate("Form", "Format", None))
         item = self.tab_one_results_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "Price Paid", None))
+        item.setText(_translate("Form", "Sale Price", None))
         item = self.tab_one_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "New/Used", None))
+        item.setText(_translate("Form", "Price Paid", None))
         item = self.tab_one_results_table.horizontalHeaderItem(7)
-        item.setText(_translate("Form", "Distributor", None))
+        item.setText(_translate("Form", "New/Used", None))
         item = self.tab_one_results_table.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Label", None))
+        item.setText(_translate("Form", "Distributor", None))
         item = self.tab_one_results_table.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "Genre", None))
+        item.setText(_translate("Form", "Label", None))
         item = self.tab_one_results_table.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Year", None))
+        item.setText(_translate("Form", "Genre", None))
         item = self.tab_one_results_table.horizontalHeaderItem(11)
+        item.setText(_translate("Form", "Year", None))
+        item = self.tab_one_results_table.horizontalHeaderItem(12)
         item.setText(_translate("Form", "Discogs Release Number", None))
         __sortingEnabled = self.tab_one_results_table.isSortingEnabled()
         self.tab_one_results_table.setSortingEnabled(False)

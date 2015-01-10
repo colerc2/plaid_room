@@ -54,7 +54,7 @@ class Ui_Form(QtGui.QWidget):
         #tab one stuff
         self.tab_one_results_table_list = []
         self.tab_one_results_table_list_tracker = []
-        self.tab_one_results_table_combobox_cols = [6, 7]
+        self.tab_one_results_table_combobox_cols = [7, 8]
 
         #tab two stuff
         self.tab_two_results_table_list = []
@@ -227,7 +227,7 @@ class Ui_Form(QtGui.QWidget):
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1916, 1035)
+        Form.resize(1920, 1035)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -353,7 +353,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.tab_one_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_one_results_table.setObjectName(_fromUtf8("tab_one_results_table"))
-        self.tab_one_results_table.setColumnCount(12)
+        self.tab_one_results_table.setColumnCount(13)
         self.tab_one_results_table.setRowCount(15)
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setVerticalHeaderItem(0, item)
@@ -410,11 +410,13 @@ class Ui_Form(QtGui.QWidget):
         item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setHorizontalHeaderItem(11, item)
         item = QtGui.QTableWidgetItem()
+        self.tab_one_results_table.setHorizontalHeaderItem(12, item)
+        item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table.setItem(0, 1, item)
-        item = QtGui.QTableWidgetItem()
         self.tab_one_results_table.setItem(0, 2, item)
+        item = QtGui.QTableWidgetItem()
+        self.tab_one_results_table.setItem(0, 3, item)
         self.tab_one_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.tab_one_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.tab_one_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -4826,7 +4828,7 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.addTab(self.create_po_tab, _fromUtf8(""))
 
         self.retranslateUi(Form)
-        self.main_menu_tabs.setCurrentIndex(4)
+        self.main_menu_tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -4872,26 +4874,28 @@ class Ui_Form(QtGui.QWidget):
         item = self.tab_one_results_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "UPC/SKU/EAN", None))
         item = self.tab_one_results_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "Artist", None))
+        item.setText(_translate("Form", "Get $", None))
         item = self.tab_one_results_table.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "Title", None))
+        item.setText(_translate("Form", "Artist", None))
         item = self.tab_one_results_table.horizontalHeaderItem(3)
-        item.setText(_translate("Form", "Format", None))
+        item.setText(_translate("Form", "Title", None))
         item = self.tab_one_results_table.horizontalHeaderItem(4)
-        item.setText(_translate("Form", "Sale Price", None))
+        item.setText(_translate("Form", "Format", None))
         item = self.tab_one_results_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "Price Paid", None))
+        item.setText(_translate("Form", "Sale Price", None))
         item = self.tab_one_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "New/Used", None))
+        item.setText(_translate("Form", "Price Paid", None))
         item = self.tab_one_results_table.horizontalHeaderItem(7)
-        item.setText(_translate("Form", "Distributor", None))
+        item.setText(_translate("Form", "New/Used", None))
         item = self.tab_one_results_table.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Label", None))
+        item.setText(_translate("Form", "Distributor", None))
         item = self.tab_one_results_table.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "Genre", None))
+        item.setText(_translate("Form", "Label", None))
         item = self.tab_one_results_table.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Year", None))
+        item.setText(_translate("Form", "Genre", None))
         item = self.tab_one_results_table.horizontalHeaderItem(11)
+        item.setText(_translate("Form", "Year", None))
+        item = self.tab_one_results_table.horizontalHeaderItem(12)
         item.setText(_translate("Form", "Discogs Release Number", None))
         __sortingEnabled = self.tab_one_results_table.isSortingEnabled()
         self.tab_one_results_table.setSortingEnabled(False)
@@ -7664,18 +7668,18 @@ class Ui_Form(QtGui.QWidget):
         #the current selected row
         try:
             db_item[UPC_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,0))
-            db_item[ARTIST_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,1))
-            db_item[TITLE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,2))
-            db_item[FORMAT_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,3))
-            db_item[PRICE_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,4))
-            db_item[PRICE_PAID_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,5))
-            db_item[NEW_USED_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,6))
-            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,7))
-            db_item[LABEL_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,8))
-            db_item[GENRE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,9))
-            db_item[YEAR_INDEX] = self.xint(self.tab_one_get_results_table_text(row,10))
+            db_item[ARTIST_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,2))
+            db_item[TITLE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,3))
+            db_item[FORMAT_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,4))
+            db_item[PRICE_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,5))
+            db_item[PRICE_PAID_INDEX] = self.xfloat(self.tab_one_get_results_table_text(row,6))
+            db_item[NEW_USED_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,7))
+            db_item[DISTRIBUTOR_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,8))
+            db_item[LABEL_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,9))
+            db_item[GENRE_INDEX] = self.xstr(self.tab_one_get_results_table_text(row,10))
+            db_item[YEAR_INDEX] = self.xint(self.tab_one_get_results_table_text(row,11))
             db_item[DATE_ADDED_INDEX] = curr_time
-            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.tab_one_get_results_table_text(row,11))
+            db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(self.tab_one_get_results_table_text(row,12))
         except Exception as e:
             print 'tab_one_add_to_inventory, extraction from spreadsheet: %s' % e
 
@@ -7965,15 +7969,15 @@ class Ui_Form(QtGui.QWidget):
 
         for ix, row in enumerate(self.tab_one_results_table_list):
             self.tab_one_results_table_change_text(ix, 0, row[UPC_INDEX])
-            self.tab_one_results_table_change_text(ix, 1, row[ARTIST_INDEX])
-            self.tab_one_results_table_change_text(ix, 2, row[TITLE_INDEX])
-            self.tab_one_results_table_change_text(ix, 3, row[FORMAT_INDEX])
-            self.tab_one_results_table_change_text(ix, 4, self.xstr(row[PRICE_INDEX]))
-            self.tab_one_results_table_change_text(ix, 5, self.xstr(row[PRICE_PAID_INDEX]))
-            self.tab_one_results_table_change_text(ix, 8, row[LABEL_INDEX])
-            self.tab_one_results_table_change_text(ix, 9, row[GENRE_INDEX])
-            self.tab_one_results_table_change_text(ix, 10, self.xstr(row[YEAR_INDEX]))
-            self.tab_one_results_table_change_text(ix, 11, self.xstr(row[DISCOGS_RELEASE_NUMBER_INDEX]))
+            self.tab_one_results_table_change_text(ix, 2, row[ARTIST_INDEX])
+            self.tab_one_results_table_change_text(ix, 3, row[TITLE_INDEX])
+            self.tab_one_results_table_change_text(ix, 4, row[FORMAT_INDEX])
+            self.tab_one_results_table_change_text(ix, 5, self.xstr(row[PRICE_INDEX]))
+            self.tab_one_results_table_change_text(ix, 6, self.xstr(row[PRICE_PAID_INDEX]))
+            self.tab_one_results_table_change_text(ix, 9, row[LABEL_INDEX])
+            self.tab_one_results_table_change_text(ix, 10, row[GENRE_INDEX])
+            self.tab_one_results_table_change_text(ix, 11, self.xstr(row[YEAR_INDEX]))
+            self.tab_one_results_table_change_text(ix, 12, self.xstr(row[DISCOGS_RELEASE_NUMBER_INDEX]))
 
         #add in combo boxes
         self.tab_one_results_table_add_dist_combos()
@@ -7985,12 +7989,13 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table.setFocus()
         if self.tab_one_results_table_list:#only resize columns if there were results
             self.tab_one_results_table.resizeColumnsToContents()
-            self.tab_one_results_table.horizontalHeader().setResizeMode(1, QtGui.QHeaderView.Stretch)#artist
-            self.tab_one_results_table.horizontalHeader().setResizeMode(2, QtGui.QHeaderView.Stretch)#title
+            self.tab_one_results_table.setColumnWidth(1,50)
+            self.tab_one_results_table.horizontalHeader().setResizeMode(2, QtGui.QHeaderView.Stretch)#artist
+            self.tab_one_results_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#title
 
 
     def tab_one_results_table_add_new_distributor(self, row, col):
-        if col == 7:
+        if col == 8:
             text = self.tab_one_results_table.item(row, col).text()
             self.distributors.add_distributor(str(text))
             self.tab_one_results_table_refresh()
@@ -8005,19 +8010,19 @@ class Ui_Form(QtGui.QWidget):
                 box = self.generate_distributor_combobox('Fat Beats')
             self.connect(box, QtCore.SIGNAL("currentIndexChanged(int)"), self.tab_one_dist_mapper, QtCore.SLOT("map()"))
             self.tab_one_dist_mapper.setMapping(box, ii)
-            self.tab_one_results_table.setCellWidget(ii,7,box)
+            self.tab_one_results_table.setCellWidget(ii,8,box)
         self.connect(self.tab_one_dist_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_one_new_dist_entered)
 
     def tab_one_new_dist_entered(self, row):
-        if self.tab_one_get_results_table_text(row,7) == 'Add Distributor':
+        if self.tab_one_get_results_table_text(row,8) == 'Add Distributor':
             item = QtGui.QTableWidgetItem()
             item.setText("")
-            if self.tab_one_results_table.cellWidget(row,7) is not None:
-                self.tab_one_results_table.removeCellWidget(row,7)
+            if self.tab_one_results_table.cellWidget(row,8) is not None:
+                self.tab_one_results_table.removeCellWidget(row,8)
             self.tab_one_results_table.blockSignals(True)
-            self.tab_one_results_table.setItem(row, 7, item)
+            self.tab_one_results_table.setItem(row, 8, item)
             self.tab_one_results_table.blockSignals(False)
-            self.tab_one_results_table.editItem(self.tab_one_results_table.item(row, 7))#why did this line take me 10 minutes?
+            self.tab_one_results_table.editItem(self.tab_one_results_table.item(row, 8))#why did this line take me 10 minutes?
 
     def tab_one_get_results_table_text(self, row, col):
         if col in self.tab_one_results_table_combobox_cols:
@@ -8039,7 +8044,7 @@ class Ui_Form(QtGui.QWidget):
     def tab_one_results_table_add_new_used_combos(self):
         for ii in range(max(1,len(self.tab_one_results_table_list))):
             box = self.generate_new_used_combobox()
-            self.tab_one_results_table.setCellWidget(ii,6,box)    
+            self.tab_one_results_table.setCellWidget(ii,7,box)    
 
         
     def tab_one_get_radio_button_input(self):
