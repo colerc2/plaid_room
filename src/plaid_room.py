@@ -20,6 +20,19 @@ import csv
 import locale
 from config_stuff import * #probably a bad idea
 
+#NOTES TO SELF:
+#    What the reserved positions are currently being used for:
+#    - in sold_misc_inventory, MISC_RESERVED_ONE_INDEX is used for
+#        keeping track of gift card values and it stored as a string
+#        in the form "value=xx.xx"
+#    - in sold_misc_inventory, MISC_RESERVED_TWO_INDEX is used for
+#        keeping track of gift card transactions and stuff
+#    - in sold_inventory, RESERVED_THREE_INDEX is used for keeping track
+#        of quantity in purchase orders. quantity is stored as a string
+#        even though it should be an int (i.e. "3")
+#    - in transactions, TRANS_RESERVED_ONE will be used to keep track of
+#        gift card discounts that may have happened on that transaction
+
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -8678,12 +8691,14 @@ class Ui_Form(QtGui.QWidget):
                         print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float: %s' % e
                     #new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
                     new_total = self.tab_four_total - gift_card_remaining_balance
-                    if new_total < 0:
+                    if new_total <= 0:
                         cream = Ui_CashDialog(0)
                         paid_or_naaa = cream.exec_()
                     else:
                         cream = Ui_CashDialog(round(new_total,2))
                         paid_or_naaa = cream.exec_()
+                    #TODO: in the future this should be able to handle multiple gift cards
+                    break
             else:
                 cream = Ui_CashDialog(self.tab_four_total)
                 paid_or_naaa = cream.exec_()
@@ -8733,6 +8748,20 @@ class Ui_Form(QtGui.QWidget):
                 discounted_price = percent_of_price * self.tab_four_subtotal
                 non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
                 sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
+                gift_card_remaining_balance = 0
+                new_total = 0
+                reserved_one_explanation = ''
+                for row in self.tab_four_gift_card_list:
+                    try:
+                        gift_card_remaining_balance = float(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX]))
+                    except Exception as e:
+                        print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float (#5 in method): %s' % e
+                    new_total = self.tab_four_total - gift_card_remaining_balance
+                    if new_total <= 0:
+                        new_gift_card_remaining_balance = round(abs(new_total),2)
+                    else:
+                        new_gift_card_remaining_balance = 0
+                    reserved_one_explanation = 'The original total was %f. The gift card(sold_misc_inventory ID=%d) had %f remaining on it. The new total charged to the customer was %f. After this transaction, the gift card has %f remaining.' % (self.tab_four_total, row[MISC_NEW_ID_INDEX],gift_card_remaining_balance, max(0,new_total), new_gift_card_remaining_balance)
                 trans_item = (self.xint(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)),
                               curr_time,
                               self.xfloat(self.tab_four_subtotal),
@@ -8746,7 +8775,7 @@ class Ui_Form(QtGui.QWidget):
                               self.xstr(",".join(sold_misc_inventory_new_ids)),
                               self.xfloat(tendered),
                               self.xfloat(change),
-                              self.xstr(''),
+                              self.xstr(reserved_one_explanation),
                               self.xstr(''),
                               self.xstr(''),
                               self.xstr(''))
@@ -8760,6 +8789,18 @@ class Ui_Form(QtGui.QWidget):
                 for key in sold_misc_inventory_new_ids:
                     self.db_cursor.execute('UPDATE sold_misc_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
                     self.db.commit()
+                #also update the gift card if necessary
+                for row in self.tab_four_gift_card_list:
+                    key = row[MISC_NEW_ID_INDEX]
+                    current_info_about_transactions = row[MISC_RESERVED_TWO_INDEX]
+                    current_info_about_transactions += 'Transaction %d used %f from gift card, remaining balance: %f\n' % (trans_id, (gift_card_remaining_balance-new_gift_card_remaining_balance), new_gift_card_remaining_balance)
+                    query = (current_info_about_transactions, key)
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET reserved_two = ? WHERE id = ?', query)
+                    self.db.commit()
+                    query = ('remaining=%f' % new_gift_card_remaining_balance, key)
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET reserved_one = ? WHERE id = ?', query)
+                    self.db.commit()
+                    
                 # 7. Print receipt
                 trans_with_id = None
                 for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
@@ -8840,8 +8881,8 @@ class Ui_Form(QtGui.QWidget):
             offset = len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)
             for ix, row in enumerate(self.tab_four_gift_card_list):
                 self.tab_four_final_checkout_table_change_text(ix+offset,0, 'Gift Card')
-                self.tab_four_final_checkout_table_change_text(ix+offset,1, ('-%s' % locale.currency(row[MISC_PRICE_INDEX]))) 
-
+                #self.tab_four_final_checkout_table_change_text(ix+offset,1, ('-%s' % locale.currency(row[MISC_PRICE_INDEX]))) 
+                self.tab_four_final_checkout_table_change_text(ix+offset,1, ('-%s' % locale.currency(self.xfloat(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX])))))
             
             #if there's no items being checked out, make sure everything else is cleared too
             if self.tab_four_final_checkout_table.rowCount() == 0:
@@ -9603,7 +9644,10 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_six_items_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_six_items_requested)
 
     def tab_six_more_info_requested(self, row):
-        todo = 0
+        if row < len(self.tab_six_results_table_list):
+            more_info = Ui_more_info_dialog()
+            more_info.add_trans_text(self.tab_six_results_table_list[row])
+            more_info.exec_()
     
         
     def tab_six_results_table_clear(self):

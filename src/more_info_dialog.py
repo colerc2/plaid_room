@@ -115,3 +115,25 @@ class Ui_more_info_dialog(QtGui.QDialog):
             all_the_stuff.append('New Primary Key  \t:\t%s' % row[MISC_NEW_ID_INDEX])
         self.more_info_text_browser.setPlainText('\n'.join(all_the_stuff))
             
+    def add_trans_text(self, row):
+        all_the_stuff = []
+        all_the_stuff.append('Number of Items          \t:\t%s' % row[TRANS_NUMBER_OF_ITEMS_INDEX])
+        all_the_stuff.append('Date Sold                \t:\t%s' % row[TRANS_DATE_SOLD_INDEX])
+        all_the_stuff.append('Subtotal                 \t:\t%s' % row[TRANS_SUBTOTAL_INDEX])
+        all_the_stuff.append('Discount Percent         \t:\t%s' % row[TRANS_DISCOUNT_PERCENT_INDEX])
+        all_the_stuff.append('Discounted Price         \t:\t%s' % row[TRANS_DISCOUNTED_PRICE_INDEX])
+        all_the_stuff.append('Tax                      \t:\t%s' % row[TRANS_TAX_INDEX])
+        all_the_stuff.append('Shipping                 \t:\t%s' % row[TRANS_SHIPPING_INDEX])
+        all_the_stuff.append('Total                    \t:\t%s' % row[TRANS_TOTAL_INDEX])
+        all_the_stuff.append('Cash/Credit              \t:\t%s' % row[TRANS_CASH_CREDIT_INDEX])
+        all_the_stuff.append('Sold Inventory IDs       \t:\t%s' % row[TRANS_SOLD_INVENTORY_IDS_INDEX])
+        all_the_stuff.append('Sold Misc. Inventory IDs \t:\t%s' % row[TRANS_SOLD_MISC_INVENTORY_IDS_INDEX])
+        all_the_stuff.append('Tendered                 \t:\t%s' % row[TRANS_TENDERED_INDEX])
+        all_the_stuff.append('Change                   \t:\t%s' % row[TRANS_CHANGE_INDEX])
+        all_the_stuff.append('Reserved One             \t:\t%s' % row[TRANS_RESERVED_ONE_INDEX])
+        all_the_stuff.append('Reserved Two             \t:\t%s' % row[TRANS_RESERVED_TWO_INDEX])
+        all_the_stuff.append('Reserved Three           \t:\t%s' % row[TRANS_RESERVED_THREE_INDEX])
+        all_the_stuff.append('Reserved Four            \t:\t%s' % row[TRANS_RESERVED_FOUR_INDEX])
+        all_the_stuff.append('Primary Key              \t:\t%s' % row[TRANS_ID_INDEX])
+        self.more_info_text_browser.setPlainText('\n'.join(all_the_stuff))
+        
