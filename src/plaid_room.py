@@ -7584,7 +7584,8 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_four_discount_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_discount_qline_edited)
         self.connect(self.tab_four_shipping_qline, QtCore.SIGNAL("returnPressed()"), self.tab_four_shipping_qline_edited)
         self.tab_four_CREAM_button.clicked.connect(self.tab_four_make_a_cash_dialog)
-
+        self.tab_four_credit_button.clicked.connect(self.tab_four_make_a_credit_transaction)
+        
         #tab five
         self.tab_five_results_tables_reset()
         #connectors
@@ -8683,6 +8684,26 @@ class Ui_Form(QtGui.QWidget):
     ###################################################################
     ################### tab four begins ##################################
 
+    def tab_four_make_a_credit_transaction(self):
+        if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
+            if self.tab_four_gift_card_list:
+                for row in self.tab_four_gift_card_list:
+                    try:
+                        gift_card_remaining_balance = float(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX]))
+                    except Exception as e:
+                        print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float: %s' % e
+                    #new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
+                    new_total = self.tab_four_total - gift_card_remaining_balance
+                    #make call to paypal here
+                    if new_total <= 0:
+                        cream = Ui_CashDialog(0)
+                        paid_or_naaa = cream.exec_()
+                    else:
+                        cream = Ui_CashDialog(round(new_total,2))
+                        paid_or_naaa = cream.exec_()
+                    #TODO: in the future this should be able to handle multiple gift cards
+                    break        
+    
     def tab_four_make_a_cash_dialog(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
             cream = None
