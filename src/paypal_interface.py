@@ -35,7 +35,7 @@ class PaypalInterface():
                     "quantity": 1,
                     "unit_price": {
                         "currency": "USD",
-                        "value": row[SOLD_FOR_INDEX]
+                        "value": format(row[SOLD_FOR_INDEX],'.2f')
                     }
                 }
                 if row[TAXABLE_INDEX]==1:
@@ -56,7 +56,7 @@ class PaypalInterface():
                     "quantity": 1,
                     "unit_price": {
                         "currency": "USD",
-                        "value": row[MISC_SOLD_FOR_INDEX]
+                        "value": format(row[MISC_SOLD_FOR_INDEX],'.2f')
                     }
                 }
                 if row[MISC_TAXABLE_INDEX]==1:
@@ -66,35 +66,37 @@ class PaypalInterface():
                     }
                 paypal_items.append(temp_item)
                   
-
+            temp_invoice = {
+                'merchant_info': {
+                    "email": "plaidroomrecords@gmail.com",
+                },
+                "billing_info": [{
+                    "email": "plaidroomrecords+invoices@gmail.com"
+                }],
+                "items": paypal_items,
+                "tax_calculated_after_discount": True,
+                "merchant_memo": ('transaction primary key: %d' % transaction[TRANS_ID_INDEX])
+            }
+                
             if transaction[TRANS_DISCOUNT_PERCENT_INDEX] > 0.001:
-                invoice = Invoice({
-                    'merchant_info': {
-                        "email": "plaidroomrecords@gmail.com",
-                    },
-                    "billing_info": [{
-                        "email": "plaidroomrecords+invoices@gmail.com"
-                    }],
-                    "items": paypal_items,
-                    "discount": {
-                        "percent":format(transaction[TRANS_DISCOUNT_PERCENT_INDEX],'.4f')
-                    },
-                    "tax_calculated_after_discount": True
-                })
-            else:
-                invoice = Invoice({
-                    'merchant_info': {
-                        "email": "plaidroomrecords@gmail.com",
-                    },
-                    "billing_info": [{
-                        "email": "plaidroomrecords+invoices@gmail.com"
-                    }],
-                    "items": paypal_items,
-                    "tax_calculated_after_discount": True
-                })                
-            
+                temp_invoice["discount"] = {
+                    "percent": format(transaction[TRANS_DISCOUNT_PERCENT_INDEX],'.4f')
+                }
+            if transaction[TRANS_SHIPPING_INDEX] > 0.001:
+                temp_invoice["shipping_cost"] = {
+                    "amount": {
+                        "currency": "USD",
+                        "value": format(transaction[TRANS_SHIPPING_INDEX],'.2f')
+                    }
+                }
+            invoice = Invoice(temp_invoice)
             if invoice.create():
                 print("Invoice[%s] created successfully"%(invoice.id))
+            else:
+                print(invoice.error)
+
+            if invoice.send(): # return True or False
+                print("Invoice[%s] send successfully" % (invoice.id))
             else:
                 print(invoice.error)
         except Exception as e:
