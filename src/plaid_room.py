@@ -10,6 +10,7 @@ from barcode_printer import BarcodePrinter
 from receipt_printer import ReceiptPrinter
 from misc_types import MiscTypes
 from misc_distributors import MiscDistributors
+from paypal_interface import PaypalInterface
 import time
 import datetime
 import sqlite3
@@ -63,6 +64,7 @@ class Ui_Form(QtGui.QWidget):
         self.barcode_printer = BarcodePrinter()
         self.misc_distributors = MiscDistributors(MISC_DIST_FILE_NAME)
         self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
+        self.paypal = PaypalInterface(PAYPAL_FILE_NAME)
         
         #tab one stuff
         self.tab_one_results_table_list = []
@@ -8686,6 +8688,9 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_four_make_a_credit_transaction(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
+            cream = None
+            paid_or_naaa = None
+            #another place i have to break all normal logic for gift cards
             if self.tab_four_gift_card_list:
                 for row in self.tab_four_gift_card_list:
                     try:
@@ -8694,15 +8699,135 @@ class Ui_Form(QtGui.QWidget):
                         print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float: %s' % e
                     #new_total = self.tab_four_total - row[MISC_PRICE_INDEX]
                     new_total = self.tab_four_total - gift_card_remaining_balance
-                    #make call to paypal here
-                    if new_total <= 0:
-                        cream = Ui_CashDialog(0)
-                        paid_or_naaa = cream.exec_()
-                    else:
-                        cream = Ui_CashDialog(round(new_total,2))
-                        paid_or_naaa = cream.exec_()
+                    #if new_total <= 0:
+                    #    cream = Ui_CashDialog(0)
+                    #    paid_or_naaa = cream.exec_()
+                    #else:
+                    #    cream = Ui_CashDialog(round(new_total,2))
+                    #    paid_or_naaa = cream.exec_()
                     #TODO: in the future this should be able to handle multiple gift cards
-                    break        
+                    break
+            else:
+                todo = 0
+                #cream = Ui_CashDialog(self.tab_four_total)
+                #paid_or_naaa = cream.exec_()
+            paid_or_naaa = QtGui.QDialog.Accepted
+            print '1'
+            if paid_or_naaa == QtGui.QDialog.Accepted:
+                tendered = 0
+                change = 0
+                curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                sold_inventory_new_ids = []
+                sold_misc_inventory_new_ids = []
+                # 1. Add items to sold inventory (numbered these so i wouldn't lose track of what i'm doing)
+                for row in self.tab_four_checkout_table_list:
+                    percent_discount = row[PERCENT_DISCOUNT_INDEX]
+                    sold_for = round(((100-percent_discount)*0.01)*row[PRICE_INDEX],2)
+                    row[SOLD_FOR_INDEX] = self.xfloat(sold_for)
+                    row[PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
+                    row[DATE_SOLD_INDEX] = self.xstr(curr_time)
+                    row[REORDER_STATE_INDEX] = 0
+                    row[TRANSACTION_ID_INDEX] = 0
+                    self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used,distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_three) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                    self.db.commit()
+                    sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                    # 2. Delete items from inventory
+                    self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (row[ID_INDEX],))
+                    self.db.commit()
+                
+                # 3. Add items to misc sold inventory
+                for row in self.tab_four_misc_checkout_table_list:
+                    percent_discount = row[MISC_PERCENT_DISCOUNT_INDEX]
+                    sold_for = round(((100-percent_discount)*0.01)*row[MISC_PRICE_INDEX],2)
+                    #make exceptions for gift cards
+                    if 'PRRGC' in row[UPC_INDEX]:
+                        row[MISC_RESERVED_ONE_INDEX] = 'remaining=%f' % sold_for
+                    row[MISC_SOLD_FOR_INDEX] = self.xfloat(sold_for)
+                    row[MISC_PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
+                    row[MISC_DATE_SOLD_INDEX] = self.xstr(curr_time)
+                    row[MISC_REORDER_STATE_INDEX] = 0
+                    row[MISC_TRANSACTION_ID_INDEX] = 0
+                    self.db_cursor.execute('INSERT INTO sold_misc_inventory (upc, type, item, description, size, sale_price, price_paid, date_added, new_used, code, distributor, taxable, reserved_one, reserved_two, reserved_three, reserved_four, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_five, reserved_six) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                    self.db.commit()
+                    sold_misc_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                    # 4. Delete items from misc inventory
+                    self.db_cursor.execute('DELETE FROM misc_inventory WHERE id = ?', (row[MISC_ID_INDEX],))
+                    self.db.commit()                    
+                # 5. Add items to transaction history
+                percent_of_price = ((100-self.tab_four_percent_discount)*0.01)
+                discounted_price = percent_of_price * self.tab_four_subtotal
+                non_taxable_discounted_price = percent_of_price * self.tab_four_non_taxable_subtotal
+                sales_tax = (discounted_price - non_taxable_discounted_price) * (LOVELAND_TAX_RATE*0.01)
+                gift_card_remaining_balance = 0
+                new_total = 0
+                reserved_one_explanation = ''
+                for row in self.tab_four_gift_card_list:
+                    try:
+                        gift_card_remaining_balance = float(self.filter_non_numeric(row[MISC_RESERVED_ONE_INDEX]))
+                    except Exception as e:
+                        print 'tab_four_make_a_cash_dialog, problem casting remaining gift card balance to float (#5 in method): %s' % e
+                    new_total = self.tab_four_total - gift_card_remaining_balance
+                    if new_total <= 0:
+                        new_gift_card_remaining_balance = round(abs(new_total),2)
+                    else:
+                        new_gift_card_remaining_balance = 0
+                    reserved_one_explanation = 'The original total was %f. The gift card(sold_misc_inventory ID=%d) had %f remaining on it. The new total charged to the customer was %f. After this transaction, the gift card has %f remaining.' % (self.tab_four_total, row[MISC_NEW_ID_INDEX],gift_card_remaining_balance, max(0,new_total), new_gift_card_remaining_balance)
+                trans_item = (self.xint(len(self.tab_four_checkout_table_list)+len(self.tab_four_misc_checkout_table_list)),
+                              curr_time,
+                              self.xfloat(self.tab_four_subtotal),
+                              self.xfloat(self.tab_four_percent_discount),
+                              self.xfloat(discounted_price),
+                              self.xfloat(sales_tax),
+                              self.xfloat(self.tab_four_shipping),
+                              self.xfloat(self.tab_four_total),
+                              self.xstr('Cash'),
+                              self.xstr(",".join(sold_inventory_new_ids)),
+                              self.xstr(",".join(sold_misc_inventory_new_ids)),
+                              self.xfloat(tendered),
+                              self.xfloat(change),
+                              self.xstr(reserved_one_explanation),
+                              self.xstr(''),
+                              self.xstr(''),
+                              self.xstr(''))
+                self.db_cursor.execute('INSERT INTO transactions (number_of_items, date_sold, subtotal, discount_percent, discounted_price, tax, shipping, total, cash_credit, sold_inventory_ids, sold_misc_inventory_ids, tendered, change, reserved_one, reserved_two, reserved_three, reserved_four) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
+                self.db.commit()
+                trans_id = self.db_cursor.lastrowid
+                # 6. Go back and update all items with new transaction number
+                for key in sold_inventory_new_ids:
+                    self.db_cursor.execute('UPDATE sold_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
+                    self.db.commit()
+                for key in sold_misc_inventory_new_ids:
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET transaction_id = ? WHERE id = ?', (trans_id, key))
+                    self.db.commit()
+                #also update the gift card if necessary
+                for row in self.tab_four_gift_card_list:
+                    key = row[MISC_NEW_ID_INDEX]
+                    current_info_about_transactions = row[MISC_RESERVED_TWO_INDEX]
+                    current_info_about_transactions += 'Transaction %d used %f from gift card, remaining balance: %f\n' % (trans_id, (gift_card_remaining_balance-new_gift_card_remaining_balance), new_gift_card_remaining_balance)
+                    query = (current_info_about_transactions, key)
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET reserved_two = ? WHERE id = ?', query)
+                    self.db.commit()
+                    query = ('remaining=%f' % new_gift_card_remaining_balance, key)
+                    self.db_cursor.execute('UPDATE sold_misc_inventory SET reserved_one = ? WHERE id = ?', query)
+                    self.db.commit()
+                    
+                # 7. Print receipt
+                trans_with_id = None
+                for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
+                    trans_with_id = list(row)
+                    break
+                self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
+                print 'made it to right before stuff'
+                #8. Push invoice to Paypal
+                self.paypal.create_invoice(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
+                print 'made call to paypal'
+                
+                # 9. Clean up
+                self.tab_four_checkout_table_list = []
+                self.tab_four_misc_checkout_table_list = []
+                self.tab_four_checkout_table_refresh()
+                self.tab_four_misc_checkout_table_refresh()
     
     def tab_four_make_a_cash_dialog(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out

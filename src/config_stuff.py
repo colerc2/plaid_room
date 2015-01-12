@@ -88,6 +88,7 @@ MISC_DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room
 TEMP_RECEIPT_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/images/receipt_test.pdf'
 RECEIPT_HEADER_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/images/plaid_room.jpg'
 BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/plaid_room'
+PAYPAL_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/paypal.key'
 
 #other stuff
 LOVELAND_TAX_RATE = 6.5 #percent
