@@ -8818,10 +8818,9 @@ class Ui_Form(QtGui.QWidget):
                     trans_with_id = list(row)
                     break
                 self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
-                print 'made it to right before stuff'
+
                 #8. Push invoice to Paypal
                 self.paypal.create_invoice(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
-                print 'made call to paypal'
                 
                 # 9. Clean up
                 self.tab_four_checkout_table_list = []
