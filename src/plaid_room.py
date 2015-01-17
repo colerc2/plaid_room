@@ -19,6 +19,7 @@ import string
 from threading import Thread
 import csv
 import locale
+from math import ceil
 from config_stuff import * #probably a bad idea
 
 #NOTES TO SELF:
@@ -106,7 +107,7 @@ class Ui_Form(QtGui.QWidget):
         
         
         #create/connect to database
-        self.db = sqlite3.connect('inventory.db')
+        self.db = sqlite3.connect(DB_FILE)
         self.db_cursor = self.db.cursor()
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS inventory
         (upc text,
@@ -7879,6 +7880,8 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_one_results_table_change_text(ii,jj,"")
 
     def tab_one_results_table_change_text(self,row, col, text):
+        if col == 6:
+            self.tab_one_results_table.blockSignals(True)
         text = self.filter_unprintable(text)
         item = self.tab_one_results_table.item(row, col)
         if item is not None:
@@ -7887,7 +7890,8 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_one_results_table.setItem(row, col, item)
-        
+        if col == 6:
+            self.tab_one_results_table.blockSignals(False)        
 
     def tab_one_search_for_release(self, search_query, upc_needed):
         #clear list
@@ -7994,7 +7998,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table_change_text(ix, 3, row[TITLE_INDEX])
             self.tab_one_results_table_change_text(ix, 4, row[FORMAT_INDEX])
             self.tab_one_results_table_change_text(ix, 5, self.xstr(row[PRICE_INDEX]))
+            self.tab_one_results_table.blockSignals(True)
             self.tab_one_results_table_change_text(ix, 6, self.xstr(row[PRICE_PAID_INDEX]))
+            self.tab_one_results_table.blockSignals(False)
             self.tab_one_results_table_change_text(ix, 9, row[LABEL_INDEX])
             self.tab_one_results_table_change_text(ix, 10, row[GENRE_INDEX])
             self.tab_one_results_table_change_text(ix, 11, self.xstr(row[YEAR_INDEX]))
@@ -8014,6 +8020,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_one_results_table.setColumnWidth(1,50)
             self.tab_one_results_table.horizontalHeader().setResizeMode(2, QtGui.QHeaderView.Stretch)#artist
             self.tab_one_results_table.horizontalHeader().setResizeMode(3, QtGui.QHeaderView.Stretch)#title
+            self.tab_one_results_table.setColumnWidth(4,min(275,self.tab_one_results_table.columnWidth(4)))
 
 
     def tab_one_results_table_add_new_distributor(self, row, col):
@@ -8021,6 +8028,15 @@ class Ui_Form(QtGui.QWidget):
             text = self.tab_one_results_table.item(row, col).text()
             self.distributors.add_distributor(str(text))
             self.tab_one_results_table_refresh()
+        elif col == 6:
+            #TODO: make this cooler, more fancy, automatic
+            text = self.xstr(self.tab_one_results_table.item(row, col).text())
+            wholesale_cost = self.xfloat(self.filter_non_numeric(text))
+            retail_cost = ceil(wholesale_cost/(1-DESIRED_PROFIT_MARGIN))-0.01
+            self.tab_one_results_table_list[row][PRICE_INDEX] = retail_cost
+            self.tab_one_results_table_list[row][PRICE_PAID_INDEX] = wholesale_cost
+            self.tab_one_results_table_refresh()
+            
         
     def tab_one_results_table_add_dist_combos(self):
         self.tab_one_dist_mapper = QtCore.QSignalMapper(self)
