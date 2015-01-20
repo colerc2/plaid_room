@@ -7599,6 +7599,11 @@ class Ui_Form(QtGui.QWidget):
         
         
         #tab one
+        while self.tab_one_dist_combo_box.count() != 0:
+            self.tab_one_dist_combo_box.removeItem(0)
+        self.tab_one_dist_combo_box.addItem('None')
+        for distributor in self.distributors.get_distributors():
+            self.tab_one_dist_combo_box.addItem(distributor)
         self.tab_one_text_browser.setPlainText('Is this the Beta Band?\n')
         self.tab_one_results_table.horizontalHeader().setStretchLastSection(True)
         self.tab_one_results_table_refresh()
@@ -8023,7 +8028,13 @@ class Ui_Form(QtGui.QWidget):
                         temp_row.append('New')
                         #7 - dist
                         #TODO: select distributor based on most recent DB item
-                        temp_row.append(self.tab_one_last_distributor)
+                        #temp_row.append(self.tab_one_last_distributor)
+                        if self.tab_one_dist_combo_box.currentText() != 'None':
+                            temp_row.append(self.tab_one_dist_combo_box.currentText())
+                        else:
+                            for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+                                temp_row.append(row[DISTRIBUTOR_INDEX])
+                                break
                         #8 - label
                         temp_row.append(result.labels[0].name)
                         #9 - genre
@@ -8095,10 +8106,19 @@ class Ui_Form(QtGui.QWidget):
             #TODO: make this cooler, more fancy, automatic
             text = self.xstr(self.tab_one_results_table.item(row, col).text())
             wholesale_cost = self.xfloat(self.filter_non_numeric(text))
-            retail_cost = ceil(wholesale_cost/(1-DESIRED_PROFIT_MARGIN))-0.01
+            custom_profit_margin = self.xfloat(self.filter_non_numeric(self.xstr(self.tab_one_profit_margin_qline.text())))
+            custom_shipping = self.xfloat(self.filter_non_numeric(self.xstr(self.tab_one_shipping_cost_qline.text())))
+            if custom_shipping != -1:
+                wholesale_cost += custom_shipping
+            if custom_profit_margin is not None and custom_profit_margin > 0 and custom_profit_margin < 100 and custom_profit_margin != -1:
+                retail_cost = ceil(wholesale_cost/(1-(custom_profit_margin/100)))-0.01
+            else:
+                retail_cost = ceil(wholesale_cost/(1-(float(DESIRED_PROFIT_MARGIN)/100)))-0.01
             self.tab_one_results_table_list[row][PRICE_INDEX] = retail_cost
             self.tab_one_results_table_list[row][PRICE_PAID_INDEX] = wholesale_cost
-            self.tab_one_results_table_refresh()
+            self.tab_one_results_table_change_text(row,5,self.xstr(self.tab_one_results_table_list[row][PRICE_INDEX]))
+            self.tab_one_results_table_change_text(row,6,self.xstr(self.tab_one_results_table_list[row][PRICE_PAID_INDEX]))
+            #self.tab_one_results_table_refresh()
             
         
     def tab_one_results_table_add_dist_combos(self):

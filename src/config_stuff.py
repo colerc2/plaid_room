@@ -93,4 +93,4 @@ DB_FILE = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/real_invent
 
 #other stuff
 LOVELAND_TAX_RATE = 6.5 #percent
-DESIRED_PROFIT_MARGIN = 0.3
+DESIRED_PROFIT_MARGIN = 30
