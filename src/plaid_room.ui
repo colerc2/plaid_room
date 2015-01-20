@@ -309,7 +309,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_36">
           <item>
-           <widget class="QLineEdit" name="tab_one_search_artist_title_title_qline_3">
+           <widget class="QLineEdit" name="tab_one_profit_margin_qline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -328,7 +328,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="tab_one_search_artist_title_title_qline_2">
+           <widget class="QLineEdit" name="tab_one_shipping_cost_qline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -412,7 +412,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="tab_two_dist_combo_box_2"/>
+           <widget class="QComboBox" name="tab_one_dist_combo_box"/>
           </item>
          </layout>
         </item>
