@@ -9548,8 +9548,8 @@ class Ui_Form(QtGui.QWidget):
                 #check date ranges if specified
                 if self.tab_five_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
-                    start = self.tab_two_date_start.date().toPyDate()
-                    end = self.tab_two_date_end.date().toPyDate()
+                    start = self.tab_five_start_date.date().toPyDate()
+                    end = self.tab_five_end_date.date().toPyDate()
                     range_delta = end - start
                     compare_delta = end - compare
                     zero_days = start - start
@@ -9577,8 +9577,8 @@ class Ui_Form(QtGui.QWidget):
                 #check date ranges if specified
                 if self.tab_five_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[MISC_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
-                    start = self.tab_two_date_start.date().toPyDate()
-                    end = self.tab_two_date_end.date().toPyDate()
+                    start = self.tab_five_start_date.date().toPyDate()
+                    end = self.tab_five_end_date.date().toPyDate()
                     range_delta = end - start
                     compare_delta = end - compare
                     zero_days = start - start
@@ -9598,8 +9598,8 @@ class Ui_Form(QtGui.QWidget):
                 #check date ranges if specified
                 if self.tab_five_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
-                    start = self.tab_two_date_start.date().toPyDate()
-                    end = self.tab_two_date_end.date().toPyDate()
+                    start = self.tab_five_start_date.date().toPyDate()
+                    end = self.tab_five_end_date.date().toPyDate()
                     range_delta = end - start
                     compare_delta = end - compare
                     zero_days = start - start
@@ -9616,8 +9616,8 @@ class Ui_Form(QtGui.QWidget):
                 #check date ranges if specified
                 if self.tab_five_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[MISC_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
-                    start = self.tab_two_date_start.date().toPyDate()
-                    end = self.tab_two_date_end.date().toPyDate()
+                    start = self.tab_five_start_date.date().toPyDate()
+                    end = self.tab_five_end_date.date().toPyDate()
                     range_delta = end - start
                     compare_delta = end - compare
                     zero_days = start - start
