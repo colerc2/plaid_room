@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Mon Jan 19 19:33:54 2015
+# Created: Sun Feb  1 19:35:02 2015
 #      by: PyQt4 UI code generator 4.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -2451,8 +2451,38 @@ class Ui_Form(object):
         self.add_item_vert_line_17.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_17.setObjectName(_fromUtf8("add_item_vert_line_17"))
         self.horizontalLayout.addWidget(self.add_item_vert_line_17)
-        spacerItem95 = QtGui.QSpacerItem(890, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem95 = QtGui.QSpacerItem(700, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem95)
+        self.add_item_vert_line_37 = QtGui.QFrame(self.layoutWidget4)
+        self.add_item_vert_line_37.setFrameShape(QtGui.QFrame.VLine)
+        self.add_item_vert_line_37.setFrameShadow(QtGui.QFrame.Sunken)
+        self.add_item_vert_line_37.setObjectName(_fromUtf8("add_item_vert_line_37"))
+        self.horizontalLayout.addWidget(self.add_item_vert_line_37)
+        self.tab_five_gross_label = QtGui.QLabel(self.layoutWidget4)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tab_five_gross_label.sizePolicy().hasHeightForWidth())
+        self.tab_five_gross_label.setSizePolicy(sizePolicy)
+        self.tab_five_gross_label.setMinimumSize(QtCore.QSize(120, 0))
+        self.tab_five_gross_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.tab_five_gross_label.setObjectName(_fromUtf8("tab_five_gross_label"))
+        self.horizontalLayout.addWidget(self.tab_five_gross_label)
+        self.add_item_vert_line_36 = QtGui.QFrame(self.layoutWidget4)
+        self.add_item_vert_line_36.setFrameShape(QtGui.QFrame.VLine)
+        self.add_item_vert_line_36.setFrameShadow(QtGui.QFrame.Sunken)
+        self.add_item_vert_line_36.setObjectName(_fromUtf8("add_item_vert_line_36"))
+        self.horizontalLayout.addWidget(self.add_item_vert_line_36)
+        self.tab_five_net_label = QtGui.QLabel(self.layoutWidget4)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tab_five_net_label.sizePolicy().hasHeightForWidth())
+        self.tab_five_net_label.setSizePolicy(sizePolicy)
+        self.tab_five_net_label.setMinimumSize(QtCore.QSize(120, 0))
+        self.tab_five_net_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.tab_five_net_label.setObjectName(_fromUtf8("tab_five_net_label"))
+        self.horizontalLayout.addWidget(self.tab_five_net_label)
         self.add_item_vert_line_18 = QtGui.QFrame(self.layoutWidget4)
         self.add_item_vert_line_18.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_18.setFrameShadow(QtGui.QFrame.Sunken)
@@ -4687,7 +4717,7 @@ class Ui_Form(object):
         self.main_menu_tabs.addTab(self.create_po_tab, _fromUtf8(""))
 
         self.retranslateUi(Form)
-        self.main_menu_tabs.setCurrentIndex(0)
+        self.main_menu_tabs.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -5945,6 +5975,8 @@ class Ui_Form(object):
         self.tab_four_search_item_label.setText(_translate("Form", "Search Item", None))
         self.tab_five_search_button.setText(_translate("Form", "Search", None))
         self.tab_five_reset_button.setText(_translate("Form", "Reset", None))
+        self.tab_five_gross_label.setText(_translate("Form", "$XX.xx Gross", None))
+        self.tab_five_net_label.setText(_translate("Form", "$XX.xx Net", None))
         self.tab_five_item_history_label.setText(_translate("Form", "XXXX Items in History", None))
         self.tab_four_filter_label.setText(_translate("Form", "Filter", None))
         self.tab_five_filter_date_checkbox.setText(_translate("Form", "Filter by Date Sold", None))
