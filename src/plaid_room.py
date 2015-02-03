@@ -8055,7 +8055,7 @@ class Ui_Form(QtGui.QWidget):
                         #4 - price
                         temp_row.append('14.99')
                         #5 - price_paid
-                        temp_row.append('9.99')
+                        temp_row.append(str(DEFAULT_PRICE))
                         #6 - new_used
                         #combo box will default to most recently added item
                         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
