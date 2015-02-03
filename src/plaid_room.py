@@ -8057,7 +8057,11 @@ class Ui_Form(QtGui.QWidget):
                         #5 - price_paid
                         temp_row.append('9.99')
                         #6 - new_used
-                        temp_row.append('New')
+                        #combo box will default to most recently added item
+                        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
+                            temp_row.append(row[NEW_USED_INDEX])
+                            break
+                        #temp_row.append('New')
                         #7 - dist
                         #TODO: select distributor based on most recent DB item
                         #temp_row.append(self.tab_one_last_distributor)
@@ -8219,7 +8223,10 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_one_results_table_add_new_used_combos(self):
         for ii in range(max(1,len(self.tab_one_results_table_list))):
-            box = self.generate_new_used_combobox()
+            try:
+                box = self.generate_new_used_combobox(self.tab_one_results_table_list[ii][NEW_USED_INDEX])
+            except Exception as e:
+                box = self.generate_new_used_combobox()
             self.tab_one_results_table.setCellWidget(ii,7,box)    
 
         
@@ -10614,10 +10621,12 @@ class Ui_Form(QtGui.QWidget):
             print 'something happened when casting'
             return -1
     
-    def generate_new_used_combobox(self):
+    def generate_new_used_combobox(self, new_used = None):
         combobox = QtGui.QComboBox()
         combobox.addItem("New")
         combobox.addItem("Used")
+        if new_used == 'Used':
+            combobox.setCurrentIndex(1)
         return combobox
 
     def generate_sizes_combobox(self):
