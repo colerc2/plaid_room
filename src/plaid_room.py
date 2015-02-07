@@ -8368,6 +8368,8 @@ class Ui_Form(QtGui.QWidget):
             for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
                 #check date ranges if specified
                 if self.filter_by_date_added_checkbox.isChecked():
+                    #print row[ARTIST_INDEX]
+                    #TODO: try catches EVERYWHERE
                     compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
                     start = self.tab_two_date_start.date().toPyDate()
                     end = self.tab_two_date_end.date().toPyDate()
