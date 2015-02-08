@@ -92,6 +92,6 @@ PAYPAL_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/co
 DB_FILE = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/real_inventory.db'
 
 #other stuff
-LOVELAND_TAX_RATE = 6.5 #percent
+LOVELAND_TAX_RATE = 6.75 #percent
 DESIRED_PROFIT_MARGIN = 30
 DEFAULT_PRICE = 1.00

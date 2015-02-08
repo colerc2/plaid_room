@@ -6185,7 +6185,7 @@ class Ui_Form(QtGui.QWidget):
         item.setText(_translate("Form", "Price", None))
         self.tab_three_subtotal_label.setText(_translate("Form", "Subtotal", None))
         self.tab_three_discount_label.setText(_translate("Form", "Discount", None))
-        self.tab_four_tax_label.setText(_translate("Form", "Sales tax at 7%", None))
+        self.tab_four_tax_label.setText(_translate("Form", "Sales tax at 6.75%", None))
         self.tab_four_tax_amount_label.setText(_translate("Form", "$X.XX", None))
         self.tab_three_shipping_label.setText(_translate("Form", "Shipping", None))
         self.tab_three_total_label.setText(_translate("Form", "Total", None))
