@@ -10014,7 +10014,7 @@ class Ui_Form(QtGui.QWidget):
                 #write the file
                 if len(temp_list) > 1:
                     with open(filename, "w+") as f:
-                        writer = csv.writer(f, quoting=csv.QUOTE_NONE, delimiter='\t')
+                        writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, delimiter='\t')
                         writer.writerows(temp_list)
 
                     for ix, row in enumerate(self.tab_seven_po_table_list):
