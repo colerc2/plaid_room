@@ -8196,7 +8196,8 @@ class Ui_Form(QtGui.QWidget):
             release_no = self.tab_one_results_table_list[row][DISCOGS_RELEASE_NUMBER_INDEX]
             prices = [0,0,0]
             self.discogs.scrape_price(release_no, prices)
-            self.tab_one_results_table_change_text(row, 5, prices[1])
+            avg_price = round(self.xfloat(prices[1])) - 0.01
+            self.tab_one_results_table_change_text(row, 5, self.xstr(avg_price))
             #print info to console as well
             self.tab_one_print_to_console('Low:\t%s\n' % prices[0])
             self.tab_one_print_to_console('Mid:\t%s\n' % prices[1])
