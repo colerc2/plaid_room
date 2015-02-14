@@ -62,7 +62,7 @@ class PaypalInterface():
                 if row[MISC_TAXABLE_INDEX]==1:
                     temp_item["tax"] = {
                         "name": "Loveland Tax",
-                        "percent": 6.5
+                        "percent": LOVELAND_TAX_RATE
                     }
                 paypal_items.append(temp_item)
                   
