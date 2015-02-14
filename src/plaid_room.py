@@ -8409,6 +8409,8 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_num_inventory_label.setText('%s Items In Inventory' % str(how_many))
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.tab_two_results_table_list)))
         
+
+        
     def tab_two_results_table_reset(self):
         self.tab_two_results_table_clear()
         self.tab_two_num_displayed_spin_box.setValue(50)
@@ -8425,7 +8427,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table_list = []
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
             self.tab_two_results_table_list.append(row)
+        total = 0.0
+        for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
+            total += self.xfloat(row[PRICE_INDEX])
+        print 'Total value in inventory: %f\n' % total
         self.tab_two_results_table_refresh()
+
         
     def tab_two_results_table_clear(self):
         for ii in range(self.tab_two_results_table.rowCount()):
