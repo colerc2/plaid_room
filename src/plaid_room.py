@@ -8929,7 +8929,7 @@ class Ui_Form(QtGui.QWidget):
                               self.xfloat(sales_tax),
                               self.xfloat(self.tab_four_shipping),
                               self.xfloat(self.tab_four_total),
-                              self.xstr('Cash'),
+                              self.xstr('Credit'),
                               self.xstr(",".join(sold_inventory_new_ids)),
                               self.xstr(",".join(sold_misc_inventory_new_ids)),
                               self.xfloat(tendered),
@@ -9685,6 +9685,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_gross_label.setText(str(locale.currency(gross) + ' Gross'))
         self.tab_five_net_label.setText((locale.currency(net) + ' Net'))
         counter = 0
+        gross_misc = 0
+        net_misc = 0
+        for item in self.tab_five_results_table_list:
+            gross_misc += item[MISC_SOLD_FOR_INDEX]
+            net_misc += (item[MISC_SOLD_FOR_INDEX] - item[MISC_PRICE_PAID_INDEX])
+        print 'Gross: %f\nNet: %f\n\n' % (gross_misc+gross, net_misc+net)
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             counter += 1
         for row in self.db_cursor.execute('SELECT * FROM sold_misc_inventory ORDER BY date_sold DESC'):
