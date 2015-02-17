@@ -10006,24 +10006,44 @@ class Ui_Form(QtGui.QWidget):
                     filename = custom_filename
                 filename = directory + '/' + filename
 
+                #if super d, do things a different way
+                if distributor == 'Super D' or distributor == 'WEA':
+                    temp_list = []
+                    temp_row = []
+                    temp_row.append('Qty')
+                    temp_row.append('UPC')
+                    temp_row.append('Artist')
+                    temp_row.append('Title')
+                    temp_row.append('Format')
+                    temp_list.append(temp_row)
+                    for row in self.tab_seven_po_table_list:
+                        if row[DISTRIBUTOR_INDEX] == distributor:
+                            temp_row = []
+                            temp_row.append(self.xstr(row[UPC_INDEX]))
+                            temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
+                            #temp_row.append(self.xstr(row[ARTIST_INDEX]))
+                            #temp_row.append(self.xstr(row[TITLE_INDEX]))
+                            #temp_row.append(self.xstr(row[FORMAT_INDEX]))
+                            temp_list.append(temp_row)
+                else:
                 #generate stuff needed for PO
-                temp_list = []
-                temp_row = []
-                temp_row.append('Qty')
-                temp_row.append('UPC')
-                temp_row.append('Artist')
-                temp_row.append('Title')
-                temp_row.append('Format')
-                temp_list.append(temp_row)
-                for row in self.tab_seven_po_table_list:
-                    if row[DISTRIBUTOR_INDEX] == distributor:
-                        temp_row = []
-                        temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
-                        temp_row.append(self.xstr(row[UPC_INDEX]))
-                        temp_row.append(self.xstr(row[ARTIST_INDEX]))
-                        temp_row.append(self.xstr(row[TITLE_INDEX]))
-                        temp_row.append(self.xstr(row[FORMAT_INDEX]))
-                        temp_list.append(temp_row)
+                    temp_list = []
+                    temp_row = []
+                    temp_row.append('Qty')
+                    temp_row.append('UPC')
+                    temp_row.append('Artist')
+                    temp_row.append('Title')
+                    temp_row.append('Format')
+                    temp_list.append(temp_row)
+                    for row in self.tab_seven_po_table_list:
+                        if row[DISTRIBUTOR_INDEX] == distributor:
+                            temp_row = []
+                            temp_row.append(self.xstr(row[UPC_INDEX]))
+                            temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
+                            temp_row.append(self.xstr(row[ARTIST_INDEX]))
+                            temp_row.append(self.xstr(row[TITLE_INDEX]))
+                            temp_row.append(self.xstr(row[FORMAT_INDEX]))
+                            temp_list.append(temp_row)
 
                 #write the file
                 if len(temp_list) > 1:
@@ -10058,6 +10078,7 @@ class Ui_Form(QtGui.QWidget):
             temp_row.append('UPC')
             temp_row.append('Artist')
             temp_row.append('Title')
+            temp_row.append('Price')
             temp_row.append('Format')
             temp_list.append(temp_row)
             for row in self.tab_seven_po_table_list_filtered:
@@ -10066,12 +10087,13 @@ class Ui_Form(QtGui.QWidget):
                 temp_row.append(self.xstr(row[UPC_INDEX]))
                 temp_row.append(self.xstr(row[ARTIST_INDEX]))
                 temp_row.append(self.xstr(row[TITLE_INDEX]))
+                temp_row.append(self.xstr(row[PRICE_PAID_INDEX]))
                 temp_row.append(self.xstr(row[FORMAT_INDEX]))
                 temp_list.append(temp_row)
 
             #write the file
             with open(filename, "w+") as f:
-                writer = csv.writer(f, quoting=csv.QUOTE_NONE, delimiter='\t')
+                writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL, delimiter='\t')
                 writer.writerows(temp_list)
 
             #take items out of filtered po list, add them to done ish
