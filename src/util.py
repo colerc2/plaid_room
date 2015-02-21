@@ -22,10 +22,40 @@ class Util():
                 other_misc_gross = 0
                 other_misc_net = 0
                 for date_ in list_of_dates:
-                        separate = date_.split('-')
-                        print '%s %s %s' % (separate[0], separate[1], separate[2])
-                        #                        all_the_stats = self.summary_by_day()
-                
+                        separate = date_.isoformat().split('-')
+                        returned_stats = self.summary_by_day(separate[0], separate[1], separate[2])
+                        new_vinyl_gross += returned_stats[0] 
+                        used_vinyl_gross += returned_stats[1]
+                        new_vinyl_net += returned_stats[2]
+                        used_vinyl_net += returned_stats[3]
+                        clothing_misc_gross += returned_stats[4]
+                        clothing_misc_net += returned_stats[5]
+                        other_misc_gross += returned_stats[6]
+                        other_misc_net += returned_stats[7]    
+
+
+                print '-'*50
+                print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
+		print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
+		print '\t\t\tNew Vinyl Gross Income: %s' % str(new_vinyl_gross)
+		print '\t\t\tUsed Vinyl Gross Income: %s' % str(used_vinyl_gross)
+		print '\t\tMisc Gross Income: %s' % str(clothing_misc_gross + other_misc_gross)
+		print '\t\t\tClothing Gross Income: %s' % str(clothing_misc_gross)
+		print '\t\t\tOther Misc. Gross Income: %s' % str(other_misc_gross)
+		print '\tTotal Net Income: %s' % str(new_vinyl_net + used_vinyl_net + clothing_misc_net + other_misc_net)
+		print '\t\tVinyl Net Income: %s' % str(new_vinyl_net + used_vinyl_net)
+                if new_vinyl_gross == 0 or used_vinyl_gross == 0:
+                        placeholder = 0
+                else:
+                        print '\t\t\tNew Vinyl Net Income: %s - margin: %s' % (str(new_vinyl_net), str(new_vinyl_net/(new_vinyl_gross)*100))
+                        print '\t\t\tUsed Vinyl Net Income: %s - margin: %s' % (str(used_vinyl_net), str(used_vinyl_net/used_vinyl_gross*100))
+		print '\t\tMisc Net Income: %s' % str(clothing_misc_net + other_misc_net)
+		print '\t\t\tClothing Net Income: %s' % str(clothing_misc_net)
+		print '\t\t\tOther Misc. Net Income: %s' % str(other_misc_net)
+		print '\n'
+                print '-'*50
+                        
+                        
                 
 	#gives basic stats about a single day, including:
 	#   - total gross income
@@ -70,8 +100,9 @@ class Util():
 				else:
 					other_misc_gross += row[MISC_SOLD_FOR_INDEX]
 					other_misc_net += (row[MISC_SOLD_FOR_INDEX] - row[MISC_PRICE_PAID_INDEX])
-
-
+                stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net]
+                
+                                        
 		print '\nDate: %s-%s-%s' % (str(year),str(month),str(day))
 		print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
 		print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
@@ -82,12 +113,17 @@ class Util():
 		print '\t\t\tOther Misc. Gross Income: %s' % str(other_misc_gross)
 		print '\tTotal Net Income: %s' % str(new_vinyl_net + used_vinyl_net + clothing_misc_net + other_misc_net)
 		print '\t\tVinyl Net Income: %s' % str(new_vinyl_net + used_vinyl_net)
-		print '\t\t\tNew Vinyl Net Income: %s - margin: %s' % (str(new_vinyl_net), str(new_vinyl_net/(new_vinyl_gross)*100))
-		print '\t\t\tUsed Vinyl Net Income: %s - margin: %s' % (str(used_vinyl_net), str(used_vinyl_net/used_vinyl_gross*100))
+                if new_vinyl_gross == 0 or used_vinyl_gross == 0:
+                        placeholder = 0
+                else:
+                        print '\t\t\tNew Vinyl Net Income: %s - margin: %s' % (str(new_vinyl_net), str(new_vinyl_net/(new_vinyl_gross)*100))
+                        print '\t\t\tUsed Vinyl Net Income: %s - margin: %s' % (str(used_vinyl_net), str(used_vinyl_net/used_vinyl_gross*100))
 		print '\t\tMisc Net Income: %s' % str(clothing_misc_net + other_misc_net)
 		print '\t\t\tClothing Net Income: %s' % str(clothing_misc_net)
 		print '\t\t\tOther Misc. Net Income: %s' % str(other_misc_net)
 		print '\n'
+
+                return stats_to_return
 
 
 if __name__ == '__main__':
@@ -117,7 +153,7 @@ if __name__ == '__main__':
                         end_date = end_date.split('-')
                         end_date = datetime.date(int(end_date[0]), int(end_date[1]), int(end_date[2]))
                         delta_dates = (end_date - start_date)
-                        delta_dates = int(delta_dates.days)
+                        delta_dates = int(delta_dates.days) + 1
                         date_list = [end_date - datetime.timedelta(days=x) for x in range(0, delta_dates)]
                         util.summary_by_range(date_list)
                         #for date_ in date_list:
