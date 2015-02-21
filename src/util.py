@@ -12,6 +12,16 @@ class Util():
 		self.db = sqlite3.connect(primary)
 		self.db_cursor = self.db.cursor()
 
+
+        def best_sellers(self):
+                upcs = []
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold ASC')):
+                        upcs.append(row[UPC_INDEX])
+                best = max(set(upcs), key=upcs.count)
+                best_number_sold = upcs.count(best)
+                print best
+                print best_number_sold
+                
         def summary_by_range(self, list_of_dates):
                 new_vinyl_gross = 0
                 used_vinyl_gross = 0
@@ -158,4 +168,7 @@ if __name__ == '__main__':
                         util.summary_by_range(date_list)
                         #for date_ in date_list:
                         #        print date_
+                elif entered == 'b' or entered == 'best':
+                        util.best_sellers()
+                
                         
