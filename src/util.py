@@ -11,16 +11,36 @@ class Util():
 		print 'Primary DB: %s' % primary
 		self.db = sqlite3.connect(primary)
 		self.db_cursor = self.db.cursor()
+                
+        def histogram(self, L):
+                d = {}
+                for x in L:
+                        if x in d:
+                                d[x] += 1
+                        else:
+                                d[x] = 1
+                return d
 
-
-        def best_sellers(self):
+        def best_sellers(self, top_how_many=25):
                 upcs = []
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold ASC')):
                         upcs.append(row[UPC_INDEX])
-                best = max(set(upcs), key=upcs.count)
-                best_number_sold = upcs.count(best)
-                print best
-                print best_number_sold
+                upc_hist = self.histogram(upcs)
+                items = [(v, k) for k, v in upc_hist.items()]
+                items.sort()
+                items.reverse()             # so largest is first
+                upc_hist = [(k, v) for v, k in items]
+                count = 0
+                for key, value in upc_hist:
+                        if 'PLAID' in key:
+                                continue
+                        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=?', (key,))):
+                                print '%d - %s - %s - %s' % (value, key, row[ARTIST_INDEX], row[TITLE_INDEX])
+                                break
+                        count += 1
+                        if count > top_how_many:
+                                break
+                
                 
         def summary_by_range(self, list_of_dates):
                 new_vinyl_gross = 0
@@ -145,7 +165,8 @@ if __name__ == '__main__':
 			print '\nh(elp) - display this message'
 			print 's(ummary) - display summary of past week'
 			print 'd(ay) - display summary of single day'
-                        print 'r(ange) - display summary stats for a range\n'
+                        print 'r(ange) - display summary stats for a range'
+                        print 'b(est) - display best sellers\n'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -169,6 +190,7 @@ if __name__ == '__main__':
                         #for date_ in date_list:
                         #        print date_
                 elif entered == 'b' or entered == 'best':
-                        util.best_sellers()
+                        number_to_display = int(raw_input('plaid-room-util/best_sellers > '))
+                        util.best_sellers(number_to_display)
                 
                         
