@@ -22,7 +22,7 @@ class DBMerger():
             without_key = list(row[:-1])
             if 'PLAID' in without_key[UPC_INDEX]:
                 without_key[UPC_INDEX] = 'BLANK'
-                without_key[RESERVED_ONE_INDEX] = 'merged from laptop DB 2.12.15'
+                without_key[RESERVED_ONE_INDEX] = 'merged from laptop DB 2.25.15'
             try:
                 self.primary_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', tuple(without_key))
                 self.primary.commit()
