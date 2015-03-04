@@ -203,6 +203,73 @@ class Util():
 
                 return stats_to_return
 
+        def get_all_distros(self):
+                distros = set()
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+                        distros.add(row[DISTRIBUTOR_INDEX])
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory')):
+                        distros.add(row[DISTRIBUTOR_INDEX])
+                return list(distros)
+
+        def distro_stock_info(self, distro):
+                #first, loop through the sold and the current inventories and get a list of every UPC we've ever had from that distro
+                upcs = set()
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE distributor=?', (distro,))):
+                        upcs.add(row[UPC_INDEX])
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', (distro,))):
+                        upcs.add(row[UPC_INDEX])
+                pairs_to_print = []
+                #loop through upcs and shit out a ton of statistics on each release
+                for upc in upcs:
+                        artist = ''
+                        title = ''
+                        number_of_times_sold = 0
+                        for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=?', (upc,)):
+                                if artist == '':
+                                        artist = row[ARTIST_INDEX]
+                                        title = row[TITLE_INDEX]
+                                number_of_times_sold += 1
+                        left_in_stock = 0
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (upc,)):
+                                if artist == '':
+                                        artist = row[ARTIST_INDEX]
+                                        title = row[TITLE_INDEX]
+                                left_in_stock += 1
+                        #average price from this distro
+                        prices = []
+                        for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=? AND distributor=?', (upc,distro)):
+                                prices.append(row[PRICE_PAID_INDEX])
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=? AND distributor=?', (upc,distro)):
+                                prices.append(row[PRICE_PAID_INDEX])
+                        avg_price = float(sum(prices)) / float(len(prices))
+                        #do we ever get from other distros
+                        other_distros = set()
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (upc,)):
+                                if row[DISTRIBUTOR_INDEX] != distro:
+                                        other_distros.add(row[DISTRIBUTOR_INDEX])
+                        for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=?', (upc,)):
+                                if row[DISTRIBUTOR_INDEX] != distro:
+                                        other_distros.add(row[DISTRIBUTOR_INDEX])
+                        string_to_print = '%i in stock - %i sold - %0.2f paid on average - %s - %s' % (left_in_stock, number_of_times_sold, avg_price, artist, title)
+                        price_paid_other = 0
+                        for other_distro in other_distros:
+                                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=? AND distributor=?', (upc,other_distro)):
+                                        if price_paid_other == 0:
+                                                price_paid_other = row[PRICE_PAID_INDEX]
+                                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=? AND distributor=?', (upc,other_distro)):
+                                        if price_paid_other == 0:
+                                                price_paid_other = row[PRICE_PAID_INDEX]
+                                addition_to_string = '\n\tSometimes get from %s for %f (%f more than %s)' % (other_distro, price_paid_other, (price_paid_other-avg_price), distro)
+                                string_to_print += addition_to_string
+                                
+                        tuple_to_add_to_list = (left_in_stock, string_to_print)
+                        pairs_to_print.append(tuple_to_add_to_list)
+                        #print '%s - %s - %i sold - %i left in stock - %f paid on average' % (artist, title, number_of_times_sold, left_in_stock, avg_price)
+                for ii in range(0,100):
+                        for item in pairs_to_print:
+                                if item[0] == ii:
+                                        print item[1]
+                print ''
 
 if __name__ == '__main__':
 	util = Util(sys.argv[1])
@@ -215,7 +282,8 @@ if __name__ == '__main__':
 			print 'd(ay) - display summary of single day'
                         print 'r(ange) - display summary stats for a range'
                         print 'b(est) - display best sellers'
-                        print 'doubles - display doubles\n'
+                        print 'doubles - display doubles'
+                        print 'distro_oos - display info about titles we get from a certain distributor'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -243,5 +311,18 @@ if __name__ == '__main__':
                         util.best_sellers(number_to_display)
                 elif entered == 'doubles':
                         util.tell_me_doubles()
+                elif entered == 'distro_oos':
+                        #first make a list of every distributor we've ever used, and have the user choose one
+                        print 'Here\'s all the distributors bro:'
+                        distros = util.get_all_distros()
+                        for distro in distros:
+                                print '\t%s' % distro
+                        print 'Which distributor? (Use capitals as shown above!!)'
+                        distro = raw_input('plaid-room-util/distro_oos > ')
+                        if distro not in distros:
+                                print 'what distributor is that!?'
+                                continue
+                        util.distro_stock_info(distro)
+                        
                 
                         
