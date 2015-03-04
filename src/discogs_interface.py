@@ -162,7 +162,8 @@ class DiscogsClient():
             
     def scrape_price(self, release_id, prices):
         release_url = 'http://www.discogs.com/release/%s' % release_id
-        user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
+        #user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
+        user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
         headers = { 'User-Agent' : user_agent }
         try:
             print 'requesting page %s' % datetime.datetime.now()
