@@ -31,7 +31,10 @@ class BarcodePrinter():
         c.drawString(2*mm, 16*mm,title)#16
         c.setFont('Courier',16)
         if 'PRRGC' not in code_copy:
-            c.drawString(40*mm, 16*mm, locale.currency(price))
+            if price > 99.99:
+                c.drawString(37*mm, 16*mm, locale.currency(price))
+            else:
+                c.drawString(40*mm, 16*mm, locale.currency(price))
         c.showPage()
         c.save()
 
