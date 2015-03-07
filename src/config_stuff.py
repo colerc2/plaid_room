@@ -81,16 +81,22 @@ ON_CURRENT_PO_LIST = 1
 REORDERED = 2
 NOT_REORDERING = 3
 
+NEEDS_PUT_OUT = 0
+ALREADY_OUT = 1
+
+#/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room
+BASE_PATH = '/Users/bccole1989/Documents/plaid_room_records/add_tabs/'
+#BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/plaid_room'
+
 #config stuff for all kinds of combo boxes
-DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/distributors.csv'
-MISC_TYPES_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/misc_types.csv'
-MISC_DIST_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/misc_distributors.csv'
-TEMP_RECEIPT_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/images/receipt_test.pdf'
-RECEIPT_HEADER_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/images/plaid_room.jpg'
-BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/plaid_room'
-PAYPAL_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/paypal.key'
-DB_FILE = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/real_inventory.db'
-EMAIL_PASSWORD_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/password.email'
+DIST_FILE_NAME = BASE_PATH + 'plaid_room/config/distributors.csv'
+MISC_TYPES_FILE_NAME = BASE_PATH + 'plaid_room/config/misc_types.csv'
+MISC_DIST_FILE_NAME = BASE_PATH + 'plaid_room/config/misc_distributors.csv'
+TEMP_RECEIPT_FILE_NAME = BASE_PATH + 'plaid_room/images/receipt_test.pdf'
+RECEIPT_HEADER_FILE_NAME = BASE_PATH + 'plaid_room/images/plaid_room.jpg'
+PAYPAL_FILE_NAME = BASE_PATH + 'plaid_room/config/paypal.key'
+DB_FILE = BASE_PATH + 'plaid_room/real_inventory.db'
+EMAIL_PASSWORD_FILE_NAME = BASE_PATH + 'plaid_room/config/password.email'
 
 #other stuff
 LOVELAND_TAX_RATE = 6.75 #percent
