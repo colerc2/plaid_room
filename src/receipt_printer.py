@@ -130,7 +130,7 @@ class ReceiptPrinter():
             lines.append([total,False])
         #tax
         tax = (' '*13) + 'Tax @ 6.75%'
-        price = locale.currency(math.floor(transaction[TRANS_TAX_INDEX]))
+        price = locale.currency(transaction[TRANS_TAX_INDEX])
         spaces_to_add = CHARS_IN_A_LINE - len(tax) - len(price)
         tax = tax + (' '*spaces_to_add) + price
         lines.append([tax,False])

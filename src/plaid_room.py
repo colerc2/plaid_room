@@ -21,6 +21,8 @@ import csv
 import locale
 from math import ceil
 from config_stuff import * #probably a bad idea
+from emailer import Emailer
+import math
 
 #NOTES TO SELF:
 #    What the reserved positions are currently being used for:
@@ -66,6 +68,7 @@ class Ui_Form(QtGui.QWidget):
         self.misc_distributors = MiscDistributors(MISC_DIST_FILE_NAME)
         self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
         self.paypal = PaypalInterface(PAYPAL_FILE_NAME)
+        self.email_sender = Emailer('plaidroomrecords@gmail.com', EMAIL_PASSWORD_FILE_NAME, 'plaidroomrecords+mikebooks@gmail.com')
         
         #tab one stuff
         self.tab_one_results_table_list = []
@@ -7973,6 +7976,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_results_table_list = []
         self.tab_one_results_table_list_tracker = []
         self.tab_one_results_table_refresh()
+        #self.email_sender.send_email('stuff\n test test\n test test')
         
     def tab_one_results_table_clear_text(self):
         for ii in range(self.tab_one_results_table.rowCount()):
@@ -8967,15 +8971,46 @@ class Ui_Form(QtGui.QWidget):
                     break
                 self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
 
-                #8. Push invoice to Paypal
+                # 8. send an email with updates
+                try:
+
+                    list_of_text = []
+                    list_of_text.append('Transaction #%06d' % trans_with_id[TRANS_ID_INDEX])
+                    date_sold = (datetime.datetime.strptime(str(trans_with_id[TRANS_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S"))
+                    list_of_text.append('%s' % date_sold.strftime("%A %b %d, %Y %I:%M %p"))
+                    for item in self.tab_four_checkout_table_list:
+                        list_of_text.append('%s - %s - %s' % (item[ARTIST_INDEX], item[TITLE_INDEX], locale.currency(item[SOLD_FOR_INDEX])))
+                    for item in self.tab_four_misc_checkout_table_list:
+                        list_of_text.append('%s - %s - %s' % (item[MISC_ITEM_INDEX], item[MISC_DESCRIPTION_INDEX], item[MISC_SOLD_FOR_INDEX]))
+                    if trans_with_id[TRANS_DISCOUNT_PERCENT_INDEX] != 0:
+                        list_of_text.append('-----------------')
+                        list_of_text.append('-%d%%' % trans_with_id[TRANS_DISCOUNT_PERCENT_INDEX])
+                    list_of_text.append('Tax %s' % locale.currency((trans_with_id[TRANS_TAX_INDEX])))
+                    list_of_text.append('Total: %s' % locale.currency(trans_with_id[TRANS_TOTAL_INDEX]))
+                
+                    #list_of_text.append('
+                    stuff_to_email = ''
+                    for line in list_of_text:
+                        stuff_to_email = stuff_to_email + line + '\n'
+                    stuff_to_email += '\n--------------------------------------\n'
+                    daily_stats = self.summary_by_day(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day)
+                    for line in daily_stats:
+                        stuff_to_email = stuff_to_email + line + '\n'
+                    self.email_sender.send_email(stuff_to_email)
+                except Exception as e:
+                    print 'failed to send mike books an email : %s' % e
+                    
+                #9. Push invoice to Paypal
                 self.paypal.create_invoice(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
                 
-                # 9. Clean up
+                # 10. Clean up
                 self.tab_four_checkout_table_list = []
                 self.tab_four_misc_checkout_table_list = []
                 self.tab_four_checkout_table_refresh()
                 self.tab_four_misc_checkout_table_refresh()
-    
+
+
+                
     def tab_four_make_a_cash_dialog(self):
         if self.tab_four_checkout_table_list or self.tab_four_misc_checkout_table_list:#if there's something to check out
             cream = None
@@ -10741,6 +10776,89 @@ class Ui_Form(QtGui.QWidget):
             item = self.__dict__[ii]
             clean(item)
 
+    def summary_by_day(self, year, month, day):
+        new_vinyl_gross = 0
+        used_vinyl_gross = 0
+        new_vinyl_net = 0
+        used_vinyl_net = 0
+        clothing_misc_gross = 0
+        clothing_misc_net = 0
+        other_misc_gross = 0
+        other_misc_net = 0
+        total_tax_paid = 0
+        desired_date = datetime.date(int(year), int(month), int(day))
+        #build a list of crap to iterate over first because doing nested cursors hurst sqlite3
+        db_results = []
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
+            db_results.append(row)
+        for ix, row in enumerate(db_results):
+            date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            if date_sold == desired_date:
+                #get extra discount from transaction table
+                trans_id = int(row[TRANSACTION_ID_INDEX])
+                trans_discount = 0.0
+                for ix_trans, discount in enumerate(self.db_cursor.execute('SELECT discount_percent FROM transactions WHERE id=?', (trans_id,))):
+                    trans_discount = float(discount[0])
+                ratio = (100-trans_discount)/100.0
+                if row[NEW_USED_INDEX] == 'New':
+                    new_vinyl_gross += (row[SOLD_FOR_INDEX] * ratio)
+                    new_vinyl_net += ((row[SOLD_FOR_INDEX] - row[PRICE_PAID_INDEX]) * ratio)
+                else:
+                    used_vinyl_gross += (row[SOLD_FOR_INDEX] * ratio)
+                    used_vinyl_net += ((row[SOLD_FOR_INDEX] - row[PRICE_PAID_INDEX]) * ratio)
+        db_results = []
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_misc_inventory ORDER BY date_sold ASC')):
+            db_results.append(row)
+        for ix, row in enumerate(db_results):
+            date_sold = (datetime.datetime.strptime(str(row[MISC_DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            if date_sold == desired_date:
+                #get extra discount from transaction table
+                trans_id = int(row[MISC_TRANSACTION_ID_INDEX])
+                trans_discount = 0.0
+                for ix_trans, discount in enumerate(self.db_cursor.execute('SELECT discount_percent FROM transactions WHERE id=?', (trans_id,))):
+                    trans_discount = float(discount[0])
+                ratio = (100-trans_discount)/100.0
+                if row[MISC_TYPE_INDEX] == 'Clothing':
+                    clothing_misc_gross += (row[MISC_SOLD_FOR_INDEX] * ratio)
+                    clothing_misc_net += ((row[MISC_SOLD_FOR_INDEX] - row[MISC_PRICE_PAID_INDEX]) * ratio)
+                else:
+                    other_misc_gross += (row[MISC_SOLD_FOR_INDEX] * ratio)
+                    other_misc_net += ((row[MISC_SOLD_FOR_INDEX] - row[MISC_PRICE_PAID_INDEX]) * ratio)
+                    
+        total_gross_with_tax = 0
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM transactions ORDER BY date_sold')):
+            date_sold = (datetime.datetime.strptime(str(row[TRANS_DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+            if date_sold == desired_date:
+                total_tax_paid += (row[TRANS_TAX_INDEX])
+                total_gross_with_tax += row[TRANS_TOTAL_INDEX]
+
+        stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid]
+
+        text_to_return = []
+        text_to_return.append('\nDate: %s-%s-%s' % (str(year),str(month),str(day)))
+        text_to_return.append('\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross))
+        text_to_return.append('\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross))
+        text_to_return.append('\t\t\tNew Vinyl Gross Income: %s' % str(new_vinyl_gross))
+        text_to_return.append('\t\t\tUsed Vinyl Gross Income: %s' % str(used_vinyl_gross))
+        text_to_return.append('\t\tMisc Gross Income: %s' % str(clothing_misc_gross + other_misc_gross))
+        text_to_return.append('\t\t\tClothing Gross Income: %s' % str(clothing_misc_gross))
+        text_to_return.append('\t\t\tOther Misc. Gross Income: %s' % str(other_misc_gross))
+        text_to_return.append('\tTotal Net Income: %s' % str(new_vinyl_net + used_vinyl_net + clothing_misc_net + other_misc_net))
+        text_to_return.append('\t\tVinyl Net Income: %s' % str(new_vinyl_net + used_vinyl_net))
+        if new_vinyl_gross == 0 or used_vinyl_gross == 0:
+            placeholder = 0
+        else:
+            text_to_return.append('\t\t\tNew Vinyl Net Income: %s - margin: %s' % (str(new_vinyl_net), str(new_vinyl_net/(new_vinyl_gross)*100)))
+            text_to_return.append('\t\t\tUsed Vinyl Net Income: %s - margin: %s' % (str(used_vinyl_net), str(used_vinyl_net/used_vinyl_gross*100)))
+        text_to_return.append('\t\tMisc Net Income: %s' % str(clothing_misc_net + other_misc_net))
+        text_to_return.append('\t\t\tClothing Net Income: %s' % str(clothing_misc_net))
+        text_to_return.append('\t\t\tOther Misc. Net Income: %s' % str(other_misc_net))
+        text_to_return.append('\tTotal Tax Paid: %s' % str(total_tax_paid))
+        text_to_return.append('\tThese two numbers should be close: (%s, %s)' % (str(total_gross_with_tax),str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross+total_tax_paid)))
+
+        return text_to_return
+
+                    
 #modified version of some stuff i found on SO. application was throwing a seg fault: 11 at close
 # and updating to newest version of pyqt didn't help so this function along with "clean_up" go
 # through and manually delete everything right before the application closes, it seems to be

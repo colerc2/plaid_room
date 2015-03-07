@@ -250,7 +250,7 @@ class Util():
                         for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=?', (upc,)):
                                 if row[DISTRIBUTOR_INDEX] != distro:
                                         other_distros.add(row[DISTRIBUTOR_INDEX])
-                        string_to_print = '%i in stock - %i sold - %0.2f paid on average - %s - %s' % (left_in_stock, number_of_times_sold, avg_price, artist, title)
+                        string_to_print = '%i in stock - %i sold - %0.2f paid on average - %s - %s - %s' % (left_in_stock, number_of_times_sold, avg_price, upc, artist, title)
                         price_paid_other = 0
                         for other_distro in other_distros:
                                 for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=? AND distributor=?', (upc,other_distro)):

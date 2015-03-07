@@ -90,6 +90,7 @@ RECEIPT_HEADER_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid
 BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/plaid_room'
 PAYPAL_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/paypal.key'
 DB_FILE = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/real_inventory.db'
+EMAIL_PASSWORD_FILE_NAME = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/password.email'
 
 #other stuff
 LOVELAND_TAX_RATE = 6.75 #percent
