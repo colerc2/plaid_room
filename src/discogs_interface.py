@@ -11,8 +11,8 @@ import datetime
 class DiscogsClient():
     def __init__(self):
         #get info from .key file
-        #key_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/discogs.key')
-        key_file = open('/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room/discogs.key')
+        key_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/discogs.key')
+        #key_file = open('/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room/discogs.key')
         self.consumer_key = key_file.readline().rstrip('\n')
         self.consumer_secret = key_file.readline().rstrip('\n')
         self.access_token = key_file.readline().rstrip('\n')
@@ -83,7 +83,16 @@ class DiscogsClient():
             print 'Some shit is going down, figure out what'
         return results
     
-
+    def search_by_release_number(self, release):
+        if(self.reconnect_if_necessary()):
+            try:
+                results = self.client.release(release)
+            except Exception as e:
+                print 'Failed on the call to search by release for the discogs client: %s' % e
+        else:
+            print 'Some shit is going down with your discogs client bro, figure out what'
+        return results
+    
     def clean_up_upc(self, upc):
         new_upc = re.sub(r"\D", "", upc)
         new_upc = new_upc.strip()
@@ -163,6 +172,7 @@ class DiscogsClient():
             
     def scrape_price(self, release_id, prices):
         release_url = 'http://www.discogs.com/release/%s' % release_id
+        
         #user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
         user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
         headers = { 'User-Agent' : user_agent }

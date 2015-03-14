@@ -6698,7 +6698,7 @@ class Ui_Form(QtGui.QWidget):
         item.setText(_translate("Form", "Price", None))
         self.tab_three_subtotal_label.setText(_translate("Form", "Subtotal", None))
         self.tab_three_discount_label.setText(_translate("Form", "Discount", None))
-        self.tab_four_tax_label.setText(_translate("Form", "Sales tax at 7%", None))
+        self.tab_four_tax_label.setText(_translate("Form", "Sales tax at 6.75%", None))
         self.tab_four_tax_amount_label.setText(_translate("Form", "$X.XX", None))
         self.tab_three_shipping_label.setText(_translate("Form", "Shipping", None))
         self.tab_three_total_label.setText(_translate("Form", "Total", None))
@@ -9170,6 +9170,16 @@ class Ui_Form(QtGui.QWidget):
             release_no = self.tab_one_results_table_list[row][DISCOGS_RELEASE_NUMBER_INDEX]
             prices = [0,0,0]
             self.discogs.scrape_price(release_no, prices)
+            #try:
+            #    result = self.discogs.search_by_release_number(self.xint(release_no))
+            #    print result
+            #print result.tracklist
+            #    print result.title
+            #    print result.year
+            #    print result.identifiers
+            #    print result.url
+            #except Exception as e:
+            #    print 'brah tryna get that url didn\t work : %s' % e
             avg_price = round(self.xfloat(prices[1])) - 0.01
             self.tab_one_results_table_change_text(row, 5, self.xstr(avg_price))
             #print info to console as well
@@ -10123,6 +10133,37 @@ class Ui_Form(QtGui.QWidget):
                 for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (trans_id,)):
                     trans_with_id = row
                 self.receipt_printer.print_receipt(self.tab_four_checkout_table_list, self.tab_four_misc_checkout_table_list, trans_with_id)
+                
+                # 8. send an email with updates
+                try:
+
+                    list_of_text = []
+                    list_of_text.append('Transaction #%06d' % trans_with_id[TRANS_ID_INDEX])
+                    date_sold = (datetime.datetime.strptime(str(trans_with_id[TRANS_DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S"))
+                    list_of_text.append('%s' % date_sold.strftime("%A %b %d, %Y %I:%M %p"))
+                    for item in self.tab_four_checkout_table_list:
+                        list_of_text.append('%s - %s - %s' % (item[ARTIST_INDEX], item[TITLE_INDEX], locale.currency(item[SOLD_FOR_INDEX])))
+                    for item in self.tab_four_misc_checkout_table_list:
+                        list_of_text.append('%s - %s - %s' % (item[MISC_ITEM_INDEX], item[MISC_DESCRIPTION_INDEX], item[MISC_SOLD_FOR_INDEX]))
+                    if trans_with_id[TRANS_DISCOUNT_PERCENT_INDEX] != 0:
+                        list_of_text.append('-----------------')
+                        list_of_text.append('-%d%%' % trans_with_id[TRANS_DISCOUNT_PERCENT_INDEX])
+                    list_of_text.append('Tax %s' % locale.currency((trans_with_id[TRANS_TAX_INDEX])))
+                    list_of_text.append('Total: %s' % locale.currency(trans_with_id[TRANS_TOTAL_INDEX]))
+                
+                    #list_of_text.append('
+                    stuff_to_email = ''
+                    for line in list_of_text:
+                        stuff_to_email = stuff_to_email + line + '\n'
+                    stuff_to_email += '\n--------------------------------------\n'
+                    daily_stats = self.summary_by_day(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day)
+                    for line in daily_stats:
+                        stuff_to_email = stuff_to_email + line + '\n'
+                    self.email_sender.send_email(stuff_to_email)
+                except Exception as e:
+                    print 'failed to send mike books an email : %s' % e
+
+
                 # 8. Clean up
                 self.tab_four_checkout_table_list = []
                 self.tab_four_misc_checkout_table_list = []
