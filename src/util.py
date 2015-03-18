@@ -11,6 +11,10 @@ class Util():
 		print 'Primary DB: %s' % primary
 		self.db = sqlite3.connect(primary)
 		self.db_cursor = self.db.cursor()
+
+        def remove_item(self, key):
+                self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', (key,))
+                self.db.commit()
                 
         def histogram(self, L):
                 d = {}
@@ -284,6 +288,7 @@ if __name__ == '__main__':
                         print 'b(est) - display best sellers'
                         print 'doubles - display doubles'
                         print 'distro_oos - display info about titles we get from a certain distributor'
+                        print 'remove_item - remove item from item history'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -323,6 +328,9 @@ if __name__ == '__main__':
                                 print 'what distributor is that!?'
                                 continue
                         util.distro_stock_info(distro)
+                elif entered == 'remove_item':
+                        to_remove = int(raw_input('plaid-room-util/remove_item > '))
+                        util.remove_item(to_remove)
                         
                 
                         
