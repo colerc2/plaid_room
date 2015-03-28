@@ -11,8 +11,8 @@ import datetime
 class DiscogsClient():
     def __init__(self):
         #get info from .key file
-        #key_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/discogs.key')
-        key_file = open('/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room/discogs.key')
+        key_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/discogs.key')
+        #key_file = open('/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room/discogs.key')
         self.consumer_key = key_file.readline().rstrip('\n')
         self.consumer_secret = key_file.readline().rstrip('\n')
         self.access_token = key_file.readline().rstrip('\n')
@@ -171,6 +171,24 @@ class DiscogsClient():
 
             
     def scrape_price(self, release_id, prices):
+        #first, get weird and search for the release id on discogs
+        try:
+            release_search_url = 'http://www.discogs.com/search/?q=%s&type=release' % str(release_id)
+            user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
+            headers = { 'User-Agent' : user_agent }
+            print 'requesting search page'
+            req = urllib2.Request(release_search_url,None,headers)
+            response = urllib2.urlopen(req)
+            print release_search_url
+            for line_ in response:
+                if 'http' in line_:
+                    print line_
+                line = line_.rstrip()
+                
+            
+        except Exception as e:
+            print 'some shit when down while trying to search for the release on discogs (price scraper): %s' % e
+
         release_url = 'http://www.discogs.com/release/%s' % release_id
         
         #user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
