@@ -277,6 +277,11 @@ class Util():
                                         print item[1]
                 print ''
 
+        def show_me_new_with_plaid_skus(self):
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used=?', ('New',)):
+                        if 'PLAID' in row[UPC_INDEX] and '7\"' not in row[FORMAT_INDEX] and '45 RPM' not in row[FORMAT_INDEX]:
+                                print '\t%s - %s - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                
         def generate_db_for_date_and_time(self, year, month, day, hour=0, minute=0):
                 specified_db = []
                 at_moment = datetime.datetime(year, month, day, hour, minute)
@@ -332,6 +337,7 @@ if __name__ == '__main__':
                         print 'remove_item - remove item from item history'
                         print 't(ime_machine) - stats about db at any point in time'
                         print 'time_travel_range - time travel through a range with a summary at the end'
+                        print 'new_with_plaid_sku - list all the shit someone might have fucked up'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -380,7 +386,8 @@ if __name__ == '__main__':
                         travel_to_time = travel_to_time.split('-')
                         util.generate_db_for_date_and_time(int(travel_to_time[0]), int(travel_to_time[1]), int(travel_to_time[2]), int(travel_to_time[3]), int(travel_to_time[4]))
                 elif entered == 'time_travel_range':
-                        hours = [8, 11, 14, 17, 20]
+                        #hours = [8, 11, 14, 17, 20]
+                        hours = [8]
                         print 'Please enter the start date in the following format: yyyy-mm-dd'
                         travel_to_time_start = raw_input('plaid-room-util/time_travel_range > ')
                         print 'Please enter the end date in the following format: yyyy-mm-dd'
@@ -393,14 +400,21 @@ if __name__ == '__main__':
                         delta_dates = int(delta_dates.days) + 1
                         date_list = [travel_to_time_end - datetime.timedelta(days=x) for x in range(0, delta_dates)]
                         total_stats = []
-                        for date_item in date_list:
+                        stats_temp = []
+                        for date_item in reversed(date_list):
                                 for hour in hours:
-                                        total_stats.append(util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0))
+                                        stats_temp = []
+                                        to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
+                                        stats_temp.append(date_item.isoformat())
+                                        stats_temp += (to_append)
+                                        total_stats.append(stats_temp)
+                                        
                                         
                         print 'New Vinyl Qty\tNew Vinyl Cost\tNew Vinyl Price\tUsed Vinyl Qty\tUsed Vinyl Cost\tUsed Vinyl Price'
                         for shit in total_stats:
                                 for item in shit:
                                         print item,
                                 print ''
-                                        
+                elif entered == 'new_with_plaid_sku':
+                        util.show_me_new_with_plaid_skus()
 
