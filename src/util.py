@@ -5,12 +5,14 @@ import sqlite3
 import time
 from config_stuff import *
 import datetime
+import locale
 
 class Util():
 	def __init__(self, primary='real_inventory.db'):
 		print 'Primary DB: %s' % primary
 		self.db = sqlite3.connect(primary)
 		self.db_cursor = self.db.cursor()
+                locale.setlocale( locale.LC_ALL, '')
 
         def remove_item(self, key):
                 self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', (key,))
@@ -275,6 +277,45 @@ class Util():
                                         print item[1]
                 print ''
 
+        def generate_db_for_date_and_time(self, year, month, day, hour=0, minute=0):
+                specified_db = []
+                at_moment = datetime.datetime(year, month, day, hour, minute)
+                for row in self.db_cursor.execute('SELECT * FROM inventory'):
+                        if len(specified_db)%100 == 0:
+                                print '%d - current' % len(specified_db)
+                        time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+                        if time_put_in < at_moment:
+                                specified_db.append(list(row))
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                        if len(specified_db)%100 == 0:
+                                print '%d - sold' % len(specified_db)
+                        time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+                        time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
+                        if ((at_moment > time_put_in) and (at_moment < time_sold)):
+                                specified_db.append(list(row))
+                new_vinyl_qty = 0
+                used_vinyl_qty = 0
+                new_vinyl_costs = 0
+                new_vinyl_prices = 0
+                used_vinyl_costs = 0
+                used_vinyl_prices = 0
+                for row in specified_db:
+                        if row[NEW_USED_INDEX] == 'New':
+                                new_vinyl_qty += 1
+                                new_vinyl_costs += row[PRICE_PAID_INDEX]
+                                new_vinyl_prices += row[PRICE_INDEX]
+                        else:
+                                used_vinyl_qty += 1
+                                used_vinyl_costs += row[PRICE_PAID_INDEX]
+                                used_vinyl_prices += row[PRICE_INDEX]
+                print '\t Summary for %s-%s-%s %s:%s' % (str(year), str(month), str(day), str(hour), str(minute))
+                print '\t\t\t Total Vinyl: %d, %s paid, %s priced' % (new_vinyl_qty+used_vinyl_qty, locale.currency(new_vinyl_costs+used_vinyl_costs), locale.currency(new_vinyl_prices+used_vinyl_prices))
+                print '\t\t\t New Vinyl: %d, %s paid, %s priced' % (new_vinyl_qty, locale.currency(new_vinyl_costs), locale.currency(new_vinyl_prices))
+                print '\t\t\t Used Vinyl: %d, %s paid, %s priced' % (used_vinyl_qty, locale.currency(used_vinyl_costs), locale.currency(used_vinyl_prices))
+                print '-'*50
+                stats_to_return = [new_vinyl_qty, new_vinyl_costs, new_vinyl_prices, used_vinyl_qty, used_vinyl_costs, used_vinyl_prices]
+                return stats_to_return
+
 if __name__ == '__main__':
 	util = Util(sys.argv[1])
 	entered = ''
@@ -289,6 +330,8 @@ if __name__ == '__main__':
                         print 'doubles - display doubles'
                         print 'distro_oos - display info about titles we get from a certain distributor'
                         print 'remove_item - remove item from item history'
+                        print 't(ime_machine) - stats about db at any point in time'
+                        print 'time_travel_range - time travel through a range with a summary at the end'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -331,6 +374,33 @@ if __name__ == '__main__':
                 elif entered == 'remove_item':
                         to_remove = int(raw_input('plaid-room-util/remove_item > '))
                         util.remove_item(to_remove)
-                        
-                
-                        
+                elif entered == 't' or entered == 'time_machine':
+                        print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
+                        travel_to_time = raw_input('plaid-room-util/time_machine > ')
+                        travel_to_time = travel_to_time.split('-')
+                        util.generate_db_for_date_and_time(int(travel_to_time[0]), int(travel_to_time[1]), int(travel_to_time[2]), int(travel_to_time[3]), int(travel_to_time[4]))
+                elif entered == 'time_travel_range':
+                        hours = [8, 11, 14, 17, 20]
+                        print 'Please enter the start date in the following format: yyyy-mm-dd'
+                        travel_to_time_start = raw_input('plaid-room-util/time_travel_range > ')
+                        print 'Please enter the end date in the following format: yyyy-mm-dd'
+                        travel_to_time_end = raw_input('plaid-room-util/time_travel_range > ')
+                        travel_to_time_start = travel_to_time_start.split('-')
+                        travel_to_time_start = datetime.date(int(travel_to_time_start[0]), int(travel_to_time_start[1]), int(travel_to_time_start[2]))
+                        travel_to_time_end = travel_to_time_end.split('-')
+                        travel_to_time_end = datetime.date(int(travel_to_time_end[0]), int(travel_to_time_end[1]), int(travel_to_time_end[2]))
+                        delta_dates = (travel_to_time_end - travel_to_time_start)
+                        delta_dates = int(delta_dates.days) + 1
+                        date_list = [travel_to_time_end - datetime.timedelta(days=x) for x in range(0, delta_dates)]
+                        total_stats = []
+                        for date_item in date_list:
+                                for hour in hours:
+                                        total_stats.append(util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0))
+                                        
+                        print 'New Vinyl Qty\tNew Vinyl Cost\tNew Vinyl Price\tUsed Vinyl Qty\tUsed Vinyl Cost\tUsed Vinyl Price'
+                        for shit in total_stats:
+                                for item in shit:
+                                        print item,
+                                print ''
+                                        
+
