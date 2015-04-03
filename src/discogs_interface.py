@@ -172,13 +172,26 @@ class DiscogsClient():
             
     def scrape_price(self, release_id, prices):
         #first, get weird and search for the release id on discogs
+        release_url = 'http://www.discogs.com/release/%s' % release_id
         try:
             release_search_url = 'http://www.discogs.com/search/?q=%s&type=release' % str(release_id)
             user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
+            user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
             headers = { 'User-Agent' : user_agent }
             print 'requesting search page'
             req = urllib2.Request(release_search_url,None,headers)
+            search_term = 'release/%s' % str(release_id)
+            print search_term
             response = urllib2.urlopen(req)
+            still_together = response.read()
+            print '*'*50
+            print '*'*50
+            for line in still_together.splitlines():
+                if search_term in line:
+                    quoted = re.findall(r'"([^"]*)"', line)
+                    if len(quoted[0]) > 0:
+                        release_url = 'http://www.discogs.com/%s' % quoted[0]
+            print '*'*50
             print release_search_url
             for line_ in response:
                 if 'http' in line_:
@@ -188,16 +201,15 @@ class DiscogsClient():
             
         except Exception as e:
             print 'some shit when down while trying to search for the release on discogs (price scraper): %s' % e
-
-        release_url = 'http://www.discogs.com/release/%s' % release_id
         
         #user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
-        user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
+        user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
+        #user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
         headers = { 'User-Agent' : user_agent }
         try:
             print 'requesting page %s' % datetime.datetime.now()
             req = urllib2.Request(release_url, None, headers)
-            print 'urlopen(req) %s' % datetime.datetime.now()
+            print 'urlopen(req) %s - %s' % (datetime.datetime.now(), release_url)
             response = urllib2.urlopen(req)
             grab_low = False
             grab_mid = False

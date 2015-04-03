@@ -11818,6 +11818,7 @@ class Ui_Form(QtGui.QWidget):
                 #check distributor
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    #TODO: stufffffssss
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 #check state
@@ -11994,25 +11995,39 @@ class Ui_Form(QtGui.QWidget):
             time_delta = date_time_sold - date_time_added
             days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
             #how many in stock still?
+            cheapest_distro = row[DISTRIBUTOR_INDEX]
+            cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
             num_in_stock = 0
             barcode_query = str(row[UPC_INDEX])
             for copy in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
                 num_in_stock += 1
+                if self.xfloat(copy[PRICE_PAID_INDEX]) < cheapest_price:
+                    cheapest_distro = copy[DISTRIBUTOR_INDEX]
+                    cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            #how many have we sold ever?
+            num_sold_ever = 0
+            for num_sold in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (barcode_query,)):
+                num_sold_ever += 1
+                if self.xfloat(num_sold[PRICE_PAID_INDEX]) < cheapest_price:
+                    cheapest_distro = num_sold[DISTRIBUTOR_INDEX]
+                    cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
             self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
-            self.tab_seven_search_sold_table_change_text(ix, 5, num_in_stock)
-            self.tab_seven_search_sold_table_change_text(ix, 6, locale.currency(self.xfloat(row[SOLD_FOR_INDEX])))
-            self.tab_seven_search_sold_table_change_text(ix, 7, locale.currency(self.xfloat((price_sold-price_paid))))
-            self.tab_seven_search_sold_table_change_text(ix, 8, row[ARTIST_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 9, row[TITLE_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 10, row[DISTRIBUTOR_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 11, row[FORMAT_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 12, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
-            self.tab_seven_search_sold_table_change_text(ix, 13, row[NEW_USED_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 14, row[LABEL_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 15, row[GENRE_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 16, row[SOLD_NOTES_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 17, row[UPC_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 5, num_sold_ever)
+            self.tab_seven_search_sold_table_change_text(ix, 6, num_in_stock)
+            self.tab_seven_search_sold_table_change_text(ix, 7, locale.currency(self.xfloat(row[SOLD_FOR_INDEX])))
+            self.tab_seven_search_sold_table_change_text(ix, 8, locale.currency(self.xfloat((price_sold-price_paid))))
+            self.tab_seven_search_sold_table_change_text(ix, 9, row[ARTIST_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 10, row[TITLE_INDEX])
+            #self.tab_seven_search_sold_table_change_text(ix, 11, row[DISTRIBUTOR_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 11, cheapest_distro)
+            self.tab_seven_search_sold_table_change_text(ix, 12, row[FORMAT_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 13, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
+            self.tab_seven_search_sold_table_change_text(ix, 14, row[NEW_USED_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 15, row[LABEL_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 16, row[GENRE_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 17, row[SOLD_NOTES_INDEX])
+            self.tab_seven_search_sold_table_change_text(ix, 18, row[UPC_INDEX])
         self.tab_seven_search_sold_table.resizeColumnsToContents()
         self.tab_seven_search_sold_table.setColumnWidth(0,50)
         self.tab_seven_search_sold_table.setColumnWidth(1,50)
