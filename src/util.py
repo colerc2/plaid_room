@@ -17,6 +17,14 @@ class Util():
         def remove_item(self, key):
                 self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', (key,))
                 self.db.commit()
+
+        def remove_misc_item(self, key):
+                self.db_cursor.execute('DELETE FROM sold_misc_inventory WHERE id = ?', (key,))
+                self.db.commit()
+
+        def remove_transaction(self, key):
+                self.db_cursor.execute('DELETE FROM transactions WHERE id = ?', (key,))
+                self.db.commit()
                 
         def histogram(self, L):
                 d = {}
@@ -335,6 +343,8 @@ if __name__ == '__main__':
                         print 'doubles - display doubles'
                         print 'distro_oos - display info about titles we get from a certain distributor'
                         print 'remove_item - remove item from item history'
+                        print 'remove_misc_item - remove misc. item from history'
+                        print 'remove_transaction - remove transaction from history'
                         print 't(ime_machine) - stats about db at any point in time'
                         print 'time_travel_range - time travel through a range with a summary at the end'
                         print 'new_with_plaid_sku - list all the shit someone might have fucked up'
@@ -380,6 +390,12 @@ if __name__ == '__main__':
                 elif entered == 'remove_item':
                         to_remove = int(raw_input('plaid-room-util/remove_item > '))
                         util.remove_item(to_remove)
+                elif entered == 'remove_misc_item':
+                        to_remove = int(raw_input('plaid-room-util/remove_misc_item > '))
+                        util.remove_misc_item(to_remove)
+                elif entered == 'remove_transaction':
+                        to_remove = int(raw_input('plaid-room_util/remove_transaction > '))
+                        util.remove_transaction(to_remove)
                 elif entered == 't' or entered == 'time_machine':
                         print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
                         travel_to_time = raw_input('plaid-room-util/time_machine > ')
