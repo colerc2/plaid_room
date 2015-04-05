@@ -402,8 +402,8 @@ if __name__ == '__main__':
                         travel_to_time = travel_to_time.split('-')
                         util.generate_db_for_date_and_time(int(travel_to_time[0]), int(travel_to_time[1]), int(travel_to_time[2]), int(travel_to_time[3]), int(travel_to_time[4]))
                 elif entered == 'time_travel_range':
-                        #hours = [8, 11, 14, 17, 20]
-                        hours = [8]
+                        hours = [8, 11, 14, 17, 20]
+                        #hours = [8]
                         print 'Please enter the start date in the following format: yyyy-mm-dd'
                         travel_to_time_start = raw_input('plaid-room-util/time_travel_range > ')
                         print 'Please enter the end date in the following format: yyyy-mm-dd'
@@ -421,15 +421,16 @@ if __name__ == '__main__':
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
-                                        stats_temp.append(date_item.isoformat())
+                                        stats_temp.append(date_item.isoformat()+(" %02d:%02d"%(hour,0)))
                                         stats_temp += (to_append)
                                         total_stats.append(stats_temp)
                                         
                                         
-                        print 'New Vinyl Qty\tNew Vinyl Cost\tNew Vinyl Price\tUsed Vinyl Qty\tUsed Vinyl Cost\tUsed Vinyl Price'
-                        for shit in total_stats:
-                                for item in shit:
+                        print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price'
+                        for line in total_stats:
+                                for item in line:
                                         print item,
+                                        print ',',
                                 print ''
                 elif entered == 'new_with_plaid_sku':
                         util.show_me_new_with_plaid_skus()
