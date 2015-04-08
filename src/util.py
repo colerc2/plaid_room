@@ -149,6 +149,7 @@ class Util():
 		other_misc_net = 0
                 total_tax_paid = 0
 		desired_date = datetime.date(int(year), int(month), int(day))
+                number_of_transactions = 0
                 #build a list of crap to iterate over first because doing nested cursors hurst sqlite3
                 db_results = []
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
@@ -193,10 +194,11 @@ class Util():
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM transactions ORDER BY date_sold')):
                         date_sold = (datetime.datetime.strptime(str(row[TRANS_DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
                         if date_sold == desired_date:
+                                number_of_transactions += 1
                                 total_tax_paid += (row[TRANS_TAX_INDEX])
                                 total_gross_with_tax += row[TRANS_TOTAL_INDEX]
 
-                stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty]
+                stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty, number_of_transactions]
                         
 		print '\nDate: %s-%s-%s' % (str(year),str(month),str(day))
 		print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
@@ -439,6 +441,7 @@ if __name__ == '__main__':
                         week_taxes = 0
                         week_new_qty = 0
                         week_used_qty = 0
+                        week_transactions = 0
                         for date_item in reversed(date_list):
                                 daily_stats = util.summary_by_day(date_item.year, date_item.month, date_item.day)
                                 #daily number crunching
@@ -467,6 +470,7 @@ if __name__ == '__main__':
                                         week_taxes = daily_stats[8]
                                         week_new_qty = daily_stats[9]
                                         week_used_qty = daily_stats[10]
+                                        week_transactions = daily_stats[11]
                                 else:
                                         week_new_gross += daily_stats[0]
                                         week_used_gross += daily_stats[1]
@@ -479,6 +483,7 @@ if __name__ == '__main__':
                                         week_taxes += daily_stats[8]
                                         week_new_qty += daily_stats[9]
                                         week_used_qty += daily_stats[10]
+                                        week_transactions += daily_stats[11]
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
@@ -497,12 +502,12 @@ if __name__ == '__main__':
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
                                 #spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
-                                spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','No. New Titles','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','Total Gross','Total Net','New Cumulative','Used Cumulative'])
+                                spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','No. New Titles','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Total Gross','Total Net','New Cumulative','Used Cumulative'])
                                 #for line in total_stats:
                                 spamwriter.writerows(total_stats)
                         with open('/Users/plaidroomrecords/Documents/pos_software/week_time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
-                                spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold'])
+                                spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions'])
                                 spamwriter.writerows(weekly_stats)
                                 #spamwriter.writerows(line)
                                         #for item in line:
