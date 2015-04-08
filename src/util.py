@@ -317,11 +317,13 @@ class Util():
                 new_vinyl_prices = 0
                 used_vinyl_costs = 0
                 used_vinyl_prices = 0
+                new_vinyl_skus = set()
                 for row in specified_db:
                         if row[NEW_USED_INDEX] == 'New':
                                 new_vinyl_qty += 1
                                 new_vinyl_costs += row[PRICE_PAID_INDEX]
                                 new_vinyl_prices += row[PRICE_INDEX]
+                                new_vinyl_skus.add(row[UPC_INDEX])
                         else:
                                 used_vinyl_qty += 1
                                 used_vinyl_costs += row[PRICE_PAID_INDEX]
@@ -331,7 +333,7 @@ class Util():
                 print '\t\t\t New Vinyl: %d, %s paid, %s priced' % (new_vinyl_qty, locale.currency(new_vinyl_costs), locale.currency(new_vinyl_prices))
                 print '\t\t\t Used Vinyl: %d, %s paid, %s priced' % (used_vinyl_qty, locale.currency(used_vinyl_costs), locale.currency(used_vinyl_prices))
                 print '-'*50
-                stats_to_return = [new_vinyl_qty, new_vinyl_costs, new_vinyl_prices, used_vinyl_qty, used_vinyl_costs, used_vinyl_prices]
+                stats_to_return = [new_vinyl_qty, new_vinyl_costs, new_vinyl_prices, used_vinyl_qty, used_vinyl_costs, used_vinyl_prices, len(new_vinyl_skus)]
                 return stats_to_return
 
 if __name__ == '__main__':
@@ -424,12 +426,59 @@ if __name__ == '__main__':
                         used_cumulative = 0
                         total_stats = []
                         stats_temp = []
+                        weekly_stats = []
+                        this_monday = 0
+                        week_new_gross = 0
+                        week_used_gross = 0
+                        week_new_net = 0
+                        week_used_net = 0
+                        week_clothing_gross = 0
+                        week_clothing_net = 0
+                        week_misc_gross = 0
+                        week_misc_net = 0
+                        week_taxes = 0
+                        week_new_qty = 0
+                        week_used_qty = 0
                         for date_item in reversed(date_list):
                                 daily_stats = util.summary_by_day(date_item.year, date_item.month, date_item.day)
+                                #daily number crunching
                                 new_cumulative += daily_stats[9]
                                 used_cumulative += daily_stats[10]
                                 total_gross = daily_stats[0] + daily_stats[1] + daily_stats[4] + daily_stats[6]
                                 total_net = daily_stats[2] + daily_stats[3] + daily_stats[5] + daily_stats[7]
+                                #weekly number crunching
+                                if date_item.weekday() == 0:#it's monday dawg
+                                        if this_monday == 0:#first time through, stuff hasn't been initialized, so initialize and then skip this week
+                                                this_monday = date_item
+                                        else:
+                                                #first, save last weeks stats
+                                                stats_temp = []
+                                                stats_temp = [this_monday.isoformat(), week_new_gross, week_used_gross, week_new_net, week_used_net, week_clothing_gross, week_clothing_net, week_misc_gross, week_misc_net, week_taxes]
+                                                weekly_stats.append(stats_temp)
+                                                this_monday = date_item
+                                        week_new_gross = daily_stats[0]
+                                        week_used_gross = daily_stats[1]
+                                        week_new_net = daily_stats[2]
+                                        week_used_net = daily_stats[3]
+                                        week_clothing_gross = daily_stats[4]
+                                        week_clothing_net = daily_stats[5]
+                                        week_misc_gross = daily_stats[6]
+                                        week_misc_net = daily_stats[7]
+                                        week_taxes = daily_stats[8]
+                                        week_new_qty = daily_stats[9]
+                                        week_used_qty = daily_stats[10]
+                                else:
+                                        week_new_gross += daily_stats[0]
+                                        week_used_gross += daily_stats[1]
+                                        week_new_net += daily_stats[2]
+                                        week_used_net += daily_stats[3]
+                                        week_clothing_gross += daily_stats[4]
+                                        week_clothing_net += daily_stats[5]
+                                        week_misc_gross += daily_stats[6]
+                                        week_misc_net += daily_stats[7]
+                                        week_taxes += daily_stats[8]
+                                        week_new_qty += daily_stats[9]
+                                        week_used_qty += daily_stats[10]
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
@@ -443,7 +492,7 @@ if __name__ == '__main__':
                                         total_stats.append(stats_temp)
                                         
                                         
-                        print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price,New Gross,Used Gross,New Net,Used Net,Clothing Gross,Clothing Net,Misc Gross, Misc Net,Taxes,New Qty,Used Qty,Total Gross,Total Net'
+                        print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price,No. New Titles,New Gross,Used Gross,New Net,Used Net,Clothing Gross,Clothing Net,Misc Gross, Misc Net,Taxes,New Qty,Used Qty,Total Gross,Total Net'
                         with open('/Users/plaidroomrecords/Documents/pos_software/time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
@@ -451,6 +500,10 @@ if __name__ == '__main__':
                                 spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','Total Gross','Total Net','New Cumulative','Used Cumulative'])
                                 #for line in total_stats:
                                 spamwriter.writerows(total_stats)
+                        with open('/Users/plaidroomrecords/Documents/pos_software/week_time_travel.csv', 'wb') as csvfile:
+                                spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
+                                spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold'])
+                                spamwriter.writerows(weekly_stats)
                                 #spamwriter.writerows(line)
                                         #for item in line:
                                                 #print item,
