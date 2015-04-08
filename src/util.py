@@ -442,6 +442,8 @@ if __name__ == '__main__':
                         week_new_qty = 0
                         week_used_qty = 0
                         week_transactions = 0
+                        week_total_gross = 0
+                        week_total_net = 0
                         for date_item in reversed(date_list):
                                 daily_stats = util.summary_by_day(date_item.year, date_item.month, date_item.day)
                                 #daily number crunching
@@ -456,7 +458,7 @@ if __name__ == '__main__':
                                         else:
                                                 #first, save last weeks stats
                                                 stats_temp = []
-                                                stats_temp = [this_monday.isoformat(), week_new_gross, week_used_gross, week_new_net, week_used_net, week_clothing_gross, week_clothing_net, week_misc_gross, week_misc_net, week_taxes]
+                                                stats_temp = [this_monday.isoformat(), week_new_gross, week_used_gross, week_new_net, week_used_net, week_clothing_gross, week_clothing_net, week_misc_gross, week_misc_net, week_taxes, week_new_qty, week_used_qty, week_transactions, week_total_gross, week_total_net]
                                                 weekly_stats.append(stats_temp)
                                                 this_monday = date_item
                                         week_new_gross = daily_stats[0]
@@ -471,6 +473,8 @@ if __name__ == '__main__':
                                         week_new_qty = daily_stats[9]
                                         week_used_qty = daily_stats[10]
                                         week_transactions = daily_stats[11]
+                                        week_total_gross = total_gross
+                                        week_total_net = total_net
                                 else:
                                         week_new_gross += daily_stats[0]
                                         week_used_gross += daily_stats[1]
@@ -484,6 +488,8 @@ if __name__ == '__main__':
                                         week_new_qty += daily_stats[9]
                                         week_used_qty += daily_stats[10]
                                         week_transactions += daily_stats[11]
+                                        week_total_gross += total_gross
+                                        week_total_net += total_net
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
@@ -507,7 +513,7 @@ if __name__ == '__main__':
                                 spamwriter.writerows(total_stats)
                         with open('/Users/plaidroomrecords/Documents/pos_software/week_time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
-                                spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions'])
+                                spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Week Gross','Week Net'])
                                 spamwriter.writerows(weekly_stats)
                                 #spamwriter.writerows(line)
                                         #for item in line:
