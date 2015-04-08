@@ -6,6 +6,7 @@ import time
 from config_stuff import *
 import datetime
 import locale
+import csv
 
 class Util():
 	def __init__(self, primary='real_inventory.db'):
@@ -136,6 +137,8 @@ class Util():
 	#         - other misc net income
         #   - total tax paid
 	def summary_by_day(self, year, month, day):
+                new_vinyl_qty = 0
+                used_vinyl_qty = 0
 		new_vinyl_gross = 0
 		used_vinyl_gross = 0
 		new_vinyl_net = 0
@@ -160,9 +163,11 @@ class Util():
                                         trans_discount = float(discount[0])
                                 ratio = (100-trans_discount)/100.0
                                 if row[NEW_USED_INDEX] == 'New':
+                                        new_vinyl_qty += 1
 					new_vinyl_gross += (row[SOLD_FOR_INDEX] * ratio)
 					new_vinyl_net += ((row[SOLD_FOR_INDEX] - row[PRICE_PAID_INDEX]) * ratio)
 				else:
+                                        used_vinyl_qty += 1
 					used_vinyl_gross += (row[SOLD_FOR_INDEX] * ratio)
 					used_vinyl_net += ((row[SOLD_FOR_INDEX] - row[PRICE_PAID_INDEX]) * ratio)
                 db_results = []
@@ -191,7 +196,7 @@ class Util():
                                 total_tax_paid += (row[TRANS_TAX_INDEX])
                                 total_gross_with_tax += row[TRANS_TOTAL_INDEX]
 
-                stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid]
+                stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty]
                         
 		print '\nDate: %s-%s-%s' % (str(year),str(month),str(day))
 		print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
@@ -415,23 +420,41 @@ if __name__ == '__main__':
                         delta_dates = (travel_to_time_end - travel_to_time_start)
                         delta_dates = int(delta_dates.days) + 1
                         date_list = [travel_to_time_end - datetime.timedelta(days=x) for x in range(0, delta_dates)]
+                        new_cumulative = 0
+                        used_cumulative = 0
                         total_stats = []
                         stats_temp = []
                         for date_item in reversed(date_list):
+                                daily_stats = util.summary_by_day(date_item.year, date_item.month, date_item.day)
+                                new_cumulative += daily_stats[9]
+                                used_cumulative += daily_stats[10]
+                                total_gross = daily_stats[0] + daily_stats[1] + daily_stats[4] + daily_stats[6]
+                                total_net = daily_stats[2] + daily_stats[3] + daily_stats[5] + daily_stats[7]
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)
                                         stats_temp.append(date_item.isoformat()+(" %02d:%02d"%(hour,0)))
                                         stats_temp += (to_append)
+                                        stats_temp += (daily_stats)
+                                        stats_temp.append(total_gross)
+                                        stats_temp.append(total_net)
+                                        stats_temp.append(new_cumulative)
+                                        stats_temp.append(used_cumulative)
                                         total_stats.append(stats_temp)
                                         
                                         
-                        print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price'
-                        for line in total_stats:
-                                for item in line:
-                                        print item,
-                                        print ',',
-                                print ''
+                        print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price,New Gross,Used Gross,New Net,Used Net,Clothing Gross,Clothing Net,Misc Gross, Misc Net,Taxes,New Qty,Used Qty,Total Gross,Total Net'
+                        with open('/Users/plaidroomrecords/Documents/pos_software/time_travel.csv', 'wb') as csvfile:
+                                spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
+                                #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
+                                #spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
+                                spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','Total Gross','Total Net','New Cumulative','Used Cumulative'])
+                                #for line in total_stats:
+                                spamwriter.writerows(total_stats)
+                                #spamwriter.writerows(line)
+                                        #for item in line:
+                                                #print item,
+                                                #print ',',
                 elif entered == 'new_with_plaid_sku':
                         util.show_me_new_with_plaid_skus()
 
