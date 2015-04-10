@@ -444,6 +444,7 @@ if __name__ == '__main__':
                         week_transactions = 0
                         week_total_gross = 0
                         week_total_net = 0
+                        last_item = date_list[0]
                         for date_item in reversed(date_list):
                                 daily_stats = util.summary_by_day(date_item.year, date_item.month, date_item.day)
                                 #daily number crunching
@@ -490,6 +491,10 @@ if __name__ == '__main__':
                                         week_transactions += daily_stats[11]
                                         week_total_gross += total_gross
                                         week_total_net += total_net
+                                        #is this the last time we loop through
+                                        if last_item == date_item:
+                                                stats_temp = [this_monday.isoformat(), week_new_gross, week_used_gross, week_new_net, week_used_net, week_clothing_gross, week_clothing_net, week_misc_gross, week_misc_net, week_taxes, week_new_qty, week_used_qty, week_transactions, week_total_gross, week_total_net]
+                                                weekly_stats.append(stats_temp)
                                 for hour in hours:
                                         stats_temp = []
                                         to_append = util.generate_db_for_date_and_time(date_item.year, date_item.month, date_item.day, hour, 0)

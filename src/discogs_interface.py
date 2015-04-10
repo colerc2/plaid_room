@@ -190,7 +190,7 @@ class DiscogsClient():
                 if search_term in line:
                     quoted = re.findall(r'"([^"]*)"', line)
                     if len(quoted[0]) > 0:
-                        release_url = 'http://www.discogs.com/%s' % quoted[0]
+                        release_url = 'http://www.discogs.com%s' % quoted[0]
             print '*'*50
             print release_search_url
             for line_ in response:
