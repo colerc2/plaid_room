@@ -12355,20 +12355,25 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(self.tab_eight_need_to_do_table_list):
             if ix > (self.tab_eight_need_to_do_table.rowCount() - 1):
                 continue
-            self.tab_eight_need_to_do_table_change_text(ix, 2, self.xstr(row[TRANSACTION_ID_INDEX]))
-            self.tab_eight_need_to_do_table_change_text(ix, 3, row[DATE_SOLD_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 4, locale.currency(self.xfloat(row[SOLD_FOR_INDEX])))
-            self.tab_eight_need_to_do_table_change_text(ix, 5, row[ARTIST_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 6, row[TITLE_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 7, row[UPC_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 8, locale.currency(self.xfloat(row[PRICE_INDEX])))
-            self.tab_eight_need_to_do_table_change_text(ix, 9, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
-            self.tab_eight_need_to_do_table_change_text(ix, 10, row[NEW_USED_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 11, row[DISTRIBUTOR_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 12, row[LABEL_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 13, row[FORMAT_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 14, row[GENRE_INDEX])
-            self.tab_eight_need_to_do_table_change_text(ix, 15, row[DATE_ADDED_INDEX])
+            #figure out how many we have left of this item
+            in_stock_count = 0
+            for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
+                in_stock_count += 1
+            self.tab_eight_need_to_do_table_change_text(ix, 2, self.xstr(in_stock_count))
+            self.tab_eight_need_to_do_table_change_text(ix, 3, self.xstr(row[TRANSACTION_ID_INDEX]))
+            self.tab_eight_need_to_do_table_change_text(ix, 4, row[DATE_SOLD_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 5, locale.currency(self.xfloat(row[SOLD_FOR_INDEX])))
+            self.tab_eight_need_to_do_table_change_text(ix, 6, row[ARTIST_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 7, row[TITLE_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 8, row[UPC_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 9, locale.currency(self.xfloat(row[PRICE_INDEX])))
+            self.tab_eight_need_to_do_table_change_text(ix, 10, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
+            self.tab_eight_need_to_do_table_change_text(ix, 11, row[NEW_USED_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 12, row[DISTRIBUTOR_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 13, row[LABEL_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 14, row[FORMAT_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 15, row[GENRE_INDEX])
+            self.tab_eight_need_to_do_table_change_text(ix, 16, row[DATE_ADDED_INDEX])
 
         for ix, row in enumerate(self.tab_eight_done_table_list):
             if ix > (self.tab_eight_done_table.rowCount() - 1):

@@ -167,6 +167,12 @@ class ReceiptPrinter():
             print 'something went wrong'
         lines.append(['-----------------------------------',True])
         lines.append(['Have a great day!',True])
+        #lines.append(['Thanks for stopping in', True])
+        #lines.append(['on record store day!! Show', True])
+        #lines.append(['this receipt at Cappy\'s for', True])
+        #lines.append(['$2 off Dogfish Head Growler fills', True])
+        #lines.append(['and a chance to win an exclusive', True])
+        #lines.append(['Dogfish Head turntable!', True])
         #lines.append(['Hope to see you again soon!',True])
         
             
