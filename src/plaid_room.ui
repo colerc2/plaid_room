@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>8</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -136,28 +136,49 @@
          </spacer>
         </item>
         <item>
-         <widget class="QRadioButton" name="tab_one_vinyl_radio_button">
-          <property name="text">
-           <string>Vinyl</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="tab_one_cd_radio_button">
-          <property name="text">
-           <string>CD</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="tab_one_any_radio_button">
-          <property name="text">
-           <string>Any</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_37">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_35">
+            <item>
+             <widget class="QRadioButton" name="tab_one_vinyl_radio_button">
+              <property name="text">
+               <string>Vinyl</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="tab_one_cd_radio_button">
+              <property name="text">
+               <string>CD</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="tab_one_any_radio_button">
+              <property name="text">
+               <string>Any</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tab_one_us_releases_only_checkbox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>US Releases Only</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <spacer name="horizontalSpacer_56">

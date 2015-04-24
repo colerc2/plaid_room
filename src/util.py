@@ -15,6 +15,15 @@ class Util():
 		self.db_cursor = self.db.cursor()
                 locale.setlocale( locale.LC_ALL, '')
 
+        #this method should be left blank unless some one time operation needs to be done
+        def custom_temp_operation(self):
+                #FIXING ALABAMA SHAKES UPC
+                #old_upc = '710882226718'
+                #new_upc = '880882226718'
+                #self.db_cursor.execute('UPDATE sold_inventory SET upc = ? WHERE upc = ?', (new_upc,old_upc))
+                #self.db.commit()
+                        
+
         def remove_item(self, key):
                 self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', (key,))
                 self.db.commit()
@@ -343,6 +352,8 @@ if __name__ == '__main__':
 	entered = ''
 	while(entered != 'q' and entered != 'quit'):
 		entered = raw_input('plaid-room-util > ')
+                if entered == 'custom_temp':
+                        util.custom_temp_operation()
 		if entered == 'h' or entered == 'help':
 			print '\nh(elp) - display this message'
 			print 's(ummary) - display summary of past week'

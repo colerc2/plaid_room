@@ -305,16 +305,27 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_2.addWidget(self.add_item_vert_line)
         spacerItem1 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
+        self.verticalLayout_37 = QtGui.QVBoxLayout()
+        self.verticalLayout_37.setObjectName(_fromUtf8("verticalLayout_37"))
+        self.horizontalLayout_35 = QtGui.QHBoxLayout()
+        self.horizontalLayout_35.setObjectName(_fromUtf8("horizontalLayout_35"))
         self.tab_one_vinyl_radio_button = QtGui.QRadioButton(self.layoutWidget)
         self.tab_one_vinyl_radio_button.setChecked(True)
         self.tab_one_vinyl_radio_button.setObjectName(_fromUtf8("tab_one_vinyl_radio_button"))
-        self.horizontalLayout_2.addWidget(self.tab_one_vinyl_radio_button)
+        self.horizontalLayout_35.addWidget(self.tab_one_vinyl_radio_button)
         self.tab_one_cd_radio_button = QtGui.QRadioButton(self.layoutWidget)
         self.tab_one_cd_radio_button.setObjectName(_fromUtf8("tab_one_cd_radio_button"))
-        self.horizontalLayout_2.addWidget(self.tab_one_cd_radio_button)
+        self.horizontalLayout_35.addWidget(self.tab_one_cd_radio_button)
         self.tab_one_any_radio_button = QtGui.QRadioButton(self.layoutWidget)
         self.tab_one_any_radio_button.setObjectName(_fromUtf8("tab_one_any_radio_button"))
-        self.horizontalLayout_2.addWidget(self.tab_one_any_radio_button)
+        self.horizontalLayout_35.addWidget(self.tab_one_any_radio_button)
+        self.verticalLayout_37.addLayout(self.horizontalLayout_35)
+        self.tab_one_us_releases_only_checkbox = QtGui.QCheckBox(self.layoutWidget)
+        self.tab_one_us_releases_only_checkbox.setEnabled(True)
+        self.tab_one_us_releases_only_checkbox.setChecked(True)
+        self.tab_one_us_releases_only_checkbox.setObjectName(_fromUtf8("tab_one_us_releases_only_checkbox"))
+        self.verticalLayout_37.addWidget(self.tab_one_us_releases_only_checkbox)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_37)
         spacerItem2 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.add_item_vert_line_27 = QtGui.QFrame(self.layoutWidget)
@@ -5890,7 +5901,7 @@ class Ui_Form(QtGui.QWidget):
         self.main_menu_tabs.addTab(self.tab_3, _fromUtf8(""))
 
         self.retranslateUi(Form)
-        self.main_menu_tabs.setCurrentIndex(8)
+        self.main_menu_tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -5899,6 +5910,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_vinyl_radio_button.setText(_translate("Form", "Vinyl", None))
         self.tab_one_cd_radio_button.setText(_translate("Form", "CD", None))
         self.tab_one_any_radio_button.setText(_translate("Form", "Any", None))
+        self.tab_one_us_releases_only_checkbox.setText(_translate("Form", "US Releases Only", None))
         self.tab_one_search_upc_button.setText(_translate("Form", "Search UPC/SKU/EAN", None))
         self.tab_one_search_artist_title_button.setText(_translate("Form", "Search Artist/Title", None))
         self.tab_seven_po_item_count_label_2.setText(_translate("Form", "Profit Margin (%)", None))
@@ -9585,11 +9597,21 @@ class Ui_Form(QtGui.QWidget):
         formats = []
         for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
             if row[FORMAT_INDEX] not in formats:
+                #overwrite the distributor with whatever the current default is
+                if self.tab_one_dist_combo_box.currentText() != 'None':
+                    row = list(row)
+                    row[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
+                    row = tuple(row)
                 self.tab_one_results_table_list.append(list(row[0:22]))
                 self.tab_one_results_table_list_tracker.append([True,row])
                 formats.append(row[FORMAT_INDEX])
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ? ORDER BY date_added DESC', (search_query,)):
             if row[FORMAT_INDEX] not in formats:
+                #overwrite the distributor with whatever the current default is
+                if self.tab_one_dist_combo_box.currentText() != 'None':
+                    row = list(row)
+                    row[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
+                    row = tuple(row)
                 self.tab_one_results_table_list.append(list(row[0:22]))
                 self.tab_one_results_table_list_tracker.append([True,row])
                 formats.append(row[FORMAT_INDEX])            
@@ -9604,6 +9626,11 @@ class Ui_Form(QtGui.QWidget):
                 for result in results:
                     if len(self.tab_one_results_table_list) >= 20:
                         break
+                    #only display US releases if necessary (it's the little things man, this is beautiful)
+                    if self.tab_one_us_releases_only_checkbox.isChecked():
+                        if result.country != 'US':
+                            break
+                    
                     temp_row = []
 
                     try:
