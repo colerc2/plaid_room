@@ -7,22 +7,45 @@ from config_stuff import *
 import datetime
 import locale
 import csv
+import discogs_client
+from discogs_interface import DiscogsClient
 
 class Util():
 	def __init__(self, primary='real_inventory.db'):
 		print 'Primary DB: %s' % primary
 		self.db = sqlite3.connect(primary)
-		self.db_cursor = self.db.cursor()
+                self.db_cursor = self.db.cursor()
                 locale.setlocale( locale.LC_ALL, '')
-
+                self.discogs = DiscogsClient()#discogs api
+                
         #this method should be left blank unless some one time operation needs to be done
         def custom_temp_operation(self):
+                placeholder = 0
                 #FIXING ALABAMA SHAKES UPC
                 #old_upc = '710882226718'
                 #new_upc = '880882226718'
                 #self.db_cursor.execute('UPDATE sold_inventory SET upc = ? WHERE upc = ?', (new_upc,old_upc))
                 #self.db.commit()
-                        
+                #self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
+                #self.db.commit()
+
+        def find_stuff_to_sell_on_discogs(self):
+                placeholder = 0
+                shit_to_sell = []
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+                        if ix > 20:
+                                break
+                        placehodler = 0
+                        discogs_release_no = row[DISCOGS_RELEASE_NUMBER_INDEX]
+                        if discogs_release_no != 1 and row[NEW_USED_INDEX] == 'New':
+                                prices = [0,0,0]
+                                self.discogs.scrape_price(discogs_release_no, prices)
+                                time.sleep(5)
+                                avg_price = float(prices[1])
+                                if avg_price > float(row[PRICE_INDEX]):
+                                        shit_to_sell.append('%s - %s - %s online - %s in our shop' % (row[ARTIST_INDEX], row[TITLE_INDEX], locale.currency(avg_price), locale.currency(row[PRICE_INDEX])))
+                for item in shit_to_sell:
+                        print item                        
 
         def remove_item(self, key):
                 self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', (key,))
@@ -365,6 +388,7 @@ if __name__ == '__main__':
                         print 'remove_item - remove item from item history'
                         print 'remove_misc_item - remove misc. item from history'
                         print 'remove_transaction - remove transaction from history'
+                        print 'what_to_sell - find stuff to sell on discogs'
                         print 't(ime_machine) - stats about db at any point in time'
                         print 'time_travel_range - time travel through a range with a summary at the end'
                         print 'new_with_plaid_sku - list all the shit someone might have fucked up'
@@ -395,6 +419,8 @@ if __name__ == '__main__':
                         util.best_sellers(number_to_display)
                 elif entered == 'doubles':
                         util.tell_me_doubles()
+                elif entered == 'what_to_sell':
+                        util.find_stuff_to_sell_on_discogs()
                 elif entered == 'distro_oos':
                         #first make a list of every distributor we've ever used, and have the user choose one
                         print 'Here\'s all the distributors bro:'
