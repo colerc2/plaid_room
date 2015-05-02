@@ -28,6 +28,17 @@ class Util():
                 #self.db.commit()
                 #self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
                 #self.db.commit()
+                #checking our double game
+                #current_inventory = open('/Users/plaidroomrecords/Desktop/inventory_checker.txt').read().splitlines()
+                #print current_inventory --------------------
+                #for row in self.db_cursor.execute('SELECT * from inventory'):
+                #        if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
+                #if row[NEW_USED_INDEX] == 'New' and '7\"' not in row[FORMAT_INDEX] and 'CD' not in row[FORMAT_INDEX]:
+                #                        if str(row[UPC_INDEX]) not in current_inventory:
+                #                                placeholder = 0
+                #                                print '%s - %s - %s - %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Harrison',)):
+                        print '%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0))
 
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
