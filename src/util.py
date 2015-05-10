@@ -38,21 +38,22 @@ class Util():
                 #                        if str(row[UPC_INDEX]) not in current_inventory:
                 #                                placeholder = 0
                 #                                print '%s - %s - %s - %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
-                total = 0
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Thomas',)):
-                        total += float(row[PRICE_PAID_INDEX])
+                #total = 0
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
+                #        total += float(row[PRICE_PAID_INDEX])
                         #       print '%s\t%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0), str(row[DISCOGS_RELEASE_NUMBER_
-                print total
+                #print total
                         
-                 #pricing some distro to a percentage of selling price
-                # list_of_stuff_to_update = []
-                # for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Thomas',)):
-                #          price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
-                #          list_of_stuff_to_update.append((price, row[ID_INDEX]))
-                # for row in list_of_stuff_to_update:
-                #         self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
-                # #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
-                # self.db.commit()
+                #pricing some distro to a percentage of selling price
+                list_of_stuff_to_update = []
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
+                        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
+                        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
+                        list_of_stuff_to_update.append((price, row[ID_INDEX]))
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
+                #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
+                self.db.commit()
                 
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
