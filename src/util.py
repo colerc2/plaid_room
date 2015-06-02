@@ -45,16 +45,23 @@ class Util():
                 #print total
                         
                 #pricing some distro to a percentage of selling price
-                list_of_stuff_to_update = []
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
-                        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
-                        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
-                        list_of_stuff_to_update.append((price, row[ID_INDEX]))
-                for row in list_of_stuff_to_update:
-                        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
+                #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
+                #        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
+                #        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
+                #        list_of_stuff_to_update.append((price, row[ID_INDEX]))
+                #for row in list_of_stuff_to_update:
+                #        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
                 #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
-                self.db.commit()
-                
+                #self.db.commit()
+                #total = 0
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
+                #        total += float(row[PRICE_PAID_INDEX])
+                #print total
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
+                        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
+
+
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
                 shit_to_sell = []
