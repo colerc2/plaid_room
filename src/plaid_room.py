@@ -116,6 +116,11 @@ class Ui_Form(QtGui.QWidget):
         self.tab_eight_need_to_do_table_list = []
         self.tab_eight_done_table_list = []
         
+        #tab cole two stuff
+        self.tab_cole_two_search_table_list = []
+        self.tab_cole_two_inventory_table_list = []
+        self.tab_cole_three_po_table_list = []
+        
         #create/connect to database
         self.db = sqlite3.connect(DB_FILE)
         self.db_cursor = self.db.cursor()
@@ -249,6 +254,46 @@ class Ui_Form(QtGui.QWidget):
         reserved_four text,
         id integer primary key autoincrement)
         """)
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS accounts
+        (business_name text,
+        contact_name text,
+        phone text,
+        cell text,
+        email text,
+        billing_name text,
+        billing_line_1 text,
+        billing_line_2 text,
+        billing_line_3 text,
+        billing_city text,
+        billing_state text,
+        billing_zip text,
+        billing_country text,
+        shipping_name text,
+        shipping_line_1 text,
+        shipping_line_2 text,
+        shipping_line_3 text,
+        shipping_city text,
+        shipping_state text,
+        shipping_zip text,
+        shipping_country text,
+        notes text,
+        account_number integer primary key autoincrement)
+        """)
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_inventory
+        (upc text,
+        qty integer,
+        catalog_number text,
+        artist text,
+        title text,
+        format text,
+        wholesale real,
+        cost real,
+        label text,
+        id integer primary key autoincrement)
+        """)
+        
         
         self.setupUi(self)
 
@@ -6721,164 +6766,128 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_50.addWidget(self.add_item_vert_line_48)
         spacerItem182 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_50.addItem(spacerItem182)
-        self.verticalLayout_59 = QtGui.QVBoxLayout()
-        self.verticalLayout_59.setObjectName(_fromUtf8("verticalLayout_59"))
-        self.horizontalLayout_51 = QtGui.QHBoxLayout()
-        self.horizontalLayout_51.setObjectName(_fromUtf8("horizontalLayout_51"))
-        self.tab_one_vinyl_radio_button_3 = QtGui.QRadioButton(self.layoutWidget_12)
-        self.tab_one_vinyl_radio_button_3.setChecked(True)
-        self.tab_one_vinyl_radio_button_3.setObjectName(_fromUtf8("tab_one_vinyl_radio_button_3"))
-        self.horizontalLayout_51.addWidget(self.tab_one_vinyl_radio_button_3)
-        self.tab_one_cd_radio_button_3 = QtGui.QRadioButton(self.layoutWidget_12)
-        self.tab_one_cd_radio_button_3.setObjectName(_fromUtf8("tab_one_cd_radio_button_3"))
-        self.horizontalLayout_51.addWidget(self.tab_one_cd_radio_button_3)
-        self.tab_one_any_radio_button_3 = QtGui.QRadioButton(self.layoutWidget_12)
-        self.tab_one_any_radio_button_3.setObjectName(_fromUtf8("tab_one_any_radio_button_3"))
-        self.horizontalLayout_51.addWidget(self.tab_one_any_radio_button_3)
-        self.verticalLayout_59.addLayout(self.horizontalLayout_51)
-        self.tab_one_us_releases_only_checkbox_2 = QtGui.QCheckBox(self.layoutWidget_12)
-        self.tab_one_us_releases_only_checkbox_2.setEnabled(True)
-        self.tab_one_us_releases_only_checkbox_2.setChecked(True)
-        self.tab_one_us_releases_only_checkbox_2.setObjectName(_fromUtf8("tab_one_us_releases_only_checkbox_2"))
-        self.verticalLayout_59.addWidget(self.tab_one_us_releases_only_checkbox_2)
-        self.horizontalLayout_50.addLayout(self.verticalLayout_59)
+        self.tab_cole_two_search_upc_qline = QtGui.QLineEdit(self.layoutWidget_12)
+        self.tab_cole_two_search_upc_qline.setObjectName(_fromUtf8("tab_cole_two_search_upc_qline"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_search_upc_qline)
+        self.tab_cole_two_search_upc_button = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_search_upc_button.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_search_upc_button.setObjectName(_fromUtf8("tab_cole_two_search_upc_button"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_search_upc_button)
         spacerItem183 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_50.addItem(spacerItem183)
-        self.add_item_vert_line_54 = QtGui.QFrame(self.layoutWidget_12)
-        self.add_item_vert_line_54.setFrameShape(QtGui.QFrame.VLine)
-        self.add_item_vert_line_54.setFrameShadow(QtGui.QFrame.Sunken)
-        self.add_item_vert_line_54.setObjectName(_fromUtf8("add_item_vert_line_54"))
-        self.horizontalLayout_50.addWidget(self.add_item_vert_line_54)
-        spacerItem184 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem184)
-        self.tab_one_search_upc_qline_3 = QtGui.QLineEdit(self.layoutWidget_12)
-        self.tab_one_search_upc_qline_3.setObjectName(_fromUtf8("tab_one_search_upc_qline_3"))
-        self.horizontalLayout_50.addWidget(self.tab_one_search_upc_qline_3)
-        self.tab_one_search_upc_button_3 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_search_upc_button_3.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_search_upc_button_3.setObjectName(_fromUtf8("tab_one_search_upc_button_3"))
-        self.horizontalLayout_50.addWidget(self.tab_one_search_upc_button_3)
-        spacerItem185 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem185)
         self.add_item_vert_line_55 = QtGui.QFrame(self.layoutWidget_12)
         self.add_item_vert_line_55.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_55.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_55.setObjectName(_fromUtf8("add_item_vert_line_55"))
         self.horizontalLayout_50.addWidget(self.add_item_vert_line_55)
-        spacerItem186 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem186)
-        self.tab_one_search_artist_title_title_qline_3 = QtGui.QLineEdit(self.layoutWidget_12)
+        spacerItem184 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_50.addItem(spacerItem184)
+        self.tab_cole_two_search_artist_qline = QtGui.QLineEdit(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tab_one_search_artist_title_title_qline_3.sizePolicy().hasHeightForWidth())
-        self.tab_one_search_artist_title_title_qline_3.setSizePolicy(sizePolicy)
-        self.tab_one_search_artist_title_title_qline_3.setMinimumSize(QtCore.QSize(250, 0))
-        self.tab_one_search_artist_title_title_qline_3.setText(_fromUtf8(""))
-        self.tab_one_search_artist_title_title_qline_3.setObjectName(_fromUtf8("tab_one_search_artist_title_title_qline_3"))
-        self.horizontalLayout_50.addWidget(self.tab_one_search_artist_title_title_qline_3)
-        self.tab_one_search_artist_title_button_3 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_search_artist_title_button_3.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_search_artist_title_button_3.setObjectName(_fromUtf8("tab_one_search_artist_title_button_3"))
-        self.horizontalLayout_50.addWidget(self.tab_one_search_artist_title_button_3)
-        spacerItem187 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem187)
-        self.tab_one_add_selected_to_inventory_4 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_add_selected_to_inventory_4.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_add_selected_to_inventory_4.setObjectName(_fromUtf8("tab_one_add_selected_to_inventory_4"))
-        self.horizontalLayout_50.addWidget(self.tab_one_add_selected_to_inventory_4)
-        spacerItem188 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem188)
+        sizePolicy.setHeightForWidth(self.tab_cole_two_search_artist_qline.sizePolicy().hasHeightForWidth())
+        self.tab_cole_two_search_artist_qline.setSizePolicy(sizePolicy)
+        self.tab_cole_two_search_artist_qline.setMinimumSize(QtCore.QSize(250, 0))
+        self.tab_cole_two_search_artist_qline.setText(_fromUtf8(""))
+        self.tab_cole_two_search_artist_qline.setObjectName(_fromUtf8("tab_cole_two_search_artist_qline"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_search_artist_qline)
+        self.tab_cole_two_search_artist_button = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_search_artist_button.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_search_artist_button.setObjectName(_fromUtf8("tab_cole_two_search_artist_button"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_search_artist_button)
+        spacerItem185 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_50.addItem(spacerItem185)
+        self.tab_cole_two_add_button = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_add_button.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_add_button.setObjectName(_fromUtf8("tab_cole_two_add_button"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_add_button)
+        spacerItem186 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_50.addItem(spacerItem186)
         self.add_item_vert_line_63 = QtGui.QFrame(self.layoutWidget_12)
         self.add_item_vert_line_63.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_63.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_63.setObjectName(_fromUtf8("add_item_vert_line_63"))
         self.horizontalLayout_50.addWidget(self.add_item_vert_line_63)
-        spacerItem189 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem189)
-        self.tab_one_clear_all_button_3 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_clear_all_button_3.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_clear_all_button_3.setObjectName(_fromUtf8("tab_one_clear_all_button_3"))
-        self.horizontalLayout_50.addWidget(self.tab_one_clear_all_button_3)
-        spacerItem190 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_50.addItem(spacerItem190)
+        spacerItem187 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_50.addItem(spacerItem187)
+        self.tab_cole_two_clear_all = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_clear_all.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_clear_all.setObjectName(_fromUtf8("tab_cole_two_clear_all"))
+        self.horizontalLayout_50.addWidget(self.tab_cole_two_clear_all)
+        spacerItem188 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_50.addItem(spacerItem188)
         self.verticalLayout_58.addLayout(self.horizontalLayout_50)
-        self.tab_one_results_table_3 = QtGui.QTableWidget(self.layoutWidget_12)
+        self.tab_cole_two_search_table = QtGui.QTableWidget(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tab_one_results_table_3.sizePolicy().hasHeightForWidth())
-        self.tab_one_results_table_3.setSizePolicy(sizePolicy)
-        self.tab_one_results_table_3.setMinimumSize(QtCore.QSize(1850, 250))
-        self.tab_one_results_table_3.setMaximumSize(QtCore.QSize(16777215, 250))
-        self.tab_one_results_table_3.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        self.tab_one_results_table_3.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.tab_one_results_table_3.setObjectName(_fromUtf8("tab_one_results_table_3"))
-        self.tab_one_results_table_3.setColumnCount(11)
-        self.tab_one_results_table_3.setRowCount(15)
+        sizePolicy.setHeightForWidth(self.tab_cole_two_search_table.sizePolicy().hasHeightForWidth())
+        self.tab_cole_two_search_table.setSizePolicy(sizePolicy)
+        self.tab_cole_two_search_table.setMinimumSize(QtCore.QSize(1850, 250))
+        self.tab_cole_two_search_table.setMaximumSize(QtCore.QSize(16777215, 250))
+        self.tab_cole_two_search_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.tab_cole_two_search_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tab_cole_two_search_table.setObjectName(_fromUtf8("tab_cole_two_search_table"))
+        self.tab_cole_two_search_table.setColumnCount(8)
+        self.tab_cole_two_search_table.setRowCount(15)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(0, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(1, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(1, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(2, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(2, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(3, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(4, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(4, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(5, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(6, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(6, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(7, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(7, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(8, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(8, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(9, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(9, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(10, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(10, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(11, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(11, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(12, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(12, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(13, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(13, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setVerticalHeaderItem(14, item)
+        self.tab_cole_two_search_table.setVerticalHeaderItem(14, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(0, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(1, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(1, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(2, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(2, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(3, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(4, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(4, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(5, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(6, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(6, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(7, item)
+        self.tab_cole_two_search_table.setHorizontalHeaderItem(7, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(8, item)
+        self.tab_cole_two_search_table.setItem(0, 0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(9, item)
+        self.tab_cole_two_search_table.setItem(0, 3, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setHorizontalHeaderItem(10, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setItem(0, 0, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setItem(0, 3, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_results_table_3.setItem(0, 4, item)
-        self.tab_one_results_table_3.horizontalHeader().setCascadingSectionResizes(False)
-        self.tab_one_results_table_3.horizontalHeader().setDefaultSectionSize(100)
-        self.tab_one_results_table_3.horizontalHeader().setSortIndicatorShown(False)
-        self.tab_one_results_table_3.horizontalHeader().setStretchLastSection(False)
-        self.verticalLayout_58.addWidget(self.tab_one_results_table_3)
+        self.tab_cole_two_search_table.setItem(0, 4, item)
+        self.tab_cole_two_search_table.horizontalHeader().setCascadingSectionResizes(False)
+        self.tab_cole_two_search_table.horizontalHeader().setDefaultSectionSize(100)
+        self.tab_cole_two_search_table.horizontalHeader().setSortIndicatorShown(False)
+        self.tab_cole_two_search_table.horizontalHeader().setStretchLastSection(False)
+        self.verticalLayout_58.addWidget(self.tab_cole_two_search_table)
         self.horizontalLayout_52 = QtGui.QHBoxLayout()
         self.horizontalLayout_52.setObjectName(_fromUtf8("horizontalLayout_52"))
         self.verticalLayout_58.addLayout(self.horizontalLayout_52)
@@ -6912,141 +6921,128 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_recent_additions_lbl_3.setScaledContents(False)
         self.tab_one_recent_additions_lbl_3.setObjectName(_fromUtf8("tab_one_recent_additions_lbl_3"))
         self.horizontalLayout_56.addWidget(self.tab_one_recent_additions_lbl_3)
-        spacerItem191 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem191)
+        spacerItem189 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem189)
         self.add_item_vert_line_67 = QtGui.QFrame(self.layoutWidget_12)
         self.add_item_vert_line_67.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_67.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_67.setObjectName(_fromUtf8("add_item_vert_line_67"))
         self.horizontalLayout_56.addWidget(self.add_item_vert_line_67)
-        spacerItem192 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        spacerItem190 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem190)
+        self.tab_cole_two_search_inventory_qline = QtGui.QLineEdit(self.layoutWidget_12)
+        self.tab_cole_two_search_inventory_qline.setObjectName(_fromUtf8("tab_cole_two_search_inventory_qline"))
+        self.horizontalLayout_56.addWidget(self.tab_cole_two_search_inventory_qline)
+        spacerItem191 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem191)
+        self.tab_cole_two_search_inventory_button = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_search_inventory_button.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_search_inventory_button.setObjectName(_fromUtf8("tab_cole_two_search_inventory_button"))
+        self.horizontalLayout_56.addWidget(self.tab_cole_two_search_inventory_button)
+        spacerItem192 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_56.addItem(spacerItem192)
-        self.tab_one_search_upc_qline_4 = QtGui.QLineEdit(self.layoutWidget_12)
-        self.tab_one_search_upc_qline_4.setObjectName(_fromUtf8("tab_one_search_upc_qline_4"))
-        self.horizontalLayout_56.addWidget(self.tab_one_search_upc_qline_4)
-        spacerItem193 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem193)
-        self.tab_one_search_upc_button_4 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_search_upc_button_4.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_search_upc_button_4.setObjectName(_fromUtf8("tab_one_search_upc_button_4"))
-        self.horizontalLayout_56.addWidget(self.tab_one_search_upc_button_4)
-        spacerItem194 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem194)
-        self.tab_one_us_releases_only_checkbox_3 = QtGui.QCheckBox(self.layoutWidget_12)
-        self.tab_one_us_releases_only_checkbox_3.setEnabled(True)
-        self.tab_one_us_releases_only_checkbox_3.setChecked(True)
-        self.tab_one_us_releases_only_checkbox_3.setObjectName(_fromUtf8("tab_one_us_releases_only_checkbox_3"))
-        self.horizontalLayout_56.addWidget(self.tab_one_us_releases_only_checkbox_3)
-        spacerItem195 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem195)
         self.add_item_vert_line_68 = QtGui.QFrame(self.layoutWidget_12)
         self.add_item_vert_line_68.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_68.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_68.setObjectName(_fromUtf8("add_item_vert_line_68"))
         self.horizontalLayout_56.addWidget(self.add_item_vert_line_68)
-        spacerItem196 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem196)
-        self.tab_one_edit_selected_item_3 = QtGui.QPushButton(self.layoutWidget_12)
-        self.tab_one_edit_selected_item_3.setMinimumSize(QtCore.QSize(0, 45))
-        self.tab_one_edit_selected_item_3.setObjectName(_fromUtf8("tab_one_edit_selected_item_3"))
-        self.horizontalLayout_56.addWidget(self.tab_one_edit_selected_item_3)
-        spacerItem197 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem197)
+        spacerItem193 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem193)
+        self.tab_cole_two_save_inventory = QtGui.QPushButton(self.layoutWidget_12)
+        self.tab_cole_two_save_inventory.setMinimumSize(QtCore.QSize(0, 45))
+        self.tab_cole_two_save_inventory.setObjectName(_fromUtf8("tab_cole_two_save_inventory"))
+        self.horizontalLayout_56.addWidget(self.tab_cole_two_save_inventory)
+        spacerItem194 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem194)
         self.add_item_vert_line_69 = QtGui.QFrame(self.layoutWidget_12)
         self.add_item_vert_line_69.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_69.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_69.setObjectName(_fromUtf8("add_item_vert_line_69"))
         self.horizontalLayout_56.addWidget(self.add_item_vert_line_69)
-        spacerItem198 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_56.addItem(spacerItem198)
-        self.tab_one_num_inventory_label_3 = QtGui.QLabel(self.layoutWidget_12)
+        spacerItem195 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_56.addItem(spacerItem195)
+        self.tab_cole_two_items_in_inventory = QtGui.QLabel(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tab_one_num_inventory_label_3.sizePolicy().hasHeightForWidth())
-        self.tab_one_num_inventory_label_3.setSizePolicy(sizePolicy)
-        self.tab_one_num_inventory_label_3.setMinimumSize(QtCore.QSize(170, 0))
-        self.tab_one_num_inventory_label_3.setObjectName(_fromUtf8("tab_one_num_inventory_label_3"))
-        self.horizontalLayout_56.addWidget(self.tab_one_num_inventory_label_3)
+        sizePolicy.setHeightForWidth(self.tab_cole_two_items_in_inventory.sizePolicy().hasHeightForWidth())
+        self.tab_cole_two_items_in_inventory.setSizePolicy(sizePolicy)
+        self.tab_cole_two_items_in_inventory.setMinimumSize(QtCore.QSize(170, 0))
+        self.tab_cole_two_items_in_inventory.setObjectName(_fromUtf8("tab_cole_two_items_in_inventory"))
+        self.horizontalLayout_56.addWidget(self.tab_cole_two_items_in_inventory)
         self.verticalLayout_64.addLayout(self.horizontalLayout_56)
-        self.tab_one_recently_added_table_3 = QtGui.QTableWidget(self.layoutWidget_12)
+        self.tab_cole_two_inventory_table = QtGui.QTableWidget(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tab_one_recently_added_table_3.sizePolicy().hasHeightForWidth())
-        self.tab_one_recently_added_table_3.setSizePolicy(sizePolicy)
-        self.tab_one_recently_added_table_3.setMinimumSize(QtCore.QSize(1300, 550))
-        self.tab_one_recently_added_table_3.setMaximumSize(QtCore.QSize(16777215, 550))
-        self.tab_one_recently_added_table_3.setAlternatingRowColors(False)
-        self.tab_one_recently_added_table_3.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.tab_one_recently_added_table_3.setObjectName(_fromUtf8("tab_one_recently_added_table_3"))
-        self.tab_one_recently_added_table_3.setColumnCount(11)
-        self.tab_one_recently_added_table_3.setRowCount(20)
+        sizePolicy.setHeightForWidth(self.tab_cole_two_inventory_table.sizePolicy().hasHeightForWidth())
+        self.tab_cole_two_inventory_table.setSizePolicy(sizePolicy)
+        self.tab_cole_two_inventory_table.setMinimumSize(QtCore.QSize(1300, 550))
+        self.tab_cole_two_inventory_table.setMaximumSize(QtCore.QSize(16777215, 550))
+        self.tab_cole_two_inventory_table.setAlternatingRowColors(False)
+        self.tab_cole_two_inventory_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tab_cole_two_inventory_table.setObjectName(_fromUtf8("tab_cole_two_inventory_table"))
+        self.tab_cole_two_inventory_table.setColumnCount(8)
+        self.tab_cole_two_inventory_table.setRowCount(20)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(0, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(1, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(1, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(2, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(2, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(3, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(4, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(4, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(5, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(6, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(6, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(7, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(7, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(8, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(8, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(9, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(9, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(10, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(10, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(11, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(11, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(12, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(12, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(13, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(13, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(14, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(14, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(15, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(15, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(16, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(16, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(17, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(17, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(18, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(18, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setVerticalHeaderItem(19, item)
+        self.tab_cole_two_inventory_table.setVerticalHeaderItem(19, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(0, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(1, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(1, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(2, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(2, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(3, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(4, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(4, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(5, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(6, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(6, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(7, item)
+        self.tab_cole_two_inventory_table.setHorizontalHeaderItem(7, item)
         item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(8, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(9, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setHorizontalHeaderItem(10, item)
-        item = QtGui.QTableWidgetItem()
-        self.tab_one_recently_added_table_3.setItem(0, 0, item)
-        self.verticalLayout_64.addWidget(self.tab_one_recently_added_table_3)
+        self.tab_cole_two_inventory_table.setItem(0, 0, item)
+        self.verticalLayout_64.addWidget(self.tab_cole_two_inventory_table)
         self.horizontalLayout_55.addLayout(self.verticalLayout_64)
         self.verticalLayout_65 = QtGui.QVBoxLayout()
         self.verticalLayout_65.setObjectName(_fromUtf8("verticalLayout_65"))
@@ -7336,8 +7332,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_account_combo_box.setObjectName(_fromUtf8("cole_three_account_combo_box"))
         self.horizontalLayout_42.addWidget(self.cole_three_account_combo_box)
         self.horizontalLayout_40.addLayout(self.horizontalLayout_42)
-        spacerItem199 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_40.addItem(spacerItem199)
+        spacerItem196 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_40.addItem(spacerItem196)
         self.verticalLayout_40 = QtGui.QVBoxLayout()
         self.verticalLayout_40.setObjectName(_fromUtf8("verticalLayout_40"))
         self.label_38 = QtGui.QLabel(self.layoutWidget7)
@@ -7381,8 +7377,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_account_number.setObjectName(_fromUtf8("cole_three_account_number"))
         self.verticalLayout_41.addWidget(self.cole_three_account_number)
         self.horizontalLayout_40.addLayout(self.verticalLayout_41)
-        spacerItem200 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_40.addItem(spacerItem200)
+        spacerItem197 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_40.addItem(spacerItem197)
         self.verticalLayout_45 = QtGui.QVBoxLayout()
         self.verticalLayout_45.setObjectName(_fromUtf8("verticalLayout_45"))
         self.label_39 = QtGui.QLabel(self.layoutWidget7)
@@ -7425,8 +7421,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_email.setObjectName(_fromUtf8("cole_three_email"))
         self.verticalLayout_46.addWidget(self.cole_three_email)
         self.horizontalLayout_40.addLayout(self.verticalLayout_46)
-        spacerItem201 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_40.addItem(spacerItem201)
+        spacerItem198 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_40.addItem(spacerItem198)
         self.label_40 = QtGui.QLabel(self.layoutWidget7)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
@@ -7448,8 +7444,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_billing_country.setObjectName(_fromUtf8("cole_three_billing_country"))
         self.verticalLayout_50.addWidget(self.cole_three_billing_country)
         self.horizontalLayout_40.addLayout(self.verticalLayout_50)
-        spacerItem202 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_40.addItem(spacerItem202)
+        spacerItem199 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_40.addItem(spacerItem199)
         self.label_43 = QtGui.QLabel(self.layoutWidget7)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
@@ -7464,12 +7460,12 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_shipping_address = QtGui.QLabel(self.layoutWidget7)
         self.cole_three_shipping_address.setObjectName(_fromUtf8("cole_three_shipping_address"))
         self.verticalLayout_51.addWidget(self.cole_three_shipping_address)
-        self.cole_three_shipping_country = QtGui.QLabel(self.layoutWidget7)
-        self.cole_three_shipping_country.setObjectName(_fromUtf8("cole_three_shipping_country"))
-        self.verticalLayout_51.addWidget(self.cole_three_shipping_country)
         self.cole_three_shipping_city_state = QtGui.QLabel(self.layoutWidget7)
         self.cole_three_shipping_city_state.setObjectName(_fromUtf8("cole_three_shipping_city_state"))
         self.verticalLayout_51.addWidget(self.cole_three_shipping_city_state)
+        self.cole_three_shipping_country = QtGui.QLabel(self.layoutWidget7)
+        self.cole_three_shipping_country.setObjectName(_fromUtf8("cole_three_shipping_country"))
+        self.verticalLayout_51.addWidget(self.cole_three_shipping_country)
         self.horizontalLayout_40.addLayout(self.verticalLayout_51)
         self.layoutWidget8 = QtGui.QWidget(self.cole_make_po_tab)
         self.layoutWidget8.setGeometry(QtCore.QRect(60, 120, 361, 68))
@@ -7617,8 +7613,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_release = QtGui.QComboBox(self.layoutWidget11)
         self.cole_three_bo_release.setObjectName(_fromUtf8("cole_three_bo_release"))
         self.horizontalLayout_48.addWidget(self.cole_three_bo_release)
-        spacerItem203 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_48.addItem(spacerItem203)
+        spacerItem200 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_48.addItem(spacerItem200)
         self.cole_three_bo_counter = QtGui.QLabel(self.layoutWidget11)
         self.cole_three_bo_counter.setObjectName(_fromUtf8("cole_three_bo_counter"))
         self.horizontalLayout_48.addWidget(self.cole_three_bo_counter)
@@ -7642,7 +7638,7 @@ class Ui_Form(QtGui.QWidget):
 
         self.retranslateUi(Form)
         self.main_menu_tabs.setCurrentIndex(10)
-        self.cole_tab_widget.setCurrentIndex(0)
+        self.cole_tab_widget.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -11027,141 +11023,124 @@ class Ui_Form(QtGui.QWidget):
         self.cole_one_group_items.setText(_translate("Form", "Group Items", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_add_edit_account_tab), _translate("Form", "Add/Edit Account", None))
         self.tab_one_search_item_lbl_9.setText(_translate("Form", "Search Colemine Item", None))
-        self.tab_one_vinyl_radio_button_3.setText(_translate("Form", "Vinyl", None))
-        self.tab_one_cd_radio_button_3.setText(_translate("Form", "CD", None))
-        self.tab_one_any_radio_button_3.setText(_translate("Form", "Any", None))
-        self.tab_one_us_releases_only_checkbox_2.setText(_translate("Form", "US Releases Only", None))
-        self.tab_one_search_upc_button_3.setText(_translate("Form", "Search UPC/SKU/EAN", None))
-        self.tab_one_search_artist_title_button_3.setText(_translate("Form", "Search Artist/Title", None))
-        self.tab_one_add_selected_to_inventory_4.setText(_translate("Form", "Add Selected Item To Inventory", None))
-        self.tab_one_clear_all_button_3.setText(_translate("Form", "Clear All", None))
-        self.tab_one_results_table_3.setSortingEnabled(False)
-        item = self.tab_one_results_table_3.verticalHeaderItem(0)
+        self.tab_cole_two_search_upc_button.setText(_translate("Form", "Search UPC/SKU/EAN", None))
+        self.tab_cole_two_search_artist_button.setText(_translate("Form", "Search Artist/Title", None))
+        self.tab_cole_two_add_button.setText(_translate("Form", "Add Selected Item To Inventory", None))
+        self.tab_cole_two_clear_all.setText(_translate("Form", "Clear All", None))
+        self.tab_cole_two_search_table.setSortingEnabled(False)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(1)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(1)
         item.setText(_translate("Form", "2", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(2)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(2)
         item.setText(_translate("Form", "3", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(3)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(3)
         item.setText(_translate("Form", "4", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(4)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(4)
         item.setText(_translate("Form", "5", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(5)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(5)
         item.setText(_translate("Form", "6", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(6)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(6)
         item.setText(_translate("Form", "7", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(7)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(7)
         item.setText(_translate("Form", "8", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(8)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(8)
         item.setText(_translate("Form", "9", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(9)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(9)
         item.setText(_translate("Form", "10", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(10)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(10)
         item.setText(_translate("Form", "11", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(11)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(11)
         item.setText(_translate("Form", "12", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(12)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(12)
         item.setText(_translate("Form", "13", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(13)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(13)
         item.setText(_translate("Form", "14", None))
-        item = self.tab_one_results_table_3.verticalHeaderItem(14)
+        item = self.tab_cole_two_search_table.verticalHeaderItem(14)
         item.setText(_translate("Form", "15", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(0)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "UPC/SKU/EAN", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(1)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "Qty.", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(2)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Catalog No.", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(3)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(3)
         item.setText(_translate("Form", "Artist", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(4)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(4)
         item.setText(_translate("Form", "Title", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(5)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(5)
         item.setText(_translate("Form", "Format", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(6)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(6)
         item.setText(_translate("Form", "Wholesale", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(7)
+        item = self.tab_cole_two_search_table.horizontalHeaderItem(7)
         item.setText(_translate("Form", "Label", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Genre", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "Year", None))
-        item = self.tab_one_results_table_3.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Discogs Release Number", None))
-        __sortingEnabled = self.tab_one_results_table_3.isSortingEnabled()
-        self.tab_one_results_table_3.setSortingEnabled(False)
-        self.tab_one_results_table_3.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.tab_cole_two_search_table.isSortingEnabled()
+        self.tab_cole_two_search_table.setSortingEnabled(False)
+        self.tab_cole_two_search_table.setSortingEnabled(__sortingEnabled)
         self.tab_one_recent_additions_lbl_3.setText(_translate("Form", "Search Inventory", None))
-        self.tab_one_search_upc_button_4.setText(_translate("Form", "Search", None))
-        self.tab_one_us_releases_only_checkbox_3.setText(_translate("Form", "By Release No.", None))
-        self.tab_one_edit_selected_item_3.setText(_translate("Form", "Save Changes To Selected Item", None))
-        self.tab_one_num_inventory_label_3.setText(_translate("Form", "XXXX Items In Inventory", None))
-        self.tab_one_recently_added_table_3.setSortingEnabled(False)
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(0)
+        self.tab_cole_two_search_inventory_button.setText(_translate("Form", "Search", None))
+        self.tab_cole_two_save_inventory.setText(_translate("Form", "Save Changes To Selected Item", None))
+        self.tab_cole_two_items_in_inventory.setText(_translate("Form", "XXXX Items In Inventory", None))
+        self.tab_cole_two_inventory_table.setSortingEnabled(False)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(1)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(1)
         item.setText(_translate("Form", "2", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(2)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(2)
         item.setText(_translate("Form", "3", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(3)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(3)
         item.setText(_translate("Form", "4", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(4)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(4)
         item.setText(_translate("Form", "5", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(5)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(5)
         item.setText(_translate("Form", "6", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(6)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(6)
         item.setText(_translate("Form", "7", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(7)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(7)
         item.setText(_translate("Form", "8", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(8)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(8)
         item.setText(_translate("Form", "9", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(9)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(9)
         item.setText(_translate("Form", "10", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(10)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(10)
         item.setText(_translate("Form", "11", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(11)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(11)
         item.setText(_translate("Form", "12", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(12)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(12)
         item.setText(_translate("Form", "13", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(13)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(13)
         item.setText(_translate("Form", "14", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(14)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(14)
         item.setText(_translate("Form", "15", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(15)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(15)
         item.setText(_translate("Form", "16", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(16)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(16)
         item.setText(_translate("Form", "17", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(17)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(17)
         item.setText(_translate("Form", "18", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(18)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(18)
         item.setText(_translate("Form", "19", None))
-        item = self.tab_one_recently_added_table_3.verticalHeaderItem(19)
+        item = self.tab_cole_two_inventory_table.verticalHeaderItem(19)
         item.setText(_translate("Form", "20", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(0)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "UPC/SKU/EAN", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(1)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "In Stock", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(2)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Catalog No.", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(3)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(3)
         item.setText(_translate("Form", "Artist", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(4)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(4)
         item.setText(_translate("Form", "Title", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(5)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(5)
         item.setText(_translate("Form", "Format", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(6)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(6)
         item.setText(_translate("Form", "Wholesale", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(7)
+        item = self.tab_cole_two_inventory_table.horizontalHeaderItem(7)
         item.setText(_translate("Form", "Label", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Genre", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "Year", None))
-        item = self.tab_one_recently_added_table_3.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Discogs Release Number", None))
-        __sortingEnabled = self.tab_one_recently_added_table_3.isSortingEnabled()
-        self.tab_one_recently_added_table_3.setSortingEnabled(False)
-        self.tab_one_recently_added_table_3.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.tab_cole_two_inventory_table.isSortingEnabled()
+        self.tab_cole_two_inventory_table.setSortingEnabled(False)
+        self.tab_cole_two_inventory_table.setSortingEnabled(__sortingEnabled)
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_add_edit_inventory_tab), _translate("Form", "Add/Edit Inventory", None))
         item = self.cole_three_po_table.verticalHeaderItem(0)
         item.setText(_translate("Form", "1", None))
@@ -11214,9 +11193,9 @@ class Ui_Form(QtGui.QWidget):
         item = self.cole_three_po_table.verticalHeaderItem(24)
         item.setText(_translate("Form", "25", None))
         item = self.cole_three_po_table.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "More", None))
-        item = self.cole_three_po_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "Remove", None))
+        item = self.cole_three_po_table.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "UPC", None))
         item = self.cole_three_po_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Catalog No.", None))
         item = self.cole_three_po_table.horizontalHeaderItem(3)
@@ -11289,7 +11268,7 @@ class Ui_Form(QtGui.QWidget):
         item = self.cole_three_bo_table.verticalHeaderItem(24)
         item.setText(_translate("Form", "25", None))
         item = self.cole_three_bo_table.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "More", None))
+        item.setText(_translate("Form", "UPC", None))
         item = self.cole_three_bo_table.horizontalHeaderItem(1)
         item.setText(_translate("Form", "Catalog No.", None))
         item = self.cole_three_bo_table.horizontalHeaderItem(2)
@@ -11322,8 +11301,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_billing_country.setText(_translate("Form", "United States of Amurica", None))
         self.label_43.setText(_translate("Form", "Shipping Address:", None))
         self.cole_three_shipping_address.setText(_translate("Form", "120 Karl Brown Way", None))
-        self.cole_three_shipping_country.setText(_translate("Form", "Loveland, OH 45140", None))
-        self.cole_three_shipping_city_state.setText(_translate("Form", "United States of Amurica", None))
+        self.cole_three_shipping_city_state.setText(_translate("Form", "Loveland, OH 45140", None))
+        self.cole_three_shipping_country.setText(_translate("Form", "United States of Amurica", None))
         self.cole_three_add_item_qline_button.setText(_translate("Form", "Add Item(s)", None))
         self.cole_three_add_item_combo_box_button.setText(_translate("Form", "Add Item", None))
         self.label_31.setText(_translate("Form", "Default Quantity", None))
@@ -11343,7 +11322,6 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_save.setText(_translate("Form", "Save Changes to Selected Item", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.colemine), _translate("Form", "Colemine", None))
-
         
         #other stuff
 
@@ -11442,7 +11420,21 @@ class Ui_Form(QtGui.QWidget):
         
         #tab eight
         self.tab_eight_refresh()
-        
+
+        #tab colemine
+        self.cole_one_add_save.clicked.connect(self.tab_cole_one_add_account)
+        self.cole_one_edit_select.currentIndexChanged.connect(self.tab_cole_one_edit_select_changed)
+        self.tab_cole_one_refresh()
+        self.tab_cole_two_add_button.clicked.connect(self.tab_cole_two_add_to_inventory)
+        self.tab_cole_two_search_upc_button.clicked.connect(self.tab_cole_two_search_for_release)
+        self.tab_cole_two_search_upc_qline.returnPressed.connect(self.tab_cole_two_search_for_release)
+        self.tab_cole_two_save_inventory.clicked.connect(self.tab_cole_two_change_inventory)
+        self.tab_cole_two_reset()
+        self.tab_cole_two_refresh()
+        self.cole_three_account_combo_box.currentIndexChanged.connect(self.tab_cole_three_account_changed)
+        self.tab_cole_three_reset()
+        self.cole_three_add_item_qline_button.clicked.connect(self.tab_cole_three_add_item_to_po)
+
     ################### tab one starts ##################################
     
     def tab_one_remove_from_inventory(self):
@@ -14668,6 +14660,382 @@ class Ui_Form(QtGui.QWidget):
 
     ################### tab eight ends ##################################
     
+    ################### tab colemine one begins ##################################
+    def tab_cole_one_add_account(self):
+        for row in self.db_cursor.execute('SELECT * from accounts'):
+            print row
+
+        db_item = [''] * 22
+        try:
+            db_item[COLE_BUSINESS_NAME_INDEX] = self.xstr(self.cole_one_add_business_name.text())
+            db_item[COLE_CONTACT_NAME_INDEX] = self.xstr(self.cole_one_add_contact.text())
+            db_item[COLE_PHONE_INDEX] = self.xstr(self.cole_one_add_phone.text())
+            db_item[COLE_CELL_INDEX] = self.xstr(self.cole_one_add_cell.text())
+            db_item[COLE_EMAIL_INDEX] = self.xstr(self.cole_one_add_email.text())
+            db_item[COLE_BILLING_NAME_INDEX] = self.xstr(self.cole_one_add_billing_name.text())
+            db_item[COLE_BILLING_LINE_ONE_INDEX] = self.xstr(self.cole_one_add_billing_line_1.text())
+            db_item[COLE_BILLING_LINE_TWO_INDEX] = self.xstr(self.cole_one_add_billing_line_2.text())
+            db_item[COLE_BILLING_LINE_THREE_INDEX] = self.xstr(self.cole_one_add_billing_line_3.text())
+            db_item[COLE_BILLING_CITY_INDEX] = self.xstr(self.cole_one_add_billing_city.text())
+            db_item[COLE_BILLING_STATE_INDEX] = self.xstr(self.cole_one_add_billing_state.text())
+            db_item[COLE_BILLING_ZIP_INDEX] = self.xstr(self.cole_one_add_billing_zip.text())
+            db_item[COLE_BILLING_COUNTRY_INDEX] = self.xstr(self.cole_one_add_billing_country.text())
+            db_item[COLE_SHIPPING_NAME_INDEX] = self.xstr(self.cole_one_add_shipping_name.text())
+            db_item[COLE_SHIPPING_LINE_ONE_INDEX] = self.xstr(self.cole_one_add_shipping_line_1.text())
+            db_item[COLE_SHIPPING_LINE_TWO_INDEX] = self.xstr(self.cole_one_add_shipping_line_2.text())
+            db_item[COLE_SHIPPING_LINE_THREE_INDEX] = self.xstr(self.cole_one_add_shipping_line_3.text())
+            db_item[COLE_SHIPPING_CITY_INDEX] = self.xstr(self.cole_one_add_shipping_city.text())
+            db_item[COLE_SHIPPING_STATE_INDEX] = self.xstr(self.cole_one_add_shipping_state.text())
+            db_item[COLE_SHIPPING_ZIP_INDEX] = self.xstr(self.cole_one_add_shipping_zip.text())
+            db_item[COLE_SHIPPING_COUNTRY_INDEX] = self.xstr(self.cole_one_add_shipping_country.text())
+            db_item[COLE_NOTES_INDEX] = 'TODO'
+            
+        except Exception as e:
+            print 'some shit fucked up while reading in new account: %s' % e
+            return
+        print db_item
+
+        try:
+            self.db_cursor.execute('INSERT INTO accounts (business_name, contact_name, phone, cell, email, billing_name, billing_line_1, billing_line_2, billing_line_3, billing_city, billing_state, billing_zip, billing_country, shipping_name, shipping_line_1, shipping_line_2, shipping_line_3, shipping_city, shipping_state, shipping_zip, shipping_country, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', tuple(db_item))
+            self.db.commit()
+        except Exception as e:
+            print 'tab_cole_one_add_account, adding item to db: %s' % e
+            return
+        self.tab_cole_one_refresh()
+
+    def tab_cole_one_refresh(self):
+        self.tab_cole_one_edit_select_populate()
+
+    def tab_cole_one_edit_select_changed(self):
+        if self.cole_one_edit_select.currentText() == 'None':
+            #TODO clear everything
+            self.cole_one_edit_business_name.setText('')
+            self.cole_one_edit_contact.setText('')
+            self.cole_one_edit_account_number.setText('')
+            self.cole_one_edit_phone.setText('')
+            self.cole_one_edit_cell.setText('')
+            self.cole_one_edit_email.setText('')
+            self.cole_one_edit_billing_name.setText('')
+            self.cole_one_edit_billing_line_1.setText('')
+            self.cole_one_edit_billing_line_2.setText('')
+            self.cole_one_edit_billing_line_3.setText('')
+            self.cole_one_edit_billing_city.setText('')
+            self.cole_one_edit_billing_state.setText('')
+            self.cole_one_edit_billing_zip.setText('')
+            self.cole_one_edit_billing_country.setText('')
+            self.cole_one_edit_shipping_name.setText('')
+            self.cole_one_edit_shipping_line_1.setText('')
+            self.cole_one_edit_shipping_line_2.setText('')
+            self.cole_one_edit_shipping_line_3.setText('')
+            self.cole_one_edit_shipping_city.setText('')
+            self.cole_one_edit_shipping_state.setText('')
+            self.cole_one_edit_shipping_zip.setText('')
+            self.cole_one_edit_shipping_country.setText('')
+            return
+        account = self.cole_one_edit_select.currentText()
+        account_no, business_name = account.split('-', 1)
+        account_no = int(account_no)
+        for row in self.db_cursor.execute('SELECT * from accounts where account_number = ?', (account_no,)):
+            self.cole_one_edit_business_name.setText(row[COLE_BUSINESS_NAME_INDEX])
+            self.cole_one_edit_contact.setText(row[COLE_CONTACT_NAME_INDEX])
+            self.cole_one_edit_account_number.setText(str(row[COLE_ACCOUNT_NUMBER_INDEX]))
+            self.cole_one_edit_phone.setText(row[COLE_PHONE_INDEX])
+            self.cole_one_edit_cell.setText(row[COLE_CELL_INDEX])
+            self.cole_one_edit_email.setText(row[COLE_EMAIL_INDEX])
+            self.cole_one_edit_billing_name.setText(row[COLE_BILLING_NAME_INDEX])
+            self.cole_one_edit_billing_line_1.setText(row[COLE_BILLING_LINE_ONE_INDEX])
+            self.cole_one_edit_billing_line_2.setText(row[COLE_BILLING_LINE_TWO_INDEX])
+            self.cole_one_edit_billing_line_3.setText(row[COLE_BILLING_LINE_THREE_INDEX])
+            self.cole_one_edit_billing_city.setText(row[COLE_BILLING_CITY_INDEX])
+            self.cole_one_edit_billing_state.setText(row[COLE_BILLING_STATE_INDEX])
+            self.cole_one_edit_billing_zip.setText(row[COLE_BILLING_ZIP_INDEX])
+            self.cole_one_edit_billing_country.setText(row[COLE_BILLING_COUNTRY_INDEX])
+            self.cole_one_edit_shipping_name.setText(row[COLE_SHIPPING_NAME_INDEX])
+            self.cole_one_edit_shipping_line_1.setText(row[COLE_SHIPPING_LINE_ONE_INDEX])
+            self.cole_one_edit_shipping_line_2.setText(row[COLE_SHIPPING_LINE_TWO_INDEX])
+            self.cole_one_edit_shipping_line_3.setText(row[COLE_SHIPPING_LINE_THREE_INDEX])
+            self.cole_one_edit_shipping_city.setText(row[COLE_SHIPPING_CITY_INDEX])
+            self.cole_one_edit_shipping_state.setText(row[COLE_SHIPPING_STATE_INDEX])
+            self.cole_one_edit_shipping_zip.setText(row[COLE_SHIPPING_ZIP_INDEX])
+            self.cole_one_edit_shipping_country.setText(row[COLE_SHIPPING_COUNTRY_INDEX])
+
+        
+
+
+    def tab_cole_one_edit_select_populate(self):
+        while self.cole_one_edit_select.count() != 0:
+            self.cole_one_edit_select.removeItem(0)
+        self.cole_one_edit_select.addItem('None')
+        for row in self.db_cursor.execute('SELECT * FROM accounts'):
+            self.cole_one_edit_select.addItem('%s - %s' % (row[COLE_ACCOUNT_NUMBER_INDEX], row[COLE_BUSINESS_NAME_INDEX]))
+
+    ################### tab colemine one ends ##################################
+            
+    ################### tab colemine two begins ##################################
+    def tab_cole_two_search_for_release(self):
+        search_term = self.xstr(self.tab_cole_two_search_upc_qline.text())
+        self.tab_cole_two_search_table_list = []
+        upcs = []
+        if ((search_term == '') or (search_term == None)):
+            for row in self.db_cursor.execute('SELECT * FROM colemine_inventory ORDER BY catalog_number ASC'):
+                if row[COLE_INV_UPC_INDEX] not in upcs:
+                    upcs.append(row[COLE_INV_UPC_INDEX])
+                    self.tab_cole_two_search_table_list.append(list(row))
+            self.tab_cole_two_refresh()
+            return
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory WHERE catalog_number = ?', (search_term,)):
+            self.tab_cole_two_search_table_list.append(list(row))
+        if len(self.tab_cole_two_search_table_list) == 0:
+            todo = 0
+        self.tab_cole_two_refresh()
+        
+    def tab_cole_two_search_inventory(self):
+        self.tab_cole_two_inventory_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory ORDER BY catalog_number ASC'):
+            self.tab_cole_two_inventory_table_list.append(list(row))
+        self.tab_cole_two_refresh()
+
+    def tab_cole_two_change_inventory(self):
+        row = self.tab_cole_two_inventory_table.currentRow()
+        db_item = [''] * 9
+        try:
+            db_item =  (self.xint(self.tab_cole_two_inventory_table_get_text(row, 1)),
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 2)),
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 3)),
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 4)),
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 5)),
+                       self.xfloat(self.tab_cole_two_inventory_table_get_text(row, 6)),
+                       self.xstr(0),#cost is always zero because terry and i are stupid
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 7)),
+                       self.xstr(self.tab_cole_two_inventory_table_get_text(row, 0)))
+        except Exception as e:
+            print 'tab_cole_two_save_inventory: %s' % e
+            return        
+        self.db_cursor.execute('UPDATE colemine_inventory SET  qty = ?, catalog_number = ?, artist = ?, title = ?, format = ?, wholesale = ?, cost = ?, label = ? WHERE upc = ?', (db_item))
+        self.db.commit()
+
+    def tab_cole_two_add_to_inventory(self):
+        row = self.tab_cole_two_search_table.currentRow()
+        db_item = [''] * 9
+        try:
+            db_item = (self.xstr(self.tab_cole_two_search_table_get_text(row, 0)),
+                       self.xint(self.tab_cole_two_search_table_get_text(row, 1)),
+                       self.xstr(self.tab_cole_two_search_table_get_text(row, 2)),
+                       self.xstr(self.tab_cole_two_search_table_get_text(row, 3)),
+                       self.xstr(self.tab_cole_two_search_table_get_text(row, 4)),
+                       self.xstr(self.tab_cole_two_search_table_get_text(row, 5)),
+                       self.xfloat(self.tab_cole_two_search_table_get_text(row, 6)),
+                       self.xstr(0),#cost is always zero because terry and i are stupid
+                       self.xstr(self.tab_cole_two_search_table_get_text(row, 7)))
+        except Exception as e:
+            print 'tab_cole_two_add_to_inventory: %s' % e
+            return
+
+        #now that we have the info, do stuff with it
+        #first check if this release is already in our db
+        new_qty = 0
+        key = 0
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory where upc = ?', (db_item[COLE_INV_UPC_INDEX],)):
+            new_qty = row[COLE_INV_QTY_INDEX] + db_item[COLE_INV_QTY_INDEX]
+            key = row[COLE_INV_ID_INDEX]
+        if key == 0:
+            self.db_cursor.execute('INSERT INTO colemine_inventory (upc, qty, catalog_number, artist, title, format, wholesale, cost, label) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(db_item))
+            self.db.commit()
+        else:
+            self.db_cursor.execute('UPDATE colemine_inventory SET qty = ? WHERE id = ?', (new_qty, key)) 
+            self.db.commit()
+        self.tab_cole_two_search_inventory()
+        self.tab_cole_two_refresh()
+
+
+    def tab_cole_two_reset(self):
+        upcs = []
+        self.tab_cole_two_search_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory ORDER BY upc ASC'):
+            if row[COLE_INV_UPC_INDEX] not in upcs:
+                upcs.append(row[COLE_INV_UPC_INDEX])
+                self.tab_cole_two_search_table_list.append(list(row))
+        self.tab_cole_two_inventory_table_list = []
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory ORDER BY upc ASC'):
+            self.tab_cole_two_inventory_table_list.append(list(row))
+        self.tab_cole_two_refresh()
+
+    def tab_cole_two_inventory_table_clear(self):
+        for ii in range(self.tab_cole_two_inventory_table.rowCount()):
+            for jj in range(self.tab_cole_two_inventory_table.columnCount()):
+                self.tab_cole_two_inventory_table_change_text(ii,jj,"")
+
+    def tab_cole_two_inventory_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_cole_two_inventory_table.item(row,col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_cole_two_inventory_table.setItem(row, col, item)
+        
+    def tab_cole_two_inventory_table_get_text(self, row, col):
+        item = self.tab_cole_two_inventory_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
+    def tab_cole_two_refresh(self):
+        self.tab_cole_two_search_table_clear()
+        #TODO: need to do stuff here to make page refresh, for now that will just mean resetting
+        #self.tab_cole_two_reset()
+        self.tab_cole_two_search_table.setRowCount(len(self.tab_cole_two_search_table_list))
+        for ix, row in enumerate(self.tab_cole_two_search_table_list):
+            self.tab_cole_two_search_table_change_text(ix,0,self.xstr(row[COLE_INV_UPC_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,1,self.xstr(0))
+            self.tab_cole_two_search_table_change_text(ix,2,self.xstr(row[COLE_INV_CATALOG_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,3,self.xstr(row[COLE_INV_ARTIST_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,4,self.xstr(row[COLE_INV_TITLE_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,5,self.xstr(row[COLE_INV_FORMAT_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,6,self.xstr(row[COLE_INV_WHOLESALE_INDEX]))
+            self.tab_cole_two_search_table_change_text(ix,7,self.xstr(row[COLE_INV_LABEL_INDEX]))
+        self.tab_cole_two_search_table.resizeColumnsToContents()
+        #bottom table now
+        self.tab_cole_two_inventory_table_clear()
+        self.tab_cole_two_inventory_table.setRowCount(len(self.tab_cole_two_inventory_table_list))
+        for ix, row in enumerate(self.tab_cole_two_inventory_table_list):            
+            self.tab_cole_two_inventory_table_change_text(ix,0,self.xstr(row[COLE_INV_UPC_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,1,self.xstr(row[COLE_INV_QTY_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,2,self.xstr(row[COLE_INV_CATALOG_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,3,self.xstr(row[COLE_INV_ARTIST_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,4,self.xstr(row[COLE_INV_TITLE_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,5,self.xstr(row[COLE_INV_FORMAT_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,6,self.xstr(row[COLE_INV_WHOLESALE_INDEX]))
+            self.tab_cole_two_inventory_table_change_text(ix,7,self.xstr(row[COLE_INV_LABEL_INDEX]))
+        self.tab_cole_two_inventory_table.resizeColumnsToContents()            
+
+
+    def tab_cole_two_search_table_clear(self):
+        for ii in range(self.tab_cole_two_search_table.rowCount()):
+            for jj in range(self.tab_cole_two_search_table.columnCount()):
+                self.tab_cole_two_search_table_change_text(ii,jj,"")
+
+    def tab_cole_two_search_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.tab_cole_two_search_table.item(row,col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.tab_cole_two_search_table.setItem(row, col, item)
+        
+    def tab_cole_two_search_table_get_text(self, row, col):
+        item = self.tab_cole_two_search_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
+    ################### tab colemine two ends ##################################
+    ################### tab colemine three begins ##################################
+
+    def tab_cole_three_reset(self):
+        while self.cole_three_account_combo_box.count() != 0:
+            self.cole_three_account_combo_box.removeItem(0)
+        self.cole_three_account_combo_box.addItem('None')
+        for row in self.db_cursor.execute('SELECT * FROM accounts'):
+            self.cole_three_account_combo_box.addItem('%s - %s' % (row[COLE_ACCOUNT_NUMBER_INDEX], row[COLE_BUSINESS_NAME_INDEX]))
+        #now go through and null out all the bullshit ass bullshit
+                                       
+    def tab_cole_three_add_item_to_po(self):
+        items = self.cole_three_add_item_qline.text()
+        items = items.split(',')
+        for cat_no in items:
+            for row in self.db_cursor.execute('SELECT * FROM colemine_inventory WHERE catalog_number = ?', (self.xstr(cat_no),)):
+                row = list(row)
+                print row
+                with_qty = row.append(self.cole_three_add_item_default_qty.value())
+                print row
+                self.tab_cole_three_po_table_list.append(row)
+        print 'fuckme'
+        print self.tab_cole_three_po_table_list
+        self.tab_cole_three_refresh()
+
+    def tab_cole_three_refresh(self):
+        self.tab_cole_three_po_table_clear()
+        self.cole_three_po_table.setRowCount(len(self.tab_cole_three_po_table_list))
+        for ix, row in enumerate(self.tab_cole_three_po_table_list):
+            print row
+            todo = 0
+            self.tab_cole_three_po_table_change_text(ix, 1, self.xstr(row[COLE_INV_UPC_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 2, self.xstr(row[COLE_INV_CATALOG_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 3, self.xstr(row[COLE_INV_ARTIST_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 4, self.xstr(row[COLE_INV_TITLE_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 5, self.xstr(0))
+            self.tab_cole_three_po_table_change_text(ix, 6, self.xstr(0))
+            self.tab_cole_three_po_table_change_text(ix, 7, self.xstr(0))
+            self.tab_cole_three_po_table_change_text(ix, 8, self.xstr(row[COLE_INV_QTY_INDEX]))
+        self.cole_three_po_table.resizeColumnsToContents()
+            #self.tab_cole_three_po_table_change_text(ix, 0, row[CO
+        
+    def tab_cole_three_po_table_clear(self):
+        for ii in range(self.cole_three_po_table.rowCount()):
+            for jj in range(self.cole_three_po_table.columnCount()):
+                self.tab_cole_three_po_table_change_text(ii, jj, "")
+
+    def tab_cole_three_account_changed(self):
+        if self.cole_three_account_combo_box.currentText() == 'None':
+            #clear it all boys
+            self.cole_three_business_name.setText('')
+            self.cole_three_contact.setText('')
+            self.cole_three_account_number.setText('')
+            self.cole_three_phone.setText('')
+            self.cole_three_cell.setText('')
+            self.cole_three_email.setText('')
+            self.cole_three_billing_address.setText('')
+            self.cole_three_billing_city_state.setText('')
+            self.cole_three_billing_country.setText('')
+            self.cole_three_shipping_address.setText('')
+            self.cole_three_shipping_city_state.setText('')
+            self.cole_three_shipping_country.setText('')
+            return
+        account = self.cole_three_account_combo_box.currentText()
+        account_no, business_name = account.split('-', 1)
+        account_no = int(account_no)
+        for row in self.db_cursor.execute('SELECT * FROM accounts WHERE account_number = ?', (account_no,)):
+            #fill in whatever info
+            self.cole_three_business_name.setText(row[COLE_BUSINESS_NAME_INDEX])
+            self.cole_three_contact.setText(row[COLE_CONTACT_NAME_INDEX])
+            self.cole_three_account_number.setText(self.xstr(row[COLE_ACCOUNT_NUMBER_INDEX]))
+            self.cole_three_phone.setText(row[COLE_PHONE_INDEX])
+            self.cole_three_cell.setText(row[COLE_CELL_INDEX])
+            self.cole_three_email.setText(row[COLE_EMAIL_INDEX])
+            self.cole_three_billing_address.setText(row[COLE_BILLING_LINE_ONE_INDEX])
+            self.cole_three_billing_city_state.setText('%s, %s %s' % (row[COLE_BILLING_CITY_INDEX], row[COLE_BILLING_STATE_INDEX], row[COLE_BILLING_ZIP_INDEX]))
+            self.cole_three_billing_country.setText(row[COLE_BILLING_COUNTRY_INDEX])
+            self.cole_three_shipping_address.setText(row[COLE_SHIPPING_LINE_ONE_INDEX])
+            self.cole_three_shipping_city_state.setText('%s, %s %s' % (row[COLE_SHIPPING_CITY_INDEX], row[COLE_SHIPPING_STATE_INDEX], row[COLE_SHIPPING_ZIP_INDEX]))
+            self.cole_three_shipping_country.setText(row[COLE_SHIPPING_COUNTRY_INDEX])
+
+
+    def tab_cole_three_po_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.cole_three_po_table.item(row,col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.cole_three_po_table.setItem(row, col, item)
+        
+    def tab_cole_three_po_table_table_get_text(self, row, col):
+        item = self.cole_three_po_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
+
+    ################### tab colemine three ends ##################################
+
     def shift_right_shortcut(self):
         if self.main_menu_tabs.currentIndex() == 0:
             self.tab_one_add_to_inventory()
