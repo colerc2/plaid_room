@@ -14949,14 +14949,25 @@ class Ui_Form(QtGui.QWidget):
         items = self.cole_three_add_item_qline.text()
         items = items.split(',')
         for cat_no in items:
-            for row in self.db_cursor.execute('SELECT * FROM colemine_inventory WHERE catalog_number = ?', (self.xstr(cat_no),)):
-                row = list(row)
-                print row
-                with_qty = row.append(self.cole_three_add_item_default_qty.value())
-                print row
-                self.tab_cole_three_po_table_list.append(row)
-        print 'fuckme'
-        print self.tab_cole_three_po_table_list
+            add = True
+            for ix, row in enumerate(self.tab_cole_three_po_table_list):
+                if cat_no == row[COLE_INV_CATALOG_INDEX]:
+                    self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_ORDERED_INDEX] += self.cole_three_add_item_default_qty.value()
+                    shipped = min(self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_INDEX],self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_ORDERED_INDEX])
+                    self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_BO_INDEX] = self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_ORDERED_INDEX] - shipped
+                    self.tab_cole_three_po_table_list[ix][COLE_INV_QTY_SHIPPED_INDEX] = shipped
+                    add = False
+                    break
+            if add:
+                for row in self.db_cursor.execute('SELECT * FROM colemine_inventory WHERE catalog_number = ?', (self.xstr(cat_no),)):
+                    row = list(row)
+                    print row
+                    row.append(self.cole_three_add_item_default_qty.value())
+                    shipped = min(row[COLE_INV_QTY_INDEX], row[COLE_INV_QTY_ORDERED_INDEX])
+                    row.append(row[COLE_INV_QTY_ORDERED_INDEX] - shipped)
+                    row.append(shipped)
+                    row.append('')
+                    self.tab_cole_three_po_table_list.append(row)
         self.tab_cole_three_refresh()
 
     def tab_cole_three_refresh(self):
@@ -14969,9 +14980,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_po_table_change_text(ix, 2, self.xstr(row[COLE_INV_CATALOG_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 3, self.xstr(row[COLE_INV_ARTIST_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 4, self.xstr(row[COLE_INV_TITLE_INDEX]))
-            self.tab_cole_three_po_table_change_text(ix, 5, self.xstr(0))
-            self.tab_cole_three_po_table_change_text(ix, 6, self.xstr(0))
-            self.tab_cole_three_po_table_change_text(ix, 7, self.xstr(0))
+            self.tab_cole_three_po_table_change_text(ix, 5, self.xstr(row[COLE_INV_QTY_ORDERED_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 6, self.xstr(row[COLE_INV_QTY_BO_INDEX]))
+            self.tab_cole_three_po_table_change_text(ix, 7, self.xstr(row[COLE_INV_QTY_SHIPPED_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 8, self.xstr(row[COLE_INV_QTY_INDEX]))
         self.cole_three_po_table.resizeColumnsToContents()
             #self.tab_cole_three_po_table_change_text(ix, 0, row[CO
