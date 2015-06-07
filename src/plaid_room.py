@@ -120,6 +120,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_cole_two_search_table_list = []
         self.tab_cole_two_inventory_table_list = []
         self.tab_cole_three_po_table_list = []
+        self.tab_cole_three_current_account = []
         
         #create/connect to database
         self.db = sqlite3.connect(DB_FILE)
@@ -293,13 +294,16 @@ class Ui_Form(QtGui.QWidget):
         label text,
         id integer primary key autoincrement)
         """)
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_transaction
+        (number_of_items interger,
         
         
         self.setupUi(self)
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1920, 1035)
+        Form.resize(1916, 1035)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -7068,6 +7072,7 @@ class Ui_Form(QtGui.QWidget):
         self.line_5.setObjectName(_fromUtf8("line_5"))
         self.cole_three_po_table = QtGui.QTableWidget(self.cole_make_po_tab)
         self.cole_three_po_table.setGeometry(QtCore.QRect(50, 210, 971, 601))
+        self.cole_three_po_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.cole_three_po_table.setObjectName(_fromUtf8("cole_three_po_table"))
         self.cole_three_po_table.setColumnCount(9)
         self.cole_three_po_table.setRowCount(25)
@@ -7233,6 +7238,7 @@ class Ui_Form(QtGui.QWidget):
         self.line_8.setObjectName(_fromUtf8("line_8"))
         self.cole_three_bo_table = QtGui.QTableWidget(self.cole_make_po_tab)
         self.cole_three_bo_table.setGeometry(QtCore.QRect(1050, 310, 831, 631))
+        self.cole_three_bo_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.cole_three_bo_table.setObjectName(_fromUtf8("cole_three_bo_table"))
         self.cole_three_bo_table.setColumnCount(7)
         self.cole_three_bo_table.setRowCount(25)
@@ -7633,6 +7639,9 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_save = QtGui.QPushButton(self.layoutWidget12)
         self.cole_three_bo_save.setObjectName(_fromUtf8("cole_three_bo_save"))
         self.horizontalLayout_49.addWidget(self.cole_three_bo_save)
+        self.cole_three_submit_po = QtGui.QPushButton(self.cole_make_po_tab)
+        self.cole_three_submit_po.setGeometry(QtCore.QRect(210, 830, 171, 31))
+        self.cole_three_submit_po.setObjectName(_fromUtf8("cole_three_submit_po"))
         self.cole_tab_widget.addTab(self.cole_make_po_tab, _fromUtf8(""))
         self.main_menu_tabs.addTab(self.colemine, _fromUtf8(""))
 
@@ -11320,8 +11329,10 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_export.setText(_translate("Form", "Export current selection to CSV", None))
         self.cole_three_bo_fulfill_all.setText(_translate("Form", "Fulfill All Currently Selected", None))
         self.cole_three_bo_save.setText(_translate("Form", "Save Changes to Selected Item", None))
+        self.cole_three_submit_po.setText(_translate("Form", "Submit PO", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.colemine), _translate("Form", "Colemine", None))
+
         
         #other stuff
 
@@ -11434,6 +11445,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_account_combo_box.currentIndexChanged.connect(self.tab_cole_three_account_changed)
         self.tab_cole_three_reset()
         self.cole_three_add_item_qline_button.clicked.connect(self.tab_cole_three_add_item_to_po)
+        self.connect(self.cole_three_po_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_cole_three_po_table_cell_changed)
+        self.cole_three_submit_po.clicked.connect(self.tab_cole_three_make_wholesale_po)
 
     ################### tab one starts ##################################
     
@@ -14973,6 +14986,7 @@ class Ui_Form(QtGui.QWidget):
     def tab_cole_three_refresh(self):
         self.tab_cole_three_po_table_clear()
         self.cole_three_po_table.setRowCount(len(self.tab_cole_three_po_table_list))
+        self.cole_three_po_table_generate_remove_buttons()
         for ix, row in enumerate(self.tab_cole_three_po_table_list):
             print row
             todo = 0
@@ -14980,17 +14994,56 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_po_table_change_text(ix, 2, self.xstr(row[COLE_INV_CATALOG_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 3, self.xstr(row[COLE_INV_ARTIST_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 4, self.xstr(row[COLE_INV_TITLE_INDEX]))
+            self.cole_three_po_table.blockSignals(True)
             self.tab_cole_three_po_table_change_text(ix, 5, self.xstr(row[COLE_INV_QTY_ORDERED_INDEX]))
+            self.cole_three_po_table.blockSignals(False)
             self.tab_cole_three_po_table_change_text(ix, 6, self.xstr(row[COLE_INV_QTY_BO_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 7, self.xstr(row[COLE_INV_QTY_SHIPPED_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 8, self.xstr(row[COLE_INV_QTY_INDEX]))
         self.cole_three_po_table.resizeColumnsToContents()
-            #self.tab_cole_three_po_table_change_text(ix, 0, row[CO
+        self.cole_three_po_table.setColumnWidth(0,50)
+        qty_ordered = 0
+        qty_backordered = 0
+        qty_shipped = 0
+        subtotal = 0
+        for row in self.tab_cole_three_po_table_list:
+            qty_ordered += row[COLE_INV_QTY_ORDERED_INDEX]
+            qty_backordered += row[COLE_INV_QTY_BO_INDEX]
+            qty_shipped += row[COLE_INV_QTY_SHIPPED_INDEX]
+            subtotal += row[COLE_INV_WHOLESALE_INDEX] * row[COLE_INV_QTY_SHIPPED_INDEX]
+        self.cole_three_qty_ordered.setText(self.xstr(qty_ordered))
+        self.cole_three_qty_shipped.setText(self.xstr(qty_shipped))
+        self.cole_three_qty_backordered.setText(self.xstr(qty_backordered))
+        self.cole_three_subtotal.setText(self.xstr(locale.currency(subtotal)))
+
+    def tab_cole_three_po_remove_item_request(self, row):
+        del self.tab_cole_three_po_table_list[row]
+        self.tab_cole_three_refresh()
+
+    def cole_three_po_table_generate_remove_buttons(self):
+        self.cole_three_po_table_remove_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.cole_three_po_table.rowCount()):
+            button = QtGui.QPushButton('X')
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.cole_three_po_table_remove_mapper, QtCore.SLOT("map()"))
+            self.cole_three_po_table_remove_mapper.setMapping(button, ii)
+            self.cole_three_po_table.setCellWidget(ii, 0, button)
+        self.connect(self.cole_three_po_table_remove_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_cole_three_po_remove_item_request)
+
+    def tab_cole_three_po_table_cell_changed(self, row, col):
+        if col == 5:
+            new_qty = int(self.cole_three_po_table.item(row,col).text())
+            self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX] = new_qty
+            self.tab_cole_three_refresh()
         
     def tab_cole_three_po_table_clear(self):
+        self.cole_three_po_table.blockSignals(True)
         for ii in range(self.cole_three_po_table.rowCount()):
             for jj in range(self.cole_three_po_table.columnCount()):
                 self.tab_cole_three_po_table_change_text(ii, jj, "")
+        self.cole_three_po_table.blockSignals(False)
+
+    def tab_cole_three_make_wholesale_po(self):
+        self.paypal.create_wholesale_invoice(self.tab_cole_three_po_table_list, self.tab_cole_three_current_account, self.xfloat(self.cole_three_shipping.text()))
 
     def tab_cole_three_account_changed(self):
         if self.cole_three_account_combo_box.currentText() == 'None':
@@ -15012,6 +15065,7 @@ class Ui_Form(QtGui.QWidget):
         account_no, business_name = account.split('-', 1)
         account_no = int(account_no)
         for row in self.db_cursor.execute('SELECT * FROM accounts WHERE account_number = ?', (account_no,)):
+            self.tab_cole_three_current_account = list(row)
             #fill in whatever info
             self.cole_three_business_name.setText(row[COLE_BUSINESS_NAME_INDEX])
             self.cole_three_contact.setText(row[COLE_CONTACT_NAME_INDEX])

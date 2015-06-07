@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1920</width>
+    <width>1916</width>
     <height>1035</height>
    </rect>
   </property>
@@ -17084,6 +17084,9 @@ p, li { white-space: pre-wrap; }
          <height>601</height>
         </rect>
        </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
        <row>
         <property name="text">
          <string>1</string>
@@ -17442,6 +17445,9 @@ p, li { white-space: pre-wrap; }
          <width>831</width>
          <height>631</height>
         </rect>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
        </property>
        <row>
         <property name="text">
@@ -18262,6 +18268,19 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QPushButton" name="cole_three_submit_po">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>830</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Submit PO</string>
+       </property>
       </widget>
      </widget>
     </widget>

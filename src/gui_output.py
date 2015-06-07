@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Thu Jun  4 23:17:44 2015
+# Created: Sat Jun  6 17:57:52 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1920, 1035)
+        Form.resize(1916, 1035)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -6795,6 +6795,7 @@ class Ui_Form(object):
         self.line_5.setObjectName(_fromUtf8("line_5"))
         self.cole_three_po_table = QtGui.QTableWidget(self.cole_make_po_tab)
         self.cole_three_po_table.setGeometry(QtCore.QRect(50, 210, 971, 601))
+        self.cole_three_po_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.cole_three_po_table.setObjectName(_fromUtf8("cole_three_po_table"))
         self.cole_three_po_table.setColumnCount(9)
         self.cole_three_po_table.setRowCount(25)
@@ -6960,6 +6961,7 @@ class Ui_Form(object):
         self.line_8.setObjectName(_fromUtf8("line_8"))
         self.cole_three_bo_table = QtGui.QTableWidget(self.cole_make_po_tab)
         self.cole_three_bo_table.setGeometry(QtCore.QRect(1050, 310, 831, 631))
+        self.cole_three_bo_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.cole_three_bo_table.setObjectName(_fromUtf8("cole_three_bo_table"))
         self.cole_three_bo_table.setColumnCount(7)
         self.cole_three_bo_table.setRowCount(25)
@@ -7360,6 +7362,9 @@ class Ui_Form(object):
         self.cole_three_bo_save = QtGui.QPushButton(self.layoutWidget12)
         self.cole_three_bo_save.setObjectName(_fromUtf8("cole_three_bo_save"))
         self.horizontalLayout_49.addWidget(self.cole_three_bo_save)
+        self.cole_three_submit_po = QtGui.QPushButton(self.cole_make_po_tab)
+        self.cole_three_submit_po.setGeometry(QtCore.QRect(210, 830, 171, 31))
+        self.cole_three_submit_po.setObjectName(_fromUtf8("cole_three_submit_po"))
         self.cole_tab_widget.addTab(self.cole_make_po_tab, _fromUtf8(""))
         self.main_menu_tabs.addTab(self.colemine, _fromUtf8(""))
 
@@ -11047,6 +11052,7 @@ class Ui_Form(object):
         self.cole_three_bo_export.setText(_translate("Form", "Export current selection to CSV", None))
         self.cole_three_bo_fulfill_all.setText(_translate("Form", "Fulfill All Currently Selected", None))
         self.cole_three_bo_save.setText(_translate("Form", "Save Changes to Selected Item", None))
+        self.cole_three_submit_po.setText(_translate("Form", "Submit PO", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.colemine), _translate("Form", "Colemine", None))
 
