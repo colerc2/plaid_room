@@ -295,9 +295,40 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_transaction
-        (number_of_items interger,
-        
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_transactions
+        (number_of_items integer,
+        date text,
+        subtotal real,
+        shipping real,
+        discount real,
+        total real,
+        sold_ids text,
+        account_number integer,
+        paypal_trans text,
+        notes text,
+        id integer primary key autoincrement)
+        """)
+
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_sold_inventory
+        (upc text,
+        qty integer,
+        catalog_number text,
+        artist text,
+        title text,
+        format text,
+        wholesale real,
+        cost real,
+        label text,
+        inventory_id integer,
+        ordered integer,
+        bo integer,
+        shipped integer,
+        price real,
+        date text,
+        trans_id integer,
+        account_number integer,
+        id integer primary key autoincrement)
+        """)
         
         self.setupUi(self)
 
@@ -14979,7 +15010,10 @@ class Ui_Form(QtGui.QWidget):
                     shipped = min(row[COLE_INV_QTY_INDEX], row[COLE_INV_QTY_ORDERED_INDEX])
                     row.append(row[COLE_INV_QTY_ORDERED_INDEX] - shipped)
                     row.append(shipped)
-                    row.append('')
+                    row.append('')#price
+                    row.append('')#date
+                    row.append('')#trans id
+                    row.append('')#account_number
                     self.tab_cole_three_po_table_list.append(row)
         self.tab_cole_three_refresh()
 
@@ -15043,8 +15077,63 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_po_table.blockSignals(False)
 
     def tab_cole_three_make_wholesale_po(self):
-        self.paypal.create_wholesale_invoice(self.tab_cole_three_po_table_list, self.tab_cole_three_current_account, self.xfloat(self.cole_three_shipping.text()))
+        if self.tab_cole_three_po_table_list and self.tab_cole_three_current_account:
+            print 'cool, there is stuff to make a po for and an account is selected'
+            curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sold_inventory_new_ids = []
+            #1. Add items to sold inventory
+            for row in self.tab_cole_three_po_table_list:
+                row[COLE_INV_PRICE_INDEX] = self.xfloat(row[COLE_INV_WHOLESALE_INDEX])
+                row[COLE_INV_DATE_SOLD_INDEX] = self.xstr(curr_time)
+                row[COLE_INV_TRANS_ID_INDEX] = 0
+                row[COLE_INV_ACCOUNT_NO_INDEX] = 0
+                self.db_cursor.execute('INSERT INTO colemine_sold_inventory (upc, qty, catalog_number, artist, title, format, wholesale, cost, label, inventory_id, ordered, bo, shipped, price, date, trans_id, account_number) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                self.db.commit()
+                sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
+                #2. Update qty in stock
+                self.db_cursor.execute('UPDATE colemine_inventory SET qty = ? WHERE id = ?', ((row[COLE_INV_QTY_INDEX]-row[COLE_INV_QTY_SHIPPED_INDEX]),row[COLE_INV_ID_INDEX]))
+                self.db.commit()
+            #3.Add items to transaction history
+            qty_ordered = 0
+            qty_backordered = 0
+            qty_shipped = 0
+            subtotal = 0
+            for row in self.tab_cole_three_po_table_list:
+                qty_ordered += row[COLE_INV_QTY_ORDERED_INDEX]
+                qty_backordered += row[COLE_INV_QTY_BO_INDEX]
+                qty_shipped += row[COLE_INV_QTY_SHIPPED_INDEX]
+                subtotal += row[COLE_INV_WHOLESALE_INDEX] * row[COLE_INV_QTY_SHIPPED_INDEX]
+            trans_item = (self.xint(len(self.tab_cole_three_po_table_list)),
+                          self.xstr(curr_time),
+                          self.xfloat(subtotal),
+                          self.xfloat(self.cole_three_shipping.text()),
+                          self.xfloat(0),
+                          self.xfloat(self.xfloat(self.cole_three_shipping.text())+subtotal),
+                          self.xstr(",".join(sold_inventory_new_ids)),
+                          self.xint(self.tab_cole_three_current_account[COLE_ACCOUNT_NUMBER_INDEX]),
+                          self.xstr(''),
+                          self.xstr(''))
+            self.db_cursor.execute('INSERT INTO colemine_transactions (number_of_items, date, subtotal, shipping, discount, total, sold_ids, account_number, paypal_trans, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
+            self.db.commit()
+            trans_id = self.db_cursor.lastrowid
+            #4. Go back and update all items with new transaction number
+            for key in sold_inventory_new_ids:
+                self.db_cursor.execute('UPDATE colemine_sold_inventory SET trans_id = ? WHERE id = ?', (trans_id, key))
+                self.db.commit()
+                
+            #5. Push invoice to paypal
+            paypal_id = self.paypal.create_wholesale_invoice(self.tab_cole_three_po_table_list, self.tab_cole_three_current_account, self.xfloat(self.cole_three_shipping.text()))
+            
+            #6. Update transaction with paypal id
+            self.db_cursor.execute('UPDATE colemine_transactions SET paypal_trans = ? WHERE id = ?', (self.xstr(paypal_id),trans_id))
+            self.db.commit()
 
+            #7.Clean up shit
+            self.tab_cole_three_po_table_list = []
+            self.tab_cole_three_refresh()
+            self.tab_cole_two_refresh()
+            
+                                        
     def tab_cole_three_account_changed(self):
         if self.cole_three_account_combo_box.currentText() == 'None':
             #clear it all boys

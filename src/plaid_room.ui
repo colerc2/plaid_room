@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1916</width>
-    <height>1035</height>
+    <height>1034</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -14826,7 +14826,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="cole_add_edit_account_tab">
       <attribute name="title">
@@ -16075,7 +16075,7 @@ p, li { white-space: pre-wrap; }
          </column>
          <column>
           <property name="text">
-           <string>Title</string>
+           <string>Catalog No.</string>
           </property>
          </column>
          <column>
@@ -16085,12 +16085,32 @@ p, li { white-space: pre-wrap; }
          </column>
          <column>
           <property name="text">
-           <string>Date</string>
+           <string>Title</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string/>
+           <string>Ordered</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>B/O</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Shipped</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Price</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Date</string>
           </property>
          </column>
         </widget>
@@ -16110,27 +16130,52 @@ p, li { white-space: pre-wrap; }
          </property>
          <column>
           <property name="text">
-           <string>PO</string>
+           <string>Items</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Title</string>
+           <string>No. Ordered</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Artist</string>
+           <string>No. Shipped</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Date</string>
+           <string>No. B/O</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string/>
+           <string>Subtotal</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Shipping</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Discount</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Total</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Account</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Paypal Trans.</string>
           </property>
          </column>
         </widget>
@@ -16141,7 +16186,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>30</x>
          <y>325</y>
-         <width>561</width>
+         <width>891</width>
          <height>27</height>
         </rect>
        </property>
@@ -16186,6 +16231,16 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
+         <widget class="QComboBox" name="cole_one_select_release">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_200">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -16197,13 +16252,6 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="cole_one_group_items">
-          <property name="text">
-           <string>Group Items</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
