@@ -14826,7 +14826,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="cole_add_edit_account_tab">
       <attribute name="title">
@@ -16246,9 +16246,9 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="tab_five_filter_date_checkbox_2">
+         <widget class="QCheckBox" name="tab_cole_one_filter_date">
           <property name="text">
-           <string>tab_cole_one_filter_date</string>
+           <string>Filter By Date Sold</string>
           </property>
          </widget>
         </item>
