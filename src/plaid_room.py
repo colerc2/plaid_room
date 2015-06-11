@@ -116,7 +116,12 @@ class Ui_Form(QtGui.QWidget):
         self.tab_eight_need_to_do_table_list = []
         self.tab_eight_done_table_list = []
         
-        #tab cole two stuff
+        #tab cole stuff
+        self.tab_cole_one_items_table_list = []
+        self.tab_cole_one_pos_table_list = []
+        self.tab_cole_one_edit_select_selected = ''
+        self.tab_cole_one_select_account_selected = ''
+        self.tab_cole_one_select_release_selected = ''
         self.tab_cole_two_search_table_list = []
         self.tab_cole_two_inventory_table_list = []
         self.tab_cole_three_po_table_list = []
@@ -151,7 +156,6 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        #self.db_cursor.execute('DROP table IF EXISTS misc_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS misc_inventory
         (upc text,
         type text,
@@ -294,7 +298,8 @@ class Ui_Form(QtGui.QWidget):
         label text,
         id integer primary key autoincrement)
         """)
-
+        
+        #self.db_cursor.execute('DROP table IF EXISTS colemine_transactions')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_transactions
         (number_of_items integer,
         date text,
@@ -309,6 +314,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
+        #self.db_cursor.execute('DROP table IF EXISTS colemine_sold_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_sold_inventory
         (upc text,
         qty integer,
@@ -6715,7 +6721,7 @@ class Ui_Form(QtGui.QWidget):
         self.cole_one_items_table = QtGui.QTableWidget(self.tab_5)
         self.cole_one_items_table.setGeometry(QtCore.QRect(10, 10, 1811, 541))
         self.cole_one_items_table.setObjectName(_fromUtf8("cole_one_items_table"))
-        self.cole_one_items_table.setColumnCount(5)
+        self.cole_one_items_table.setColumnCount(10)
         self.cole_one_items_table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.cole_one_items_table.setHorizontalHeaderItem(0, item)
@@ -6727,13 +6733,23 @@ class Ui_Form(QtGui.QWidget):
         self.cole_one_items_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
         self.cole_one_items_table.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_items_table.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_items_table.setHorizontalHeaderItem(6, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_items_table.setHorizontalHeaderItem(7, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_items_table.setHorizontalHeaderItem(8, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_items_table.setHorizontalHeaderItem(9, item)
         self.tabWidget.addTab(self.tab_5, _fromUtf8(""))
         self.tab_6 = QtGui.QWidget()
         self.tab_6.setObjectName(_fromUtf8("tab_6"))
         self.cole_one_pos_table = QtGui.QTableWidget(self.tab_6)
         self.cole_one_pos_table.setGeometry(QtCore.QRect(10, 10, 1811, 541))
         self.cole_one_pos_table.setObjectName(_fromUtf8("cole_one_pos_table"))
-        self.cole_one_pos_table.setColumnCount(5)
+        self.cole_one_pos_table.setColumnCount(10)
         self.cole_one_pos_table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.cole_one_pos_table.setHorizontalHeaderItem(0, item)
@@ -6745,9 +6761,19 @@ class Ui_Form(QtGui.QWidget):
         self.cole_one_pos_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
         self.cole_one_pos_table.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_pos_table.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_pos_table.setHorizontalHeaderItem(6, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_pos_table.setHorizontalHeaderItem(7, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_pos_table.setHorizontalHeaderItem(8, item)
+        item = QtGui.QTableWidgetItem()
+        self.cole_one_pos_table.setHorizontalHeaderItem(9, item)
         self.tabWidget.addTab(self.tab_6, _fromUtf8(""))
         self.widget = QtGui.QWidget(self.cole_add_edit_account_tab)
-        self.widget.setGeometry(QtCore.QRect(30, 325, 561, 27))
+        self.widget.setGeometry(QtCore.QRect(30, 325, 891, 27))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.horizontalLayout_59 = QtGui.QHBoxLayout(self.widget)
         self.horizontalLayout_59.setMargin(0)
@@ -6768,11 +6794,12 @@ class Ui_Form(QtGui.QWidget):
         self.cole_one_select_account.setMinimumSize(QtCore.QSize(200, 0))
         self.cole_one_select_account.setObjectName(_fromUtf8("cole_one_select_account"))
         self.horizontalLayout_59.addWidget(self.cole_one_select_account)
+        self.cole_one_select_release = QtGui.QComboBox(self.widget)
+        self.cole_one_select_release.setMinimumSize(QtCore.QSize(200, 0))
+        self.cole_one_select_release.setObjectName(_fromUtf8("cole_one_select_release"))
+        self.horizontalLayout_59.addWidget(self.cole_one_select_release)
         spacerItem180 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_59.addItem(spacerItem180)
-        self.cole_one_group_items = QtGui.QCheckBox(self.widget)
-        self.cole_one_group_items.setObjectName(_fromUtf8("cole_one_group_items"))
-        self.horizontalLayout_59.addWidget(self.cole_one_group_items)
         self.cole_tab_widget.addTab(self.cole_add_edit_account_tab, _fromUtf8(""))
         self.cole_add_edit_inventory_tab = QtGui.QWidget()
         self.cole_add_edit_inventory_tab.setObjectName(_fromUtf8("cole_add_edit_inventory_tab"))
@@ -7678,7 +7705,7 @@ class Ui_Form(QtGui.QWidget):
 
         self.retranslateUi(Form)
         self.main_menu_tabs.setCurrentIndex(10)
-        self.cole_tab_widget.setCurrentIndex(2)
+        self.cole_tab_widget.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -11044,23 +11071,46 @@ class Ui_Form(QtGui.QWidget):
         item = self.cole_one_items_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "PO", None))
         item = self.cole_one_items_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "Title", None))
+        item.setText(_translate("Form", "Catalog No.", None))
         item = self.cole_one_items_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "Artist", None))
         item = self.cole_one_items_table.horizontalHeaderItem(3)
+        item.setText(_translate("Form", "Title", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Ordered", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "B/O", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "Shipped", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Price", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Date", None))
+        item = self.cole_one_items_table.horizontalHeaderItem(9)
+        item.setText(_translate("Form", "Account", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("Form", "Items", None))
         item = self.cole_one_pos_table.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "PO", None))
+        item.setText(_translate("Form", "Items", None))
         item = self.cole_one_pos_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "Title", None))
+        item.setText(_translate("Form", "No. Ordered", None))
         item = self.cole_one_pos_table.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "Artist", None))
+        item.setText(_translate("Form", "No. Shipped", None))
         item = self.cole_one_pos_table.horizontalHeaderItem(3)
-        item.setText(_translate("Form", "Date", None))
+        item.setText(_translate("Form", "No. B/O", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Subtotal", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "Shipping", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "Discount", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Total", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(8)
+        item.setText(_translate("Form", "Account", None))
+        item = self.cole_one_pos_table.horizontalHeaderItem(9)
+        item.setText(_translate("Form", "Paypal Trans.", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("Form", "POs", None))
         self.label_103.setText(_translate("Form", "View Account History", None))
-        self.cole_one_group_items.setText(_translate("Form", "Group Items", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_add_edit_account_tab), _translate("Form", "Add/Edit Account", None))
         self.tab_one_search_item_lbl_9.setText(_translate("Form", "Search Colemine Item", None))
         self.tab_cole_two_search_upc_button.setText(_translate("Form", "Search UPC/SKU/EAN", None))
@@ -11466,7 +11516,10 @@ class Ui_Form(QtGui.QWidget):
         #tab colemine
         self.cole_one_add_save.clicked.connect(self.tab_cole_one_add_account)
         self.cole_one_edit_select.currentIndexChanged.connect(self.tab_cole_one_edit_select_changed)
-        self.tab_cole_one_refresh()
+        self.cole_one_edit_save.clicked.connect(self.tab_cole_one_edit_account)
+        self.cole_one_select_account.currentIndexChanged.connect(self.tab_cole_one_select_account_changed)
+        self.cole_one_select_release.currentIndexChanged.connect(self.tab_cole_one_select_account_changed)#release and account use same logic
+        self.tab_cole_one_reset()
         self.tab_cole_two_add_button.clicked.connect(self.tab_cole_two_add_to_inventory)
         self.tab_cole_two_search_upc_button.clicked.connect(self.tab_cole_two_search_for_release)
         self.tab_cole_two_search_upc_qline.returnPressed.connect(self.tab_cole_two_search_for_release)
@@ -14705,6 +14758,92 @@ class Ui_Form(QtGui.QWidget):
     ################### tab eight ends ##################################
     
     ################### tab colemine one begins ##################################
+    def tab_cole_one_pos_table_clear(self):
+        for ii in range(self.cole_one_pos_table.rowCount()):
+            for jj in range(self.cole_one_pos_table.columnCount()):
+                self.tab_cole_one_pos_table_change_text(ii, jj, "")
+
+    def tab_cole_one_pos_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.cole_one_pos_table.item(row,col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.cole_one_pos_table.setItem(row, col, item)
+
+    def tab_cole_one_pos_table_get_text(self, row, col):
+        item = self.cole_one_pos_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
+    def tab_cole_one_items_table_clear(self):
+        for ii in range(self.cole_one_items_table.rowCount()):
+            for jj in range(self.cole_one_items_table.columnCount()):
+                self.tab_cole_one_items_table_change_text(ii, jj, "")
+
+    def tab_cole_one_items_table_change_text(self, row, col, text):
+        text = self.filter_unprintable(text)
+        item = self.cole_one_items_table.item(row,col)
+        if item is not None:
+            item.setText(text)
+        else:
+            item = QtGui.QTableWidgetItem()
+            item.setText(text)
+            self.cole_one_items_table.setItem(row, col, item)
+
+    def tab_cole_one_items_table_get_text(self, row, col):
+        item = self.cole_one_items_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
+
+    def tab_cole_one_edit_account(self):
+        account_no = self.xint(self.cole_one_edit_account_number.text())
+        db_item = [''] * 23
+        try:
+            db_item[COLE_BUSINESS_NAME_INDEX] = self.xstr(self.cole_one_edit_business_name.text())
+            db_item[COLE_CONTACT_NAME_INDEX] = self.xstr(self.cole_one_edit_contact.text())
+            db_item[COLE_PHONE_INDEX] = self.xstr(self.cole_one_edit_phone.text())
+            db_item[COLE_CELL_INDEX] = self.xstr(self.cole_one_edit_cell.text())
+            db_item[COLE_EMAIL_INDEX] = self.xstr(self.cole_one_edit_email.text())
+            db_item[COLE_BILLING_NAME_INDEX] = self.xstr(self.cole_one_edit_billing_name.text())
+            db_item[COLE_BILLING_LINE_ONE_INDEX] = self.xstr(self.cole_one_edit_billing_line_1.text())
+            db_item[COLE_BILLING_LINE_TWO_INDEX] = self.xstr(self.cole_one_edit_billing_line_2.text())
+            db_item[COLE_BILLING_LINE_THREE_INDEX] = self.xstr(self.cole_one_edit_billing_line_3.text())
+            db_item[COLE_BILLING_CITY_INDEX] = self.xstr(self.cole_one_edit_billing_city.text())
+            db_item[COLE_BILLING_STATE_INDEX] = self.xstr(self.cole_one_edit_billing_state.text())
+            db_item[COLE_BILLING_ZIP_INDEX] = self.xstr(self.cole_one_edit_billing_zip.text())
+            db_item[COLE_BILLING_COUNTRY_INDEX] = self.xstr(self.cole_one_edit_billing_country.text())
+            db_item[COLE_SHIPPING_NAME_INDEX] = self.xstr(self.cole_one_edit_shipping_name.text())
+            db_item[COLE_SHIPPING_LINE_ONE_INDEX] = self.xstr(self.cole_one_edit_shipping_line_1.text())
+            db_item[COLE_SHIPPING_LINE_TWO_INDEX] = self.xstr(self.cole_one_edit_shipping_line_2.text())
+            db_item[COLE_SHIPPING_LINE_THREE_INDEX] = self.xstr(self.cole_one_edit_shipping_line_3.text())
+            db_item[COLE_SHIPPING_CITY_INDEX] = self.xstr(self.cole_one_edit_shipping_city.text())
+            db_item[COLE_SHIPPING_STATE_INDEX] = self.xstr(self.cole_one_edit_shipping_state.text())
+            db_item[COLE_SHIPPING_ZIP_INDEX] = self.xstr(self.cole_one_edit_shipping_zip.text())
+            db_item[COLE_SHIPPING_COUNTRY_INDEX] = self.xstr(self.cole_one_edit_shipping_country.text())
+            db_item[COLE_NOTES_INDEX] = 'TODO'
+            db_item[-1] = account_no
+            
+        except Exception as e:
+            print 'some shit fucked up while reading in edit account: %s' % e
+            return
+        print db_item
+
+        try:
+            self.db_cursor.execute('UPDATE accounts SET business_name = ?, contact_name = ?, phone = ?, cell = ?, email = ?, billing_name = ?, billing_line_1 = ?, billing_line_2 = ?, billing_line_3 = ?, billing_city = ?, billing_state = ?, billing_zip = ?, billing_country = ?, shipping_name = ?, shipping_line_1 = ?, shipping_line_2 = ?, shipping_line_3 = ?, shipping_city = ?, shipping_state = ?, shipping_zip = ?, shipping_country = ?, notes = ?  WHERE account_number = ?', tuple(db_item))
+            self.db.commit()
+        except Exception as e:
+            print 'tab_cole_one_add_account, adding item to db: %s' % e
+            return
+        self.tab_cole_one_refresh()
+        
+
     def tab_cole_one_add_account(self):
         for row in self.db_cursor.execute('SELECT * from accounts'):
             print row
@@ -14749,8 +14888,69 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_cole_one_refresh(self):
         self.tab_cole_one_edit_select_populate()
+        self.tab_cole_one_select_account_populate()
+        self.tab_cole_one_select_release_populate()
+        #items table
+        self.tab_cole_one_items_table_clear()
+        self.cole_one_items_table.setRowCount(50)
+        for ix, row in enumerate(self.tab_cole_one_items_table_list):
+            self.tab_cole_one_items_table_change_text(ix, 1, self.xstr(row[COLE_INV_CATALOG_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 2, self.xstr(row[COLE_INV_ARTIST_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 3, self.xstr(row[COLE_INV_TITLE_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 4, self.xstr(row[COLE_INV_QTY_ORDERED_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 5, self.xstr(row[COLE_INV_QTY_BO_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 6, self.xstr(row[COLE_INV_QTY_SHIPPED_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 7, self.xstr(row[COLE_INV_PRICE_INDEX]))
+            self.tab_cole_one_items_table_change_text(ix, 8, self.xstr(row[COLE_INV_DATE_SOLD_INDEX]))
+            account_string = ''
+            for account in self.db_cursor.execute('SELECT * FROM accounts WHERE account_number = ?', (row[COLE_INV_ACCOUNT_NO_INDEX],)):
+                account_string = '%i - %s' % (row[COLE_INV_ACCOUNT_NO_INDEX],account[COLE_BUSINESS_NAME_INDEX])
+            self.tab_cole_one_items_table_change_text(ix, 9, self.xstr(account_string))
+        self.cole_one_items_table.resizeColumnsToContents()
+        for ix, row in enumerate(self.tab_cole_one_pos_table_list):
+            #self.tab_cole_one_pos_table_change_text(ix, 
+            todo = 0
+
+
+        #po table
+
+    def tab_cole_one_reset(self):
+        self.tab_cole_one_items_table_list = []
+        self.tab_cole_one_pos_table_list = []
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM colemine_sold_inventory ORDER BY date DESC')):
+            self.tab_cole_one_items_table_list.append(list(row))
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM colemine_transactions ORDER BY date DESC')):
+            self.tab_cole_one_pos_table_list.append(list(row))
+        self.tab_cole_one_select_account_selected = 'Any'
+        self.tab_cole_one_select_release_selected = 'Any'
+        self.tab_cole_one_edit_select_selected = 'None'
+        self.tab_cole_one_refresh()
+
+    def tab_cole_one_select_account_changed(self):
+        self.tab_cole_one_select_account_selected = self.cole_one_select_account.currentText()
+        self.tab_cole_one_select_release_selected = self.cole_one_select_release.currentText()
+        self.tab_cole_one_items_table_list = [] 
+        if self.cole_one_select_account.currentText() == 'Any' and self.cole_one_select_release.currentText() == 'Any':
+            for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM colemine_sold_inventory')):
+                self.tab_cole_one_items_table_list.append(list(row))
+        elif self.cole_one_select_account.currentText() != 'Any' and self.cole_one_select_release.currentText() == 'Any':
+            account = self.cole_one_select_account.currentText()
+            account_no, business_name = account.split('-', 1)
+            account_no = int(account_no)
+            for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM colemine_sold_inventory WHERE account_number = ? ORDER BY date DESC', (account_no,))):
+                self.tab_cole_one_items_table_list.append(list(row))
+        elif self.cole_one_select_account.currentText() == 'Any' and self.cole_one_select_release.currentText != 'Any':
+            release = self.xstr(self.cole_one_select_release.currentText())
+            release_no, rest_of_shit = release.split('-', 1)
+            release_no = int(release_no)
+            for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM colemine_sold_inventory WHERE catalog_number = ? ORDER BY date DESC', (release_no,))):
+                self.tab_cole_one_items_table_list.append(list(row))
+        else:
+            todo = 0
+        self.tab_cole_one_refresh()
 
     def tab_cole_one_edit_select_changed(self):
+        self.tab_cole_one_edit_select_selected = self.cole_one_edit_select.currentText()
         if self.cole_one_edit_select.currentText() == 'None':
             #TODO clear everything
             self.cole_one_edit_business_name.setText('')
@@ -14803,15 +15003,51 @@ class Ui_Form(QtGui.QWidget):
             self.cole_one_edit_shipping_zip.setText(row[COLE_SHIPPING_ZIP_INDEX])
             self.cole_one_edit_shipping_country.setText(row[COLE_SHIPPING_COUNTRY_INDEX])
 
-        
-
-
     def tab_cole_one_edit_select_populate(self):
+        self.cole_one_edit_select.blockSignals(True)
         while self.cole_one_edit_select.count() != 0:
             self.cole_one_edit_select.removeItem(0)
         self.cole_one_edit_select.addItem('None')
         for row in self.db_cursor.execute('SELECT * FROM accounts'):
             self.cole_one_edit_select.addItem('%s - %s' % (row[COLE_ACCOUNT_NUMBER_INDEX], row[COLE_BUSINESS_NAME_INDEX]))
+        #if one was selected before, go back and select it again
+        if self.tab_cole_one_edit_select_selected != 'None':
+            index = self.cole_one_edit_select.findText(self.tab_cole_one_edit_select_selected)
+            if index != -1:
+                self.cole_one_edit_select.setCurrentIndex(index)
+        self.cole_one_edit_select.blockSignals(False)
+
+    def tab_cole_one_select_release_populate(self):
+        self.cole_one_select_release.blockSignals(True)
+        while self.cole_one_select_release.count() != 0:
+            self.cole_one_select_release.removeItem(0)
+        self.cole_one_select_release.addItem('Any')
+        for row in self.db_cursor.execute('SELECT * FROM colemine_inventory'):
+            self.cole_one_select_release.addItem('%s - %s - %s' % (row[COLE_INV_CATALOG_INDEX], row[COLE_INV_ARTIST_INDEX], row[COLE_INV_TITLE_INDEX]))
+        if self.tab_cole_one_select_release_selected != 'Any':
+            index = self.cole_one_select_release.findText(self.tab_cole_one_select_release_selected)
+            if index != -1:
+                self.cole_one_select_release.setCurrentIndex(index)
+        self.cole_one_select_release.blockSignals(False)
+
+    def tab_cole_one_select_account_populate(self):
+        self.cole_one_select_account.blockSignals(True)
+        while self.cole_one_select_account.count() != 0:
+            self.cole_one_select_account.removeItem(0)
+        self.cole_one_select_account.addItem('Any')
+        for row in self.db_cursor.execute('SELECT * FROM accounts'):
+            self.cole_one_select_account.addItem('%s - %s' % (row[COLE_ACCOUNT_NUMBER_INDEX], row[COLE_BUSINESS_NAME_INDEX]))
+        #if one was selected before, go back and select it again
+        if self.tab_cole_one_select_account_selected != 'Any':
+            print 'made it to here at least'
+            print self.tab_cole_one_select_account_selected
+            index = self.cole_one_select_account.findText(self.tab_cole_one_select_account_selected)
+            print index
+            if index != -1:
+                self.cole_one_select_account.setCurrentIndex(index)
+        self.cole_one_select_account.blockSignals(False)
+        
+                
 
     ################### tab colemine one ends ##################################
             
@@ -15067,6 +15303,8 @@ class Ui_Form(QtGui.QWidget):
         if col == 5:
             new_qty = int(self.cole_three_po_table.item(row,col).text())
             self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX] = new_qty
+            self.tab_cole_three_po_table_list[row][COLE_INV_QTY_SHIPPED_INDEX] = min(self.tab_cole_three_po_table_list[row][COLE_INV_QTY_INDEX],self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX])
+            self.tab_cole_three_po_table_list[row][COLE_INV_QTY_BO_INDEX] = self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX] - self.tab_cole_three_po_table_list[row][COLE_INV_QTY_SHIPPED_INDEX]
             self.tab_cole_three_refresh()
         
     def tab_cole_three_po_table_clear(self):
@@ -15086,7 +15324,7 @@ class Ui_Form(QtGui.QWidget):
                 row[COLE_INV_PRICE_INDEX] = self.xfloat(row[COLE_INV_WHOLESALE_INDEX])
                 row[COLE_INV_DATE_SOLD_INDEX] = self.xstr(curr_time)
                 row[COLE_INV_TRANS_ID_INDEX] = 0
-                row[COLE_INV_ACCOUNT_NO_INDEX] = 0
+                row[COLE_INV_ACCOUNT_NO_INDEX] = self.xint(self.tab_cole_three_current_account[COLE_ACCOUNT_NUMBER_INDEX])
                 self.db_cursor.execute('INSERT INTO colemine_sold_inventory (upc, qty, catalog_number, artist, title, format, wholesale, cost, label, inventory_id, ordered, bo, shipped, price, date, trans_id, account_number) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                 self.db.commit()
                 sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))

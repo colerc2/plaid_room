@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1916</width>
-    <height>1034</height>
+    <height>1035</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -14826,7 +14826,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="cole_add_edit_account_tab">
       <attribute name="title">
@@ -16047,9 +16047,9 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>360</y>
+         <y>380</y>
          <width>1831</width>
-         <height>591</height>
+         <height>571</height>
         </rect>
        </property>
        <property name="currentIndex">
@@ -16063,9 +16063,9 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>10</y>
+           <y>0</y>
            <width>1811</width>
-           <height>541</height>
+           <height>551</height>
           </rect>
          </property>
          <column>
@@ -16111,6 +16111,11 @@ p, li { white-space: pre-wrap; }
          <column>
           <property name="text">
            <string>Date</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Account</string>
           </property>
          </column>
         </widget>
@@ -16186,8 +16191,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>30</x>
          <y>325</y>
-         <width>891</width>
-         <height>27</height>
+         <width>1821</width>
+         <height>55</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_59">
@@ -16234,9 +16239,117 @@ p, li { white-space: pre-wrap; }
          <widget class="QComboBox" name="cole_one_select_release">
           <property name="minimumSize">
            <size>
-            <width>200</width>
+            <width>400</width>
             <height>0</height>
            </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="tab_five_filter_date_checkbox_2">
+          <property name="text">
+           <string>tab_cole_one_filter_date</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_59">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
+          <item>
+           <widget class="QDateEdit" name="tab_cole_one_start_date">
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_20">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Start Date</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_75">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
+          <item>
+           <widget class="QDateEdit" name="tab_cole_one_end_date">
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_63">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>End Date</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_165">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="tab_five_filter_date_checkbox_3">
+          <property name="text">
+           <string>Group Items</string>
           </property>
          </widget>
         </item>
@@ -17303,6 +17416,11 @@ p, li { white-space: pre-wrap; }
        <column>
         <property name="text">
          <string>In Stock</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Price</string>
         </property>
        </column>
       </widget>
