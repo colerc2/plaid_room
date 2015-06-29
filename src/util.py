@@ -63,15 +63,23 @@ class Util():
                 
                 #pricing some distro to a percentage of selling price
                 #list_of_stuff_to_update = []
+<<<<<<< HEAD
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Lisbin',)):
                 #        price = math.ceil((float(row[PRICE_INDEX]) * 0.402) * 100)/100.0
 
                         #price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
                         #list_of_stuff_to_update.append((price, row[ID_INDEX]))
+=======
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
+                #        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
+                #        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
+                #        list_of_stuff_to_update.append((price, row[ID_INDEX]))
+>>>>>>> 6b02c9817c4e3100dfdc76ae44335dfc615bf107
                 #for row in list_of_stuff_to_update:
                 #        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
                 #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
                 #self.db.commit()
+<<<<<<< HEAD
                 #for row in self.db_cursor.execute('SELECT * from inventory'):
                 #        crap = row[UPC_INDEX]
                 #        crap = crap[0:3]
@@ -124,6 +132,16 @@ class Util():
 
                 
                 
+=======
+                #total = 0
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
+                #        total += float(row[PRICE_PAID_INDEX])
+                #print total
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
+                        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
+
+
+>>>>>>> 6b02c9817c4e3100dfdc76ae44335dfc615bf107
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
                 shit_to_sell = []
