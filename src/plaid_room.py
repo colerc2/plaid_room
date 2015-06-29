@@ -4,6 +4,7 @@ import os
 import discogs_client
 from discogs_interface import DiscogsClient
 from distributors import Distributors
+from catalogs import Catalogs
 from more_info_dialog import Ui_more_info_dialog
 from cash_dialog import Ui_CashDialog
 from barcode_printer import BarcodePrinter
@@ -35,6 +36,8 @@ import math
 #        of doubles' status (i.e. whether or not we've put them back
 #        on the floor). this should probably go into the non-existent
 #        RESERVED_FOUR_INDEX at some point TODO
+#    - in sold_inventory, RESERVED_ONE_INDEX is used for keeping track
+#        of what distirbutor we should buy this thing from in a PO
 #    - in sold_inventory, RESERVED_THREE_INDEX is used for keeping track
 #        of quantity in purchase orders. quantity is stored as a string
 #        even though it should be an int (i.e. "3")
@@ -68,6 +71,7 @@ class Ui_Form(QtGui.QWidget):
         self.discogs = DiscogsClient()#discogs api
         self.distributors = Distributors(DIST_FILE_NAME)
         self.misc_types = MiscTypes(MISC_TYPES_FILE_NAME)
+        self.catalogs = Catalogs(CATALOGS_PATH, self.distributors.get_distributors())
         self.barcode_printer = BarcodePrinter()
         self.misc_distributors = MiscDistributors(MISC_DIST_FILE_NAME)
         self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
@@ -337,7 +341,7 @@ class Ui_Form(QtGui.QWidget):
         """)
 
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS books
-        date text,
+        (date text,
         amount real,
         category text,
         company text,
@@ -12475,6 +12479,9 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.cole_three_po_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_cole_three_po_table_cell_changed)
         self.cole_three_submit_po.clicked.connect(self.tab_cole_three_make_wholesale_po)
 
+        #tab books
+        
+
     ################### tab one starts ##################################
     
     def tab_one_remove_from_inventory(self):
@@ -13672,6 +13679,7 @@ class Ui_Form(QtGui.QWidget):
                     row[DATE_SOLD_INDEX] = self.xstr(curr_time)
                     row[REORDER_STATE_INDEX] = 0
                     row[TRANSACTION_ID_INDEX] = 0
+                    row[RESERVED_ONE_INDEX] = row[DISTRIBUTOR_INDEX]
                     #check if we need to add this to the doubles tab
                     counter = 0
                     for row_db in self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],)):
@@ -13847,6 +13855,7 @@ class Ui_Form(QtGui.QWidget):
                     row[SOLD_FOR_INDEX] = self.xfloat(sold_for)
                     row[PERCENT_DISCOUNT_INDEX] = self.xfloat(percent_discount)
                     row[DATE_SOLD_INDEX] = self.xstr(curr_time)
+                    row[RESERVED_ONE_INDEX] = row[DISTRIBUTOR_INDEX]
                     row[REORDER_STATE_INDEX] = 0
                     row[TRANSACTION_ID_INDEX] = 0
                     #check if we need to add this to the doubles tab
@@ -15012,7 +15021,7 @@ class Ui_Form(QtGui.QWidget):
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
                     #TODO: stufffffssss
-                    if dist != row[DISTRIBUTOR_INDEX]:
+                    if dist != row[RESERVED_ONE_INDEX]:
                         continue
                 #check state
                 if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
@@ -15158,6 +15167,23 @@ class Ui_Form(QtGui.QWidget):
             if (selected_distributor == row[DISTRIBUTOR_INDEX]) or (selected_distributor == 'Any'):
                 self.tab_seven_po_table_list_filtered.append(row)
         
+    def tab_seven_get_list_of_distros_and_prices(self, row):
+        list_of_distros = dict()
+        #first add the one we got it from
+        list_of_distros[row[DISTRIBUTOR_INDEX]] =  row[PRICE_PAID_INDEX]
+        for item in self.catalogs.get_catalog():
+            if item[1] == row[UPC_INDEX]:
+                list_of_distros[item[0]] = item[2]
+        for db_row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (row[UPC_INDEX],)):
+            if db_row[DISTRIBUTOR_INDEX] == 'Used':
+                continue
+            list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
+        for db_row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (row[UPC_INDEX],)):
+            if db_row[DISTRIBUTOR_INDEX] == 'Used':
+                continue
+            list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
+        return list_of_distros
+            
     def tab_seven_refresh(self):
         #clear tables
         self.tab_seven_search_sold_table_clear()
@@ -15175,6 +15201,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table_generate_more_info_buttons()
         self.tab_seven_done_table_generate_back_buttons()
 
+        self.tab_seven_distributor_mapper = QtCore.QSignalMapper(self)
         #search sold table
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
@@ -15204,6 +15231,26 @@ class Ui_Form(QtGui.QWidget):
                 if self.xfloat(num_sold[PRICE_PAID_INDEX]) < cheapest_price:
                     cheapest_distro = num_sold[DISTRIBUTOR_INDEX]
                     cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            #work black magic with distributor stuff
+            choices = self.tab_seven_get_list_of_distros_and_prices(row)
+            list_of_choices = []
+            for key, value in choices.iteritems():
+                list_of_choices.append([key, value])
+            list_of_choices = sorted(list_of_choices, key=lambda x:x[1])
+            if len(list_of_choices) > 1:
+                combobox = QtGui.QComboBox()
+                for choice in list_of_choices:
+                    combobox.addItem('%s - %s' % (choice[0], locale.currency(choice[1])))
+                try:
+                    todo = 0
+                except Exception as e:
+                    print 'generate distributor changer combobox failure: %s' % e
+                self.connect(combobox, QtCore.SIGNAL("activated(int)"), self.tab_seven_distributor_mapper, QtCore.SLOT("map()"))
+                self.tab_seven_distributor_mapper.setMapping(combobox, ix)
+                self.tab_seven_search_sold_table.setCellWidget(ix,11,combobox)
+            else:
+                self.tab_seven_search_sold_table_change_text(ix, 11, cheapest_distro)
+
             self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
             self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
             self.tab_seven_search_sold_table_change_text(ix, 5, num_sold_ever)
@@ -15213,7 +15260,6 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_search_sold_table_change_text(ix, 9, row[ARTIST_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 10, row[TITLE_INDEX])
             #self.tab_seven_search_sold_table_change_text(ix, 11, row[DISTRIBUTOR_INDEX])
-            self.tab_seven_search_sold_table_change_text(ix, 11, cheapest_distro)
             self.tab_seven_search_sold_table_change_text(ix, 12, row[FORMAT_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 13, locale.currency(self.xfloat(row[PRICE_PAID_INDEX])))
             self.tab_seven_search_sold_table_change_text(ix, 14, row[NEW_USED_INDEX])
@@ -15221,6 +15267,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_search_sold_table_change_text(ix, 16, row[GENRE_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 17, row[SOLD_NOTES_INDEX])
             self.tab_seven_search_sold_table_change_text(ix, 18, row[UPC_INDEX])
+        self.connect(self.tab_seven_distributor_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_seven_distributor_mapper_change_request)
         self.tab_seven_search_sold_table.resizeColumnsToContents()
         self.tab_seven_search_sold_table.setColumnWidth(0,50)
         self.tab_seven_search_sold_table.setColumnWidth(1,50)
@@ -15303,11 +15350,27 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_done_table_list)))
 
     
+    def tab_seven_distributor_mapper_change_request(self, row):
+        selection = self.tab_seven_search_sold_table_get_text(row, 11)
+        db_info = self.tab_seven_search_sold_table_list[row]
+        selection = str(selection.split('-')[0]).strip()
+        if selection in self.distributors.get_distributors():
+            print 'cool man, things are kinda working'
+            print selection
+            #self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (selection, db_info[NEW_ID_INDEX]))
+            #self.db.commit()
+        else:
+            print 'Can\'t find a distributor that matches that braj'
+        
         
     def tab_seven_search_sold_table_clear(self):
-        for ii in range(self.tab_seven_search_sold_table.rowCount()):
-           for jj in range(self.tab_seven_search_sold_table.columnCount()):
-               self.tab_seven_search_sold_table_change_text(ii,jj,"")
+        while self.tab_seven_search_sold_table.rowCount() > 0:
+            self.tab_seven_search_sold_table.removeRow(0)
+            #item = self.tab_seven_search_sold_table.item(ii,11)
+            
+            #for jj in range(self.tab_seven_search_sold_table.columnCount()):
+            #    self.tab_seven_search_sold_table_change_text(ii,jj,"")
+            
         self.tab_seven_search_sold_table.setRowCount(self.tab_seven_search_sold_num_displayed_spinbox.value())
 
     def tab_seven_po_table_clear(self):
@@ -15331,6 +15394,16 @@ class Ui_Form(QtGui.QWidget):
             item = QtGui.QTableWidgetItem()
             item.setText(text)
             self.tab_seven_search_sold_table.setItem(row, col, item)
+
+    def tab_seven_search_sold_table_get_text(self, row, col):
+        if col == 11:#such bad coding i don't even like myself
+            widget = self.tab_seven_search_sold_table.cellWidget(row, col)
+            return widget.currentText()
+        item = self.tab_seven_search_sold_table.item(row, col)
+        if (item is not None):
+            return item.text()
+        else:
+            return None
 
     def tab_seven_po_table_change_text(self, row, col, text):
         text = self.filter_unprintable(self.xstr(text))

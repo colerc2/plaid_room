@@ -108,11 +108,11 @@ class PaypalInterface():
             else:
                 print(invoice.error)
 
-            if invoice.send(): # return True or False
-                print("Invoice[%s] send successfully" % (invoice.id))
-            else:
-                print(invoice.error)
-                return invoice.id
+            #if invoice.send(): # return True or False
+            #    print("Invoice[%s] send successfully" % (invoice.id))
+            #else:
+            #    print(invoice.error)
+            #    return invoice.id
         except Exception as e:
             print 'Error making paypal invoice, do it by hand brej: %s' % e
             
