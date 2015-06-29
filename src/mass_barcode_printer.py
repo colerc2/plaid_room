@@ -20,7 +20,7 @@ class MassBarcodePrinter():
                                 print 'now printing: %s, %i' %  (row[ARTIST_INDEX],key)
 				self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX])
 				break
-			time.sleep(5)
+			time.sleep(3)
 
 
 if __name__ == '__main__':

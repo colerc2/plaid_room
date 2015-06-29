@@ -12560,7 +12560,7 @@ class Ui_Form(QtGui.QWidget):
 
     def generate_sizes_combobox(self):
         combobox = QtGui.QComboBox()
-        sizes = ['N/A','XS','S','M','L','XL','XXL','XXL','KS','KM','KL','Other']
+        sizes = ['N/A','XS','S','M','L','XL','2XL','3XL','4XL','KS','KM','KL','Other']
         for size in sizes:
             combobox.addItem(size)
         return combobox
