@@ -13,9 +13,12 @@ class Catalogs():
             if not os.path.exists(file_name):
                 print '%s does not exist' % distro
                 continue
-            with open(file_name, 'r') as f:
+            with open(file_name, 'rb') as f:
+                print file_name
                 data = [row for row in csv.reader(f.read().splitlines())]
+            print data
             for row in data:
+                print row
                 self.catalog.append([distro, self.filter_non_numeric(row[0]), self.xfloat(self.filter_non_numeric(row[1]))])
         for row in self.catalog:
             print row

@@ -15044,7 +15044,7 @@ class Ui_Form(QtGui.QWidget):
                 #check distributor
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
-                    if dist != row[DISTRIBUTOR_INDEX]:
+                    if dist != row[RESERVED_ONE_INDEX]:
                         continue
                 #check state
                 if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
@@ -15084,6 +15084,7 @@ class Ui_Form(QtGui.QWidget):
                 if self.tab_seven_done_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_done_dist_combo_box.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
+                    #if dist != row[RESERVED_ONE_INDEX]:
                         continue
                 #check state
                 if row[REORDER_STATE_INDEX] == NEEDS_REORDERED or row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
@@ -15106,6 +15107,8 @@ class Ui_Form(QtGui.QWidget):
                 #check distributor
                 if self.tab_seven_done_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_done_dist_combo_box.currentText()
+                    print row[RESERVED_ONE_INDEX]
+                    #if dist != row[RESERVED_ONE_INDEX]:
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
                 #check state
@@ -15357,8 +15360,9 @@ class Ui_Form(QtGui.QWidget):
         if selection in self.distributors.get_distributors():
             print 'cool man, things are kinda working'
             print selection
-            #self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (selection, db_info[NEW_ID_INDEX]))
-            #self.db.commit()
+            self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (selection, db_info[NEW_ID_INDEX]))
+            self.db.commit()
+            #self.tab_seven_refresh()
         else:
             print 'Can\'t find a distributor that matches that braj'
         

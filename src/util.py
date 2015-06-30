@@ -18,7 +18,7 @@ class Util():
                 self.db_cursor = self.db.cursor()
                 locale.setlocale( locale.LC_ALL, '')
                 self.discogs = DiscogsClient()#discogs api
-
+                
         #this method should be left blank unless some one time operation needs to be done
         def custom_temp_operation(self):
                 placeholder = 0
@@ -39,109 +39,36 @@ class Util():
                 #                                placeholder = 0
                 #                                print '%s - %s - %s - %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
                 #total = 0
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Smokin\' in the boys room',)):
-                #        total += float(row[PRICE_INDEX])
-                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor = ?', ('Smokin\' in the boys room',)):
-                #total += float(row[PRICE_INDEX])
-                        #print '%s\t%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0), str(row[DISCOGS_RELEASE_NUMBER_
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
+                #        total += float(row[PRICE_PAID_INDEX])
+                        #       print '%s\t%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0), str(row[DISCOGS_RELEASE_NUMBER_
                 #print total
-                #list_of_stuff_to_update = []
-                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor = ?', ('Johnny Mathis feat. Pink Floyd',)):
-                #price = math.ceil((float(row[PRICE_INDEX]) * 0.606) * 100)/100.0
-                #        list_of_stuff_to_update.append((price,row[NEW_ID_INDEX]))
-                #for row in list_of_stuff_to_update:
-                #        print row
-                #        self.db_cursor.execute('UPDATE sold_inventory SET price_paid = ? WHERE id = ?', row)
-                #self.db.commit()
-                #for row in self.db_cursor.execute('SELECT * FROM transactions'):
-                #        if row[TRANS_NUMBER_OF_ITEMS_INDEX] > 50:
-                #                print '%s - %s' % (row[TRANS_NUMBER_OF_ITEMS_INDEX], row[TRANS_ID_INDEX])
-                #self.db_cursor.execute('UPDATE sold_inventory SET price_paid = ? WHERE id = ?', ('0.01', '7183'))
-                #self.db.commit()
-                
-                
-                
+                        
                 #pricing some distro to a percentage of selling price
                 #list_of_stuff_to_update = []
-<<<<<<< HEAD
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Lisbin',)):
-                #        price = math.ceil((float(row[PRICE_INDEX]) * 0.402) * 100)/100.0
-
-                        #price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
-                        #list_of_stuff_to_update.append((price, row[ID_INDEX]))
-=======
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
                 #        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
                 #        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
                 #        list_of_stuff_to_update.append((price, row[ID_INDEX]))
->>>>>>> 6b02c9817c4e3100dfdc76ae44335dfc615bf107
                 #for row in list_of_stuff_to_update:
                 #        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
                 #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
                 #self.db.commit()
-<<<<<<< HEAD
-                #for row in self.db_cursor.execute('SELECT * from inventory'):
-                #        crap = row[UPC_INDEX]
-                #        crap = crap[0:3]
-                #        print crap
-                #        if crap is '000':
-                #                print row[ARTIST_INDEX]
-                #self.db_cursor.execute('UPDATE inventory SET distributor = ? WHERE distributor = ?', ('Johnny Mathis TenThousand.beta', 'Johnny Mathis TenThounsand.beta'))
-                #self.db.commit()
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Lisbin',)):
-                #        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX])
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ? AND price_paid = ?', ('New', 1.0)):
-                #        print '%s - %s - %s' % (row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX])
-                #upcs = []
-                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor = ?', ('Colemine',)):
-                #        upcs.append(row[UPC_INDEX])
-                #sold = self.histogram(upcs)
-                #items = [(v, k) for k, v in sold.items()]
-                #items.sort()
-                #items.reverse()             # so largest is first
-                #for row in items:
-                #        print '%s, %s' % (row[1], row[0])
-                #labels = []
-                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                #        labels.append(row[LABEL_INDEX])
-                #labels = self.histogram(labels)
-                #items = [(v, k) for k, v in labels.items()]
-                #items.sort()
-                #items.reverse()             # so largest is first
-                #for row in items:
-                #        print '%s, %s' % (row[1], row[0])
-
-                list_of_stuff = []
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Johnny Mathis TenThousand.beta',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Sir Scott Carney',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Pearl Jam',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Lisbin',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Moldy Hip Hop',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Lisbin',)):
-                        list_of_stuff.append(list(row))
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
-                        list_of_stuff.append(list(row))
-                print 'ARTIST;TITLE;PRICE;DATE;DISTRO'
-                for row in list_of_stuff:
-                        print '%s;%s;%f;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[DATE_ADDED_INDEX], row[DISTRIBUTOR_INDEX])
-
-                
-                
-=======
                 #total = 0
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
                 #        total += float(row[PRICE_PAID_INDEX])
                 #print total
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
-                        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
+                #        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
+                list_of_stuff_to_update = []
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                        list_of_stuff_to_update.append((row[DISTRIBUTOR_INDEX], row[NEW_ID_INDEX]))
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', row)
+                self.db.commit()
+                
+                
 
-
->>>>>>> 6b02c9817c4e3100dfdc76ae44335dfc615bf107
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
                 shit_to_sell = []
@@ -446,14 +373,14 @@ class Util():
                 specified_db = []
                 at_moment = datetime.datetime(year, month, day, hour, minute)
                 for row in self.db_cursor.execute('SELECT * FROM inventory'):
-                        #if len(specified_db)%100 == 0:
-                                #print '%d - current' % len(specified_db)
+                        if len(specified_db)%100 == 0:
+                                print '%d - current' % len(specified_db)
                         time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
                         if time_put_in < at_moment:
                                 specified_db.append(list(row))
                 for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                        #if len(specified_db)%100 == 0:
-                                #print '%d - sold' % len(specified_db)
+                        if len(specified_db)%100 == 0:
+                                print '%d - sold' % len(specified_db)
                         time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
                         time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
                         if ((at_moment > time_put_in) and (at_moment < time_sold)):
