@@ -14897,7 +14897,7 @@ class Ui_Form(QtGui.QWidget):
                     temp_row.append('Format')
                     temp_list.append(temp_row)
                     for row in self.tab_seven_po_table_list:
-                        if row[DISTRIBUTOR_INDEX] == distributor:
+                        if row[RESERVED_ONE_INDEX] == distributor:
                             temp_row = []
                             temp_row.append(self.xstr(row[UPC_INDEX]))
                             temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
@@ -14916,7 +14916,7 @@ class Ui_Form(QtGui.QWidget):
                     temp_row.append('Format')
                     temp_list.append(temp_row)
                     for row in self.tab_seven_po_table_list:
-                        if row[DISTRIBUTOR_INDEX] == distributor:
+                        if row[RESERVED_ONE_INDEX] == distributor:
                             temp_row = []
                             temp_row.append(self.xstr(row[UPC_INDEX]))
                             temp_row.append(self.xstr(row[RESERVED_THREE_INDEX]))
@@ -15020,6 +15020,7 @@ class Ui_Form(QtGui.QWidget):
                 #check distributor
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    dist = str(dist.split('-')[0]).strip()
                     #TODO: stufffffssss
                     if dist != row[RESERVED_ONE_INDEX]:
                         continue
@@ -15044,6 +15045,7 @@ class Ui_Form(QtGui.QWidget):
                 #check distributor
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    dist = str(dist.split('-')[0]).strip()
                     if dist != row[RESERVED_ONE_INDEX]:
                         continue
                 #check state
@@ -15152,7 +15154,11 @@ class Ui_Form(QtGui.QWidget):
         while self.tab_seven_search_sold_dist_combo_box.count() != 0:
             self.tab_seven_search_sold_dist_combo_box.removeItem(0)
         for distributor in self.distributors.get_distributors():
-            self.tab_seven_search_sold_dist_combo_box.addItem(distributor)
+            #find out how many items each of these distros needs reordered
+            count = 0
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reserved_one = ? AND reorder_state = ?', (distributor, NEEDS_REORDERED)):
+                count += 1
+            self.tab_seven_search_sold_dist_combo_box.addItem('%s - %i' % (distributor, count))
         self.tab_seven_search_sold_filter_date_checkbox.setCheckState(False)
         self.tab_seven_search_sold_start_date.setDateTime(datetime.datetime.today())
         self.tab_seven_search_sold_end_date.setDateTime(datetime.datetime.today())
@@ -15167,7 +15173,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_po_table_list_filtered = []
         selected_distributor = self.tab_seven_po_combobox.currentText()
         for row in self.tab_seven_po_table_list:
-            if (selected_distributor == row[DISTRIBUTOR_INDEX]) or (selected_distributor == 'Any'):
+            if (selected_distributor == row[RESERVED_ONE_INDEX]) or (selected_distributor == 'Any'):
                 self.tab_seven_po_table_list_filtered.append(row)
         
     def tab_seven_get_list_of_distros_and_prices(self, row):

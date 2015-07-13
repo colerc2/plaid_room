@@ -16,12 +16,13 @@ class Catalogs():
             with open(file_name, 'rb') as f:
                 print file_name
                 data = [row for row in csv.reader(f.read().splitlines())]
-            print data
+            #print data
+            print '%s - %d' % (distro, len(data))
             for row in data:
-                print row
+                #print row
                 self.catalog.append([distro, self.filter_non_numeric(row[0]), self.xfloat(self.filter_non_numeric(row[1]))])
-        for row in self.catalog:
-            print row
+        #for row in self.catalog:
+            #print row
 
     def get_catalog(self):
         return self.catalog

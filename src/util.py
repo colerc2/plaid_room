@@ -60,12 +60,20 @@ class Util():
                 #print total
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
                 #        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
-                list_of_stuff_to_update = []
-                for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                        list_of_stuff_to_update.append((row[DISTRIBUTOR_INDEX], row[NEW_ID_INDEX]))
-                for row in list_of_stuff_to_update:
-                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', row)
-                self.db.commit()
+                #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                #        list_of_stuff_to_update.append((row[DISTRIBUTOR_INDEX], row[NEW_ID_INDEX]))
+                #for row in list_of_stuff_to_update:
+                #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', row)
+                #self.db.commit()
+                file_name = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/catalogs/City Hall.csv'
+                with open(file_name, 'rb') as f:
+                        data = [row for row in csv.reader(f.read().splitlines())]
+                for row in data:
+                        [upc, price] = row[0].split()
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (upc,)):
+                                if float(price) > (row[PRICE_PAID_INDEX]-0):
+                                        print ('%s - %s - %f - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX], price)) 
                 
                 
 
