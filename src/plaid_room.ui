@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1436</width>
-    <height>855</height>
+    <width>1920</width>
+    <height>1035</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>11</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -1392,9 +1392,9 @@ p, li { white-space: pre-wrap; }
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>3</y>
-       <width>1852</width>
-       <height>947</height>
+       <y>9</y>
+       <width>1881</width>
+       <height>944</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1808,7 +1808,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>66</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -1925,7 +1925,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>66</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -1944,7 +1944,7 @@ p, li { white-space: pre-wrap; }
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::Minimum</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -1971,7 +1971,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>30</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -1986,11 +1986,11 @@ p, li { white-space: pre-wrap; }
              <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::Minimum</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>28</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -1998,6 +1998,71 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <widget class="Line" name="add_item_vert_line_19">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_199">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tab_two_filter_by_new_used">
+            <property name="text">
+             <string>New/Used</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_203">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QComboBox" name="tab_two_new_used_combo_box"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_202">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="add_item_vert_line_54">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -2013,7 +2078,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>58</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -2062,7 +2127,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>58</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
@@ -16192,7 +16257,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>30</x>
@@ -18703,7 +18768,7 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -18900,7 +18965,7 @@ p, li { white-space: pre-wrap; }
       <attribute name="title">
        <string>Data Input</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>11</x>
