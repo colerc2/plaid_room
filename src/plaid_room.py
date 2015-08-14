@@ -15214,7 +15214,8 @@ class Ui_Form(QtGui.QWidget):
         #first add the one we got it from
         list_of_distros[row[DISTRIBUTOR_INDEX]] =  row[PRICE_PAID_INDEX]
         for item in self.catalogs.get_catalog():
-            if item[1] == row[UPC_INDEX]:
+            #if item[1] == row[UPC_INDEX]:
+            if row[UPC_INDEX] in item[1]:
                 list_of_distros[item[0]] = item[2]
         for db_row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (row[UPC_INDEX],)):
             if db_row[DISTRIBUTOR_INDEX] == 'Used':

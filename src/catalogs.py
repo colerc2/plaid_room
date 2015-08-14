@@ -19,7 +19,9 @@ class Catalogs():
             #print data
             print '%s - %d' % (distro, len(data))
             for row in data:
-                #print row
+                print row
+                if row[0] == '886976651817':
+                    print self.filter_non_numeric(row[0])
                 self.catalog.append([distro, self.filter_non_numeric(row[0]), self.xfloat(self.filter_non_numeric(row[1]))])
         #for row in self.catalog:
             #print row
