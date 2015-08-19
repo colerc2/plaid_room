@@ -606,14 +606,14 @@ if __name__ == '__main__':
                                         
                                         
                         print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price,No. New Titles,New Gross,Used Gross,New Net,Used Net,Clothing Gross,Clothing Net,Misc Gross, Misc Net,Taxes,New Qty,Used Qty,Total Gross,Total Net'
-                        with open('/Users/plaidroomrecords/Documents/pos_software/time_travel.csv', 'wb') as csvfile:
+                        with open('/Volumes/NAS_250GB/pos_software/time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
                                 #spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
                                 spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','No. New Titles','Total Qty','Total Cost','Total Price','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Total Gross','Total Net','New Cumulative','Used Cumulative'])
                                 #for line in total_stats:
                                 spamwriter.writerows(total_stats)
-                        with open('/Users/plaidroomrecords/Documents/pos_software/week_time_travel.csv', 'wb') as csvfile:
+                        with open('/Volumes/NAS_250GB/pos_software/week_time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Week Gross','Week Net'])
                                 spamwriter.writerows(weekly_stats)

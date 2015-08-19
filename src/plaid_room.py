@@ -12809,10 +12809,16 @@ class Ui_Form(QtGui.QWidget):
         #search discogs
         self.tab_one_print_to_console('Searching discogs...')
         try:
+            print 'three'
             results = self.discogs.search_for_release(search_query_with_format)
-            if (results is not None) and (len(results) != 0):
+            print '-'*50
+            print results
+            print len(results)
+            print '-'*50
+            if results is not None:
+            #if (results is not None) and (len(results) != 0):
+                print 'five'
                 self.tab_one_print_to_console('\t%s results found on discogs for term: %s.\n' % (len(results), search_query))
-
 
                 for result in results:
                     if len(self.tab_one_results_table_list) >= 20:
@@ -12823,7 +12829,7 @@ class Ui_Form(QtGui.QWidget):
                             break
                     
                     temp_row = []
-
+                    
                     try:
                         #0 - upc
                         if upc_needed:
@@ -12888,7 +12894,7 @@ class Ui_Form(QtGui.QWidget):
                         self.tab_one_results_table_list_tracker.append([False,result])
                         
                     except Exception as e:
-                        print e
+                        print 'Problem with search: %s' % e
                         temp_row = []
                         pass
                     
