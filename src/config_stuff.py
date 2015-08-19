@@ -151,8 +151,8 @@ ALREADY_OUT = 1
 
 #/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room
 #BASE_PATH = '/Users/bccole1989/Documents/plaid_room_records/add_tabs/'
-#BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/'
-BASE_PATH = '/Volumes/NAS-250GB/pos_software/'
+BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/'
+#BASE_PATH = '/Volumes/NAS-250GB/pos_software/'
 
 #config stuff for all kinds of combo boxes
 DIST_FILE_NAME = BASE_PATH + 'plaid_room/config/distributors.csv'
