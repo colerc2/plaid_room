@@ -30,14 +30,19 @@ class Util():
                 #self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
                 #self.db.commit()
                 #checking our double game
-                #current_inventory = open('/Users/plaidroomrecords/Desktop/inventory_checker.txt').read().splitlines()
+                current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/up_top').read().splitlines()
+                temp_inventory = list()
+                for item in current_inventory:
+                        temp_inventory.append(item.strip())
+                current_inventory = temp_inventory
+                #print current_inventory
                 #print current_inventory --------------------
-                #for row in self.db_cursor.execute('SELECT * from inventory'):
-                #        if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
-                #if row[NEW_USED_INDEX] == 'New' and '7\"' not in row[FORMAT_INDEX] and 'CD' not in row[FORMAT_INDEX]:
-                #                        if str(row[UPC_INDEX]) not in current_inventory:
-                #                                placeholder = 0
-                #                                print '%s - %s - %s - %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                for row in self.db_cursor.execute('SELECT * from inventory'):
+                        if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
+                                if row[NEW_USED_INDEX] == 'New':
+                                        if str(row[UPC_INDEX]) not in current_inventory:
+                                                placeholder = 0
+                                                print '%s ; %s ; %s ; %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
                 #total = 0
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
                 #        total += float(row[PRICE_PAID_INDEX])
@@ -78,10 +83,10 @@ class Util():
                 #        if 'Reggae' in row[GENRE_INDEX]:
                 #                if row[NEW_USED_INDEX] == 'Used':
                 #                        print '%s - %s - %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX])
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor=?', ('Daptone',)):
-                        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
-                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', ('Daptone',)):
-                        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))                
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor=?', ('Daptone',)):
+                #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', ('Daptone',)):
+                #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))                
                 
 
         def find_stuff_to_sell_on_discogs(self):
