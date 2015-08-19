@@ -161,7 +161,7 @@ MISC_DIST_FILE_NAME = BASE_PATH + 'plaid_room/config/misc_distributors.csv'
 TEMP_RECEIPT_FILE_NAME = BASE_PATH + 'plaid_room/images/receipt_test.pdf'
 RECEIPT_HEADER_FILE_NAME = BASE_PATH + 'plaid_room/images/plaid_room.jpg'
 PAYPAL_FILE_NAME = BASE_PATH + 'plaid_room/config/paypal.key'
-DB_FILE = BASE_PATH + 'plaid_room/real_inventory_1.db'
+DB_FILE = BASE_PATH + 'plaid_room/real_inventory.db'
 EMAIL_PASSWORD_FILE_NAME = BASE_PATH + 'plaid_room/config/password.email'
 CATALOGS_PATH = BASE_PATH + 'plaid_room/config/catalogs/'
 
