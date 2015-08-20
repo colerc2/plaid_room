@@ -12,6 +12,7 @@ from receipt_printer import ReceiptPrinter
 from misc_types import MiscTypes
 from misc_distributors import MiscDistributors
 from paypal_interface import PaypalInterface
+from paypalrestsdk import Invoice
 import time
 import datetime
 import sqlite3
@@ -130,6 +131,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_cole_two_inventory_table_list = []
         self.tab_cole_three_po_table_list = []
         self.tab_cole_three_current_account = []
+        self.tab_cole_three_current_invoice = None
         
         #create/connect to database
         self.db = sqlite3.connect(DB_FILE)
@@ -303,7 +305,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
         
-        #self.db_cursor.execute('DROP table IF EXISTS colemine_transactions')
+        self.db_cursor.execute('DROP table IF EXISTS colemine_transactions')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_transactions
         (number_of_items integer,
         date text,
@@ -314,11 +316,13 @@ class Ui_Form(QtGui.QWidget):
         sold_ids text,
         account_number integer,
         paypal_trans text,
+        paypal_trans_id text,
         notes text,
+        status integer,
         id integer primary key autoincrement)
         """)
 
-        #self.db_cursor.execute('DROP table IF EXISTS colemine_sold_inventory')
+        self.db_cursor.execute('DROP table IF EXISTS colemine_sold_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS colemine_sold_inventory
         (upc text,
         qty integer,
@@ -337,6 +341,7 @@ class Ui_Form(QtGui.QWidget):
         date text,
         trans_id integer,
         account_number integer,
+        status integer,
         id integer primary key autoincrement)
         """)
 
@@ -7780,9 +7785,47 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_save = QtGui.QPushButton(self.layoutWidget13)
         self.cole_three_bo_save.setObjectName(_fromUtf8("cole_three_bo_save"))
         self.horizontalLayout_49.addWidget(self.cole_three_bo_save)
-        self.cole_three_submit_po = QtGui.QPushButton(self.cole_make_po_tab)
-        self.cole_three_submit_po.setGeometry(QtCore.QRect(210, 830, 171, 31))
+        self.widget = QtGui.QWidget(self.cole_make_po_tab)
+        self.widget.setGeometry(QtCore.QRect(240, 820, 151, 131))
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout_96 = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout_96.setMargin(0)
+        self.verticalLayout_96.setObjectName(_fromUtf8("verticalLayout_96"))
+        self.verticalLayout_95 = QtGui.QVBoxLayout()
+        self.verticalLayout_95.setObjectName(_fromUtf8("verticalLayout_95"))
+        self.label_105 = QtGui.QLabel(self.widget)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Helvetica"))
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.label_105.setFont(font)
+        self.label_105.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_105.setObjectName(_fromUtf8("label_105"))
+        self.verticalLayout_95.addWidget(self.label_105)
+        self.cole_three_custom_po_name = QtGui.QLineEdit(self.widget)
+        self.cole_three_custom_po_name.setObjectName(_fromUtf8("cole_three_custom_po_name"))
+        self.verticalLayout_95.addWidget(self.cole_three_custom_po_name)
+        self.verticalLayout_96.addLayout(self.verticalLayout_95)
+        self.cole_three_save_po = QtGui.QPushButton(self.widget)
+        self.cole_three_save_po.setObjectName(_fromUtf8("cole_three_save_po"))
+        self.verticalLayout_96.addWidget(self.cole_three_save_po)
+        self.cole_three_submit_po = QtGui.QPushButton(self.widget)
         self.cole_three_submit_po.setObjectName(_fromUtf8("cole_three_submit_po"))
+        self.verticalLayout_96.addWidget(self.cole_three_submit_po)
+        self.widget1 = QtGui.QWidget(self.cole_make_po_tab)
+        self.widget1.setGeometry(QtCore.QRect(40, 820, 191, 71))
+        self.widget1.setObjectName(_fromUtf8("widget1"))
+        self.verticalLayout_97 = QtGui.QVBoxLayout(self.widget1)
+        self.verticalLayout_97.setMargin(0)
+        self.verticalLayout_97.setObjectName(_fromUtf8("verticalLayout_97"))
+        self.cole_three_load_po_combobox = QtGui.QComboBox(self.widget1)
+        self.cole_three_load_po_combobox.setObjectName(_fromUtf8("cole_three_load_po_combobox"))
+        self.verticalLayout_97.addWidget(self.cole_three_load_po_combobox)
+        self.cole_three_load_po = QtGui.QPushButton(self.widget1)
+        self.cole_three_load_po.setObjectName(_fromUtf8("cole_three_load_po"))
+        self.verticalLayout_97.addWidget(self.cole_three_load_po)
         self.cole_tab_widget.addTab(self.cole_make_po_tab, _fromUtf8(""))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -8389,8 +8432,8 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_75.setObjectName(_fromUtf8("add_item_vert_line_75"))
 
         self.retranslateUi(Form)
-        self.main_menu_tabs.setCurrentIndex(1)
-        self.cole_tab_widget.setCurrentIndex(3)
+        self.main_menu_tabs.setCurrentIndex(10)
+        self.cole_tab_widget.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -12103,7 +12146,10 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_export.setText(_translate("Form", "Export current selection to CSV", None))
         self.cole_three_bo_fulfill_all.setText(_translate("Form", "Fulfill All Currently Selected", None))
         self.cole_three_bo_save.setText(_translate("Form", "Save Changes to Selected Item", None))
-        self.cole_three_submit_po.setText(_translate("Form", "Submit PO", None))
+        self.label_105.setText(_translate("Form", "Custom PO name", None))
+        self.cole_three_save_po.setText(_translate("Form", "Save PO", None))
+        self.cole_three_submit_po.setText(_translate("Form", "Send PO", None))
+        self.cole_three_load_po.setText(_translate("Form", "Load PO", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.tab_one_recent_additions_lbl_4.setText(_translate("Form", "Select Release", None))
         self.tab_one_recent_additions_lbl_6.setText(_translate("Form", "Activity", None))
@@ -12379,7 +12425,7 @@ class Ui_Form(QtGui.QWidget):
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_9), _translate("Form", "Statistics", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.tab_2), _translate("Form", "Books", None))
 
-        
+
         #other stuff
 
         #make keyboard shortcut (shift,->) that adds stuff from search tabs (2 & 3) to the checkout
@@ -12492,11 +12538,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_cole_two_reset()
         self.tab_cole_two_refresh()
         self.cole_three_account_combo_box.currentIndexChanged.connect(self.tab_cole_three_account_changed)
+        self.cole_three_load_po.clicked.connect(self.tab_cole_three_load_po)
         self.tab_cole_three_reset()
         self.cole_three_add_item_qline_button.clicked.connect(self.tab_cole_three_add_item_to_po)
         self.connect(self.cole_three_po_table, QtCore.SIGNAL("cellChanged(int, int)"), self.tab_cole_three_po_table_cell_changed)
+        self.cole_three_save_po.clicked.connect(self.tab_cole_three_save_wholesale_po)
         self.cole_three_submit_po.clicked.connect(self.tab_cole_three_make_wholesale_po)
-
+        self.cole_three_discount.returnPressed.connect(self.tab_cole_three_refresh_totals)
+        self.cole_three_shipping.returnPressed.connect(self.tab_cole_three_refresh_totals)
+        
         #tab books
         
 
@@ -16127,6 +16177,9 @@ class Ui_Form(QtGui.QWidget):
                 if row[COLE_INV_UPC_INDEX] not in upcs:
                     upcs.append(row[COLE_INV_UPC_INDEX])
                     self.tab_cole_two_search_table_list.append(list(row))
+            if len(self.tab_cole_two_search_table_list) == 0:
+                #placeholder = 0
+                self.tab_cole_two_search_table_list.append(['','','','','','','','','',''])
             self.tab_cole_two_refresh()
             return
         for row in self.db_cursor.execute('SELECT * FROM colemine_inventory WHERE catalog_number = ?', (search_term,)):
@@ -16316,6 +16369,7 @@ class Ui_Form(QtGui.QWidget):
                     row.append('')#date
                     row.append('')#trans id
                     row.append('')#account_number
+                    row.append('')#status
                     self.tab_cole_three_po_table_list.append(row)
         self.tab_cole_three_refresh()
 
@@ -16336,6 +16390,9 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_po_table_change_text(ix, 6, self.xstr(row[COLE_INV_QTY_BO_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 7, self.xstr(row[COLE_INV_QTY_SHIPPED_INDEX]))
             self.tab_cole_three_po_table_change_text(ix, 8, self.xstr(row[COLE_INV_QTY_INDEX]))
+            self.cole_three_po_table.blockSignals(True)
+            self.tab_cole_three_po_table_change_text(ix, 9, self.xstr(locale.currency(row[COLE_INV_WHOLESALE_INDEX])))
+            self.cole_three_po_table.blockSignals(False)
         self.cole_three_po_table.resizeColumnsToContents()
         self.cole_three_po_table.setColumnWidth(0,50)
         qty_ordered = 0
@@ -16351,7 +16408,26 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_qty_shipped.setText(self.xstr(qty_shipped))
         self.cole_three_qty_backordered.setText(self.xstr(qty_backordered))
         self.cole_three_subtotal.setText(self.xstr(locale.currency(subtotal)))
+        while self.cole_three_load_po_combobox.count() != 0:
+                    self.cole_three_load_po_combobox.removeItem(0)
+        self.cole_three_load_po_combobox.addItem('None')
+        if self.tab_cole_three_current_account:#if an account is selected
+            for po in self.db_cursor.execute('SELECT * FROM colemine_transactions WHERE account_number = ? ORDER BY date ASC', (self.tab_cole_three_current_account[COLE_ACCOUNT_NUMBER_INDEX],)):
+                self.cole_three_load_po_combobox.addItem(self.xstr('%i - %s' % (po[COLE_TRANS_ID_INDEX],po[COLE_TRANS_PAYPAL_TRANS_INDEX])))
+        self.tab_cole_three_refresh_totals()
 
+    def tab_cole_three_refresh_totals(self):
+        subtotal = self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_subtotal.text())))
+        discount = self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_discount.text())))
+        shipping = self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_shipping.text())))
+        if discount == -1:
+            discount = 0
+        if shipping == -1:
+            shipping = 0
+        self.cole_three_discount.setText(locale.currency(discount))
+        self.cole_three_shipping.setText(locale.currency(shipping))
+        self.cole_three_total.setText(locale.currency(subtotal-discount+shipping))                                      
+                
     def tab_cole_three_po_remove_item_request(self, row):
         del self.tab_cole_three_po_table_list[row]
         self.tab_cole_three_refresh()
@@ -16372,6 +16448,12 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_po_table_list[row][COLE_INV_QTY_SHIPPED_INDEX] = min(self.tab_cole_three_po_table_list[row][COLE_INV_QTY_INDEX],self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX])
             self.tab_cole_three_po_table_list[row][COLE_INV_QTY_BO_INDEX] = self.tab_cole_three_po_table_list[row][COLE_INV_QTY_ORDERED_INDEX] - self.tab_cole_three_po_table_list[row][COLE_INV_QTY_SHIPPED_INDEX]
             self.tab_cole_three_refresh()
+        elif col == 9:
+            new_price = self.cole_three_po_table.item(row, col).text()
+            new_price = float(self.filter_non_numeric(str(new_price)))
+            if new_price >= 0 and new_price < 1000:
+                self.tab_cole_three_po_table_list[row][COLE_INV_WHOLESALE_INDEX] = new_price
+                self.tab_cole_three_refresh()
         
     def tab_cole_three_po_table_clear(self):
         self.cole_three_po_table.blockSignals(True)
@@ -16380,9 +16462,21 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_cole_three_po_table_change_text(ii, jj, "")
         self.cole_three_po_table.blockSignals(False)
 
-    def tab_cole_three_make_wholesale_po(self):
+    def tab_cole_three_save_wholesale_po(self):
         if self.tab_cole_three_po_table_list and self.tab_cole_three_current_account:
-            print 'cool, there is stuff to make a po for and an account is selected'
+            #first delete the old draft/invoice and then recreate it. i'm doing this because it's easier
+            #to make a new one vs. just updating the current one
+            paypal_invoice_number = ''
+            paypal_invoice_id = ''
+            transaction_id_to_delete = 0
+            if self.tab_cole_three_current_invoice is not None:
+                paypal_invoice_id = self.tab_cole_three_current_invoice
+                for row in self.db_cursor.execute('SELECT * FROM colemine_transactions WHERE paypal_trans_id = ?', (paypal_invoice_id,)):
+                    paypal_invoice_number = row[COLE_TRANS_PAYPAL_TRANS_INDEX]
+                    transaction_id_to_delete = row[COLE_TRANS_ID_INDEX]
+                self.db_cursor.execute('DELETE FROM colemine_sold_inventory WHERE trans_id = ?', (self.xint(transaction_id_to_delete),))
+                self.db_cursor.execute('DELETE FROM colemine_transactions WHERE id = ?', (self.xint(transaction_id_to_delete),))
+                self.db.commit()
             curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             sold_inventory_new_ids = []
             #1. Add items to sold inventory
@@ -16391,12 +16485,13 @@ class Ui_Form(QtGui.QWidget):
                 row[COLE_INV_DATE_SOLD_INDEX] = self.xstr(curr_time)
                 row[COLE_INV_TRANS_ID_INDEX] = 0
                 row[COLE_INV_ACCOUNT_NO_INDEX] = self.xint(self.tab_cole_three_current_account[COLE_ACCOUNT_NUMBER_INDEX])
-                self.db_cursor.execute('INSERT INTO colemine_sold_inventory (upc, qty, catalog_number, artist, title, format, wholesale, cost, label, inventory_id, ordered, bo, shipped, price, date, trans_id, account_number) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
+                row[COLE_INV_STATUS_INDEX] = DRAFT
+                self.db_cursor.execute('INSERT INTO colemine_sold_inventory (upc, qty, catalog_number, artist, title, format, wholesale, cost, label, inventory_id, ordered, bo, shipped, price, date, trans_id, account_number, status) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                 self.db.commit()
                 sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
                 #2. Update qty in stock
-                self.db_cursor.execute('UPDATE colemine_inventory SET qty = ? WHERE id = ?', ((row[COLE_INV_QTY_INDEX]-row[COLE_INV_QTY_SHIPPED_INDEX]),row[COLE_INV_ID_INDEX]))
-                self.db.commit()
+                #self.db_cursor.execute('UPDATE colemine_inventory SET qty = ? WHERE id = ?', ((row[COLE_INV_QTY_INDEX]-row[COLE_INV_QTY_SHIPPED_INDEX]),row[COLE_INV_ID_INDEX]))
+                #self.db.commit()
             #3.Add items to transaction history
             qty_ordered = 0
             qty_backordered = 0
@@ -16410,14 +16505,16 @@ class Ui_Form(QtGui.QWidget):
             trans_item = (self.xint(len(self.tab_cole_three_po_table_list)),
                           self.xstr(curr_time),
                           self.xfloat(subtotal),
-                          self.xfloat(self.cole_three_shipping.text()),
+                          self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_shipping.text()))),
                           self.xfloat(0),
-                          self.xfloat(self.xfloat(self.cole_three_shipping.text())+subtotal),
+                          self.xfloat(self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_shipping.text())))+subtotal),
                           self.xstr(",".join(sold_inventory_new_ids)),
                           self.xint(self.tab_cole_three_current_account[COLE_ACCOUNT_NUMBER_INDEX]),
-                          self.xstr(''),
-                          self.xstr(''))
-            self.db_cursor.execute('INSERT INTO colemine_transactions (number_of_items, date, subtotal, shipping, discount, total, sold_ids, account_number, paypal_trans, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
+                          self.xstr(paypal_invoice_number),#paypal trans
+                          self.xstr(paypal_invoice_id),#paypal trans id
+                          self.xstr(''),#notes
+                          self.xint(DRAFT))
+            self.db_cursor.execute('INSERT INTO colemine_transactions (number_of_items, date, subtotal, shipping, discount, total, sold_ids, account_number, paypal_trans, paypal_trans_id, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
             self.db.commit()
             trans_id = self.db_cursor.lastrowid
             #4. Go back and update all items with new transaction number
@@ -16426,10 +16523,12 @@ class Ui_Form(QtGui.QWidget):
                 self.db.commit()
                 
             #5. Push invoice to paypal
-            paypal_id = self.paypal.create_wholesale_invoice(self.tab_cole_three_po_table_list, self.tab_cole_three_current_account, self.xfloat(self.cole_three_shipping.text()))
+            paypal_invoice = self.paypal.create_wholesale_invoice(paypal_invoice_id, self.tab_cole_three_po_table_list, self.tab_cole_three_current_account, self.xfloat(self.filter_non_numeric(self.xstr(self.cole_three_shipping.text()))))
             
             #6. Update transaction with paypal id
-            self.db_cursor.execute('UPDATE colemine_transactions SET paypal_trans = ? WHERE id = ?', (self.xstr(paypal_id),trans_id))
+            self.db_cursor.execute('UPDATE colemine_transactions SET paypal_trans = ? WHERE id = ?', (self.xstr(paypal_invoice.number),trans_id))
+            self.db_cursor.execute('UPDATE colemine_transactions SET paypal_trans_id = ? WHERE id = ?', (self.xstr(paypal_invoice.id), trans_id))
+            self.tab_cole_three_current_invoice = paypal_invoice.id
             self.db.commit()
 
             #7.Clean up shit
@@ -16437,10 +16536,43 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_refresh()
             self.tab_cole_two_refresh()
             
+        
+    def tab_cole_three_make_wholesale_po(self):
+        self.tab_cole_three_save_wholesale_po()
+        try:
+            paypal_invoice = Invoice.find(self.tab_cole_three_current_invoice)
+            if paypal_invoice.send(): # return True or False
+                print("Invoice[%s] send successfully" % (paypal_invoice.id))
+                #if it successfully sent, we need to update QOH for the colemine inventory
+            else:
+                print(paypal_invoice.error)
+        except Exception as e:
+            print 'Problem finding paypal invoice: %s' % e
+        
+    def tab_cole_three_load_po(self):
+        if self.cole_three_load_po_combobox.currentText() == 'None':
+            self.tab_cole_three_po_table_list = []
+            self.tab_cole_three_current_invoice = None
+            self.tab_cole_three_refresh()
+            return
+        which_po = self.cole_three_load_po_combobox.currentText()
+        colemine_number, paypal_number = which_po.split('-', 1)
+        trans_id = None
+        paypal_number = paypal_number.replace(' ','')
+        for transaction in self.db_cursor.execute('SELECT * FROM colemine_transactions WHERE paypal_trans = ?', (self.xstr(paypal_number),)):
+            self.tab_cole_three_current_invoice = transaction[COLE_TRANS_PAYPAL_TRANS_ID_INDEX]
+            print 'loading %s...' % self.tab_cole_three_current_invoice
+            trans_id = transaction[COLE_TRANS_ID_INDEX]
+        if trans_id is not None:
+            self.tab_cole_three_po_table_list = []
+            for row in self.db_cursor.execute('SELECT * FROM colemine_sold_inventory WHERE trans_id = ?', (trans_id,)):
+                self.tab_cole_three_po_table_list.append(list(row[:-1]))
+        self.tab_cole_three_refresh()
                                         
     def tab_cole_three_account_changed(self):
         if self.cole_three_account_combo_box.currentText() == 'None':
             #clear it all boys
+            self.tab_cole_three_current_account = None
             self.cole_three_business_name.setText('')
             self.cole_three_contact.setText('')
             self.cole_three_account_number.setText('')
@@ -16453,6 +16585,7 @@ class Ui_Form(QtGui.QWidget):
             self.cole_three_shipping_address.setText('')
             self.cole_three_shipping_city_state.setText('')
             self.cole_three_shipping_country.setText('')
+            self.tab_cole_three_refresh()
             return
         account = self.cole_three_account_combo_box.currentText()
         account_no, business_name = account.split('-', 1)
@@ -16472,6 +16605,7 @@ class Ui_Form(QtGui.QWidget):
             self.cole_three_shipping_address.setText(row[COLE_SHIPPING_LINE_ONE_INDEX])
             self.cole_three_shipping_city_state.setText('%s, %s %s' % (row[COLE_SHIPPING_CITY_INDEX], row[COLE_SHIPPING_STATE_INDEX], row[COLE_SHIPPING_ZIP_INDEX]))
             self.cole_three_shipping_country.setText(row[COLE_SHIPPING_COUNTRY_INDEX])
+        self.tab_cole_three_refresh()
 
 
     def tab_cole_three_po_table_change_text(self, row, col, text):

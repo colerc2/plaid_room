@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>10</number>
    </property>
    <property name="iconSize">
     <size>
@@ -14891,7 +14891,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="cole_add_edit_account_tab">
       <attribute name="title">
@@ -18506,18 +18506,129 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QPushButton" name="cole_three_submit_po">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
-         <x>210</x>
-         <y>830</y>
-         <width>171</width>
-         <height>31</height>
+         <x>240</x>
+         <y>820</y>
+         <width>151</width>
+         <height>131</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Submit PO</string>
+       <layout class="QVBoxLayout" name="verticalLayout_96">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_95">
+          <item>
+           <widget class="QLabel" name="label_105">
+            <property name="font">
+             <font>
+              <family>Helvetica</family>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Custom PO name</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="cole_three_custom_po_name"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cole_three_save_po">
+          <property name="text">
+           <string>Save PO</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cole_three_submit_po">
+          <property name="text">
+           <string>Send PO</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>820</y>
+         <width>191</width>
+         <height>71</height>
+        </rect>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_97">
+        <item>
+         <widget class="QComboBox" name="cole_three_load_po_combobox"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cole_three_load_po">
+          <property name="text">
+           <string>Load PO</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>16</x>
+         <y>900</y>
+         <width>221</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_98">
+        <item>
+         <widget class="QLabel" name="label_106">
+          <property name="font">
+           <font>
+            <family>Helvetica</family>
+            <pointsize>14</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Current Invoice: None</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_107">
+          <property name="font">
+           <font>
+            <family>Helvetica</family>
+            <pointsize>14</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Status: Draft</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tab">

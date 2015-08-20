@@ -2,6 +2,7 @@
 import paypalrestsdk
 import logging
 from paypalrestsdk import Invoice
+#from paypalrestsdk import invoice_item
 from config_stuff import *
 
 class PaypalInterface():
@@ -19,7 +20,7 @@ class PaypalInterface():
             "client_id": self.client_id,
             "client_secret": self.client_secret })
 
-    def create_wholesale_invoice(self, items, account, shipping):
+    def create_wholesale_invoice(self, previous_id, items, account, shipping):
         try:
             #first create array of items
             paypal_items = []
@@ -32,14 +33,17 @@ class PaypalInterface():
                     "quantity": row[COLE_INV_QTY_SHIPPED_INDEX],
                     "unit_price": {
                         "currency": "USD",
-                        "value": format(row[COLE_INV_WHOLESALE_INDEX],'.2f')
+                        "value": str(format(row[COLE_INV_WHOLESALE_INDEX],'.2f'))
                     }
                 }
                 #temp_item["tax"] = {
-                    #"name": "WHOLESALE",
-                    #"percent": 0.0
-                    #}
+                #    "name": "WHOLESALE",
+                #    "percent": 6.75
+                #}
                 paypal_items.append(temp_item)
+            print '*'*50    
+            print paypal_items
+            print '*'*50    
             temp_invoice = {
                 'merchant_info': {
                     "email": "plaidroomrecords@gmail.com",
@@ -102,17 +106,27 @@ class PaypalInterface():
                         "value": format(shipping,'.2f')
                     }
                 }
+            if previous_id != '':
+                temp_invoice["id"] = previous_id
+                
             invoice = Invoice(temp_invoice)
-            if invoice.create():
-                print("Invoice[%s] created successfully"%(invoice.id))
+
+            if previous_id != '':
+                if invoice.update():
+                    print("Invoice[%s] updated successfully"%(invoice.id))                
+                else:
+                    print(invoice.error)
             else:
-                print(invoice.error)
+                if invoice.create():
+                    print("Invoice[%s] created successfully"%(invoice.id))                
+                else:
+                    print(invoice.error)
 
             #if invoice.send(): # return True or False
             #    print("Invoice[%s] send successfully" % (invoice.id))
             #else:
             #    print(invoice.error)
-            #    return invoice.id
+            return invoice
         except Exception as e:
             print 'Error making paypal invoice, do it by hand brej: %s' % e
             
