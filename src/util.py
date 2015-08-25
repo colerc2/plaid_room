@@ -21,7 +21,9 @@ class Util():
                 
         #this method should be left blank unless some one time operation needs to be done
         def custom_temp_operation(self):
-                placeholder = 0
+                #placeholder = 0
+                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (22809,))
+                #self.db.commit()
                 #FIXING ALABAMA SHAKES UPC
                 #old_upc = '710882226718'
                 #new_upc = '880882226718'
@@ -30,19 +32,19 @@ class Util():
                 #self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
                 #self.db.commit()
                 #checking our double game
-                current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/up_top').read().splitlines()
-                temp_inventory = list()
-                for item in current_inventory:
-                        temp_inventory.append(item.strip())
-                current_inventory = temp_inventory
+                #current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/up_top').read().splitlines()
+                #temp_inventory = list()
+                #for item in current_inventory:
+                #        temp_inventory.append(item.strip())
+                #current_inventory = temp_inventory
                 #print current_inventory
                 #print current_inventory --------------------
-                for row in self.db_cursor.execute('SELECT * from inventory'):
-                        if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
-                                if row[NEW_USED_INDEX] == 'New':
-                                        if str(row[UPC_INDEX]) not in current_inventory:
-                                                placeholder = 0
-                                                print '%s ; %s ; %s ; %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                #for row in self.db_cursor.execute('SELECT * from inventory'):
+                #        if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
+                #                if row[NEW_USED_INDEX] == 'New':
+                #                        if str(row[UPC_INDEX]) not in current_inventory:
+                #                                placeholder = 0
+                #                                print '%s ; %s ; %s ; %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
                 #total = 0
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
                 #        total += float(row[PRICE_PAID_INDEX])
@@ -63,8 +65,8 @@ class Util():
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
                 #        total += float(row[PRICE_PAID_INDEX])
                 #print total
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
-                #        print '%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX])
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
+                        print '%s;%s;%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX],row[PRICE_INDEX],row[DATE_ADDED_INDEX])
                 #list_of_stuff_to_update = []
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
                 #        list_of_stuff_to_update.append((row[DISTRIBUTOR_INDEX], row[NEW_ID_INDEX]))
@@ -72,13 +74,20 @@ class Util():
                 #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', row)
                 #self.db.commit()
                 #file_name = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/catalogs/City Hall.csv'
+                #file_name = '/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/catalogs/Baker and Taylor.csv'                
                 #with open(file_name, 'rb') as f:
                 #        data = [row for row in csv.reader(f.read().splitlines())]
+                #count = 0
                 #for row in data:
                 #        [upc, price] = row[0].split()
-                #        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (upc,)):
-                #                if float(price) > (row[PRICE_PAID_INDEX]-0):
-                #                        print ('%s - %s - %f - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX], price))
+                #        for row in self.db_cursor.execute('SELECT * FROM inventory'):
+                #                if row[UPC_INDEX] in upc:
+                #                        difference = float(price) - row[PRICE_PAID_INDEX]
+                #                        if difference > 0 and difference < 1:
+                                        #if float(price) < (row[PRICE_PAID_INDEX]-0):
+               #                                 print ('%s - %s - %f - New price: %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX], price))
+                #                                count += 1
+                #print count
                 #for row in self.db_cursor.execute('SELECT * FROM inventory'):
                 #        if 'Reggae' in row[GENRE_INDEX]:
                 #                if row[NEW_USED_INDEX] == 'Used':
@@ -87,7 +96,7 @@ class Util():
                 #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', ('Daptone',)):
                 #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))                
-                
+                placeholder = 0
 
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
@@ -606,14 +615,14 @@ if __name__ == '__main__':
                                         
                                         
                         print 'Date,New Vinyl Qty,New Vinyl Cost,New Vinyl Price,Used Vinyl Qty,Used Vinyl Cost,Used Vinyl Price,No. New Titles,New Gross,Used Gross,New Net,Used Net,Clothing Gross,Clothing Net,Misc Gross, Misc Net,Taxes,New Qty,Used Qty,Total Gross,Total Net'
-                        with open('/Volumes/NAS_250GB/pos_software/time_travel.csv', 'wb') as csvfile:
+                        with open('/Users/plaidroomrecords/Documents/pos_software/time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
                                 #spamwriter.writerow(['Spam', 'Lovely Spam', 'Wonderful Spam'])
                                 spamwriter.writerow(['Date','New Vinyl Qty','New Vinyl Cost','New Vinyl Price','Used Vinyl Qty','Used Vinyl Cost','Used Vinyl Price','No. New Titles','Total Qty','Total Cost','Total Price','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Total Gross','Total Net','New Cumulative','Used Cumulative'])
                                 #for line in total_stats:
                                 spamwriter.writerows(total_stats)
-                        with open('/Volumes/NAS_250GB/pos_software/week_time_travel.csv', 'wb') as csvfile:
+                        with open('/Users/plaidroomrecords/Documents/pos_software/week_time_travel.csv', 'wb') as csvfile:
                                 spamwriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_MINIMAL)
                                 spamwriter.writerow(['Week Start Date','New Gross','Used Gross','New Net','Used Net','Clothing Gross','Clothing Net','Misc Gross','Misc Net','Taxes','New Qty Sold','Used Qty Sold','No. Transactions','Week Gross','Week Net'])
                                 spamwriter.writerows(weekly_stats)
