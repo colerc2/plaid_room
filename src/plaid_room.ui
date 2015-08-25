@@ -18591,7 +18591,7 @@ p, li { white-space: pre-wrap; }
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_98">
         <item>
-         <widget class="QLabel" name="label_106">
+         <widget class="QLabel" name="cole_three_current_invoice">
           <property name="font">
            <font>
             <family>Helvetica</family>
@@ -18610,7 +18610,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_107">
+         <widget class="QLabel" name="cole_three_current_invoice_status">
           <property name="font">
            <font>
             <family>Helvetica</family>

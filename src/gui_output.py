@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'src/plaid_room.ui'
 #
-# Created: Thu Aug 20 18:22:18 2015
+# Created: Thu Aug 20 19:07:33 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -7497,28 +7497,28 @@ class Ui_Form(object):
         self.verticalLayout_98 = QtGui.QVBoxLayout(self.widget2)
         self.verticalLayout_98.setMargin(0)
         self.verticalLayout_98.setObjectName(_fromUtf8("verticalLayout_98"))
-        self.label_106 = QtGui.QLabel(self.widget2)
+        self.cole_three_current_invoice = QtGui.QLabel(self.widget2)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
         font.setPointSize(14)
         font.setBold(True)
         font.setItalic(False)
         font.setWeight(75)
-        self.label_106.setFont(font)
-        self.label_106.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_106.setObjectName(_fromUtf8("label_106"))
-        self.verticalLayout_98.addWidget(self.label_106)
-        self.label_107 = QtGui.QLabel(self.widget2)
+        self.cole_three_current_invoice.setFont(font)
+        self.cole_three_current_invoice.setAlignment(QtCore.Qt.AlignCenter)
+        self.cole_three_current_invoice.setObjectName(_fromUtf8("cole_three_current_invoice"))
+        self.verticalLayout_98.addWidget(self.cole_three_current_invoice)
+        self.cole_three_current_invoice_status = QtGui.QLabel(self.widget2)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
         font.setPointSize(14)
         font.setBold(True)
         font.setItalic(False)
         font.setWeight(75)
-        self.label_107.setFont(font)
-        self.label_107.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_107.setObjectName(_fromUtf8("label_107"))
-        self.verticalLayout_98.addWidget(self.label_107)
+        self.cole_three_current_invoice_status.setFont(font)
+        self.cole_three_current_invoice_status.setAlignment(QtCore.Qt.AlignCenter)
+        self.cole_three_current_invoice_status.setObjectName(_fromUtf8("cole_three_current_invoice_status"))
+        self.verticalLayout_98.addWidget(self.cole_three_current_invoice_status)
         self.cole_tab_widget.addTab(self.cole_make_po_tab, _fromUtf8(""))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -11843,8 +11843,8 @@ class Ui_Form(object):
         self.cole_three_save_po.setText(_translate("Form", "Save PO", None))
         self.cole_three_submit_po.setText(_translate("Form", "Send PO", None))
         self.cole_three_load_po.setText(_translate("Form", "Load PO", None))
-        self.label_106.setText(_translate("Form", "Current Invoice: None", None))
-        self.label_107.setText(_translate("Form", "Status: Draft", None))
+        self.cole_three_current_invoice.setText(_translate("Form", "Current Invoice: None", None))
+        self.cole_three_current_invoice_status.setText(_translate("Form", "Status: Draft", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.tab_one_recent_additions_lbl_4.setText(_translate("Form", "Select Release", None))
         self.tab_one_recent_additions_lbl_6.setText(_translate("Form", "Activity", None))

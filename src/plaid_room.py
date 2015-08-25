@@ -358,7 +358,6 @@ class Ui_Form(QtGui.QWidget):
         """)
         
         self.setupUi(self)
-
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(1920, 1035)
@@ -7826,6 +7825,34 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_load_po = QtGui.QPushButton(self.widget1)
         self.cole_three_load_po.setObjectName(_fromUtf8("cole_three_load_po"))
         self.verticalLayout_97.addWidget(self.cole_three_load_po)
+        self.widget2 = QtGui.QWidget(self.cole_make_po_tab)
+        self.widget2.setGeometry(QtCore.QRect(16, 900, 221, 51))
+        self.widget2.setObjectName(_fromUtf8("widget2"))
+        self.verticalLayout_98 = QtGui.QVBoxLayout(self.widget2)
+        self.verticalLayout_98.setMargin(0)
+        self.verticalLayout_98.setObjectName(_fromUtf8("verticalLayout_98"))
+        self.cole_three_current_invoice = QtGui.QLabel(self.widget2)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Helvetica"))
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.cole_three_current_invoice.setFont(font)
+        self.cole_three_current_invoice.setAlignment(QtCore.Qt.AlignCenter)
+        self.cole_three_current_invoice.setObjectName(_fromUtf8("cole_three_current_invoice"))
+        self.verticalLayout_98.addWidget(self.cole_three_current_invoice)
+        self.cole_three_current_invoice_status = QtGui.QLabel(self.widget2)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Helvetica"))
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setWeight(75)
+        self.cole_three_current_invoice_status.setFont(font)
+        self.cole_three_current_invoice_status.setAlignment(QtCore.Qt.AlignCenter)
+        self.cole_three_current_invoice_status.setObjectName(_fromUtf8("cole_three_current_invoice_status"))
+        self.verticalLayout_98.addWidget(self.cole_three_current_invoice_status)
         self.cole_tab_widget.addTab(self.cole_make_po_tab, _fromUtf8(""))
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
@@ -12150,6 +12177,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_save_po.setText(_translate("Form", "Save PO", None))
         self.cole_three_submit_po.setText(_translate("Form", "Send PO", None))
         self.cole_three_load_po.setText(_translate("Form", "Load PO", None))
+        self.cole_three_current_invoice.setText(_translate("Form", "Current Invoice: None", None))
+        self.cole_three_current_invoice_status.setText(_translate("Form", "Status: Draft", None))
         self.cole_tab_widget.setTabText(self.cole_tab_widget.indexOf(self.cole_make_po_tab), _translate("Form", "Create PO", None))
         self.tab_one_recent_additions_lbl_4.setText(_translate("Form", "Select Release", None))
         self.tab_one_recent_additions_lbl_6.setText(_translate("Form", "Activity", None))
@@ -12424,7 +12453,6 @@ class Ui_Form(QtGui.QWidget):
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_4), _translate("Form", "Data Input", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_9), _translate("Form", "Statistics", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.tab_2), _translate("Form", "Books", None))
-
 
         #other stuff
 
@@ -16532,18 +16560,29 @@ class Ui_Form(QtGui.QWidget):
             self.db.commit()
 
             #7.Clean up shit
-            self.tab_cole_three_po_table_list = []
+            #self.tab_cole_three_po_table_list = []
             self.tab_cole_three_refresh()
             self.tab_cole_two_refresh()
             
         
     def tab_cole_three_make_wholesale_po(self):
         self.tab_cole_three_save_wholesale_po()
+        if self.tab_cole_three_current_invoice == None:
+            #todo throw some sort of error here!
+            return
         try:
             paypal_invoice = Invoice.find(self.tab_cole_three_current_invoice)
             if paypal_invoice.send(): # return True or False
                 print("Invoice[%s] send successfully" % (paypal_invoice.id))
                 #if it successfully sent, we need to update QOH for the colemine inventory
+                todo = 0
+                #also update the status in the transaction and items
+                trans_id = 0
+                for row in self.db_cursor.execute('SELECT * FROM colemine_transactions WHERE paypal_trans_id = ?', (self.tab_cole_three_current_invoice,)):
+                    trans_id = row[COLE_TRANS_ID_INDEX]
+                self.db_cursor.execute('UPDATE colemine_transactions WHERE paypal_trans_id = ? SET status = ?', (self.tab_cole_three_current_invoice,SENT))
+                self.db_cursor.execute('UPDATE colemine_sold_inventory WHERE trans_id = ? SET status = ?', (trans_id, SENT))
+                self.db.commit()
             else:
                 print(paypal_invoice.error)
         except Exception as e:
@@ -16553,6 +16592,8 @@ class Ui_Form(QtGui.QWidget):
         if self.cole_three_load_po_combobox.currentText() == 'None':
             self.tab_cole_three_po_table_list = []
             self.tab_cole_three_current_invoice = None
+            self.cole_three_current_invoice.setText('Current Invoice: None')
+            self.cole_three_current_invoice_status.setText('Status: N/A')
             self.tab_cole_three_refresh()
             return
         which_po = self.cole_three_load_po_combobox.currentText()
@@ -16563,6 +16604,13 @@ class Ui_Form(QtGui.QWidget):
             self.tab_cole_three_current_invoice = transaction[COLE_TRANS_PAYPAL_TRANS_ID_INDEX]
             print 'loading %s...' % self.tab_cole_three_current_invoice
             trans_id = transaction[COLE_TRANS_ID_INDEX]
+            self.cole_three_current_invoice.setText('Current Invoice: %s' % paypal_number)
+            if transaction[COLE_TRANS_STATUS_INDEX] == DRAFT:
+                self.cole_three_current_invoice_status.setText('Status: DRAFT')
+            elif transaction[COLE_TRANS_STATUS_INDEX] == SENT:
+                self.cole_three_current_invoice_status.setText('Status: SENT')
+            elif transaction[COLE_TRANS_STATUS_INDEX] == PAID:
+                self.cole_three_current_invoice_status.setText('Status: PAID')
         if trans_id is not None:
             self.tab_cole_three_po_table_list = []
             for row in self.db_cursor.execute('SELECT * FROM colemine_sold_inventory WHERE trans_id = ?', (trans_id,)):
