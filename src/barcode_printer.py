@@ -7,6 +7,7 @@ from reportlab.pdfgen import canvas
 import reportlab
 import locale
 import subprocess
+from config_stuff import *
 
 class BarcodePrinter():
     def __init__(self):
@@ -19,11 +20,13 @@ class BarcodePrinter():
         
         if code.isdigit():
             code = '%013d' % int(code)
-            code = reportlab.graphics.barcode.createBarcodeDrawing('EAN13',value=code,barHeight=10*mm,width=60*mm)
+            code = reportlab.graphics.barcode.createBarcodeDrawing('EAN13',value=code,barHeight=10*mm,width=49*mm)
         else:
-            code = reportlab.graphics.barcode.createBarcodeDrawing('Code128',value=code,barHeight=8*mm,width=60*mm,humanReadable=True)
+            code = reportlab.graphics.barcode.createBarcodeDrawing('Code128',value=code,barHeight=8*mm,width=49*mm,humanReadable=True)
         
-        code.drawOn(c,1*mm, 3*mm)
+        code.drawOn(c,12*mm, 3*mm)
+        c.drawImage(BABY_LOGO_FILE_NAME, 2*mm,-14*mm,width=10*mm,preserveAspectRatio=True)
+        #c.drawImage(BABY_LOGO_FILE_NAME, 1*mm,-14*mm,preserveAspectRatio=True)
         c.setFont('Courier', 8)
         artist = artist[0:22]
         title = title[0:22]
