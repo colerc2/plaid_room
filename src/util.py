@@ -18,6 +18,15 @@ class Util():
                 self.db_cursor = self.db.cursor()
                 locale.setlocale( locale.LC_ALL, '')
                 self.discogs = DiscogsClient()#discogs api
+
+        def import_alliance_order(self):
+                order = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/PLS89388384.csv').read().splitlines()
+                upc_column = 2
+                qty_column = 7
+                price_column = 9
+                for item in order:
+                        print item
+                        print
                 
         #this method should be left blank unless some one time operation needs to be done
         def custom_temp_operation(self):
@@ -53,8 +62,8 @@ class Util():
                         
                 #pricing some distro to a percentage of selling price
                 #list_of_stuff_to_update = []
-                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
-                #        #price = math.ceil((float(row[PRICE_INDEX]) * 0.4) * 100)/100.0
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Tom Luce',)):
+                #        price = math.ceil((float(row[PRICE_INDEX]) * 0.31) * 100)/100.0
                 #        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
                 #        list_of_stuff_to_update.append((price, row[ID_INDEX]))
                 #for row in list_of_stuff_to_update:
@@ -65,8 +74,8 @@ class Util():
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
                 #        total += float(row[PRICE_PAID_INDEX])
                 #print total
-                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
-                        print '%s;%s;%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX],row[PRICE_INDEX],row[DATE_ADDED_INDEX])
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Brett',)):
+                #        print '%s;%s;%s;%s;%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_PAID_INDEX],row[PRICE_INDEX],row[DATE_ADDED_INDEX])
                 #list_of_stuff_to_update = []
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
                 #        list_of_stuff_to_update.append((row[DISTRIBUTOR_INDEX], row[NEW_ID_INDEX]))
@@ -95,9 +104,54 @@ class Util():
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor=?', ('Daptone',)):
                 #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', ('Daptone',)):
-                #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))                
+                #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
+                #figuring out what has the shittest margins in the shop
+                list_of_shitty_shit = []
+                for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ?', ('New',)):
+                        profit = row[PRICE_INDEX] - row[PRICE_PAID_INDEX]
+                        margin = profit / row[PRICE_INDEX]
+                        print '%s\t%s\t%s\t%s\t%s' % (margin, profit, row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX])
+                        #list_of_shitty_shit.append((margin,profit,row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX]))
                 placeholder = 0
 
+
+        def print_doubles_that_havent_sold_well(self):
+                #grab a list of all the upcs in inventory
+                upcs = []
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added')):
+                        upcs.append(row[UPC_INDEX])
+                #make a histogram out of them braj
+                upc_hist = self.histogram(upcs)
+                items = [(v, k) for k, v in upc_hist.items()]
+                items.sort()
+                items.reverse()             # so largest is first
+                upc_hist = [(k, v) for v, k in items]
+                count = 0
+                upcs_that_are_done = []
+                #loop through each one
+                for key, value in upc_hist:
+                        if key in upcs_that_are_done:
+                                continue
+                        upcs_that_are_done.append(key)
+                        #if we don't have more than 1 in inventory, eh, fuck off m8
+                        if value < 2:
+                                continue
+                        count = 0
+                        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc=?', (key,))):
+                                count += 1
+                        #it's never sold if the count is zero
+                        if count == 0:
+                                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (key,))):
+                                        #date_time_sold = (datetime.datetime.strptime(str(), "%Y-%m-%d %H:%M:%S"))
+                                        date_time_sold = datetime.datetime.now()#.strftime("%Y-%m-%d %H:%M:%S")
+                                        date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+                                        time_delta = date_time_sold - date_time_added
+                                        days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
+                                        if row[NEW_USED_INDEX] == 'New':
+                                                print '%s;%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX], str(value), str(days_in_shop),str(row[PRICE_PAID_INDEX]))
+                                
+                                
+                
         def find_stuff_to_sell_on_discogs(self):
                 placeholder = 0
                 shit_to_sell = []
@@ -404,7 +458,11 @@ class Util():
                 for row in self.db_cursor.execute('SELECT * FROM inventory'):
                         if len(specified_db)%100 == 0:
                                 print '%d - current' % len(specified_db)
+                        #try:
                         time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+                        #except Exception as e:
+                        #        print e
+                        #        print row
                         if time_put_in < at_moment:
                                 specified_db.append(list(row))
                 for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
@@ -461,6 +519,8 @@ if __name__ == '__main__':
                         print 't(ime_machine) - stats about db at any point in time'
                         print 'time_travel_range - time travel through a range with a summary at the end'
                         print 'new_with_plaid_sku - list all the shit someone might have fucked up'
+                        print 'import_alliance - import an alliance order'
+                        print 'shit_selling_doubles - self explanatory'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -511,6 +571,8 @@ if __name__ == '__main__':
                 elif entered == 'remove_transaction':
                         to_remove = int(raw_input('plaid-room_util/remove_transaction > '))
                         util.remove_transaction(to_remove)
+                elif entered == 'import_alliance':
+                        util.import_alliance_order()
                 elif entered == 't' or entered == 'time_machine':
                         print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
                         travel_to_time = raw_input('plaid-room-util/time_machine > ')
@@ -632,4 +694,6 @@ if __name__ == '__main__':
                                                 #print ',',
                 elif entered == 'new_with_plaid_sku':
                         util.show_me_new_with_plaid_skus()
+                elif entered == 'shit_selling_doubles':
+                        util.print_doubles_that_havent_sold_well()
 

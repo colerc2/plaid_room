@@ -13320,7 +13320,7 @@ class Ui_Form(QtGui.QWidget):
         how_much_search = 0
         for item in self.tab_two_results_table_list:
             placeholder = 0
-            #how_much_search += item[PRICE_INDEX]
+            how_much_search += item[PRICE_INDEX]
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
         
 
@@ -14555,7 +14555,7 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
             self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
             self.db.commit()
-            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added FROM sold_inventory""")
+            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
             self.db.commit()
             #get search term
             SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
@@ -14700,8 +14700,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_five_results_table_generate_more_info_buttons()
         self.tab_five_results_table_2_generate_trans_id_buttons()
         self.tab_five_results_table_generate_trans_id_buttons()
-        
+
+        print '*'*50
         for ix, row in enumerate(self.tab_five_results_table_2_list):
+            #print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[DATE_SOLD_INDEX], row[SOLD_FOR_INDEX], row[SOLD_NOTES_INDEX])
             if ix > (self.tab_five_results_table_2.rowCount()-1):
                 continue
             #fill in table
@@ -14731,6 +14733,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_five_results_table_2_change_text(ix, 25, row[PERCENT_DISCOUNT_INDEX])
             self.tab_five_results_table_2_change_text(ix, 26, row[NEW_ID_INDEX])
         #make table prettier
+        print '*'*50
         self.tab_five_results_table_2.resizeColumnsToContents()
         self.tab_five_results_table_2.setColumnWidth(0,50)
         self.tab_five_results_table_2.setColumnWidth(1,50)
