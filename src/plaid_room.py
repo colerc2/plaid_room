@@ -13330,7 +13330,11 @@ class Ui_Form(QtGui.QWidget):
         #for item in self.tab_two_results_table_list:
         #    placeholder = 0
         #    how_much_search += item[PRICE_INDEX]
+<<<<<<< HEAD
         #self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
+=======
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
+>>>>>>> 5328784d1515bfb3f0dbb3e456d73d07438c97ca
         
 
         
