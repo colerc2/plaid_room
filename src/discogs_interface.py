@@ -17,7 +17,10 @@ class DiscogsClient():
         self.consumer_key = key_file.readline().rstrip('\n')
         self.consumer_secret = key_file.readline().rstrip('\n')
         self.access_token = key_file.readline().rstrip('\n')
+        self.access_token = unicode(self.access_token)
+        print 'still alive'
         self.access_secret = key_file.readline().rstrip('\n')
+        self.access_secret = unicode(self.access_secret)
         #request_token_url = key_file.readline()
         #authorize_url = key_file.readline()
         #authorize_token = key_file.readline()

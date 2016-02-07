@@ -13312,11 +13312,13 @@ class Ui_Form(QtGui.QWidget):
         #update inventory count
         how_many = 0
         how_much = 0
+        how_much_paid = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
             #print row
             #print row[PRICE_INDEX]
             how_much = how_much + row[PRICE_INDEX]
+            
         self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s)' % (str(how_many), locale.currency(how_much)))
         how_much_search = 0
         how_much_paid_search = 0
@@ -13325,10 +13327,10 @@ class Ui_Form(QtGui.QWidget):
             how_much_search += item[PRICE_INDEX]
             how_much_paid_search += item[PRICE_PAID_INDEX]
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s / %s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search),locale.currency(how_much_paid_search)))
-        for item in self.tab_two_results_table_list:
-            placeholder = 0
-            how_much_search += item[PRICE_INDEX]
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
+        #for item in self.tab_two_results_table_list:
+        #    placeholder = 0
+        #    how_much_search += item[PRICE_INDEX]
+        #self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
         
 
         
