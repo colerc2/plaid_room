@@ -13318,8 +13318,8 @@ class Ui_Form(QtGui.QWidget):
             #print row
             #print row[PRICE_INDEX]
             how_much = how_much + row[PRICE_INDEX]
-            
-        self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s)' % (str(how_many), locale.currency(how_much)))
+            how_much_paid = how_much_paid + row[PRICE_PAID_INDEX]
+        self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s / %s)' % (str(how_many), locale.currency(how_much), locale.currency(how_much_paid)))
         how_much_search = 0
         how_much_paid_search = 0
         for item in self.tab_two_results_table_list:
@@ -13330,11 +13330,7 @@ class Ui_Form(QtGui.QWidget):
         #for item in self.tab_two_results_table_list:
         #    placeholder = 0
         #    how_much_search += item[PRICE_INDEX]
-<<<<<<< HEAD
         #self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
-=======
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
->>>>>>> 5328784d1515bfb3f0dbb3e456d73d07438c97ca
         
 
         
