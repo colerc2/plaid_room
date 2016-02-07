@@ -13325,9 +13325,9 @@ class Ui_Form(QtGui.QWidget):
             how_much_search += item[PRICE_INDEX]
             how_much_paid_search += item[PRICE_PAID_INDEX]
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s / %s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search),locale.currency(how_much_paid_search)))
-        for item in self.tab_two_results_table_list:
-            placeholder = 0
-            how_much_search += item[PRICE_INDEX]
+        #for item in self.tab_two_results_table_list:
+        #    placeholder = 0
+        #    how_much_search += item[PRICE_INDEX]
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
         
 
