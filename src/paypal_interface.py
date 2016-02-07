@@ -184,7 +184,11 @@ class PaypalInterface():
                     "email": "plaidroomrecords@gmail.com",
                 },
                 "billing_info": [{
+<<<<<<< HEAD
+                    #"email": "carolbologna2@gmail.com"
+=======
                     #"email": "alex.winzenread@gmail.com"
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
                     "email": "plaidroomrecords+invoices@gmail.com"
                 }],
                 "items": paypal_items,

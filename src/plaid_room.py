@@ -13300,6 +13300,10 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table_clear()
         self.tab_two_generate_more_info_buttons()
         for ix, row in enumerate(self.tab_two_results_table_list):
+<<<<<<< HEAD
+            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+=======
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
             if ix > (self.tab_two_results_table.rowCount()-1):
                 continue
             #fill in table
@@ -13318,10 +13322,19 @@ class Ui_Form(QtGui.QWidget):
             how_much = how_much + row[PRICE_INDEX]
         self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s)' % (str(how_many), locale.currency(how_much)))
         how_much_search = 0
+<<<<<<< HEAD
+        how_much_paid_search = 0
+        for item in self.tab_two_results_table_list:
+            placeholder = 0
+            how_much_search += item[PRICE_INDEX]
+            how_much_paid_search += item[PRICE_PAID_INDEX]
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s / %s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search),locale.currency(how_much_paid_search)))
+=======
         for item in self.tab_two_results_table_list:
             placeholder = 0
             how_much_search += item[PRICE_INDEX]
         self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search)))
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
         
 
         
@@ -14703,7 +14716,11 @@ class Ui_Form(QtGui.QWidget):
 
         print '*'*50
         for ix, row in enumerate(self.tab_five_results_table_2_list):
+<<<<<<< HEAD
+            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+=======
             #print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[DATE_SOLD_INDEX], row[SOLD_FOR_INDEX], row[SOLD_NOTES_INDEX])
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
             if ix > (self.tab_five_results_table_2.rowCount()-1):
                 continue
             #fill in table

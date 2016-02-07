@@ -31,8 +31,14 @@ class Util():
         #this method should be left blank unless some one time operation needs to be done
         def custom_temp_operation(self):
                 #placeholder = 0
+<<<<<<< HEAD
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (37134,))
+                self.db.commit()
+                #FUCKFUCK
+=======
                 #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (22809,))
                 #self.db.commit()
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
                 #FIXING ALABAMA SHAKES UPC
                 #old_upc = '710882226718'
                 #new_upc = '880882226718'
@@ -62,13 +68,21 @@ class Util():
                         
                 #pricing some distro to a percentage of selling price
                 #list_of_stuff_to_update = []
+<<<<<<< HEAD
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Tom Luce 2',)):
+                #        price = math.ceil((float(row[PRICE_INDEX]) * 0.367) * 100)/100.0
+=======
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Tom Luce',)):
                 #        price = math.ceil((float(row[PRICE_INDEX]) * 0.31) * 100)/100.0
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
                 #        price = math.ceil((float(row[PRICE_INDEX])*100)/2.0)/100.0
                 #        list_of_stuff_to_update.append((price, row[ID_INDEX]))
                 #for row in list_of_stuff_to_update:
                 #        self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', row)
+<<<<<<< HEAD
+=======
                 #self.db_cursor.execute('UPDATE inventory SET price_paid WHERE distributor = ?', ('Used', 'Thomas'))
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
                 #self.db.commit()
                 #total = 0
                 #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Cat Fever',)):
@@ -106,6 +120,79 @@ class Util():
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE distributor=?', ('Daptone',)):
                 #        print '%s;%s;%s;%s;%s;%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[PRICE_PAID_INDEX], row[DATE_ADDED_INDEX].replace(' ',';'))
                 #figuring out what has the shittest margins in the shop
+<<<<<<< HEAD
+                #list_of_shitty_shit = []
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ?', ('New',)):
+                #        profit = row[PRICE_INDEX] - row[PRICE_PAID_INDEX]
+                #        margin = profit / row[PRICE_INDEX]
+                #        print '%s\t%s\t%s\t%s\t%s' % (margin, profit, row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX])
+                        #list_of_shitty_shit.append((margin,profit,row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX]))
+                #for ii in range(1000):
+                #        print 'PRRLTB%05d' % ii
+                
+                
+                
+                placeholder = 0
+
+
+        def import_csv(self):
+                stuff_to_insert = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/looney_t_birds_45s.csv')
+                csv_f = csv.reader(stuff_to_insert)
+                
+                for row_file in csv_f:
+                        if row_file[0] == 'UPC':
+                                continue
+                        if row_file[1] != '' and row_file[2] != '' and row_file[3] != '':#if all the info is filled out
+                                found = False
+                                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (row_file[0],))):
+                                        print '%s found in inventory' % row_file[0]
+                                        found = True
+                                if not found:#not already in inventory, add it
+                                        db_item = [''] * 22
+                                        curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                        genre = ''
+                                        if row_file[7] == 'C':
+                                                genre = 'Country'
+                                        if row_file[7] == 'S':
+                                                genre = 'Soul'
+                                        if row_file[7] == 'R':
+                                                genre = 'R&B'
+                                        if row_file[7] == 'G':
+                                                genre = 'Garage'
+                                        if row_file[7] == 'RK':
+                                                genre = 'Rockabilly'
+                                        try:
+                                                db_item[UPC_INDEX] = self.xstr(row_file[0])
+                                                db_item[ARTIST_INDEX] = self.xstr(row_file[1])
+                                                db_item[TITLE_INDEX] = self.xstr(row_file[2])
+                                                db_item[FORMAT_INDEX] = self.xstr('1xVinyl, 7", 45RPM')
+                                                db_item[PRICE_INDEX] = self.xfloat(row_file[5])
+                                                db_item[PRICE_PAID_INDEX] = self.xfloat(0.01)
+                                                db_item[NEW_USED_INDEX] = self.xstr('Used')
+                                                db_item[DISTRIBUTOR_INDEX] = self.xstr('Looney T Birds 45s')
+                                                db_item[LABEL_INDEX] = self.xstr(row_file[3])
+                                                db_item[GENRE_INDEX] = self.xstr(genre)
+                                                db_item[YEAR_INDEX] = self.xint(0)
+                                                db_item[DATE_ADDED_INDEX] = curr_time
+                                                db_item[DISCOGS_RELEASE_NUMBER_INDEX] = self.xint(-1)
+                                                db_item[REAL_NAME_INDEX] = ''
+                                                db_item[PROFILE_INDEX] = ''
+                                                db_item[VARIATIONS_INDEX] = ''
+                                                db_item[ALIASES_INDEX] = ''
+                                                db_item[TRACK_LIST_INDEX] = '' 
+                                                db_item[NOTES_INDEX] = self.xstr(('Condition: %s\nNotes: %s' % (row_file[4],row_file[6])))
+                                                db_item[TAXABLE_INDEX] = 1
+                                                db_item[RESERVED_ONE_INDEX] = 'Merged from Tom spreadsheet' 
+                                                db_item[RESERVED_TWO_INDEX] = ''
+                                                self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', tuple(db_item))
+                                                self.db.commit()
+                                                time.sleep(0.5)
+                                        except Exception as e:
+                                                print 'priblem adding item to inventory: %s' % e
+                                                return
+
+                                        
+=======
                 list_of_shitty_shit = []
                 for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ?', ('New',)):
                         profit = row[PRICE_INDEX] - row[PRICE_PAID_INDEX]
@@ -115,6 +202,7 @@ class Util():
                 placeholder = 0
 
 
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
         def print_doubles_that_havent_sold_well(self):
                 #grab a list of all the upcs in inventory
                 upcs = []
@@ -497,6 +585,26 @@ class Util():
                 stats_to_return = [new_vinyl_qty, new_vinyl_costs, new_vinyl_prices, used_vinyl_qty, used_vinyl_costs, used_vinyl_prices, len(new_vinyl_skus), (new_vinyl_qty+used_vinyl_qty), (new_vinyl_costs+used_vinyl_costs), (new_vinyl_prices+used_vinyl_prices)]
                 return stats_to_return
 
+<<<<<<< HEAD
+        def xstr(self,s):
+                if s is None:
+                        return ''
+                return str(s)
+
+        def xint(self, i):
+                if (i is None) or (i == ''):
+                        return -1
+                return int(i)
+
+        def xfloat(self, f):
+                if (f is None) or (f == ''):
+                        return -1
+                return float(f)
+
+
+        
+=======
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
 if __name__ == '__main__':
 	util = Util(sys.argv[1])
 	entered = ''
@@ -573,6 +681,11 @@ if __name__ == '__main__':
                         util.remove_transaction(to_remove)
                 elif entered == 'import_alliance':
                         util.import_alliance_order()
+<<<<<<< HEAD
+                elif entered == 'import_csv':
+                        util.import_csv()
+=======
+>>>>>>> fd08dca43c9fa5ffbddf1b78bdb3bb27792ced51
                 elif entered == 't' or entered == 'time_machine':
                         print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
                         travel_to_time = raw_input('plaid-room-util/time_machine > ')
