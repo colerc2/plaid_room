@@ -31,14 +31,38 @@ class Util():
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
 		#placeholder = 0
-		self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (37134,))
-		self.db.commit()
-		#FUCKFUCK
-		#self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (22809,))
+                #total = 0
+                #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * from sold_inventory'):
+                #        if 'sundaypowerout' in row[SOLD_NOTES_INDEX]:
+                #                list_of_stuff_to_update.append(('2016-07-30 12:00:00', row[NEW_ID_INDEX]))
+                #                total += row[SOLD_FOR_INDEX]
+                #                print row
+                #print total
+                #list_of_stuff_to_update.append(('2016-07-30 12:00:00', ))
+                #for row in list_of_stuff_to_update:
+                #        self.db_cursor.execute('UPDATE sold_inventory SET date_sold = ? WHERE id = ?', (row))
+                #self.db.commit()
+                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (57821,))
 		#self.db.commit()
+                #self.db_cursor.execute('UPDATE sold_inventory SET distributor = ? WHERE upc = ?', ('Colemine','659123058414'))
+                #self.db.commit()
+                #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * from sold_inventory WHERE distributor = ?', ('Looney T Birds',)):
+                #        if '2016' in row[DATE_ADDED_INDEX]:
+                #                list_of_stuff_to_update.append(('Looney T Birds 2', row[NEW_ID_INDEX]))
+                #                print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+                #for row in list_of_stuff_to_update:
+                #        self.db_cursor.execute('UPDATE sold_inventory SET distributor = ? WHERE id = ?', (row))
+                #self.db.commit()
+                #FUCKFUCK
+		self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (60674,))
+		self.db.commit()
 		#FIXING ALABAMA SHAKES UPC
 		#old_upc = '710882226718'
 		#new_upc = '880882226718'
+                #self.db_cursor.execute('UPDATE inventory SET taxable = ? WHERE taxable = ?', (1,-1))
+                #self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET upc = ? WHERE upc = ?', (new_upc,old_upc))
 		#self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
@@ -120,13 +144,15 @@ class Util():
 		#for ii in range(1000):
 		#	 print 'PRRLTB%05d' % ii
 
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE taxable = ?', (-1,)):
+                #        print '%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
 
 
 		placeholder = 0
 
 
 	def import_csv(self):
-		stuff_to_insert = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/looney_t_birds_45s.csv')
+		stuff_to_insert = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/looney_adds.csv')
 		csv_f = csv.reader(stuff_to_insert)
 
 		for row_file in csv_f:
@@ -312,6 +338,7 @@ class Util():
 		other_misc_gross = 0
 		other_misc_net = 0
 		total_tax_paid = 0
+                total_gift_cards_redeemed = 0
 		for date_ in list_of_dates:
 			separate = date_.isoformat().split('-')
 			returned_stats = self.summary_by_day(separate[0], separate[1], separate[2])
@@ -324,11 +351,13 @@ class Util():
 			other_misc_gross += returned_stats[6]
 			other_misc_net += returned_stats[7]
 			total_tax_paid += returned_stats[8]
+                        total_gift_cards_redeemed += returned_stats[12]
 
 
 		print '-'*50
-		print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
-		print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
+		print '\tTotal Gross Income w/ GCs: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
+                print '\tTotal Gross Income w/o GCs: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross - total_gift_cards_redeemed)
+                print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
 		print '\t\t\tNew Vinyl Gross Income: %s' % str(new_vinyl_gross)
 		print '\t\t\tUsed Vinyl Gross Income: %s' % str(used_vinyl_gross)
 		print '\t\tMisc Gross Income: %s' % str(clothing_misc_gross + other_misc_gross)
@@ -350,7 +379,18 @@ class Util():
 		print '-'*50
 
 
-
+        def monthly_stats(self):
+                curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                history = dict()
+		for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold ASC')):
+                        date_sold = row[DATE_SOLD_INDEX]
+                        date_sold = date_sold.split('-')
+                        #print date_sold
+                        old = history['%s-%s-%s' % (date_sold[1],date_sold[0],row[NEW_USED_INDEX])]
+                        history['%s-%s-%s' % (date_sold[1],date_sold[0],row[NEW_USED_INDEX])] += row[SOLD_FOR_INDEX]
+                print history
+                        
+                        
 	#gives basic stats about a single day, including:
 	#   - total gross income
 	#      - vinyl gross income
@@ -380,8 +420,9 @@ class Util():
 		other_misc_net = 0
 		total_tax_paid = 0
 		desired_date = datetime.date(int(year), int(month), int(day))
+                total_gift_cards = 0
 		number_of_transactions = 0
-		#build a list of crap to iterate over first because doing nested cursors hurst sqlite3
+		#build a list of crap to iterate over first because doing nested cursors hurts sqlite3
 		db_results = []
 		for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
 			db_results.append(row)
@@ -428,12 +469,16 @@ class Util():
 				number_of_transactions += 1
 				total_tax_paid += (row[TRANS_TAX_INDEX])
 				total_gross_with_tax += row[TRANS_TOTAL_INDEX]
+                                split_sentence = row[TRANS_RESERVED_ONE_INDEX].split()
+                                if len(split_sentence) > 1:
+                                        total_gift_cards += (float(split_sentence[4][:-1]) - float(split_sentence[22][:-1]))
 
-		stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty, number_of_transactions]
+		stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty, number_of_transactions, total_gift_cards]
 
 		print '\nDate: %s-%s-%s' % (str(year),str(month),str(day))
-		print '\tTotal Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
-		print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
+		print '\tTotal Gross Income(including gift cards): %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
+                print '\tTotal Gross Income(excluding gift cards): %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross - total_gift_cards) 
+                print '\t\tVinyl Gross Income: %s' % str(new_vinyl_gross + used_vinyl_gross)
 		print '\t\t\tNew Vinyl Gross Income: %s' % str(new_vinyl_gross)
 		print '\t\t\tUsed Vinyl Gross Income: %s' % str(used_vinyl_gross)
 		print '\t\tMisc Gross Income: %s' % str(clothing_misc_gross + other_misc_gross)
@@ -668,6 +713,8 @@ if __name__ == '__main__':
 			util.import_alliance_order()
 		elif entered == 'import_csv':
 			util.import_csv()
+                elif entered == 'monthly':
+                        util.monthly_stats()
 		elif entered == 't' or entered == 'time_machine':
 			print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
 			travel_to_time = raw_input('plaid-room-util/time_machine > ')

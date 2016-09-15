@@ -12883,16 +12883,33 @@ class Ui_Form(QtGui.QWidget):
                     row = tuple(row)
                 self.tab_one_results_table_list.append(list(row[0:22]))
                 self.tab_one_results_table_list_tracker.append([True,row])
-                formats.append(row[FORMAT_INDEX])            
+                formats.append(row[FORMAT_INDEX])
+        #TEMP CODE FOR RSD
+        #read in csv
+        file_name  = BASE_PATH + 'plaid_room/config/rsd.csv'
+        with open(file_name, 'rb') as f:
+            data = [row for row in csv.reader(f.read().splitlines())]
+        for title in data:
+            if title[0] == search_query:
+                answers = [''] * 23
+                answers[UPC_INDEX] = search_query
+                answers[ARTIST_INDEX] = title[1]
+                answers[TITLE_INDEX] = title[2]
+                answers[FORMAT_INDEX] = '1xVinyl, LP, Album, RSD2016'
+                answers[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
+                answers[TAXABLE_INDEX] = 1
+                self.tab_one_results_table_list.append(answers)
+                self.tab_one_results_table_list_tracker.append([True,answers])
+                break
         #search discogs
         self.tab_one_print_to_console('Searching discogs...')
         try:
-            print 'three'
+            #print 'three'
             results = self.discogs.search_for_release(search_query_with_format)
-            print '-'*50
-            print results
-            print len(results)
-            print '-'*50
+            #print '-'*50
+            #print results
+            #print len(results)
+            #print '-'*50
             if results is not None:
             #if (results is not None) and (len(results) != 0):
                 print 'five'
@@ -13270,7 +13287,7 @@ class Ui_Form(QtGui.QWidget):
             for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC'):
                 #check date ranges if specified
                 if self.filter_by_date_added_checkbox.isChecked():
-                    #print row[ARTIST_INDEX]
+                    print row[ARTIST_INDEX]
                     #TODO: try catches EVERYWHERE
                     compare = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]),"%Y-%m-%d %H:%M:%S")).date()
                     start = self.tab_two_date_start.date().toPyDate()
@@ -13322,11 +13339,20 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s / %s)' % (str(how_many), locale.currency(how_much), locale.currency(how_much_paid)))
         how_much_search = 0
         how_much_paid_search = 0
+        how_much_selected_search = 0
+        how_much_paid_selected_search = 0
         for item in self.tab_two_results_table_list:
             placeholder = 0
             how_much_search += item[PRICE_INDEX]
             how_much_paid_search += item[PRICE_PAID_INDEX]
-        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s / %s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search),locale.currency(how_much_paid_search)))
+        rows_selected = set()
+        for item in self.tab_two_results_table.selectedItems():
+            rows_selected.add(item.row())
+        for item in rows_selected:
+            how_much_selected_search += self.tab_two_results_table_list[item][PRICE_INDEX]
+            how_much_paid_selected_search += self.tab_two_results_table_list[item][PRICE_PAID_INDEX]
+        #print '%s / %s' % (how_much_selected_search,how_much_paid_selected_search)
+        self.tab_two_items_found_label.setText('%s Items Found For Search Terms (%s / %s)\n%s Items Selected (%s / %s)' % (str(len(self.tab_two_results_table_list)),locale.currency(how_much_search),locale.currency(how_much_paid_search),str(len(rows_selected)),locale.currency(how_much_selected_search),locale.currency(how_much_paid_selected_search)))
         #for item in self.tab_two_results_table_list:
         #    placeholder = 0
         #    how_much_search += item[PRICE_INDEX]
@@ -14712,7 +14738,8 @@ class Ui_Form(QtGui.QWidget):
 
         print '*'*50
         for ix, row in enumerate(self.tab_five_results_table_2_list):
-            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+            #print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX], row[DISTRIBUTOR_INDEX])
             #print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[DATE_SOLD_INDEX], row[SOLD_FOR_INDEX], row[SOLD_NOTES_INDEX])
             if ix > (self.tab_five_results_table_2.rowCount()-1):
                 continue
@@ -15020,7 +15047,7 @@ class Ui_Form(QtGui.QWidget):
                 filename = directory + '/' + filename
 
                 #if super d, do things a different way
-                if distributor == 'Super D' or distributor == 'WEA':
+                if distributor == 'Super D' or distributor == 'WEA' or distributor == 'Sony':
                     temp_list = []
                     temp_row = []
                     temp_row.append('Qty')

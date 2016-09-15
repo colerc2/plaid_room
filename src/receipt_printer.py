@@ -167,6 +167,11 @@ class ReceiptPrinter():
             print 'something went wrong'
         lines.append(['-----------------------------------',True])
         lines.append(['Have a great day!',True])
+        #lines.append(['HAPPY RECORD STORE DAY!', True])
+        #lines.append(['<3 <3 <3 <3 <3 <3 <3 <3 ', True])
+        #lines.append(['', True])
+        #lines.append(['', True])
+        #lines.append(['', True])
         #lines.append(['Thanks for stopping in', True])
         #lines.append(['on record store day!! Show', True])
         #lines.append(['this receipt at Cappy\'s for', True])

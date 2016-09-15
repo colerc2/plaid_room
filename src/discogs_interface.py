@@ -176,9 +176,9 @@ class DiscogsClient():
             
     def scrape_price(self, release_id, prices):
         #first, get weird and search for the release id on discogs
-        release_url = 'http://www.discogs.com/release/%s' % release_id
+        release_url = 'https://www.discogs.com/release/%s' % release_id
         try:
-            release_search_url = 'http://www.discogs.com/search/?q=%s&type=release' % str(release_id)
+            release_search_url = 'https://www.discogs.com/search/?q=%s&type=release' % str(release_id)
             user_agent = 'Mozilla/36.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US)'        
             user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_10_1; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.63 Safari/534.3'
             headers = { 'User-Agent' : user_agent }
@@ -196,7 +196,7 @@ class DiscogsClient():
                     quoted = re.findall(r'"([^"]*)"', line)
                     print quoted
                     if len(quoted[0]) > 0:
-                        release_url = 'http://www.discogs.com%s' % quoted[0]
+                        release_url = 'https://www.discogs.com%s' % quoted[0]
                         print 'RELEASE URL: %s' % release_url
                     break
             print '*'*50
