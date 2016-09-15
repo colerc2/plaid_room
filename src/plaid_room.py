@@ -358,6 +358,7 @@ class Ui_Form(QtGui.QWidget):
         """)
         
         self.setupUi(self)
+
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(1920, 1035)
