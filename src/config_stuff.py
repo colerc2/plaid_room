@@ -172,7 +172,10 @@ PAYPAL_FILE_NAME = BASE_PATH + 'plaid_room/config/paypal.key'
 DB_FILE = BASE_PATH + 'plaid_room/real_inventory.db'
 EMAIL_PASSWORD_FILE_NAME = BASE_PATH + 'plaid_room/config/password.email'
 CATALOGS_PATH = BASE_PATH + 'plaid_room/config/catalogs/'
-SHOPIFY_FILE_NAME = BASE_PATH + 'plaid_room/config/shopify.key'
+SHOPIFY_COLEMINE_NAME = BASE_PATH + 'plaid_room/config/colemine_shopify.key'
+SHOPIFY_PLAID_ROOM_NAME = BASE_PATH + 'plaid_room/config/plaid_room_shopify.key'
+PAYPAL_LOGIN_NAME = BASE_PATH + 'plaid_room/config/paypal_login.key'
+
 
 #other stuff
 LOVELAND_TAX_RATE = 6.75 #percent

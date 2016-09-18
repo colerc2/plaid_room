@@ -18479,12 +18479,17 @@ class Ui_Form(QtGui.QWidget):
         self.tab_website_one_imported_table_clear(len(lines))
         print len(lines)
         self.tab_website_one_imported_table_list = []
-        self.tab_website_one_imported_table_list.append(['UPC','Artist','Title','Price','Street Date','Label'])
+        #self.tab_website_one_imported_table_list.append(['UPC','Artist','Title','Price','Street Date','Label'])
         for ix, line in enumerate(lines):
             line_split = line.split('\t')
             if ix == 0:
                 continue
-            self.tab_website_one_imported_table_list.append([line_split[header_indexes["upc"]], line_split[header_indexes["artist"]], line_split[header_indexes["title"]], line_split[header_indexes["price"]], line_split[header_indexes["release_date"]], line_split[header_indexes["label"]]])
+            if header_indexes.get("upc") == None:
+                upc = ''
+            else:
+                upc = header_indexes["upc"]
+            
+            self.tab_website_one_imported_table_list.append([line_split[header_indexes["upc"]], line_split[header_indexes["artist"]], line_split[header_indexes["title"]], line_split[header_indexes["price"]], line_split[header_indexes["release_date"]], line_split[header_indexes.get("label")]])
         self.tab_website_one_imported_table_refresh()
 
     def tab_website_one_imported_table_refresh(self):
