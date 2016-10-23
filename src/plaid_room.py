@@ -12,6 +12,7 @@ from receipt_printer import ReceiptPrinter
 from misc_types import MiscTypes
 from misc_distributors import MiscDistributors
 from paypal_interface import PaypalInterface
+from shopify_interface import ShopifyInterface
 from paypalrestsdk import Invoice
 import time
 import datetime
@@ -25,6 +26,7 @@ from math import ceil
 from config_stuff import * #probably a bad idea
 from emailer import Emailer
 import math
+import shopify
 
 #NOTES TO SELF:
 #    What the reserved positions are currently being used for:
@@ -78,6 +80,9 @@ class Ui_Form(QtGui.QWidget):
         self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
         self.paypal = PaypalInterface(PAYPAL_FILE_NAME)
         self.email_sender = Emailer('plaidroomrecords@gmail.com', EMAIL_PASSWORD_FILE_NAME, 'plaidroomrecords+mikebooks@gmail.com')
+
+        #shopify connect
+        self.shopify_interface = ShopifyInterface()
         
         #tab one stuff
         self.tab_one_results_table_list = []
@@ -18925,9 +18930,9 @@ class Ui_Form(QtGui.QWidget):
                 db_item[PRE_NOTES] = ''
                 db_item[PRE_SHOPIFY_ID] = ''
                 db_item[PRE_SHOPIFY_TYPE] = ''
-                db_item[PRE_SHOPIFY_DESC] = ''
-                db_item[PRE_SHOPIFY_COLLECTIONS] = 'Pre-order' 
-                db_item[PRE_SHOPIFY_TAGS] = 'Pre-order_%s' % db_item[PRE_STREET_DATE]
+                db_item[PRE_SHOPIFY_DESC] = 'This item is a pre-order. It should ship within 72 hours of %s' % (db_item[PRE_STREET_DATE])
+                db_item[PRE_SHOPIFY_COLLECTIONS] = 'Pre-Orders' 
+                db_item[PRE_SHOPIFY_TAGS] = 'Pre-Order Street Date_%s,Format_LP,Pre-Orders' % db_item[PRE_STREET_DATE]
                 db_item[PRE_RESERVED_ONE] = ''
                 db_item[PRE_RESERVED_TWO] = ''
                 db_item[PRE_RESERVED_THREE] = ''
@@ -19039,6 +19044,9 @@ class Ui_Form(QtGui.QWidget):
         
     ################### tab website one ends ##################################
     ################### tab website two begins ##################################
+    def tab_website_two_results_table_search(self):#this is going to suck
+        self.tab_website_two_results_table_reset()
+    
     def tab_website_two_results_table_reset(self):
         self.tab_website_two_results_table_clear()
         self.website_pre_order_active_tab_spin_box.setValue(50)
@@ -19064,8 +19072,11 @@ class Ui_Form(QtGui.QWidget):
     
     def tab_website_two_results_table_refresh(self):
         self.tab_website_two_results_table_clear()
+        self.website_pre_order_active_tab_results_table.setRowCount(len(self.tab_website_two_results_table_list))
         #TODO: generate buttons that will fill columns
         self.tab_website_two_generate_more_info_buttons()
+        self.tab_website_two_generate_active_buttons()
+        self.tab_website_two_generate_sync_buttons()
         for ix, row in enumerate(self.tab_website_two_results_table_list):
             if ix > (self.website_pre_order_active_tab_results_table.rowCount()-1):
                 continue
@@ -19100,7 +19111,66 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.tab_website_two_more_info_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_website_two_more_info_requested)
 
     def tab_website_two_more_info_requested(self, row):
+        print 'more info requested TODO'
         placeholder = 0
+        #TODO
+
+    def tab_website_two_generate_active_buttons(self):
+        self.tab_website_two_active_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.website_pre_order_active_tab_results_table.rowCount()):
+            button = QtGui.QPushButton('Error')
+            try:
+                if self.tab_website_two_results_table_list[ii][PRE_ACTIVE] == 0:
+                    button = QtGui.QPushButton('NO')
+                elif self.tab_website_two_results_table_list[ii][PRE_ACTIVE] == 1:
+                    button = QtGui.QPushButton('YES')
+            except Exception as e:
+                print e
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_website_two_active_mapper, QtCore.SLOT("map()"))
+            self.tab_website_two_active_mapper.setMapping(button, ii)
+            self.website_pre_order_active_tab_results_table.setCellWidget(ii,1,button)
+        self.connect(self.tab_website_two_active_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_website_two_active_requested)
+
+    def tab_website_two_active_requested(self, row):
+        this_row = self.tab_website_two_results_table_list[row]
+        for row in self.db_cursor.execute('SELECT active FROM pre_order_inventory WHERE id = ?', (this_row[PRE_ID],)):
+            active = self.xint(row[0])
+        if active == 0:
+            active = 1
+        else:
+            active = 0
+        self.db_cursor.execute('UPDATE pre_order_inventory SET active = ? WHERE id = ?', (active, this_row[PRE_ID]))
+        self.db.commit()
+        self.tab_website_two_results_table_search()
+
+    def tab_website_two_generate_sync_buttons(self):
+        self.tab_website_two_sync_mapper = QtCore.QSignalMapper(self)
+        for ii in range(self.website_pre_order_active_tab_results_table.rowCount()):
+            button = QtGui.QPushButton('Error')
+            try:
+                if self.tab_website_two_results_table_list[ii][PRE_SYNC] == 0:
+                    button = QtGui.QPushButton('NO')
+                elif self.tab_website_two_results_table_list[ii][PRE_SYNC] == 1:
+                    button = QtGui.QPushButton('YES')
+            except Exception as e:
+                print e
+            self.connect(button, QtCore.SIGNAL("clicked()"), self.tab_website_two_sync_mapper, QtCore.SLOT("map()"))
+            self.tab_website_two_sync_mapper.setMapping(button, ii)
+            self.website_pre_order_active_tab_results_table.setCellWidget(ii,2,button)
+        self.connect(self.tab_website_two_sync_mapper, QtCore.SIGNAL("mapped(int)"), self.tab_website_two_sync_requested)
+
+    def tab_website_two_sync_requested(self, row):
+        #this is the hard one, the heavy lifing is done in the shopify method
+        product = self.shopify_interface.create_or_update_item(self.tab_website_two_results_table_list[row])
+        #update database with product info where necessary
+        this_row = self.tab_website_two_results_table_list[row]
+        if product is not None:#shopify update successful
+            if this_row[PRE_SHOPIFY_ID] is None or this_row[PRE_SHOPIFY_ID] == '':
+                self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
+                self.db.commit()
+        self.tab_website_two_results_table_search()
+            
+            
 
         
     def tab_website_two_results_table_clear(self):
