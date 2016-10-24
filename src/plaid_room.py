@@ -19257,6 +19257,12 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
             self.db.commit()
         #update pictures on website
+        for row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (this_row[PRE_UPC],)):
+            if row[IMAGE_SHOPIFY_ID] == '':#this shit doesn't exist yet, let's upload it
+                row[IMAGE_SHOPIFY_PRODUCT] = this_row[product.id]#set temporary parent of this image, confirm once it's uploaded
+                shopify_interface.update_pictures_for_upc(row)
+                
+        #update current view
         self.tab_website_two_results_table_search()
 
     def tab_website_two_find_image_request(self):

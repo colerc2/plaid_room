@@ -25,6 +25,8 @@ class ShopifyInterface():
         return product
 
     def update_pictures_for_upc(self, row):
+        image = shopify.Image()
+        image.position = row[IMAGE_POSITION]
         placeholder = 0
     
     #this function takes an item formatted from the pre-order table in the DB, and updates or creates it on shopify,
