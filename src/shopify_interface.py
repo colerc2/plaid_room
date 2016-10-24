@@ -24,6 +24,9 @@ class ShopifyInterface():
         product = shopify.Product.find(id)
         return product
 
+    def update_pictures_for_upc(self, row):
+        placeholder = 0
+    
     #this function takes an item formatted from the pre-order table in the DB, and updates or creates it on shopify,
     #and also returns the shopify product when it's done
     def create_or_update_item(self, row):#aka sync
@@ -86,9 +89,9 @@ class ShopifyInterface():
             if success == False:
                 return None
             time.sleep(0.5)
-            print 'SHE \nWAS\nSUCCESS'
             return product
-            
+
+        
             
         
         

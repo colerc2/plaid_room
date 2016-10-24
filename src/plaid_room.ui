@@ -20449,7 +20449,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1871</width>
+         <width>1861</width>
          <height>951</height>
         </rect>
        </property>
@@ -20637,7 +20637,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
@@ -20649,6 +20649,12 @@ p, li { white-space: pre-wrap; }
                <size>
                 <width>0</width>
                 <height>45</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="text">
@@ -20666,7 +20672,42 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>28</width>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_pre_order_active_tab_find_image">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>95</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Find Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_212">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
@@ -20692,7 +20733,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>

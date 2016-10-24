@@ -182,6 +182,14 @@ PRE_RESERVED_THREE = 22
 PRE_RESERVED_FOUR = 23
 PRE_ID = 24
 
+IMAGE_UPC = 0
+IMAGE_FILENAME = 1
+IMAGE_SHOPIFY_ID = 2
+IMAGE_SHOPIFY_PRODUCT = 3
+IMAGE_POSITION = 4
+IMAGE_SRC = 5
+IMAGE_ID = 6
+
 #/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room
 #BASE_PATH = '/Users/bccole1989/Documents/plaid_room_records/add_tabs/'
 BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/'
@@ -201,6 +209,7 @@ CATALOGS_PATH = BASE_PATH + 'plaid_room/config/catalogs/'
 SHOPIFY_COLEMINE_NAME = BASE_PATH + 'plaid_room/config/colemine_shopify.key'
 SHOPIFY_PLAID_ROOM_NAME = BASE_PATH + 'plaid_room/config/plaid_room_shopify.key'
 PAYPAL_LOGIN_NAME = BASE_PATH + 'plaid_room/config/paypal_login.key'
+WEBSITE_IMAGES = BASE_PATH + 'plaid_room/config/site_images/'
 
 
 #other stuff

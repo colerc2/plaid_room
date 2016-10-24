@@ -396,7 +396,17 @@ class Ui_Form(QtGui.QWidget):
         reserved_four text,
         id integer primary key autoincrement)
         """)
-        
+
+        self.db_cursor.execute('DROP table IF EXISTS website_images')
+        self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS website_images
+        (upc text,
+        filename text,
+        shopify_id text,
+        shopify_product text,
+        position integer,
+        src text,
+        id integer primary key autoincrement)
+        """)
         
         self.setupUi(self)
 
@@ -8656,7 +8666,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab = QtGui.QWidget()
         self.website_pre_order_active_tab.setObjectName(_fromUtf8("website_pre_order_active_tab"))
         self.layoutWidget_6 = QtGui.QWidget(self.website_pre_order_active_tab)
-        self.layoutWidget_6.setGeometry(QtCore.QRect(0, 0, 1871, 951))
+        self.layoutWidget_6.setGeometry(QtCore.QRect(0, 0, 1861, 951))
         self.layoutWidget_6.setObjectName(_fromUtf8("layoutWidget_6"))
         self.verticalLayout_103 = QtGui.QVBoxLayout(self.layoutWidget_6)
         self.verticalLayout_103.setMargin(0)
@@ -8718,33 +8728,41 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_64.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_64.setObjectName(_fromUtf8("add_item_vert_line_64"))
         self.horizontalLayout_63.addWidget(self.add_item_vert_line_64)
-        spacerItem224 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem224 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_63.addItem(spacerItem224)
         self.website_pre_order_active_tab_remove_from_inventory = QtGui.QPushButton(self.layoutWidget_6)
         self.website_pre_order_active_tab_remove_from_inventory.setMinimumSize(QtCore.QSize(0, 45))
+        self.website_pre_order_active_tab_remove_from_inventory.setMaximumSize(QtCore.QSize(250, 16777215))
         self.website_pre_order_active_tab_remove_from_inventory.setObjectName(_fromUtf8("website_pre_order_active_tab_remove_from_inventory"))
         self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_remove_from_inventory)
-        spacerItem225 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem225 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_63.addItem(spacerItem225)
+        self.website_pre_order_active_tab_find_image = QtGui.QPushButton(self.layoutWidget_6)
+        self.website_pre_order_active_tab_find_image.setMinimumSize(QtCore.QSize(0, 45))
+        self.website_pre_order_active_tab_find_image.setMaximumSize(QtCore.QSize(95, 16777215))
+        self.website_pre_order_active_tab_find_image.setObjectName(_fromUtf8("website_pre_order_active_tab_find_image"))
+        self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_find_image)
+        spacerItem226 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_63.addItem(spacerItem226)
         self.website_pre_order_active_tab_sync_selected = QtGui.QPushButton(self.layoutWidget_6)
         self.website_pre_order_active_tab_sync_selected.setMinimumSize(QtCore.QSize(0, 45))
         self.website_pre_order_active_tab_sync_selected.setObjectName(_fromUtf8("website_pre_order_active_tab_sync_selected"))
         self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_sync_selected)
-        spacerItem226 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_63.addItem(spacerItem226)
+        spacerItem227 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_63.addItem(spacerItem227)
         self.website_pre_order_active_tab_save_changes = QtGui.QPushButton(self.layoutWidget_6)
         self.website_pre_order_active_tab_save_changes.setMinimumSize(QtCore.QSize(0, 45))
         self.website_pre_order_active_tab_save_changes.setObjectName(_fromUtf8("website_pre_order_active_tab_save_changes"))
         self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_save_changes)
-        spacerItem227 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_63.addItem(spacerItem227)
+        spacerItem228 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_63.addItem(spacerItem228)
         self.add_item_vert_line_71 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_71.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_71.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_71.setObjectName(_fromUtf8("add_item_vert_line_71"))
         self.horizontalLayout_63.addWidget(self.add_item_vert_line_71)
-        spacerItem228 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_63.addItem(spacerItem228)
+        spacerItem229 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_63.addItem(spacerItem229)
         self.website_pre_order_active_tab_inventory_label = QtGui.QLabel(self.layoutWidget_6)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -8754,8 +8772,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_inventory_label.setMinimumSize(QtCore.QSize(220, 0))
         self.website_pre_order_active_tab_inventory_label.setObjectName(_fromUtf8("website_pre_order_active_tab_inventory_label"))
         self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_inventory_label)
-        spacerItem229 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_63.addItem(spacerItem229)
+        spacerItem230 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_63.addItem(spacerItem230)
         self.verticalLayout_104.addLayout(self.horizontalLayout_63)
         self.horizontalLayout_64 = QtGui.QHBoxLayout()
         self.horizontalLayout_64.setSpacing(-1)
@@ -8768,22 +8786,22 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_item_lbl_12.setScaledContents(False)
         self.tab_one_search_item_lbl_12.setObjectName(_fromUtf8("tab_one_search_item_lbl_12"))
         self.horizontalLayout_64.addWidget(self.tab_one_search_item_lbl_12)
-        spacerItem230 = QtGui.QSpacerItem(77, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem230)
+        spacerItem231 = QtGui.QSpacerItem(77, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem231)
         self.add_item_vert_line_73 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_73.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_73.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_73.setObjectName(_fromUtf8("add_item_vert_line_73"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_73)
-        spacerItem231 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem231)
+        spacerItem232 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem232)
         self.website_pre_order_active_tab_date_range_checkbox = QtGui.QCheckBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_date_range_checkbox.setMinimumSize(QtCore.QSize(90, 20))
         self.website_pre_order_active_tab_date_range_checkbox.setMaximumSize(QtCore.QSize(90, 40))
         self.website_pre_order_active_tab_date_range_checkbox.setObjectName(_fromUtf8("website_pre_order_active_tab_date_range_checkbox"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_date_range_checkbox)
-        spacerItem232 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem232)
+        spacerItem233 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem233)
         self.verticalLayout_105 = QtGui.QVBoxLayout()
         self.verticalLayout_105.setSpacing(0)
         self.verticalLayout_105.setSizeConstraint(QtGui.QLayout.SetFixedSize)
@@ -8826,83 +8844,83 @@ class Ui_Form(QtGui.QWidget):
         self.label_110.setObjectName(_fromUtf8("label_110"))
         self.verticalLayout_106.addWidget(self.label_110)
         self.horizontalLayout_64.addLayout(self.verticalLayout_106)
-        spacerItem233 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem233)
+        spacerItem234 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem234)
         self.add_item_vert_line_74 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_74.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_74.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_74.setObjectName(_fromUtf8("add_item_vert_line_74"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_74)
-        spacerItem234 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem234)
+        spacerItem235 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem235)
         self.website_pre_order_active_tab_filter_by_dist_checkbox = QtGui.QCheckBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_by_dist_checkbox.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_by_dist_checkbox"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_by_dist_checkbox)
-        spacerItem235 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem235)
+        spacerItem236 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem236)
         self.website_pre_order_active_tab_filter_by_dist_combo_box = QtGui.QComboBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_by_dist_combo_box.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_by_dist_combo_box"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_by_dist_combo_box)
-        spacerItem236 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem236)
+        spacerItem237 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem237)
         self.add_item_vert_line_78 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_78.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_78.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_78.setObjectName(_fromUtf8("add_item_vert_line_78"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_78)
-        spacerItem237 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem237)
+        spacerItem238 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem238)
         self.website_pre_order_active_tab_filter_street_date_checkbox = QtGui.QCheckBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_street_date_checkbox.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_street_date_checkbox"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_street_date_checkbox)
-        spacerItem238 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem238)
+        spacerItem239 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem239)
         self.website_pre_order_active_tab_filter_street_date_combo_box = QtGui.QComboBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_street_date_combo_box.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_street_date_combo_box"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_street_date_combo_box)
-        spacerItem239 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem239)
+        spacerItem240 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem240)
         self.add_item_vert_line_79 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_79.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_79.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_79.setObjectName(_fromUtf8("add_item_vert_line_79"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_79)
-        spacerItem240 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem240)
+        spacerItem241 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem241)
         self.website_pre_order_active_tab_filter_active_checkbox = QtGui.QCheckBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_active_checkbox.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_active_checkbox"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_active_checkbox)
-        spacerItem241 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem241)
+        spacerItem242 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem242)
         self.website_pre_order_active_tab_filter_active_combo_box = QtGui.QComboBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_active_combo_box.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_active_combo_box"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_active_combo_box)
-        spacerItem242 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem242)
+        spacerItem243 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem243)
         self.add_item_vert_line_88 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_88.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_88.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_88.setObjectName(_fromUtf8("add_item_vert_line_88"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_88)
-        spacerItem243 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem243)
+        spacerItem244 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem244)
         self.website_pre_order_active_tab_filter_sync_status_checkbox = QtGui.QCheckBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_sync_status_checkbox.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_sync_status_checkbox"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_sync_status_checkbox)
-        spacerItem244 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem244)
+        spacerItem245 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem245)
         self.website_pre_order_active_tab_filter_sync_status_combo_box = QtGui.QComboBox(self.layoutWidget_6)
         self.website_pre_order_active_tab_filter_sync_status_combo_box.setObjectName(_fromUtf8("website_pre_order_active_tab_filter_sync_status_combo_box"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_filter_sync_status_combo_box)
-        spacerItem245 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem245)
+        spacerItem246 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem246)
         self.add_item_vert_line_81 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_81.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_81.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_81.setObjectName(_fromUtf8("add_item_vert_line_81"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_81)
-        spacerItem246 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem246)
+        spacerItem247 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem247)
         self.label_111 = QtGui.QLabel(self.layoutWidget_6)
         self.label_111.setObjectName(_fromUtf8("label_111"))
         self.horizontalLayout_64.addWidget(self.label_111)
@@ -8917,15 +8935,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_112 = QtGui.QLabel(self.layoutWidget_6)
         self.label_112.setObjectName(_fromUtf8("label_112"))
         self.horizontalLayout_64.addWidget(self.label_112)
-        spacerItem247 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem247)
+        spacerItem248 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem248)
         self.add_item_vert_line_80 = QtGui.QFrame(self.layoutWidget_6)
         self.add_item_vert_line_80.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_80.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_80.setObjectName(_fromUtf8("add_item_vert_line_80"))
         self.horizontalLayout_64.addWidget(self.add_item_vert_line_80)
-        spacerItem248 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem248)
+        spacerItem249 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem249)
         self.website_pre_order_active_tab_search_inventory_label = QtGui.QLabel(self.layoutWidget_6)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -8935,8 +8953,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_search_inventory_label.setMinimumSize(QtCore.QSize(170, 0))
         self.website_pre_order_active_tab_search_inventory_label.setObjectName(_fromUtf8("website_pre_order_active_tab_search_inventory_label"))
         self.horizontalLayout_64.addWidget(self.website_pre_order_active_tab_search_inventory_label)
-        spacerItem249 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_64.addItem(spacerItem249)
+        spacerItem250 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_64.addItem(spacerItem250)
         self.verticalLayout_104.addLayout(self.horizontalLayout_64)
         self.verticalLayout_103.addLayout(self.verticalLayout_104)
         self.website_pre_order_active_tab_results_table = QtGui.QTableWidget(self.layoutWidget_6)
@@ -9480,8 +9498,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_account_combo_box_2.setObjectName(_fromUtf8("cole_three_account_combo_box_2"))
         self.horizontalLayout_74.addWidget(self.cole_three_account_combo_box_2)
         self.horizontalLayout_73.addLayout(self.horizontalLayout_74)
-        spacerItem250 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_73.addItem(spacerItem250)
+        spacerItem251 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_73.addItem(spacerItem251)
         self.verticalLayout_133 = QtGui.QVBoxLayout()
         self.verticalLayout_133.setObjectName(_fromUtf8("verticalLayout_133"))
         self.label_165 = QtGui.QLabel(self.layoutWidget_9)
@@ -9525,8 +9543,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_account_number_2.setObjectName(_fromUtf8("cole_three_account_number_2"))
         self.verticalLayout_134.addWidget(self.cole_three_account_number_2)
         self.horizontalLayout_73.addLayout(self.verticalLayout_134)
-        spacerItem251 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_73.addItem(spacerItem251)
+        spacerItem252 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_73.addItem(spacerItem252)
         self.verticalLayout_135 = QtGui.QVBoxLayout()
         self.verticalLayout_135.setObjectName(_fromUtf8("verticalLayout_135"))
         self.label_168 = QtGui.QLabel(self.layoutWidget_9)
@@ -9569,8 +9587,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_email_2.setObjectName(_fromUtf8("cole_three_email_2"))
         self.verticalLayout_136.addWidget(self.cole_three_email_2)
         self.horizontalLayout_73.addLayout(self.verticalLayout_136)
-        spacerItem252 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_73.addItem(spacerItem252)
+        spacerItem253 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_73.addItem(spacerItem253)
         self.label_171 = QtGui.QLabel(self.layoutWidget_9)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
@@ -9592,8 +9610,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_billing_country_2.setObjectName(_fromUtf8("cole_three_billing_country_2"))
         self.verticalLayout_137.addWidget(self.cole_three_billing_country_2)
         self.horizontalLayout_73.addLayout(self.verticalLayout_137)
-        spacerItem253 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_73.addItem(spacerItem253)
+        spacerItem254 = QtGui.QSpacerItem(15, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_73.addItem(spacerItem254)
         self.label_172 = QtGui.QLabel(self.layoutWidget_9)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
@@ -9761,8 +9779,8 @@ class Ui_Form(QtGui.QWidget):
         self.cole_three_bo_release_2 = QtGui.QComboBox(self.layoutWidget_19)
         self.cole_three_bo_release_2.setObjectName(_fromUtf8("cole_three_bo_release_2"))
         self.horizontalLayout_78.addWidget(self.cole_three_bo_release_2)
-        spacerItem254 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_78.addItem(spacerItem254)
+        spacerItem255 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_78.addItem(spacerItem255)
         self.cole_three_bo_counter_2 = QtGui.QLabel(self.layoutWidget_19)
         self.cole_three_bo_counter_2.setObjectName(_fromUtf8("cole_three_bo_counter_2"))
         self.horizontalLayout_78.addWidget(self.cole_three_bo_counter_2)
@@ -14127,6 +14145,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_hard_search_tab.setText(_translate("Form", "Hard Search", None))
         self.website_pre_order_active_tab_reset_tab.setText(_translate("Form", "Reset", None))
         self.website_pre_order_active_tab_remove_from_inventory.setText(_translate("Form", "Remove Selected Item From Inventory", None))
+        self.website_pre_order_active_tab_find_image.setText(_translate("Form", "Find Image", None))
         self.website_pre_order_active_tab_sync_selected.setText(_translate("Form", "Sync Selected", None))
         self.website_pre_order_active_tab_save_changes.setText(_translate("Form", "Save Changes To Selected Item", None))
         self.website_pre_order_active_tab_inventory_label.setText(_translate("Form", "XXXX Pre-Order Items (XX pre-orders)", None))
@@ -14762,6 +14781,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_website_two_results_table_reset()
         self.website_pre_order_active_tab_reset_tab.clicked.connect(self.tab_website_two_results_table_reset)
         self.website_pre_order_active_tab_save_changes.clicked.connect(self.tab_website_two_results_table_save)
+        self.website_pre_order_active_tab_find_image.clicked.connect(self.tab_website_two_find_image_request)
         
     ################### tab one starts ##################################
     
@@ -19236,10 +19256,23 @@ class Ui_Form(QtGui.QWidget):
         if product is not None:#shopify update successful
             self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
             self.db.commit()
+        #update pictures on website
         self.tab_website_two_results_table_search()
-            
-            
 
+    def tab_website_two_find_image_request(self):
+        rows_selected = set()
+        for item in self.website_pre_order_active_tab_results_table.selectedItems():
+            rows_selected.add(item.row())
+        for row in rows_selected:
+            self.update_currently_associated_images(self.tab_website_two_results_table_list[row][PRE_UPC],self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID])
+        #extensions = ['.jpg']
+        #for row in rows_selected:
+        #    for extension in extensions:
+        #        file_check = WEBSITE_IMAGES + self.tab_website_two_results_table_list[row][PRE_UPC] + extension
+        #        if os.path.isfile(file_check):
+        #            print file_check
+        for row in self.db_cursor.execute('SELECT * FROM website_images'):
+            print row
         
     def tab_website_two_results_table_clear(self):
         for ii in range(self.website_pre_order_active_tab_results_table.rowCount()):
@@ -19268,7 +19301,55 @@ class Ui_Form(QtGui.QWidget):
     
     ################### tab website two ends ##################################
 
+    ################### image table manipulation ##################################
+    def remove_currently_associated_images(self, upc):
+        placeholder = 0
 
+    def update_currently_associated_images(self, upc, product_id):
+        extensions = ['.jpg']#might need to add more here later
+        filename_addons = ['', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9']
+        files_to_add = []
+        for ix, adds in enumerate(filename_addons):
+            #print '%s,%s' % (upc,adds)
+            already_in_db = False
+            added_to_queue = False
+            #does this file exist in the db?
+            for extension in extensions:
+                for row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (upc,)):
+                    if row[IMAGE_FILENAME] == '%s%s%s' % (upc,adds,extension):
+                        already_in_db = True
+                        break#no need to keep scanning through multiple entries for the same UPC
+                if already_in_db:
+                    break#no need to keep trying different extensions, the entry has been found
+            if already_in_db:#this file already exists in the db
+                continue
+            #nothing found in the db, let's see if there's actually a file with this name
+            for extension in extensions:
+                file_check = '%s%s%s%s' % (WEBSITE_IMAGES,upc,adds,extension)
+                if os.path.isfile(file_check):
+                    #file exists
+                    filename = '%s%s%s' % (upc,adds,extension)
+                    print filename
+                    files_to_add.append([upc,filename,'',product_id,ix,''])
+                    added_to_queue = True
+                    break
+            if added_to_queue == False:
+                break
+        #now it's time to add some stuff to the db
+        for row in files_to_add:
+            try:
+                self.db_cursor.execute('INSERT INTO website_images (upc, filename, shopify_id, shopify_product, position, src) VALUES (?,?,?,?,?,?)', tuple(row))
+                self.db.commit()
+            except Exception as e:
+                print 'adding pictures to website image table: %s' % e
+                
+
+    
+    ################### image table manipulation ends ##################################
+
+
+
+    
     
 
     def shift_right_shortcut(self):
