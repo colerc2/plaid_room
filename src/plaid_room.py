@@ -14741,6 +14741,7 @@ class Ui_Form(QtGui.QWidget):
         #website two
         self.tab_website_two_results_table_reset()
         self.website_pre_order_active_tab_reset_tab.clicked.connect(self.tab_website_two_results_table_reset)
+        self.website_pre_order_active_tab_save_changes.clicked.connect(self.tab_website_two_results_table_save)
         
     ################### tab one starts ##################################
     
@@ -19140,6 +19141,7 @@ class Ui_Form(QtGui.QWidget):
         else:
             active = 0
         self.db_cursor.execute('UPDATE pre_order_inventory SET active = ? WHERE id = ?', (active, this_row[PRE_ID]))
+        self.db_cursor.execute('UPDATE pre_order_inventory SET sync = ? WHERE id = ?', (0, this_row[PRE_ID]))
         self.db.commit()
         self.tab_website_two_results_table_search()
 
