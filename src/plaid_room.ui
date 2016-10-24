@@ -20133,7 +20133,7 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>11</x>
@@ -20439,9 +20439,6 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
-      <zorder>layoutWidget_5</zorder>
-      <zorder>layoutWidget</zorder>
-      <zorder>tab_website_one_imported_table</zorder>
      </widget>
      <widget class="QWidget" name="website_pre_order_active_tab">
       <attribute name="title">
@@ -20452,7 +20449,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1881</width>
+         <width>1871</width>
          <height>951</height>
         </rect>
        </property>
@@ -21998,6 +21995,26 @@ p, li { white-space: pre-wrap; }
           <column>
            <property name="text">
             <string>Shopify ID</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Shopify Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Shopify Desc</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Shopify Collections</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Shopify Tags</string>
            </property>
           </column>
           <column>

@@ -8530,15 +8530,15 @@ class Ui_Form(QtGui.QWidget):
         self.website_one_bulk_input_text.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
         self.website_one_bulk_input_text.setObjectName(_fromUtf8("website_one_bulk_input_text"))
         self.horizontalLayout_61.addWidget(self.website_one_bulk_input_text)
-        self.widget = QtGui.QWidget(self.website_pre_order_input_tab)
-        self.widget.setGeometry(QtCore.QRect(11, 421, 1841, 531))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout_62 = QtGui.QHBoxLayout(self.widget)
+        self.layoutWidget19 = QtGui.QWidget(self.website_pre_order_input_tab)
+        self.layoutWidget19.setGeometry(QtCore.QRect(11, 421, 1841, 531))
+        self.layoutWidget19.setObjectName(_fromUtf8("layoutWidget19"))
+        self.horizontalLayout_62 = QtGui.QHBoxLayout(self.layoutWidget19)
         self.horizontalLayout_62.setMargin(0)
         self.horizontalLayout_62.setObjectName(_fromUtf8("horizontalLayout_62"))
         self.verticalLayout_102 = QtGui.QVBoxLayout()
         self.verticalLayout_102.setObjectName(_fromUtf8("verticalLayout_102"))
-        self.label_107 = QtGui.QLabel(self.widget)
+        self.label_107 = QtGui.QLabel(self.layoutWidget19)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Helvetica"))
         font.setPointSize(18)
@@ -8552,7 +8552,7 @@ class Ui_Form(QtGui.QWidget):
         self.verticalLayout_102.addItem(spacerItem215)
         self.verticalLayout_101 = QtGui.QVBoxLayout()
         self.verticalLayout_101.setObjectName(_fromUtf8("verticalLayout_101"))
-        self.website_tab_one_overwrite_checkbox = QtGui.QCheckBox(self.widget)
+        self.website_tab_one_overwrite_checkbox = QtGui.QCheckBox(self.layoutWidget19)
         self.website_tab_one_overwrite_checkbox.setEnabled(True)
         self.website_tab_one_overwrite_checkbox.setObjectName(_fromUtf8("website_tab_one_overwrite_checkbox"))
         self.verticalLayout_101.addWidget(self.website_tab_one_overwrite_checkbox)
@@ -8560,26 +8560,26 @@ class Ui_Form(QtGui.QWidget):
         self.verticalLayout_100.setObjectName(_fromUtf8("verticalLayout_100"))
         spacerItem216 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_100.addItem(spacerItem216)
-        self.label_108 = QtGui.QLabel(self.widget)
+        self.label_108 = QtGui.QLabel(self.layoutWidget19)
         self.label_108.setMaximumSize(QtCore.QSize(16777215, 20))
         self.label_108.setObjectName(_fromUtf8("label_108"))
         self.verticalLayout_100.addWidget(self.label_108, QtCore.Qt.AlignHCenter)
-        self.website_tab_one_distro_combo_box = QtGui.QComboBox(self.widget)
-        self.website_tab_one_distro_combo_box.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.website_tab_one_distro_combo_box = QtGui.QComboBox(self.layoutWidget19)
+        self.website_tab_one_distro_combo_box.setMaximumSize(QtCore.QSize(150, 30))
         self.website_tab_one_distro_combo_box.setObjectName(_fromUtf8("website_tab_one_distro_combo_box"))
         self.verticalLayout_100.addWidget(self.website_tab_one_distro_combo_box)
         spacerItem217 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_100.addItem(spacerItem217)
         self.verticalLayout_101.addLayout(self.verticalLayout_100)
-        self.website_tab_one_import_items_button = QtGui.QPushButton(self.widget)
+        self.website_tab_one_import_items_button = QtGui.QPushButton(self.layoutWidget19)
         self.website_tab_one_import_items_button.setObjectName(_fromUtf8("website_tab_one_import_items_button"))
         self.verticalLayout_101.addWidget(self.website_tab_one_import_items_button)
-        self.website_tab_one_clear_imported_button = QtGui.QPushButton(self.widget)
+        self.website_tab_one_clear_imported_button = QtGui.QPushButton(self.layoutWidget19)
         self.website_tab_one_clear_imported_button.setObjectName(_fromUtf8("website_tab_one_clear_imported_button"))
         self.verticalLayout_101.addWidget(self.website_tab_one_clear_imported_button)
         self.verticalLayout_102.addLayout(self.verticalLayout_101)
         self.horizontalLayout_62.addLayout(self.verticalLayout_102)
-        self.tab_website_one_imported_table = QtGui.QTableWidget(self.widget)
+        self.tab_website_one_imported_table = QtGui.QTableWidget(self.layoutWidget19)
         self.tab_website_one_imported_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tab_website_one_imported_table.setColumnCount(6)
         self.tab_website_one_imported_table.setObjectName(_fromUtf8("tab_website_one_imported_table"))
@@ -8949,7 +8949,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.website_pre_order_active_tab_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.website_pre_order_active_tab_results_table.setObjectName(_fromUtf8("website_pre_order_active_tab_results_table"))
-        self.website_pre_order_active_tab_results_table.setColumnCount(17)
+        self.website_pre_order_active_tab_results_table.setColumnCount(22)
         self.website_pre_order_active_tab_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setVerticalHeaderItem(0, item)
@@ -9179,6 +9179,16 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(15, item)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(16, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(17, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(18, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(19, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(20, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(21, item)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setItem(0, 3, item)
         item = QtGui.QTableWidgetItem()
@@ -10050,7 +10060,7 @@ class Ui_Form(QtGui.QWidget):
         self.cole_tab_widget.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
-        self.website_tab_widget.setCurrentIndex(0)
+        self.website_tab_widget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -14356,10 +14366,20 @@ class Ui_Form(QtGui.QWidget):
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(13)
         item.setText(_translate("Form", "Date Added", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Notes", None))
+        item.setText(_translate("Form", "Date Modified", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Shopify ID", None))
+        item.setText(_translate("Form", "Notes", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(16)
+        item.setText(_translate("Form", "Shopify ID", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(17)
+        item.setText(_translate("Form", "Shopify Type", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(18)
+        item.setText(_translate("Form", "Shopify Desc", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(19)
+        item.setText(_translate("Form", "Shopify Collections", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(20)
+        item.setText(_translate("Form", "Shopify Tags", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(21)
         item.setText(_translate("Form", "Unique ID", None))
         __sortingEnabled = self.website_pre_order_active_tab_results_table.isSortingEnabled()
         self.website_pre_order_active_tab_results_table.setSortingEnabled(False)
@@ -19056,7 +19076,37 @@ class Ui_Form(QtGui.QWidget):
     ################### tab website two begins ##################################
     def tab_website_two_results_table_search(self):#this is going to suck
         self.tab_website_two_results_table_reset()
-    
+
+    def tab_website_two_results_table_save(self):
+        row = self.website_pre_order_active_tab_results_table.currentRow()
+        key = self.tab_website_two_results_table_list[row][PRE_ID]
+        try:
+            db_query = (0, self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,3)),#sync, upc
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,4)),#artist
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,5)),#title
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,6)),#street date
+                        self.xfloat(self.website_pre_order_active_tab_results_table_get_text(row,7)),#sale price
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,8)),#distro
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,10)),#format
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,11)),#label
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,12)),#genre
+                        self.xstr(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),#date modified
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,15)),#notes
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,16)),#shopify id
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,17)),#shopify type
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,18)),#shopify desc
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,19)),#shopify collections
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,20)), key)#shopify_tags, key
+        except Exception as e:
+            print 'tab_website_two_results_table_save: %s' % e
+            return
+        print db_query
+        #edit her
+        self.db_cursor.execute('UPDATE pre_order_inventory SET sync = ?, upc = ?, artist = ?, title = ?, street_date = ?, sale_price = ?, distro = ?, format = ?, label = ?, genre = ?, date_modified = ?, notes = ?, shopify_id = ?, shopify_type = ?, shopify_desc = ?, shopify_collections = ?, shopify_tags = ? WHERE id = ?', db_query)
+        self.db.commit()
+        self.tab_website_two_results_table_search()
+
+            
     def tab_website_two_results_table_reset(self):
         self.tab_website_two_results_table_clear()
         self.website_pre_order_active_tab_spin_box.setValue(50)
@@ -19104,6 +19154,14 @@ class Ui_Form(QtGui.QWidget):
             self.website_pre_order_active_tab_results_table_change_text(ix, 13, self.xstr(row[PRE_DATE_ADDED]))
             self.website_pre_order_active_tab_results_table_change_text(ix, 14, self.xstr(row[PRE_DATE_MODIFIED]))
             self.website_pre_order_active_tab_results_table_change_text(ix, 15, self.xstr(row[PRE_NOTES]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 16, self.xstr(row[PRE_SHOPIFY_ID]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 17, self.xstr(row[PRE_SHOPIFY_TYPE]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 18, self.xstr(row[PRE_SHOPIFY_DESC]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 19, self.xstr(row[PRE_SHOPIFY_COLLECTIONS]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 20, self.xstr(row[PRE_SHOPIFY_TAGS]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 21, self.xstr(row[PRE_ID]))
+
+                        
         self.website_pre_order_active_tab_results_table.resizeColumnsToContents()
         self.website_pre_order_active_tab_results_table.setColumnWidth(0,50)
         self.website_pre_order_active_tab_results_table.setColumnWidth(1,50)
@@ -19149,8 +19207,8 @@ class Ui_Form(QtGui.QWidget):
             active = 1
         else:
             active = 0
-        self.db_cursor.execute('UPDATE pre_order_inventory SET active = ? WHERE id = ?', (active, this_row[PRE_ID]))
-        self.db_cursor.execute('UPDATE pre_order_inventory SET sync = ? WHERE id = ?', (0, this_row[PRE_ID]))
+        date_modified = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db_cursor.execute('UPDATE pre_order_inventory SET active = ?, sync = ?, date_modified = ? WHERE id = ?', (active, 0, date_modified, this_row[PRE_ID]))
         self.db.commit()
         self.tab_website_two_results_table_search()
 
@@ -19176,9 +19234,8 @@ class Ui_Form(QtGui.QWidget):
         #update database with product info where necessary
         this_row = self.tab_website_two_results_table_list[row]
         if product is not None:#shopify update successful
-            if this_row[PRE_SHOPIFY_ID] is None or this_row[PRE_SHOPIFY_ID] == '':
-                self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
-                self.db.commit()
+            self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
+            self.db.commit()
         self.tab_website_two_results_table_search()
             
             

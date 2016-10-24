@@ -39,6 +39,8 @@ class ShopifyInterface():
                 pprint (vars(new_product))
                 if row[PRE_ACTIVE] == 0:
                     new_product.published_at = None
+#                else:
+#                    product.published_at = datetime.datetime.now().isoformat()
                 new_product.published_scope = 'web'
                 v = shopify.Variant()
                 v.price = row[PRE_SALE_PRICE]
@@ -55,7 +57,37 @@ class ShopifyInterface():
                 return None
             time.sleep(0.5)
             return new_product
-            
+        else:
+            try:
+                product = shopify.Product.find(row[PRE_SHOPIFY_ID])
+                street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
+                street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
+                product.title = "<b>%s</b><br><i>%s</i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
+                product.product_type = "LP"#default for now, might change later
+                product.tags = row[PRE_SHOPIFY_TAGS]
+                product.body_html = row[PRE_SHOPIFY_DESC]
+                if row[PRE_ACTIVE] == 0:
+                    product.published_at = None
+                else:
+                    product.published_at = datetime.datetime.now().isoformat()
+                product.published_scope = 'web'
+                #v = shopify.Variant()
+                v = product.variants[0]
+                v.price = row[PRE_SALE_PRICE]
+                v.barcode = row[PRE_UPC]
+                v.product_id = product.id
+                #new_product.variants = [v]
+                success = product.save()
+                #pprint (vars(new_product))
+                #print
+            except Exception as e:
+                print 'error in the shopify:create_or_update_item func (UPDATE): %s' % e
+                return None
+            if success == False:
+                return None
+            time.sleep(0.5)
+            print 'SHE \nWAS\nSUCCESS'
+            return product
             
             
         
