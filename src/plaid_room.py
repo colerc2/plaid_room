@@ -17211,7 +17211,7 @@ class Ui_Form(QtGui.QWidget):
                 filename = directory + '/' + filename
 
                 #if super d, do things a different way
-                if distributor == 'Super D' or distributor == 'WEA' or distributor == 'Sony':
+                if distributor == 'Super D' or distributor == 'WEA' or distributor == 'Sony' or distributor == 'All Media Supply':
                     temp_list = []
                     temp_row = []
                     temp_row.append('Qty')
@@ -17264,7 +17264,7 @@ class Ui_Form(QtGui.QWidget):
                         row[REORDER_STATE_INDEX] = REORDERED
                         self.tab_seven_done_table_list.append(row)
             self.tab_seven_po_table_list = []
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(True,True,True)
         else:
             #create directories if necessary
             directory = BASE_PATH + ('/Purchase Orders/%s' % distributor)
@@ -17313,18 +17313,19 @@ class Ui_Form(QtGui.QWidget):
                 for ix_unfiltered, unfiltered_row in enumerate(self.tab_seven_po_table_list):
                     if unfiltered_row[NEW_ID_INDEX] == key:
                         del self.tab_seven_po_table_list[ix_unfiltered]
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(True,True,True)
                 
-    def tab_seven_search(self):
+    def tab_seven_search(self, hard_search=False):
         query = self.tab_seven_search_sold_qline.text()
         
         if ((query != '') and (query is not None)):
             #TODO: idiotic round 3
-            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
-            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
-            self.db.commit()
-            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
-            self.db.commit()
+            if hard_search:
+                self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+                self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+                self.db.commit()
+                self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+                self.db.commit()
             #get search term
             SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
             self.db_cursor.execute(SEARCH_FTS, (str(query),))
@@ -17353,8 +17354,18 @@ class Ui_Form(QtGui.QWidget):
                     continue
                 self.tab_seven_search_sold_table_list.append(list(row))
         else:
+            print 'query is BLANNNKKKK'
             self.tab_seven_search_sold_table_list = []
             for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check state
+                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
+                    continue
+                #check distributor
+                if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                    dist = str(dist.split('-')[0]).strip()
+                    if dist != row[RESERVED_ONE_INDEX]:
+                        continue
                 #check date ranges specified
                 if self.tab_seven_search_sold_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
@@ -17366,30 +17377,22 @@ class Ui_Form(QtGui.QWidget):
                     if (compare_delta < zero_days) or (compare_delta > range_delta):
                         #out of range
                         continue
-                #check distributor
-                if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
-                    dist = self.tab_seven_search_sold_dist_combo_box.currentText()
-                    dist = str(dist.split('-')[0]).strip()
-                    if dist != row[RESERVED_ONE_INDEX]:
-                        continue
-                #check state
-                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
-                    continue
                 self.tab_seven_search_sold_table_list.append(list(row))
         #update UI
         #self.tab_seven_refresh()
 
 
-    def tab_seven_done_table_search(self):
+    def tab_seven_done_table_search(self, hard_search=False):
         query = self.tab_seven_done_search_qline.text()
         
         if ((query != '') and (query is not None)):
             #TODO: idiotic round 4534
-            self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
-            self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
-            self.db.commit()
-            self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
-            self.db.commit()
+            if hard_search:
+                self.db_cursor.execute('DROP table IF EXISTS virt_sold_inventory')
+                self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_sold_inventory USING fts4(key INT, content)')
+                self.db.commit()
+                self.db_cursor.execute("""INSERT INTO virt_sold_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label || ' ' || real_name || ' ' || profile || ' ' || variations || ' ' || aliases || ' ' || track_list || ' ' || notes || ' ' || date_added || ' ' || sold_notes FROM sold_inventory""")
+                self.db.commit()
             #get search term
             SEARCH_FTS = """SELECT * FROM sold_inventory WHERE id IN (SELECT key FROM virt_sold_inventory WHERE content MATCH ?) ORDER BY date_sold DESC"""
             self.db_cursor.execute(SEARCH_FTS, (str(query),))
@@ -17419,6 +17422,16 @@ class Ui_Form(QtGui.QWidget):
         else:
             self.tab_seven_done_table_list = []
             for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #check state
+                if row[REORDER_STATE_INDEX] == NEEDS_REORDERED or row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
+                    continue
+                #check distributor
+                if self.tab_seven_done_filter_dist_checkbox.isChecked():
+                    dist = self.tab_seven_done_dist_combo_box.currentText()
+                    print row[RESERVED_ONE_INDEX]
+                    #if dist != row[RESERVED_ONE_INDEX]:
+                    if dist != row[DISTRIBUTOR_INDEX]:
+                        continue
                 #check date ranges specified
                 if self.tab_seven_done_filter_date_checkbox.isChecked():
                     compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
@@ -17430,16 +17443,6 @@ class Ui_Form(QtGui.QWidget):
                     if (compare_delta < zero_days) or (compare_delta > range_delta):
                         #out of range
                         continue
-                #check distributor
-                if self.tab_seven_done_filter_dist_checkbox.isChecked():
-                    dist = self.tab_seven_done_dist_combo_box.currentText()
-                    print row[RESERVED_ONE_INDEX]
-                    #if dist != row[RESERVED_ONE_INDEX]:
-                    if dist != row[DISTRIBUTOR_INDEX]:
-                        continue
-                #check state
-                if row[REORDER_STATE_INDEX] == NEEDS_REORDERED or row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
-                    continue
                 self.tab_seven_done_table_list.append(list(row))
         #update UI
         #self.tab_seven_refresh()
@@ -17459,7 +17462,7 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
                 self.tab_seven_done_table_list.append(list(row))
-        self.tab_seven_refresh()
+        self.tab_seven_refresh(True,True,True)
     
     def tab_seven_po_table_reset(self):
         while self.tab_seven_po_combobox.count() != 0:
@@ -17471,7 +17474,7 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             if row[REORDER_STATE_INDEX] == ON_CURRENT_PO_LIST:
                 self.tab_seven_po_table_list.append(list(row))
-        self.tab_seven_refresh()
+        self.tab_seven_refresh(True,True,True)
             
     def tab_seven_search_sold_table_reset(self):
         self.tab_seven_search_sold_filter_dist_checkbox.setCheckState(False)
@@ -17491,7 +17494,7 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
             if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
                 self.tab_seven_search_sold_table_list.append(list(row))
-        self.tab_seven_refresh()
+        self.tab_seven_refresh(True,True,True)
 
     def tab_seven_po_table_filter(self):
         self.tab_seven_po_table_list_filtered = []
@@ -17518,14 +17521,20 @@ class Ui_Form(QtGui.QWidget):
             list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
         return list_of_distros
             
-    def tab_seven_refresh(self):
+    def tab_seven_refresh(self, hard_search=False, top_table_refresh=True, bottom_table_refresh=True):
         #clear tables
         self.tab_seven_search_sold_table_clear()
         self.tab_seven_po_table_clear()
         self.tab_seven_done_table_clear()
         #perform search
-        self.tab_seven_search()
-        self.tab_seven_done_table_search()
+        if top_table_refresh:
+            self.tab_seven_search(hard_search)
+        else:
+            print 'skipping top table refresh'
+        if bottom_table_refresh:
+            self.tab_seven_done_table_search(hard_search)
+        else:
+            print 'skipping bottom table refresh'
         #filter distributors
         self.tab_seven_po_table_filter()
         #generate all the buttons
@@ -17539,7 +17548,7 @@ class Ui_Form(QtGui.QWidget):
         #search sold table
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
-                continue
+                break
             #do stuff to make display better for ordering
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
@@ -17648,6 +17657,8 @@ class Ui_Form(QtGui.QWidget):
 
         #done list
         for ix, row in enumerate(self.tab_seven_done_table_list):
+            if ix > (self.tab_seven_done_table.rowCount()-1):
+                break
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
             date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
             date_time_added = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -17655,8 +17666,6 @@ class Ui_Form(QtGui.QWidget):
             price_paid = float(row[PRICE_PAID_INDEX])
             time_delta = date_time_sold - date_time_added
             days_in_shop = round(float(time_delta.days) + (time_delta.seconds/3600.0)/24.0,1)
-            if ix > (self.tab_seven_done_table.rowCount()-1):
-                continue
             self.tab_seven_done_table_change_text(ix, 2, str(date_sold))
             self.tab_seven_done_table_change_text(ix, 3, str(days_in_shop))
             self.tab_seven_done_table_change_text(ix, 4, locale.currency(self.xfloat(str(row[SOLD_FOR_INDEX]))))
@@ -17782,7 +17791,7 @@ class Ui_Form(QtGui.QWidget):
             temp_row[REORDER_STATE_INDEX] = ON_CURRENT_PO_LIST
             temp_row[RESERVED_THREE_INDEX] = qty
             self.tab_seven_po_table_list.append(temp_row)
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(False,True,False)
             
     def tab_seven_search_sold_ignore_requested(self, row):
         if row < len(self.tab_seven_search_sold_table_list):
@@ -17796,7 +17805,7 @@ class Ui_Form(QtGui.QWidget):
             del self.tab_seven_search_sold_table_list[row]
             temp_row[REORDER_STATE_INDEX] = NOT_REORDERING
             self.tab_seven_done_table_list.append(temp_row)
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(False,True,False)
 
     def tab_seven_po_more_info_requested(self, row):
         if row < len(self.tab_seven_po_table_list):
@@ -17821,7 +17830,7 @@ class Ui_Form(QtGui.QWidget):
             del self.tab_seven_po_table_list[row_to_del]
             temp_row[REORDER_STATE_INDEX] = NEEDS_REORDERED
             self.tab_seven_search_sold_table_list.append(temp_row)
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(False,True,False)
             
     def tab_seven_done_more_info_requested(self, row):
         if row < len(self.tab_seven_done_table_list):
@@ -17841,7 +17850,7 @@ class Ui_Form(QtGui.QWidget):
             del self.tab_seven_done_table_list[row]
             temp_row[REORDER_STATE_INDEX] = NEEDS_REORDERED
             self.tab_seven_search_sold_table_list.append(temp_row)
-            self.tab_seven_refresh()
+            self.tab_seven_refresh(False,True,True)
             
     def tab_seven_po_table_quantity_requested(self, row):
         if row < len(self.tab_seven_po_table_list_filtered):
@@ -17851,7 +17860,7 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('UPDATE sold_inventory SET reserved_three = ? WHERE id = ?', query)
             self.db.commit()
             self.tab_seven_po_table_list_filtered[row][RESERVED_THREE_INDEX] = new_value
-        self.tab_seven_refresh()
+        self.tab_seven_refresh(False,False,False)
         
     def tab_seven_po_table_generate_quantity_buttons(self):
         self.po_quantity_mapper = QtCore.QSignalMapper(self)
