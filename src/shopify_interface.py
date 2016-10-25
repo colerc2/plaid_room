@@ -22,13 +22,35 @@ class ShopifyInterface():
 
     def get_item(self, id):
         product = shopify.Product.find(id)
+        time.sleep(0.5)
         return product
 
     def update_pictures_for_upc(self, row):
+        print 'about to call Image()'
         image = shopify.Image()
-        image.position = row[IMAGE_POSITION]
-        placeholder = 0
-    
+        print 'called Image()'
+        image.position = int(row[IMAGE_POSITION])
+        print 'image position: %s' % str(row[IMAGE_POSITION])
+        file_name = '%s%s' % (WEBSITE_IMAGES,row[IMAGE_FILENAME])
+        print file_name
+        f = open(file_name, "rb")
+        image.attach_image(f.read())
+        image.product_id = row[IMAGE_SHOPIFY_PRODUCT]
+        product = shopify.Product.find(row[IMAGE_SHOPIFY_PRODUCT])
+        time.sleep(0.25)
+        product.images.append(image)
+        #product.images = [image]
+        print 'COMIN THROUGH'
+        try:
+            success = product.save()
+            time.sleep(0.5)
+            if success:
+                return product
+        except Exception as e:
+            print 'problem tryna upload pics to shopify: %s' % e
+            return None
+        return None
+            
     #this function takes an item formatted from the pre-order table in the DB, and updates or creates it on shopify,
     #and also returns the shopify product when it's done
     def create_or_update_item(self, row):#aka sync
@@ -53,6 +75,7 @@ class ShopifyInterface():
                 v.product_id = new_product.id
                 new_product.variants = [v]
                 success = new_product.save()
+                time.sleep(0.25)
                 pprint (vars(new_product))
                 print
             except Exception as e:

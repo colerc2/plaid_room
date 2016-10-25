@@ -27,6 +27,8 @@ from config_stuff import * #probably a bad idea
 from emailer import Emailer
 import math
 import shopify
+from pprint import pprint
+
 
 #NOTES TO SELF:
 #    What the reserved positions are currently being used for:
@@ -19256,13 +19258,35 @@ class Ui_Form(QtGui.QWidget):
         if product is not None:#shopify update successful
             self.db_cursor.execute('UPDATE pre_order_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[PRE_ID]))
             self.db.commit()
+        to_update = []
         #update pictures on website
-        for row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (this_row[PRE_UPC],)):
-            if row[IMAGE_SHOPIFY_ID] == '':#this shit doesn't exist yet, let's upload it
-                row[IMAGE_SHOPIFY_PRODUCT] = this_row[product.id]#set temporary parent of this image, confirm once it's uploaded
-                shopify_interface.update_pictures_for_upc(row)
-                
+        for db_row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (this_row[PRE_UPC],)):
+            db_row = list(db_row)
+            if db_row[IMAGE_SHOPIFY_ID] == '':#this shit doesn't exist yet, let's upload it
+                db_row[IMAGE_SHOPIFY_PRODUCT] = product.id#set temporary parent of this image, confirm once it's uploaded
+                to_update.append(db_row)
+                #upload = shopify_interface.update_pictures_for_upc(row)
+                #if upload is not None:
+        for db_row in to_update:
+            print 'updating...'
+            print db_row
+            upload = self.shopify_interface.update_pictures_for_upc(db_row)
+            if upload is not None:
+                upload = self.shopify_interface.get_item(upload.id)
+                images = upload.images
+                print images
+                for image in images:
+                    #pprint(vars(image))
+                    #print '----'
+                    #print image.position
+                    #print db_row[IMAGE_POSITION]
+                    #print image._prefix_options['product_id']
+                    if self.xint(image.position) == self.xint(db_row[IMAGE_POSITION]):#images are really fucked dude, so we iterate through the product's list of images until we find the right one, then we update our db accordingly, since i couldn't figure out how to return an updated image object complete with image.src and image.id information
+                        self.db_cursor.execute('UPDATE website_images SET shopify_id = ?, shopify_product = ?, src = ? WHERE id = ?', (self.xstr(image.id), self.xstr(image._prefix_options['product_id']), image.src, db_row[IMAGE_ID]))
+                        self.db.commit()
         #update current view
+        for db_row in self.db_cursor.execute('SELECT * FROM website_images'):
+            print db_row
         self.tab_website_two_results_table_search()
 
     def tab_website_two_find_image_request(self):
@@ -19336,7 +19360,7 @@ class Ui_Form(QtGui.QWidget):
                     #file exists
                     filename = '%s%s%s' % (upc,adds,extension)
                     print filename
-                    files_to_add.append([upc,filename,'',product_id,ix,''])
+                    files_to_add.append([upc,filename,'',product_id,(ix+1),''])
                     added_to_queue = True
                     break
             if added_to_queue == False:
