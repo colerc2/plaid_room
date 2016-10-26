@@ -14784,6 +14784,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_reset_tab.clicked.connect(self.tab_website_two_results_table_reset)
         self.website_pre_order_active_tab_save_changes.clicked.connect(self.tab_website_two_results_table_save)
         self.website_pre_order_active_tab_find_image.clicked.connect(self.tab_website_two_find_image_request)
+        self.website_pre_order_active_tab_search_button.clicked.connect(self.tab_website_two_results_table_search)
+        self.website_pre_order_active_tab_remove_from_inventory.clicked.connect(self.tab_website_two_remove_item)
         
     ################### tab one starts ##################################
     
@@ -19096,8 +19098,88 @@ class Ui_Form(QtGui.QWidget):
         
     ################### tab website one ends ##################################
     ################### tab website two begins ##################################
-    def tab_website_two_results_table_search(self):#this is going to suck
-        self.tab_website_two_results_table_reset()
+    def tab_website_two_remove_item(self):
+        row = self.website_pre_order_active_tab_results_table.currentRow()
+        key = self.tab_website_two_results_table_list[row][PRE_ID]
+        #first, remove this item from the website
+        if self.shopify_interface.delete_item(self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID]):
+            #if the removal from the website was successful, delete it from our db
+            self.db_cursor.execute('DELETE FROM pre_order_inventory WHERE id = ?', (key,))
+            self.db.commit()
+            self.tab_website_two_results_table_search()
+        else:
+            print 'Problem removing:\n%s' % self.tab_website_two_results_table_list[row]
+        
+        
+    
+    def tab_website_two_results_table_search(self, hard_search=False):#this is going to suck
+        #grab info from search box if necessary
+
+        #clear table
+        self.tab_website_two_results_table_clear()
+        query = self.website_pre_order_active_tab_search_qline.text()
+        self.website_pre_order_active_tab_results_table.setRowCount(self.website_pre_order_active_tab_spin_box.value())
+        self.tab_website_two_results_table_list = []
+        if ((query != '') and (query is not None)):
+            if hard_search:
+                self.db_cursor.execute('DROP table IF EXISTS virt_pre_order_inventory')
+                self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_pre_order_inventory USING fts4(key INT, content)')
+                self.db.commit()
+                self.db_cursor.execute("""INSERT INTO virt_pre_order_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || label || ' ' || shopify_tags || ' ' || shopify_desc || ' ' || shopify_type FROM pre_order_inventory""")
+                self.db.commit()
+            #get search term
+            SEARCH_FTS = """SELECT * FROM pre_order_inventory WHERE id IN (SELECT key FROM virt_pre_order_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
+            self.db_cursor.execute(SEARCH_FTS, (str(query),))
+            for row in self.db_cursor.fetchall():
+                do_stuff = 1
+        else:
+            for row in self.db_cursor.execute('SELECT * FROM pre_order_inventory ORDER BY date_added DESC'):
+                #filter street date
+                if self.website_pre_order_active_tab_filter_street_date_checkbox.isChecked():
+                    date = self.website_pre_order_active_tab_filter_street_date_combo_box.currentText()
+                    if date != row[PRE_STREET_DATE]:
+                        continue
+                #filter sync
+                if self.website_pre_order_active_tab_filter_sync_status_checkbox.isChecked():
+                    sync = self.website_pre_order_active_tab_filter_sync_status_combo_box.currentText()
+                    if sync == 'Synced':
+                        if row[PRE_SYNC] == 0:
+                            continue
+                    if sync == 'Needs Synced':
+                        if row[PRE_SYNC] == 1:
+                            continue
+                #filter active
+                if self.website_pre_order_active_tab_filter_active_checkbox.isChecked():
+                    active = self.website_pre_order_active_tab_filter_active_combo_box.currentText()
+                    if active == 'Inactive':
+                        if row[PRE_ACTIVE] == 1:
+                            continue
+                    if active == 'Active':
+                        if row[PRE_ACTIVE] == 0:
+                            continue
+                #filter distro
+                if self.website_pre_order_active_tab_filter_by_dist_checkbox.isChecked():
+                    dist = self.website_pre_order_active_tab_filter_by_dist_combo_box.currentText()
+                    if dist != row[PRE_DISTRO]:
+                        continue
+                self.tab_website_two_results_table_list.append(list(row))
+
+        #for row in self.db_cursor.execute('SELECT * FROM pre_order_inventory ORDER BY date_added DESC'):
+        #    self.tab_website_two_results_table_list.append(row)
+        self.tab_website_two_results_table_refresh()
+        #self.website_pre_order_active_tab_end_date.setDateTime(datetime.datetime.today())
+        #self.website_pre_order_active_tab_date_range_checkbox.setCheckState(False)
+        #self.website_pre_order_active_tab_filter_by_dist_checkbox.setCheckState(False)
+        #self.website_pre_order_active_tab_filter_street_date_checkbox.setCheckState(False)
+        #self.website_pre_order_active_tab_filter_active_checkbox.setCheckState(False)
+        #self.website_pre_order_active_tab_filter_sync_status_checkbox.setCheckState(False)
+        #refresh distributors in combobox
+        #while self.website_pre_order_active_tab_filter_by_dist_combo_box.count() != 0:
+        #    self.website_pre_order_active_tab_filter_by_dist_combo_box.removeItem(0)
+        #for distributor in self.distributors.get_distributors():
+        #    self.website_pre_order_active_tab_filter_by_dist_combo_box.addItem(distributor)
+
+
 
     def tab_website_two_results_table_save(self):
         row = self.website_pre_order_active_tab_results_table.currentRow()
@@ -19144,6 +19226,25 @@ class Ui_Form(QtGui.QWidget):
             self.website_pre_order_active_tab_filter_by_dist_combo_box.removeItem(0)
         for distributor in self.distributors.get_distributors():
             self.website_pre_order_active_tab_filter_by_dist_combo_box.addItem(distributor)
+        #refresh street dates in combobox
+        while self.website_pre_order_active_tab_filter_street_date_combo_box.count() != 0:
+            self.website_pre_order_active_tab_filter_street_date_combo_box.removeItem(0)
+        street_dates = set()
+        for row in self.db_cursor.execute('SELECT * FROM pre_order_inventory'):
+            street_dates.add(self.xstr(row[PRE_STREET_DATE]))
+        street_dates = list(street_dates)
+        for item in street_dates:
+            self.website_pre_order_active_tab_filter_street_date_combo_box.addItem(item)
+        #active combobox
+        while self.website_pre_order_active_tab_filter_active_combo_box.count() != 0:
+           self.website_pre_order_active_tab_filter_active_combo_box.removeItem(0)
+        self.website_pre_order_active_tab_filter_active_combo_box.addItem('Active')
+        self.website_pre_order_active_tab_filter_active_combo_box.addItem('Inactive')
+        #sync combobox
+        while self.website_pre_order_active_tab_filter_sync_status_combo_box.count() != 0:
+            self.website_pre_order_active_tab_filter_sync_status_combo_box.removeItem(0)
+        self.website_pre_order_active_tab_filter_sync_status_combo_box.addItem('Needs Synced')
+        self.website_pre_order_active_tab_filter_sync_status_combo_box.addItem('Synced')
         self.website_pre_order_active_tab_results_table.setRowCount(self.website_pre_order_active_tab_spin_box.value())
         self.tab_website_two_results_table_list = []
         for row in self.db_cursor.execute('SELECT * FROM pre_order_inventory ORDER BY date_added DESC'):
@@ -19301,6 +19402,7 @@ class Ui_Form(QtGui.QWidget):
         #        file_check = WEBSITE_IMAGES + self.tab_website_two_results_table_list[row][PRE_UPC] + extension
         #        if os.path.isfile(file_check):
         #            print file_check
+        self.tab_website_two_results_table_search()
         for row in self.db_cursor.execute('SELECT * FROM website_images'):
             print row
         
@@ -19369,6 +19471,9 @@ class Ui_Form(QtGui.QWidget):
         for row in files_to_add:
             try:
                 self.db_cursor.execute('INSERT INTO website_images (upc, filename, shopify_id, shopify_product, position, src) VALUES (?,?,?,?,?,?)', tuple(row))
+                self.db.commit()
+                #update sync status
+                self.db_cursor.execute('UPDATE pre_order_inventory SET sync = ? WHERE upc = ?', (0,upc))
                 self.db.commit()
             except Exception as e:
                 print 'adding pictures to website image table: %s' % e

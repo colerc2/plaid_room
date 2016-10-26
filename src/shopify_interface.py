@@ -19,6 +19,14 @@ class ShopifyInterface():
         shop_url = "https://%s:%s@plaid-room-records-2.myshopify.com/admin" % (self.api_key, self.api_password)
         shopify.ShopifyResource.set_site(shop_url)
 
+    def delete_item(self, id):
+        product = shopify.Product.find(id)
+        time.sleep(0.5)
+        try:
+            product.destroy()
+            return True
+        except Exception as e:
+            return False
 
     def get_item(self, id):
         product = shopify.Product.find(id)
