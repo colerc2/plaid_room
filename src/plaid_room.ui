@@ -20074,7 +20074,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="website_pre_order_input_tab">
       <attribute name="title">
@@ -20449,7 +20449,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1861</width>
+         <width>2113</width>
          <height>951</height>
         </rect>
        </property>
@@ -22083,1555 +22083,2544 @@ p, li { white-space: pre-wrap; }
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="cole_make_po_tab_2">
+     <widget class="QWidget" name="website_pre_order_make_po_tab">
       <attribute name="title">
        <string>Create PO</string>
       </attribute>
-      <widget class="Line" name="line_16">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>70</y>
-         <width>971</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="cole_three_po_table_2">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>210</y>
-         <width>971</width>
-         <height>601</height>
-        </rect>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>3</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>4</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>5</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>6</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>7</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>8</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>9</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>10</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>11</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>12</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>13</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>14</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>15</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>16</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>17</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>18</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>19</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>20</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>21</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>22</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>23</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>24</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>25</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>Remove</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>UPC</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Catalog No.</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Artist</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Title</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Ordered</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>B/O</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Shipped</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>In Stock</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Price</string>
-        </property>
-       </column>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_14">
-       <property name="geometry">
-        <rect>
-         <x>400</x>
-         <y>820</y>
-         <width>301</width>
-         <height>131</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_71">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_130">
-          <item>
-           <widget class="QLabel" name="label_159">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Qty Ordered:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_160">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Qty. Shipped:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_161">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Qty. Backordered:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_131">
-          <item>
-           <widget class="QLabel" name="cole_three_qty_ordered_2">
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_qty_shipped_2">
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_qty_backordered_2">
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="Line" name="line_17">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>100</y>
-         <width>20</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="Line" name="line_18">
-       <property name="geometry">
-        <rect>
-         <x>1020</x>
-         <y>90</y>
-         <width>20</width>
-         <height>851</height>
-        </rect>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_15">
-       <property name="geometry">
-        <rect>
-         <x>1050</x>
-         <y>80</y>
-         <width>781</width>
-         <height>111</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_72">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_132">
-          <item>
-           <widget class="QLabel" name="label_162">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>18</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Notes</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="cole_three_notes_2"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="Line" name="line_19">
-       <property name="geometry">
-        <rect>
-         <x>1040</x>
-         <y>200</y>
-         <width>811</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="cole_three_bo_table_2">
-       <property name="geometry">
-        <rect>
-         <x>1050</x>
-         <y>310</y>
-         <width>831</width>
-         <height>631</height>
-        </rect>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>3</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>4</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>5</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>6</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>7</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>8</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>9</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>10</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>11</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>12</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>13</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>14</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>15</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>16</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>17</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>18</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>19</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>20</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>21</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>22</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>23</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>24</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>25</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>UPC</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Catalog No.</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Artist</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Title</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Qty. B/O</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Fulfilled </string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>In Stock</string>
-        </property>
-       </column>
-      </widget>
-      <widget class="QLabel" name="label_163">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>85</y>
-         <width>105</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Helvetica</family>
-         <pointsize>18</pointsize>
-         <weight>75</weight>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Add Items</string>
-       </property>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_9">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
+         <x>1</x>
          <y>10</y>
-         <width>1781</width>
-         <height>62</height>
+         <width>1871</width>
+         <height>941</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_73">
+       <layout class="QVBoxLayout" name="verticalLayout_108">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_74">
+         <layout class="QHBoxLayout" name="horizontalLayout_66">
           <item>
-           <widget class="QLabel" name="label_164">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>18</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
+           <widget class="QTableWidget" name="website_pre_order_make_po_tab_top_table">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="text">
-             <string>Account</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cole_three_account_combo_box_2"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_229">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>15</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_133">
-          <item>
-           <widget class="QLabel" name="label_165">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Business Name:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_166">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Contact:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_167">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Account #:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_134">
-          <item>
-           <widget class="QLabel" name="cole_three_business_name_2">
-            <property name="text">
-             <string>Plaid Room Records</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_contact_2">
-            <property name="text">
-             <string>Terry Cole</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_account_number_2">
-            <property name="text">
-             <string>0001</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_230">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>15</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_135">
-          <item>
-           <widget class="QLabel" name="label_168">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Phone:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_169">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Cell:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_170">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Email:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_136">
-          <item>
-           <widget class="QLabel" name="cole_three_phone_2">
-            <property name="text">
-             <string>555-555-5555</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_cell_2">
-            <property name="text">
-             <string>555-555-5555</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_email_2">
-            <property name="text">
-             <string>plaidroomrecords@gmail.com</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_239">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>15</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_171">
-          <property name="font">
-           <font>
-            <family>Helvetica</family>
-            <pointsize>14</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Billing Address:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_137">
-          <item>
-           <widget class="QLabel" name="cole_three_billing_address_2">
-            <property name="text">
-             <string>120 Karl Brown Way</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_billing_city_state_2">
-            <property name="text">
-             <string>Loveland, OH 45140</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_billing_country_2">
-            <property name="text">
-             <string>United States of Amurica</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_240">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>15</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_172">
-          <property name="font">
-           <font>
-            <family>Helvetica</family>
-            <pointsize>14</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Shipping Address:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_138">
-          <item>
-           <widget class="QLabel" name="cole_three_shipping_address_2">
-            <property name="text">
-             <string>120 Karl Brown Way</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_shipping_city_state_2">
-            <property name="text">
-             <string>Loveland, OH 45140</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="cole_three_shipping_country_2">
-            <property name="text">
-             <string>United States of Amurica</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_16">
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>120</y>
-         <width>361</width>
-         <height>68</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_75">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_139">
-          <item>
-           <widget class="QLineEdit" name="cole_three_add_item_qline_2"/>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cole_three_add_item_combo_box_2"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_140">
-          <item>
-           <widget class="QPushButton" name="cole_three_add_item_qline_button_2">
-            <property name="text">
-             <string>Add Item(s)</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="cole_three_add_item_combo_box_button_2">
-            <property name="text">
-             <string>Add Item</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_141">
-          <item>
-           <widget class="QLabel" name="label_173">
-            <property name="maximumSize">
+            <property name="minimumSize">
              <size>
-              <width>16777215</width>
-              <height>25</height>
+              <width>1500</width>
+              <height>450</height>
              </size>
             </property>
-            <property name="text">
-             <string>Default Quantity</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="cole_three_add_item_default_qty_2">
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>25</height>
+              <width>1500</width>
+              <height>450</height>
              </size>
             </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="sortingEnabled">
+             <bool>false</bool>
+            </property>
+            <attribute name="horizontalHeaderCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>100</number>
+            </attribute>
+            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <row>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>3</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>4</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>5</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>6</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>7</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>8</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>9</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>10</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>11</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>12</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>13</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>14</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>15</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>16</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>17</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>18</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>19</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>20</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>21</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>22</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>23</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>24</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>25</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>26</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>27</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>28</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>29</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>30</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>31</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>32</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>33</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>34</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>35</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>36</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>37</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>38</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>39</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>40</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>41</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>42</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>43</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>44</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>45</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>46</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>47</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>48</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>49</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>50</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>51</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>52</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>53</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>55</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>56</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>57</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>58</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>59</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>60</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>61</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>62</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>63</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>64</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>65</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>66</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>67</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>68</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>69</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>70</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>71</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>72</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>73</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>74</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>75</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>76</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>77</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>78</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>79</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>80</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>81</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>82</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>83</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>84</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>85</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>86</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>87</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>88</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>90</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>91</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>92</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>93</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>94</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>95</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>96</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>97</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>98</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>99</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Done</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>UPC/SKU/EAN</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Artist</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Title</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Sold For</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Distributor</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Label</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Format</string>
+             </property>
+            </column>
+            <item row="0" column="1">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="0" column="3">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
            </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_107">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_65">
+              <item>
+               <widget class="QComboBox" name="website_pre_order_make_po_tab_choose_delim"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="website_pre_order_make_po_tab_make_csv">
+                <property name="text">
+                 <string>Generate</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="website_pre_order_make_po_tab_csv_browser"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_17">
-       <property name="geometry">
-        <rect>
-         <x>720</x>
-         <y>820</y>
-         <width>301</width>
-         <height>131</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_76">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_142">
-          <item>
-           <widget class="QLabel" name="label_174">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Subtotal:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_175">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Discount:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_176">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Shipping:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_177">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Total:</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_143">
-          <item>
-           <widget class="QLabel" name="cole_three_subtotal_2">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="cole_three_discount_2"/>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="cole_three_shipping_2"/>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="cole_three_total_2"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_18">
-       <property name="geometry">
-        <rect>
-         <x>470</x>
-         <y>90</y>
-         <width>541</width>
-         <height>109</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_77">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_144">
-          <item>
-           <widget class="QLabel" name="label_178">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>18</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Bulk Upload</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="cole_three_bulk_add_items_button_2">
-            <property name="text">
-             <string>Add Items</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="cole_three_bulk_clear_2">
-            <property name="text">
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="cole_three_bulk_text_input_2"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_19">
-       <property name="geometry">
-        <rect>
-         <x>1050</x>
-         <y>220</y>
-         <width>821</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_78">
-        <item>
-         <widget class="QLabel" name="label_179">
-          <property name="font">
-           <font>
-            <family>Helvetica</family>
-            <pointsize>18</pointsize>
-            <weight>75</weight>
-            <italic>false</italic>
-            <bold>true</bold>
-           </font>
+         <widget class="QTableWidget" name="website_pre_order_make_po_tab_bottom_table">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="text">
-           <string>Back Orders</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_180">
-          <property name="text">
-           <string>Release</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cole_three_bo_release_2"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_241">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+          <property name="minimumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1850</width>
+            <height>450</height>
            </size>
           </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="cole_three_bo_counter_2">
-          <property name="text">
-           <string>XX Active Items on Backorder</string>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>450</height>
+           </size>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_20">
-       <property name="geometry">
-        <rect>
-         <x>1040</x>
-         <y>260</y>
-         <width>831</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_79">
-        <item>
-         <widget class="QPushButton" name="cole_three_bo_export_2">
-          <property name="text">
-           <string>Export current selection to CSV</string>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cole_three_bo_fulfill_all_2">
-          <property name="text">
-           <string>Fulfill All Currently Selected</string>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cole_three_bo_save_2">
-          <property name="text">
-           <string>Save Changes to Selected Item</string>
+          <property name="sortingEnabled">
+           <bool>false</bool>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_21">
-       <property name="geometry">
-        <rect>
-         <x>240</x>
-         <y>820</y>
-         <width>151</width>
-         <height>131</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_145">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_146">
-          <item>
-           <widget class="QLabel" name="label_181">
-            <property name="font">
-             <font>
-              <family>Helvetica</family>
-              <pointsize>14</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Custom PO name</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="cole_three_custom_po_name_2"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cole_three_save_po_2">
-          <property name="text">
-           <string>Save PO</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cole_three_submit_po_2">
-          <property name="text">
-           <string>Send PO</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_23">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>820</y>
-         <width>191</width>
-         <height>71</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_153">
-        <item>
-         <widget class="QComboBox" name="cole_three_load_po_combobox_2"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cole_three_load_po_2">
-          <property name="text">
-           <string>Load PO</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_24">
-       <property name="geometry">
-        <rect>
-         <x>16</x>
-         <y>900</y>
-         <width>221</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_154">
-        <item>
-         <widget class="QLabel" name="cole_three_current_invoice_2">
-          <property name="font">
-           <font>
-            <family>Helvetica</family>
-            <pointsize>14</pointsize>
-            <weight>75</weight>
-            <italic>false</italic>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Current Invoice: None</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="cole_three_current_invoice_status_2">
-          <property name="font">
-           <font>
-            <family>Helvetica</family>
-            <pointsize>14</pointsize>
-            <weight>75</weight>
-            <italic>false</italic>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Status: Draft</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>100</number>
+          </attribute>
+          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <row>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>6</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>7</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>8</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>9</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>10</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>11</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>12</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>13</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>14</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>15</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>16</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>17</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>18</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>19</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>20</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>21</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>22</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>23</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>24</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>25</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>26</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>27</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>28</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>29</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>30</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>31</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>32</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>33</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>34</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>35</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>36</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>37</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>38</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>39</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>40</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>41</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>42</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>43</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>44</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>45</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>46</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>47</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>48</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>49</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>51</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>52</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>53</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>55</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>56</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>57</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>58</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>59</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>61</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>62</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>63</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>64</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>65</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>66</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>67</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>68</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>69</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>71</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>72</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>73</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>74</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>75</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>76</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>77</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>78</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>79</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>81</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>82</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>83</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>84</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>85</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>86</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>87</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>88</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>91</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>92</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>93</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>94</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>95</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>96</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>97</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>98</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>99</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>More...</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Undo</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Trans. ID</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Date Sold</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Sold For</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Artist</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Title</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>UPC/SKU/EAN</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Sale Price</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Price Paid</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>New/Used</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Distributor</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Label</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Format</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Genre</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Date Added</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="tab_10">
+     <widget class="QWidget" name="website_add_catalog_tab">
       <attribute name="title">
-       <string>Release</string>
+       <string>Catalog Input</string>
       </attribute>
-      <widget class="QComboBox" name="cole_one_select_release_5">
+      <widget class="QWidget" name="layoutWidget_8">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>10</y>
-         <width>400</width>
-         <height>26</height>
-        </rect>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>400</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QLabel" name="tab_one_recent_additions_lbl_8">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
+         <x>0</x>
          <y>0</y>
-         <width>145</width>
-         <height>44</height>
+         <width>1881</width>
+         <height>944</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>Lucida Grande</family>
-         <pointsize>18</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Select Release</string>
-       </property>
-       <property name="scaledContents">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="Line" name="line_20">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>1869</width>
-         <height>3</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Helvetica</family>
-         <pointsize>24</pointsize>
-         <italic>true</italic>
-        </font>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="lineWidth">
-        <number>3</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-      <widget class="QWidget" name="layoutWidget_25">
-       <property name="geometry">
-        <rect>
-         <x>700</x>
-         <y>43</y>
-         <width>733</width>
-         <height>911</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_155">
+       <layout class="QVBoxLayout" name="verticalLayout_109">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_80">
+         <layout class="QVBoxLayout" name="verticalLayout_110">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <item>
-           <widget class="QLabel" name="tab_one_recent_additions_lbl_9">
-            <property name="font">
-             <font>
-              <family>Lucida Grande</family>
-              <pointsize>18</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Activity</string>
-            </property>
-            <property name="scaledContents">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cole_one_select_release_6">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_156">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
-            </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_67">
             <item>
-             <widget class="QDateEdit" name="tab_cole_one_start_date_5">
-              <property name="calendarPopup">
-               <bool>true</bool>
+             <widget class="QLabel" name="tab_one_search_item_lbl_13">
+              <property name="font">
+               <font>
+                <family>Lucida Grande</family>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Search Item</string>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_182">
+             <spacer name="horizontalSpacer_229">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_72">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_230">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="website_add_catalog_search_qline">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>250</width>
+                <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string>Start Date</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <string/>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_239">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_add_catalog_search_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Search</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_240">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_add_catalog_reset_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_241">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_82">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_248">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_add_catalog_permaban_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Permaban This UPC</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_249">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_83">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_250">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_add_catalog_find_image">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>95</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Find Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_252">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_add_catalog_import_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Import Into Active Grid</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_253">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_84">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_254">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="website_add_catalog_possible_stock_label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>220</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>XXXX Items In Possible Stock</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_255">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_157">
+           <layout class="QHBoxLayout" name="horizontalLayout_68">
             <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
+             <number>-1</number>
             </property>
             <item>
-             <widget class="QDateEdit" name="tab_cole_one_end_date_5">
-              <property name="calendarPopup">
-               <bool>true</bool>
+             <widget class="QLabel" name="tab_one_search_item_lbl_14">
+              <property name="font">
+               <font>
+                <family>Lucida Grande</family>
+                <pointsize>18</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Filter</string>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_183">
+             <spacer name="horizontalSpacer_256">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>77</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_85">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_257">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_filter_by_date_added_checkbox">
+              <property name="text">
+               <string>Filter by Date Added</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_258">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_111">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
+              </property>
+              <item>
+               <widget class="QDateEdit" name="website_add_catalog_start_date">
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_113">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Start Date</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_112">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
+              </property>
+              <item>
+               <widget class="QDateEdit" name="website_add_catalog_end_date">
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_114">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>End Date</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_259">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_86">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_260">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>28</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_filter_dist_checkbox">
+              <property name="text">
+               <string>Filter By Distributor</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_261">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QComboBox" name="website_add_catalog_filter_dist_combobox"/>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_262">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_87">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_263">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_show_permabans">
+              <property name="text">
+               <string>Show Permabans Only</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_268">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_89">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_269">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_115">
+              <property name="text">
+               <string>Show</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="website_add_catalog_num_displayed_spinbox">
+              <property name="correctionMode">
+               <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+              </property>
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>250</number>
+              </property>
+              <property name="singleStep">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>50</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_116">
+              <property name="text">
+               <string>Items</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_270">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_90">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_271">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="website_add_catalog_items_found_label">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>170</width>
+                <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string>End Date</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <string>XXXX Items Found For Search Terms</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_272">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QTableWidget" name="cole_one_items_table_5">
+         <widget class="QTableWidget" name="website_add_catalog_results_table">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>1850</width>
+            <height>825</height>
+           </size>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>false</bool>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>100</number>
+          </attribute>
+          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <row>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>6</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>7</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>8</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>9</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>10</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>11</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>12</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>13</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>14</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>15</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>16</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>17</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>18</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>19</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>20</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>21</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>22</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>23</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>24</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>25</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>26</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>27</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>28</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>29</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>30</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>31</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>32</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>33</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>34</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>35</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>36</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>37</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>38</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>39</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>40</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>41</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>42</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>43</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>44</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>45</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>46</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>47</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>48</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>49</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>51</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>52</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>53</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>55</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>56</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>57</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>58</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>59</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>61</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>62</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>63</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>64</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>65</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>66</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>67</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>68</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>69</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>71</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>72</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>73</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>74</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>75</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>76</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>77</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>78</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>79</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>81</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>82</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>83</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>84</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>85</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>86</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>87</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>88</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>91</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>92</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>93</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>94</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>95</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>96</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>97</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>98</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>99</string>
+           </property>
+          </row>
           <column>
            <property name="text">
-            <string>PO</string>
+            <string>More...</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Catalog No.</string>
+            <string>UPC/SKU/EAN</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Image</string>
            </property>
           </column>
           <column>
@@ -23646,212 +24635,68 @@ p, li { white-space: pre-wrap; }
           </column>
           <column>
            <property name="text">
-            <string>Ordered</string>
+            <string>Sale Price</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>B/O</string>
+            <string>QOH</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Shipped</string>
+            <string>Distributor</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Price</string>
+            <string>Label</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Date</string>
+            <string>Genre</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Account</string>
+            <string>Year</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>Notes</string>
+           </property>
+          </column>
+          <item row="0" column="1">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="0" column="3">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item row="0" column="4">
+           <property name="text">
+            <string/>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget_26">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>44</y>
-         <width>671</width>
-         <height>911</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_158">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_81">
-          <item>
-           <widget class="QLabel" name="tab_one_recent_additions_lbl_10">
-            <property name="font">
-             <font>
-              <family>Lucida Grande</family>
-              <pointsize>18</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Sales</string>
-            </property>
-            <property name="scaledContents">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="tab_cole_one_filter_date_4">
-            <property name="text">
-             <string>Filter By Date Sold</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_159">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
-            </property>
-            <item>
-             <widget class="QDateEdit" name="tab_cole_one_start_date_6">
-              <property name="calendarPopup">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_186">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Start Date</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_160">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetFixedSize</enum>
-            </property>
-            <item>
-             <widget class="QDateEdit" name="tab_cole_one_end_date_6">
-              <property name="calendarPopup">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_189">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>End Date</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QTableWidget" name="cole_one_items_table_6">
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <column>
-           <property name="text">
-            <string>PO</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Catalog No.</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Artist</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Title</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Ordered</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>B/O</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Shipped</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Price</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Date</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Account</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_7">
+      <attribute name="title">
+       <string>Catalog Active</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="website_pre_order_history_tab">
+      <attribute name="title">
+       <string>Order History</string>
+      </attribute>
      </widget>
     </widget>
    </widget>
