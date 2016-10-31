@@ -20097,6 +20097,7 @@ class Ui_Form(QtGui.QWidget):
                 upcs[upc] = 1
         #third, populate list for table
         print 'three'
+        test = 0
         print len(upcs)
         for ix, row in self.db_cursor.execute('SELECT * FROM inventory'):
             if row[UPC_INDEX] in upcs:
