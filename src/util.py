@@ -150,6 +150,39 @@ class Util():
 
 		placeholder = 0
 
+        def soundscan(self, list_of_dates):
+                upcs = dict()
+                db_results = []
+                print list_of_dates
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory WHERE new_used = ? ORDER BY date_sold DESC', ('New',))):
+                        db_results.append(row)
+                for date_ in list_of_dates:
+                        print 'matching date %s' % date_
+                        separate = date_.isoformat().split('-')
+                        desired_date = datetime.date(int(separate[0]), int(separate[1]), int(separate[2]))
+                        for ix, row in enumerate(db_results):
+                                date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                                if date_sold == desired_date:
+                                        if row[UPC_INDEX].isdigit():
+                                                if row[UPC_INDEX] in upcs:
+                                                        upcs[row[UPC_INDEX]] += 1
+                                                else:
+                                                        upcs[row[UPC_INDEX]] = 1
+                #print header
+                separate = list_of_dates[0].isoformat().split('-')
+                print '92090000746%s' % (list_of_dates[0].strftime("%y%m%d"))
+                #print date
+                total = 0
+                for key, value in upcs.iteritems():
+                        print 'I3%013d%05d' % (int(key),value)
+                        total += value
+		#print footer
+                print '%s    %s    %s' % ('94', str(len(upcs)), str(total))
+                
+                #find out dates
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                        
+                
 
 	def import_csv(self):
 		stuff_to_insert = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/looney_adds.csv')
@@ -427,7 +460,7 @@ class Util():
 		for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
 			db_results.append(row)
 		for ix, row in enumerate(db_results):
-			date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+		 	date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
 			if date_sold == desired_date:
 				#get extra discount from transaction table
 				trans_id = int(row[TRANSACTION_ID_INDEX])
@@ -659,6 +692,7 @@ if __name__ == '__main__':
 			print 'new_with_plaid_sku - list all the shit someone might have fucked up'
 			print 'import_alliance - import an alliance order'
 			print 'shit_selling_doubles - self explanatory'
+                        print 'soundscan - generate soundscan report'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -715,6 +749,19 @@ if __name__ == '__main__':
 			util.import_csv()
                 elif entered == 'monthly':
                         util.monthly_stats()
+                elif entered == 'soundscan':
+                        print '\tPlease enter the starting date in the following format: yyyy-mm-dd'
+			start_date = raw_input('plaid-room-util/soundscan > ')
+			start_date = start_date.split('-')
+			start_date = datetime.date(int(start_date[0]), int(start_date[1]), int(start_date[2]))
+			print '\tPlease enter the ending date in the following format:	 yyyy-mm-dd'
+			end_date = raw_input('plaid-room-util/soundscan > ')
+			end_date = end_date.split('-')
+			end_date = datetime.date(int(end_date[0]), int(end_date[1]), int(end_date[2]))
+			delta_dates = (end_date - start_date)
+			delta_dates = int(delta_dates.days) + 1
+			date_list = [end_date - datetime.timedelta(days=x) for x in range(0, delta_dates)]
+                        util.soundscan(date_list)
 		elif entered == 't' or entered == 'time_machine':
 			print '\tPlease enter the date/time in the following format: yyyy-mm-dd-hh-mm'
 			travel_to_time = raw_input('plaid-room-util/time_machine > ')
