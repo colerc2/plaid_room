@@ -59,6 +59,77 @@ class ShopifyInterface():
             return None
         return None
             
+
+    def create_or_update_catalog_item(self, row):#aka sync
+        placeholder = 0
+        if row[ONLINE_SHOPIFY_ID] is None or row[ONLINE_SHOPIFY_ID] == '':#if it doesn't exist
+            try:
+                new_product = shopify.Product()
+                #street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
+                #street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
+                new_product.title = "<b>%s</b><br><i>%s</i>" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
+                new_product.product_type = "LP"#default for now, might change later
+                new_product.tags = row[ONLINE_SHOPIFY_TAGS]
+                new_product.body_html = row[ONLINE_SHOPIFY_DESC]
+                pprint (vars(new_product))
+                if row[ONLINE_ACTIVE] == 0:
+                    new_product.published_at = None
+#                else:
+#                    product.published_at = datetime.datetime.now().isoformat()
+                new_product.published_scope = 'web'
+                v = shopify.Variant()
+                v.price = row[ONLINE_SALE_PRICE]
+                v.barcode = row[ONLINE_UPC]
+                v.inventory_management = 'shopify'
+                v.inventory_policy = 'deny'
+                v.inventory_quantity = row[ONLINE_QOH]
+                v.product_id = new_product.id
+                new_product.variants = [v]
+                success = new_product.save()
+                time.sleep(0.25)
+                pprint (vars(new_product))
+                print
+            except Exception as e:
+                print 'error in the shopify:create_or_update_item func: %s' % e
+                return None
+            if success == False:
+                return None
+            time.sleep(0.5)
+            return new_product
+        else:
+            try:
+                product = shopify.Product.find(row[ONLINE_SHOPIFY_ID])
+                product.title = "<b>%s</b><br><i>%s</i>" % (row[PRE_ARTIST], row[PRE_TITLE])
+                product.product_type = "LP"#default for now, might change later
+                product.tags = row[ONLINE_SHOPIFY_TAGS]
+                product.body_html = row[ONLINE_SHOPIFY_DESC]
+                if row[ONLINE_ACTIVE] == 0:
+                    product.published_at = None
+                else:
+                    product.published_at = datetime.datetime.now().isoformat()
+                product.published_scope = 'web'
+                #v = shopify.Variant()
+                v = product.variants[0]
+                v.price = row[ONLINE_SALE_PRICE]
+                v.barcode = row[ONLINE_UPC]
+                v.inventory_management = 'shopify'
+                v.inventory_policy = 'deny'
+                v.inventory_quantity = row[ONLINE_QOH]
+                v.product_id = product.id
+                #new_product.variants = [v]
+                success = product.save()
+                #pprint (vars(new_product))
+                #print
+            except Exception as e:
+                print 'error in the shopify:create_or_update_item func (UPDATE): %s' % e
+                return None
+            if success == False:
+                return None
+            time.sleep(0.5)
+            return product
+
+            #do stuff
+
     #this function takes an item formatted from the pre-order table in the DB, and updates or creates it on shopify,
     #and also returns the shopify product when it's done
     def create_or_update_item(self, row):#aka sync

@@ -235,6 +235,7 @@ CATALOGS_PATH = BASE_PATH + 'plaid_room/config/catalogs/'
 SHOPIFY_COLEMINE_NAME = BASE_PATH + 'plaid_room/config/colemine_shopify.key'
 SHOPIFY_PLAID_ROOM_NAME = BASE_PATH + 'plaid_room/config/plaid_room_shopify.key'
 PAYPAL_LOGIN_NAME = BASE_PATH + 'plaid_room/config/paypal_login.key'
+RED_LOGIN_INFO = BASE_PATH + 'plaid_room/config/red_login.key'
 WEBSITE_IMAGES = BASE_PATH + 'plaid_room/config/site_images/'
 
 

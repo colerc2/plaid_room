@@ -28,7 +28,19 @@ from emailer import Emailer
 import math
 import shopify
 from pprint import pprint
+import requests
+import logging
+import urllib
+import urllib2
+import json
+from PIL import Image
 
+try:
+    import http.client as http_client
+except ImportError:
+    # Python 2
+    import httplib as http_client
+http_client.HTTPConnection.debuglevel = 1
 
 #NOTES TO SELF:
 #    What the reserved positions are currently being used for:
@@ -70,6 +82,12 @@ class Ui_Form(QtGui.QWidget):
         #few setup things
         self.thread().setPriority(QtCore.QThread.HighestPriority)
         locale.setlocale( locale.LC_ALL, '')
+        #debugging for Requests
+        logging.basicConfig()
+        logging.getLogger().setLevel(logging.DEBUG)
+        requests_log = logging.getLogger("requests.packages.urllib3")
+        requests_log.setLevel(logging.DEBUG)
+        requests_log.propagate = True
         
         #declaration of global variables
         self.non_decimal = re.compile(r'[^\d.]+')
@@ -82,7 +100,10 @@ class Ui_Form(QtGui.QWidget):
         self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
         self.paypal = PaypalInterface(PAYPAL_FILE_NAME)
         self.email_sender = Emailer('plaidroomrecords@gmail.com', EMAIL_PASSWORD_FILE_NAME, 'plaidroomrecords+mikebooks@gmail.com')
-
+        #connect to RED
+        red_file = open(RED_LOGIN_INFO, 'r')
+        self.red_auth = (red_file.readline()).strip()
+        self.red_url = (red_file.readline()).strip()
         #shopify connect
         self.shopify_interface = ShopifyInterface()
         
@@ -16227,6 +16248,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_reset_button.clicked.connect(self.website_catalog_active_results_table_reset)
         self.website_catalog_active_search_qline.returnPressed.connect(self.website_catalog_active_results_table_search)
         self.website_catalog_active_search_button.clicked.connect(self.website_catalog_active_results_table_search)
+        self.website_catalog_active_find_image_button.clicked.connect(self.website_catalog_active_find_image_request)
         ################### tab one starts ##################################
     
     def tab_one_remove_from_inventory(self):
@@ -20835,6 +20857,8 @@ class Ui_Form(QtGui.QWidget):
         for item in self.website_pre_order_active_tab_results_table.selectedItems():
             rows_selected.add(item.row())
         for row in rows_selected:
+            #first, run through any automated image import utilities i've created for various distros
+            self.try_to_auto_download_images(self.tab_website_two_results_table_list[row][PRE_UPC], self.tab_website_two_results_table_list[row][PRE_DISTRO])
             self.update_currently_associated_images(self.tab_website_two_results_table_list[row][PRE_UPC],self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID])
         #extensions = ['.jpg']
         #for row in rows_selected:
@@ -20886,7 +20910,7 @@ class Ui_Form(QtGui.QWidget):
         for row in self.db_cursor.execute('SELECT * FROM online_inventory'):
             active_upcs.append(row[ONLINE_UPC])
         #search to get potentials
-        potentials = dict()
+        potentials = set()
         query = self.website_add_catalog_search_qline.text()
         self.website_add_catalog_results_table_list = []
         if ((query != '') and (query is not None)):
@@ -20906,10 +20930,11 @@ class Ui_Form(QtGui.QWidget):
                     dist = self.website_add_catalog_filter_dist_combobox.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
-                if row[UPC_INDEX] in potentials:
-                    potentials[row[UPC_INDEX]] += 1
-                else:
-                    potentials[row[UPC_INDEX]] = 1
+                potentials.add(row[UPC_INDEX])
+                #if row[UPC_INDEX] in potentials:
+                #    potentials[row[UPC_INDEX]] += 1
+                #else:
+                #    potentials[row[UPC_INDEX]] = 1
         else:#query is blank
             for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
                 #if active already or permabanned, skip her
@@ -20920,15 +20945,23 @@ class Ui_Form(QtGui.QWidget):
                     dist = self.website_add_catalog_filter_dist_combobox.currentText()
                     if dist != row[DISTRIBUTOR_INDEX]:
                         continue
-                if row[UPC_INDEX] in potentials:
-                    potentials[row[UPC_INDEX]] += 1
-                else:
-                    potentials[row[UPC_INDEX]] = 1
+                potentials.add(row[UPC_INDEX])
+                    #if row[UPC_INDEX] in potentials:
+                #    potentials[row[UPC_INDEX]] += 1
+                #else:
+                #    potentials[row[UPC_INDEX]] = 1
+        qoh = dict()
+        for upc in potentials:#get qoh
+            print upc
+            qoh[upc] = 0
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+            if row[UPC_INDEX] in qoh:
+                qoh[row[UPC_INDEX]] += 1
         already_added = set()
         for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
-            if row[UPC_INDEX] in potentials:
+            if row[UPC_INDEX] in qoh:
                 if row[UPC_INDEX] not in already_added:
-                    self.website_add_catalog_results_table_list.append([potentials[row[UPC_INDEX]]] + list(row))
+                    self.website_add_catalog_results_table_list.append([qoh[row[UPC_INDEX]]] + list(row))
                     already_added.add(row[UPC_INDEX])
         
         self.tab_website_add_catalog_results_table_refresh()
@@ -21119,7 +21152,7 @@ class Ui_Form(QtGui.QWidget):
                     if sync == 'Synced':
                         if row[ONLINE_SYNC] == 0:
                             continue
-                    if sync == 'Not Synced':
+                    if sync == 'Needs Synced':
                         if row[ONLINE_SYNC] == 1:
                             continue
                 #filter active
@@ -21146,7 +21179,7 @@ class Ui_Form(QtGui.QWidget):
                     if sync == 'Synced':
                         if row[ONLINE_SYNC] == 0:
                             continue
-                    if sync == 'Not Synced':
+                    if sync == 'Needs Synced':
                         if row[ONLINE_SYNC] == 1:
                             continue
                 #filter active
@@ -21264,7 +21297,19 @@ class Ui_Form(QtGui.QWidget):
 
     def website_catalog_active_requested(self, row):
         print 'todo website_catalog_active active requested'
-
+        this_row = self.website_catalog_active_results_table_list[row]
+        active = None
+        for row in self.db_cursor.execute('SELECT active FROM online_inventory WHERE id = ?', (this_row[ONLINE_ID],)):
+            active = self.xint(row[0])
+        if active == 0:
+            active = 1
+        else:
+            active = 0
+        date_modified = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db_cursor.execute('UPDATE online_inventory SET active = ?, sync = ?, date_modified = ? WHERE id =  ?', (active, 0, date_modified, this_row[ONLINE_ID]))
+        self.db.commit()
+        self.website_catalog_active_results_table_search()
+        
     def website_catalog_active_generate_sync_buttons(self):
         self.website_catalog_active_sync_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.website_catalog_active_results_table.rowCount()):
@@ -21282,8 +21327,46 @@ class Ui_Form(QtGui.QWidget):
         self.connect(self.website_catalog_active_sync_mapper, QtCore.SIGNAL("mapped(int)"), self.website_catalog_active_sync_requested)
 
     def website_catalog_active_sync_requested(self, row):
-        print 'todo website_catalog_active sync requested'
-        
+        #first, check qoh because this fucking matters a fucking lot
+        new_qoh = 0
+        for ix, db_row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+            if db_row[UPC_INDEX] == self.website_catalog_active_results_table_list[row][ONLINE_UPC]:
+                new_qoh += 1
+        self.website_catalog_active_results_table_list[row][ONLINE_QOH] = new_qoh
+        #this shit is hard, pass off most of the work to shopify
+        product = self.shopify_interface.create_or_update_catalog_item(self.website_catalog_active_results_table_list[row])
+        #update database on our end where necessary
+        this_row = self.website_catalog_active_results_table_list[row]
+        if product is not None:#shopify update successful
+            self.db_cursor.execute('UPDATE online_inventory SET shopify_id = ?, sync = ? WHERE id = ?', (product.id, 1, this_row[ONLINE_ID]))
+            self.db.commit()
+        to_update = []
+        #update pictures on website
+        for db_row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (this_row[ONLINE_UPC],)):
+            db_row = list(db_row)
+            if db_row[IMAGE_SHOPIFY_ID] == '':#this shit doesn't exist yet, let's upload it
+                db_row[IMAGE_SHOPIFY_PRODUCT] = product.id
+                to_update.append(db_row)
+        for db_row in to_update:
+            print 'updating...'
+            upload = self.shopify_interface.update_pictures_for_upc(db_row)
+            if upload is not None:
+                upload = self.shopify_interface.get_item(upload.id)
+                images = upload.images
+                for image in images:
+                    if self.xint(image.position) == self.xint(db_row[IMAGE_POSITION]):
+                        self.db_cursor.execute('UPDATE website_images SET shopify_id = ?, shopify_product = ?, src = ? WHERE id = ?', (self.xstr(image.id), self.xstr(image._prefix_options['product_id']), image.src, db_row[IMAGE_ID]))
+                        self.db.commit()
+        self.website_catalog_active_results_table_search()
+            
+    def website_catalog_active_find_image_request(self):
+        rows_selected = set()
+        for item in self.website_catalog_active_results_table.selectedItems():
+            rows_selected.add(item.row())
+        for row in rows_selected:
+            self.try_to_auto_download_images(self.website_catalog_active_results_table_list[row][ONLINE_UPC], self.website_catalog_active_results_table_list[row][ONLINE_DISTRO])
+            self.update_currently_associated_catalog_images(self.website_catalog_active_results_table_list[row][ONLINE_UPC], self.website_catalog_active_results_table_list[row][ONLINE_SHOPIFY_ID])
+        self.website_catalog_active_results_table_search()
         
     
     def website_catalog_active_results_table_clear(self):
@@ -21315,9 +21398,99 @@ class Ui_Form(QtGui.QWidget):
     ################### tab website five ends ##################################
 
     ################### image table manipulation ##################################
+    def resize_image_if_necessary(self, filename):
+        img = Image.open(filename)
+        if img.size[0] > 600:
+            size = 600, 600
+            img.thumbnail(size)
+            img.save(filename)
+    
+    def try_to_auto_download_images(self, upc, distro):
+        print upc
+        print distro
+        if distro == 'Red':
+            url = '%s%s%s' % (self.red_url,'release_dockey=',self.xstr(upc))
+            headers = {'Authorization':self.red_auth}
+            print url
+            try:
+                req = urllib2.Request(url, headers=headers)
+                res = urllib2.urlopen(req)
+                data = json.load(res)
+                print data
+                #for key in data:
+                #    print key
+                file_url = ''
+                if data['status'] == 'OK':
+                    file_url = data['response']['releases'][0]['products'][0]['cover_art_img_url']
+                local_file = WEBSITE_IMAGES + self.xstr(upc) + '.jpg'
+                img_req = urllib2.Request(file_url, headers=headers)
+                img_data = urllib2.urlopen(img_req).read()
+                f = open(local_file, 'w')
+                f.write(img_data)
+                f.close()
+            except Exception as e:
+                print 'error trying to get Red picture: %s' % e
+        elif distro == 'WEA' or distro == 'Merge' or distro == 'Secretly Canadian' or distro == 'Matador' or distro == 'Sub Pop':
+            if len(upc) > 12:
+                upc = upc[-12:]
+            try:
+                file_url = 'http://www.media.wmg-is.com/media/portal/media/cms/%s/%s/%s.jpg' % (upc[:5],upc[5:9],upc)
+                local_file = WEBSITE_IMAGES + self.xstr(upc) + '.jpg'
+                img_req = urllib2.Request(file_url)
+                img_data = urllib2.urlopen(img_req).read()
+                f = open(local_file, 'w')
+                f.write(img_data)
+                f.close()
+            except Exception as e:
+                print 'error trying to get WEA/ADA pictures for upc %s : %s' % (upc,e)
+
     def remove_currently_associated_images(self, upc):
         placeholder = 0
 
+    #function used for catalog titles, NOT pre-orders
+    def update_currently_associated_catalog_images(self, upc, product_id):
+        extensions = ['.jpg', '.jpeg']#might need to add more here later
+        filename_addons = ['', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9']
+        files_to_add = []
+        for ix, adds in enumerate(filename_addons):
+            #print '%s,%s' % (upc,adds)
+            already_in_db = False
+            added_to_queue = False
+            #does this file exist in the db?
+            for extension in extensions:
+                for row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (upc,)):
+                    if row[IMAGE_FILENAME] == '%s%s%s' % (upc,adds,extension):
+                        already_in_db = True
+                        break#no need to keep scanning through multiple entries for the same UPC
+                if already_in_db:
+                    break#no need to keep trying different extensions, the entry has been found
+            if already_in_db:#this file already exists in the db
+                continue
+            #nothing found in the db, let's see if there's actually a file with this name
+            for extension in extensions:
+                file_check = '%s%s%s%s' % (WEBSITE_IMAGES,upc,adds,extension)
+                if os.path.isfile(file_check):
+                    #file exists
+                    self.resize_image_if_necessary(file_check)
+                    filename = '%s%s%s' % (upc,adds,extension)
+                    print filename
+                    files_to_add.append([upc,filename,'',product_id,(ix+1),''])
+                    added_to_queue = True
+                    break
+            if added_to_queue == False:
+                break
+        #now it's time to add some stuff to the db
+        for row in files_to_add:
+            try:
+                self.db_cursor.execute('INSERT INTO website_images (upc, filename, shopify_id, shopify_product, position, src) VALUES (?,?,?,?,?,?)', tuple(row))
+                self.db.commit()
+                #update sync status
+                self.db_cursor.execute('UPDATE online_inventory SET sync = ? WHERE upc = ?', (0,upc))
+                self.db.commit()
+            except Exception as e:
+                print 'adding pictures to website image table: %s' % e
+   
+    #ONLY used for pre-orders
     def update_currently_associated_images(self, upc, product_id):
         extensions = ['.jpg']#might need to add more here later
         filename_addons = ['', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9']
@@ -21340,6 +21513,7 @@ class Ui_Form(QtGui.QWidget):
             for extension in extensions:
                 file_check = '%s%s%s%s' % (WEBSITE_IMAGES,upc,adds,extension)
                 if os.path.isfile(file_check):
+                    self.resize_image_if_necessary(file_check)
                     #file exists
                     filename = '%s%s%s' % (upc,adds,extension)
                     print filename
