@@ -12,13 +12,77 @@ class ShopifyInterface():
         #self.db_cursor = self.db.cursor()
         
         f = open(SHOPIFY_PLAID_ROOM_NAME, 'r')
-
+        #f = open(SHOPIFY_COLEMINE_NAME, 'r')
+        
         self.api_key = (f.readline()).strip()
         self.api_password = (f.readline()).strip()
         
         shop_url = "https://%s:%s@plaid-room-records-2.myshopify.com/admin" % (self.api_key, self.api_password)
         shopify.ShopifyResource.set_site(shop_url)
+        #shop_url = "https://%s:%s@colemine-records.myshopify.com/admin" % (self.api_key, self.api_password)
+        #shopify.ShopifyResource.set_site(shop_url)
 
+    def get_line_items(self, shopify_id):
+        order = shopify.Order.find(shopify_id)
+        print order
+        #print order.attributes
+        items_to_return = []
+        for line in order.line_items:
+#            to_append = [line["sku"],line["price"],line["variant_title"]]
+            to_append = [line.sku,line.price,line.title,line.quantity]
+            items_to_return.append(to_append)
+        return items_to_return
+        
+    def get_list_of_orders_after_order_number(self, shopify_id):
+        orders_to_return = []
+        for page in range(250):
+            orders = shopify.Order.find(page=(page+1), since_id=shopify_id)
+            time.sleep(0.5)
+            if len(orders) == 0:
+                break
+            for order in orders:
+                qty = 0
+                #print order
+                for line in order.line_items:
+                    qty += int(line.quantity)
+                #print '%s - %s items' % (order.name,str(qty))
+                to_append = [order.id, order.processed_at, qty, order.total_price, order.shipping_lines[0].attributes["title"],0]
+                orders_to_return.append(to_append)
+                #print order.attributes
+                #print order
+                #print '\n\n\n'
+        #print 'total orders: %s' % (str(total),)
+        return orders_to_return
+
+            
+    def get_list_of_orders_from_beginning(self):
+        #order_number = range(520)
+        orders_to_return = []
+        for page in range(250):
+            #print '\n\n -------------\t\tPAGE %s\t\t--------------------\n\n' % (str(page+1),)
+            orders = shopify.Order.find(page=(page+1))#status will default to status='open', use status='any' to get ALL orders, including refunds
+            time.sleep(0.5)
+            if len(orders) == 0:
+                break
+            for order in orders:
+                try:
+                    order_id = 0
+                    order_id = order.id
+                    qty = 0
+                    #print order
+                    for line in order.line_items:
+                        qty += int(line.quantity)
+                    #print '%s - %s items' % (order.name,str(qty))
+                    to_append = [order.id, order.processed_at, qty, order.total_price, order.shipping_lines[0].attributes["title"],0]
+                    orders_to_return.append(to_append)
+                    #print order.attributes
+                    #print order
+                    #print '\n\n\n'
+                except Exception as e:
+                    print 'trouble getting order: %s' % (order_id)
+        #print 'total orders: %s' % (str(total),)
+        return orders_to_return
+        
     def delete_item(self, id):
         product = shopify.Product.find(id)
         time.sleep(0.5)
@@ -48,7 +112,6 @@ class ShopifyInterface():
         time.sleep(0.25)
         product.images.append(image)
         #product.images = [image]
-        print 'COMIN THROUGH'
         try:
             success = product.save()
             time.sleep(0.5)
@@ -79,7 +142,7 @@ class ShopifyInterface():
                 new_product.published_scope = 'web'
                 v = shopify.Variant()
                 v.price = row[ONLINE_SALE_PRICE]
-                v.barcode = row[ONLINE_UPC]
+                v.sku = row[ONLINE_UPC]
                 v.inventory_management = 'shopify'
                 v.inventory_policy = 'deny'
                 v.inventory_quantity = row[ONLINE_QOH]
@@ -111,7 +174,7 @@ class ShopifyInterface():
                 #v = shopify.Variant()
                 v = product.variants[0]
                 v.price = row[ONLINE_SALE_PRICE]
-                v.barcode = row[ONLINE_UPC]
+                v.sku = row[ONLINE_UPC]
                 v.inventory_management = 'shopify'
                 v.inventory_policy = 'deny'
                 v.inventory_quantity = row[ONLINE_QOH]
@@ -150,7 +213,7 @@ class ShopifyInterface():
                 new_product.published_scope = 'web'
                 v = shopify.Variant()
                 v.price = row[PRE_SALE_PRICE]
-                v.barcode = row[PRE_UPC]
+                v.sku = row[PRE_UPC]
                 v.product_id = new_product.id
                 new_product.variants = [v]
                 success = new_product.save()
@@ -181,7 +244,7 @@ class ShopifyInterface():
                 #v = shopify.Variant()
                 v = product.variants[0]
                 v.price = row[PRE_SALE_PRICE]
-                v.barcode = row[PRE_UPC]
+                v.sku = row[PRE_UPC]
                 v.product_id = product.id
                 #new_product.variants = [v]
                 success = product.save()
