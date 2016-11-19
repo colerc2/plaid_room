@@ -18276,12 +18276,13 @@ class Ui_Form(QtGui.QWidget):
         with open(file_name, 'rb') as f:
             data = [row for row in csv.reader(f.read().splitlines())]
         for title in data:
-            if title[0] == search_query:
+            if search_query in title[0]:
+            #if title[0] == search_query:
                 answers = [''] * 23
                 answers[UPC_INDEX] = search_query
-                answers[ARTIST_INDEX] = title[1]
-                answers[TITLE_INDEX] = title[2]
-                answers[FORMAT_INDEX] = '1xVinyl, LP, Album, RSD2016'
+                answers[ARTIST_INDEX] = string.capwords(title[1])
+                answers[TITLE_INDEX] = string.capwords(title[2])
+                answers[FORMAT_INDEX] = '1xVinyl, LP, Album, BF2016'
                 answers[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
                 answers[TAXABLE_INDEX] = 1
                 self.tab_one_results_table_list.append(answers)
