@@ -22,6 +22,11 @@ class ShopifyInterface():
         #shop_url = "https://%s:%s@colemine-records.myshopify.com/admin" % (self.api_key, self.api_password)
         #shopify.ShopifyResource.set_site(shop_url)
 
+    def get_trans_info(self, shopify_id):
+        order = shopify.Order.find(shopify_id)
+        return order
+        
+        
     def get_line_items(self, shopify_id):
         order = shopify.Order.find(shopify_id)
         print order
@@ -193,6 +198,19 @@ class ShopifyInterface():
 
             #do stuff
 
+    def update_qoh(self, shopify_id, qoh):
+        try:
+            product = shopify.Product.find(shopify_id)
+            v = product.variants[0]
+            v.inventory_quantity = qoh
+            v.product_id = product.id
+            success = product.save()
+        except Exception as e:
+            print 'error in updating qoh: %s' % e
+            return None
+        time.sleep(0.75)
+        return product
+            
     #this function takes an item formatted from the pre-order table in the DB, and updates or creates it on shopify,
     #and also returns the shopify product when it's done
     def create_or_update_item(self, row):#aka sync
@@ -204,7 +222,7 @@ class ShopifyInterface():
                 new_product.title = "<b>%s</b><br><i>%s</i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
                 new_product.product_type = "LP"#default for now, might change later
                 new_product.tags = row[PRE_SHOPIFY_TAGS]
-                new_product.body_html = row[PRE_SHOPIFY_DESC]
+                new_product.body_html = '<b>UPC: %s</b><br>%s' % (row[PRE_UPC],row[PRE_SHOPIFY_DESC])
                 pprint (vars(new_product))
                 if row[PRE_ACTIVE] == 0:
                     new_product.published_at = None

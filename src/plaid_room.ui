@@ -20074,7 +20074,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="website_pre_order_input_tab">
       <attribute name="title">
@@ -23325,7 +23325,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1881</width>
+         <width>1883</width>
          <height>944</height>
         </rect>
        </property>
@@ -23927,7 +23927,53 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer_317">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_show_used">
+              <property name="text">
+               <string>Show Used</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_269">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_109">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_316">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -27515,20 +27561,10 @@ Modified</string>
           </column>
           <column>
            <property name="text">
-            <string>Sale Price</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>Distributor</string>
            </property>
           </column>
           <item row="0" column="3">
-           <property name="text">
-            <string/>
-           </property>
-          </item>
-          <item row="0" column="5">
            <property name="text">
             <string/>
            </property>
@@ -28836,6 +28872,11 @@ Date Sold</string>
        <column>
         <property name="text">
          <string>Shipping Method</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Shopify ID</string>
         </property>
        </column>
       </widget>

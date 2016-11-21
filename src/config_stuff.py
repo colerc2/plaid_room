@@ -225,6 +225,27 @@ ONLINE_RESERVED_THREE = 22
 ONLINE_RESERVED_FOUR = 23
 ONLINE_ID = 24
 
+ONLINE_SS_TRANS_ID = 0
+ONLINE_SS_PICKED = 1
+ONLINE_SS_FULFILLED = 2
+ONLINE_SS_FULFILL_SKU = 3
+ONLINE_SS_UPC = 4
+ONLINE_SS_ARTIST = 5
+ONLINE_SS_TITLE = 6
+ONLINE_SS_PRICE = 7
+ONLINE_SS_NAME = 8
+ONLINE_SS_SHIPPING_METHOD = 9
+ONLINE_SS_DATE_SOLD = 10
+ONLINE_SS_DISTRO = 11
+ONLINE_SS_SHOPIFY_ID = 12
+ONLINE_SS_PRE_ORDER = 13
+ONLINE_SS_STREET_DATE = 14
+ONLINE_SS_ID = 15
+
+
+
+
+
 #/Users/bccole1989/Documents/plaid_room_records/add_tabs/plaid_room
 #BASE_PATH = '/Users/bccole1989/Documents/plaid_room_records/add_tabs/'
 BASE_PATH = '/Users/plaidroomrecords/Documents/pos_software/'
@@ -246,7 +267,7 @@ SHOPIFY_PLAID_ROOM_NAME = BASE_PATH + 'plaid_room/config/plaid_room_shopify.key'
 PAYPAL_LOGIN_NAME = BASE_PATH + 'plaid_room/config/paypal_login.key'
 RED_LOGIN_INFO = BASE_PATH + 'plaid_room/config/red_login.key'
 WEBSITE_IMAGES = BASE_PATH + 'plaid_room/config/site_images/'
-
+PICK_SHEET_FILE_NAME = BASE_PATH + 'plaid_room/images/pick_sheet.pdf'
 
 #other stuff
 LOVELAND_TAX_RATE = 6.75 #percent
