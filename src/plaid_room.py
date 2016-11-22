@@ -7,6 +7,7 @@ from distributors import Distributors
 from catalogs import Catalogs
 from more_info_dialog import Ui_more_info_dialog
 from cash_dialog import Ui_CashDialog
+from pending_pre_dialog import Ui_Pending_Dialog
 from barcode_printer import BarcodePrinter
 from receipt_printer import ReceiptPrinter
 from misc_types import MiscTypes
@@ -9073,7 +9074,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.website_pre_order_active_tab_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.website_pre_order_active_tab_results_table.setObjectName(_fromUtf8("website_pre_order_active_tab_results_table"))
-        self.website_pre_order_active_tab_results_table.setColumnCount(22)
+        self.website_pre_order_active_tab_results_table.setColumnCount(23)
         self.website_pre_order_active_tab_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setVerticalHeaderItem(0, item)
@@ -9313,6 +9314,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(20, item)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(21, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_pre_order_active_tab_results_table.setHorizontalHeaderItem(22, item)
         item = QtGui.QTableWidgetItem()
         self.website_pre_order_active_tab_results_table.setItem(0, 3, item)
         item = QtGui.QTableWidgetItem()
@@ -10607,7 +10610,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.website_catalog_active_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.website_catalog_active_results_table.setObjectName(_fromUtf8("website_catalog_active_results_table"))
-        self.website_catalog_active_results_table.setColumnCount(22)
+        self.website_catalog_active_results_table.setColumnCount(23)
         self.website_catalog_active_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.website_catalog_active_results_table.setVerticalHeaderItem(0, item)
@@ -10847,6 +10850,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_results_table.setHorizontalHeaderItem(20, item)
         item = QtGui.QTableWidgetItem()
         self.website_catalog_active_results_table.setHorizontalHeaderItem(21, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_catalog_active_results_table.setHorizontalHeaderItem(22, item)
         item = QtGui.QTableWidgetItem()
         self.website_catalog_active_results_table.setItem(0, 3, item)
         item = QtGui.QTableWidgetItem()
@@ -11653,7 +11658,7 @@ class Ui_Form(QtGui.QWidget):
         self.horizontalLayout_75.addLayout(self.verticalLayout_126)
         self.verticalLayout_119.addLayout(self.horizontalLayout_75)
         self.website_order_history_results_table = QtGui.QTableWidget(self.website_order_history_tab)
-        self.website_order_history_results_table.setGeometry(QtCore.QRect(1, 130, 1850, 821))
+        self.website_order_history_results_table.setGeometry(QtCore.QRect(1, 130, 1851, 821))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -11664,7 +11669,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_order_history_results_table.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.website_order_history_results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.website_order_history_results_table.setObjectName(_fromUtf8("website_order_history_results_table"))
-        self.website_order_history_results_table.setColumnCount(11)
+        self.website_order_history_results_table.setColumnCount(15)
         self.website_order_history_results_table.setRowCount(97)
         item = QtGui.QTableWidgetItem()
         self.website_order_history_results_table.setVerticalHeaderItem(0, item)
@@ -11882,6 +11887,14 @@ class Ui_Form(QtGui.QWidget):
         self.website_order_history_results_table.setHorizontalHeaderItem(9, item)
         item = QtGui.QTableWidgetItem()
         self.website_order_history_results_table.setHorizontalHeaderItem(10, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_order_history_results_table.setHorizontalHeaderItem(11, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_order_history_results_table.setHorizontalHeaderItem(12, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_order_history_results_table.setHorizontalHeaderItem(13, item)
+        item = QtGui.QTableWidgetItem()
+        self.website_order_history_results_table.setHorizontalHeaderItem(14, item)
         self.website_order_history_results_table.horizontalHeader().setCascadingSectionResizes(False)
         self.website_order_history_results_table.horizontalHeader().setDefaultSectionSize(100)
         self.website_order_history_results_table.horizontalHeader().setSortIndicatorShown(False)
@@ -11899,7 +11912,7 @@ class Ui_Form(QtGui.QWidget):
         self.cole_tab_widget.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
-        self.website_tab_widget.setCurrentIndex(3)
+        self.website_tab_widget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -16190,36 +16203,38 @@ class Ui_Form(QtGui.QWidget):
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(5)
         item.setText(_translate("Form", "Title", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "Street Date", None))
+        item.setText(_translate("Form", "Image", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(7)
-        item.setText(_translate("Form", "Sale Price", None))
+        item.setText(_translate("Form", "Street Date", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Preferred Distro", None))
+        item.setText(_translate("Form", "Sale Price", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "Qty Sold", None))
+        item.setText(_translate("Form", "Preferred Distro", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Format", None))
+        item.setText(_translate("Form", "Qty Sold", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(11)
-        item.setText(_translate("Form", "Label", None))
+        item.setText(_translate("Form", "Format", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(12)
-        item.setText(_translate("Form", "Genre", None))
+        item.setText(_translate("Form", "Label", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(13)
-        item.setText(_translate("Form", "Date Added", None))
+        item.setText(_translate("Form", "Genre", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Date Modified", None))
+        item.setText(_translate("Form", "Date Added", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Notes", None))
+        item.setText(_translate("Form", "Date Modified", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(16)
-        item.setText(_translate("Form", "Shopify ID", None))
+        item.setText(_translate("Form", "Notes", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(17)
-        item.setText(_translate("Form", "Shopify Type", None))
+        item.setText(_translate("Form", "Shopify ID", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(18)
-        item.setText(_translate("Form", "Shopify Desc", None))
+        item.setText(_translate("Form", "Shopify Type", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(19)
-        item.setText(_translate("Form", "Shopify Collections", None))
+        item.setText(_translate("Form", "Shopify Desc", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(20)
-        item.setText(_translate("Form", "Shopify Tags", None))
+        item.setText(_translate("Form", "Shopify Collections", None))
         item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(21)
+        item.setText(_translate("Form", "Shopify Tags", None))
+        item = self.website_pre_order_active_tab_results_table.horizontalHeaderItem(22)
         item.setText(_translate("Form", "Unique ID", None))
         __sortingEnabled = self.website_pre_order_active_tab_results_table.isSortingEnabled()
         self.website_pre_order_active_tab_results_table.setSortingEnabled(False)
@@ -17135,36 +17150,38 @@ class Ui_Form(QtGui.QWidget):
         item = self.website_catalog_active_results_table.horizontalHeaderItem(5)
         item.setText(_translate("Form", "Title", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(6)
-        item.setText(_translate("Form", "Street Date", None))
+        item.setText(_translate("Form", "Image", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(7)
-        item.setText(_translate("Form", "Sale Price", None))
+        item.setText(_translate("Form", "Street Date", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(8)
-        item.setText(_translate("Form", "Preferred Distro", None))
+        item.setText(_translate("Form", "Sale Price", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(9)
-        item.setText(_translate("Form", "QOH", None))
+        item.setText(_translate("Form", "Preferred Distro", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(10)
-        item.setText(_translate("Form", "Format", None))
+        item.setText(_translate("Form", "QOH", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(11)
-        item.setText(_translate("Form", "Label", None))
+        item.setText(_translate("Form", "Format", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(12)
-        item.setText(_translate("Form", "Genre", None))
+        item.setText(_translate("Form", "Label", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(13)
-        item.setText(_translate("Form", "Date Added", None))
+        item.setText(_translate("Form", "Genre", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(14)
-        item.setText(_translate("Form", "Date Modified", None))
+        item.setText(_translate("Form", "Date Added", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(15)
-        item.setText(_translate("Form", "Notes", None))
+        item.setText(_translate("Form", "Date Modified", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(16)
-        item.setText(_translate("Form", "Shopify ID", None))
+        item.setText(_translate("Form", "Notes", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(17)
-        item.setText(_translate("Form", "Shopify Type", None))
+        item.setText(_translate("Form", "Shopify ID", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(18)
-        item.setText(_translate("Form", "Shopify Desc", None))
+        item.setText(_translate("Form", "Shopify Type", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(19)
-        item.setText(_translate("Form", "Shopify Collections", None))
+        item.setText(_translate("Form", "Shopify Desc", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(20)
-        item.setText(_translate("Form", "Shopify Tags", None))
+        item.setText(_translate("Form", "Shopify Collections", None))
         item = self.website_catalog_active_results_table.horizontalHeaderItem(21)
+        item.setText(_translate("Form", "Shopify Tags", None))
+        item = self.website_catalog_active_results_table.horizontalHeaderItem(22)
         item.setText(_translate("Form", "Unique ID", None))
         __sortingEnabled = self.website_catalog_active_results_table.isSortingEnabled()
         self.website_catalog_active_results_table.setSortingEnabled(False)
@@ -17834,7 +17851,15 @@ class Ui_Form(QtGui.QWidget):
         item = self.website_order_history_results_table.horizontalHeaderItem(9)
         item.setText(_translate("Form", "Shipping Method", None))
         item = self.website_order_history_results_table.horizontalHeaderItem(10)
+        item.setText(_translate("Form", "Date Sold", None))
+        item = self.website_order_history_results_table.horizontalHeaderItem(11)
+        item.setText(_translate("Form", "Distro", None))
+        item = self.website_order_history_results_table.horizontalHeaderItem(12)
         item.setText(_translate("Form", "Shopify ID", None))
+        item = self.website_order_history_results_table.horizontalHeaderItem(13)
+        item.setText(_translate("Form", "Pre-Order", None))
+        item = self.website_order_history_results_table.horizontalHeaderItem(14)
+        item.setText(_translate("Form", "Street Date", None))
         self.website_tab_widget.setTabText(self.website_tab_widget.indexOf(self.website_order_history_tab), _translate("Form", "Order History", None))
         self.main_menu_tabs.setTabText(self.main_menu_tabs.indexOf(self.website_tab), _translate("Form", "Website", None))
 
@@ -18263,7 +18288,24 @@ class Ui_Form(QtGui.QWidget):
     def tab_one_search_for_upc(self):
         #get entered text and do sanity checks
         upc = str(self.tab_one_search_upc_qline.text())
-        self.tab_one_search_for_release(upc, False)
+        list_for_pre_dialog = []
+        #first, check to make sure this item isn't a pre-order
+        for row in self.db_cursor.execute('SELECT * FROM sold_online_status WHERE upc = ?', (upc,)):
+            if row[ONLINE_SS_PICKED] == 0:#it's not picked yet
+                list_for_pre_dialog.append((upc,row[ONLINE_SS_NAME],row[ONLINE_SS_ARTIST],row[ONLINE_SS_TITLE],row[ONLINE_SS_DATE_SOLD], row[ONLINE_SS_ID]))
+        if len(list_for_pre_dialog) > 0:
+            pre_dialog = Ui_Pending_Dialog(list_for_pre_dialog)
+            pre_order_or_naaa = pre_dialog.exec_()
+            if pre_order_or_naaa == QtGui.QDialog.Accepted:
+                picked_id = pre_dialog.get_id()
+                self.main_menu_tabs.setCurrentIndex(12)
+                self.website_tab_widget.setCurrentIndex(6)
+                self.pre_order_in_stock_now(picked_id)
+                return
+            else:
+                self.tab_one_search_for_release(upc, False)
+        else:
+            self.tab_one_search_for_release(upc, False)
 
     def tab_one_search_for_artist_title(self):
         artist_title = str(self.tab_one_search_artist_title_title_qline.text())
@@ -22231,9 +22273,11 @@ class Ui_Form(QtGui.QWidget):
                 db_item[PRE_NOTES] = ''
                 db_item[PRE_SHOPIFY_ID] = ''
                 db_item[PRE_SHOPIFY_TYPE] = ''
-                db_item[PRE_SHOPIFY_DESC] = 'This item is a pre-order. It should ship within 72 hours of %s' % (db_item[PRE_STREET_DATE])
+                street_date_formatted_for_america = datetime.datetime.strptime(db_item[PRE_STREET_DATE], "%Y-%m-%d")
+                street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
+                db_item[PRE_SHOPIFY_DESC] = 'This item is a pre-order. It should ship within 72 hours of %s' % (street_date_formatted_for_america)
                 db_item[PRE_SHOPIFY_COLLECTIONS] = 'Pre-Orders' 
-                db_item[PRE_SHOPIFY_TAGS] = 'Pre-Order Street Date_%s,Format_LP,Pre-Orders' % db_item[PRE_STREET_DATE]
+                db_item[PRE_SHOPIFY_TAGS] = 'Pre-Order Street Date_%s,Format_LP,Pre-Orders' % street_date_formatted_for_america
                 db_item[PRE_RESERVED_ONE] = ''
                 db_item[PRE_RESERVED_TWO] = ''
                 db_item[PRE_RESERVED_THREE] = ''
@@ -22439,19 +22483,19 @@ class Ui_Form(QtGui.QWidget):
             db_query = (0, self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,3)),#sync, upc
                         self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,4)),#artist
                         self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,5)),#title
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,6)),#street date
-                        self.xfloat(self.website_pre_order_active_tab_results_table_get_text(row,7)),#sale price
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,8)),#distro
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,10)),#format
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,11)),#label
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,12)),#genre
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,7)),#street date
+                        self.xfloat(self.website_pre_order_active_tab_results_table_get_text(row,8)),#sale price
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,9)),#distro
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,11)),#format
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,12)),#label
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,13)),#genre
                         self.xstr(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),#date modified
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,15)),#notes
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,16)),#shopify id
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,17)),#shopify type
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,18)),#shopify desc
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,19)),#shopify collections
-                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,20)), key)#shopify_tags, key
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,16)),#notes
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,17)),#shopify id
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,18)),#shopify type
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,19)),#shopify desc
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,20)),#shopify collections
+                        self.xstr(self.website_pre_order_active_tab_results_table_get_text(row,21)), key)#shopify_tags, key
         except Exception as e:
             print 'tab_website_two_results_table_save: %s' % e
             return
@@ -22515,25 +22559,32 @@ class Ui_Form(QtGui.QWidget):
             if ix > (self.website_pre_order_active_tab_results_table.rowCount()-1):
                 continue
             #fill in table
+            image_exists = False
+            for web_row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (row[PRE_UPC],)):
+                image_exists = True
             self.website_pre_order_active_tab_results_table_change_text(ix, 3, self.xstr(row[PRE_UPC]))
             self.website_pre_order_active_tab_results_table_change_text(ix, 4, self.xstr(row[PRE_ARTIST]))
             self.website_pre_order_active_tab_results_table_change_text(ix, 5, self.xstr(row[PRE_TITLE]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 6, self.xstr(row[PRE_STREET_DATE]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 7, self.xstr(row[PRE_SALE_PRICE]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 8, self.xstr(row[PRE_DISTRO]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 9, self.xstr(row[PRE_QTY_SOLD]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 10, self.xstr(row[PRE_FORMAT]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 11, self.xstr(row[PRE_LABEL]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 12, self.xstr(row[PRE_GENRE]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 13, self.xstr(row[PRE_DATE_ADDED]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 14, self.xstr(row[PRE_DATE_MODIFIED]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 15, self.xstr(row[PRE_NOTES]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 16, self.xstr(row[PRE_SHOPIFY_ID]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 17, self.xstr(row[PRE_SHOPIFY_TYPE]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 18, self.xstr(row[PRE_SHOPIFY_DESC]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 19, self.xstr(row[PRE_SHOPIFY_COLLECTIONS]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 20, self.xstr(row[PRE_SHOPIFY_TAGS]))
-            self.website_pre_order_active_tab_results_table_change_text(ix, 21, self.xstr(row[PRE_ID]))
+            if image_exists:
+                self.website_pre_order_active_tab_results_table_change_text(ix, 6, self.xstr('Found'))
+            else:
+                self.website_pre_order_active_tab_results_table_change_text(ix, 6, self.xstr('NULL'))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 7, self.xstr(row[PRE_STREET_DATE]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 8, self.xstr(row[PRE_SALE_PRICE]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 9, self.xstr(row[PRE_DISTRO]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 10, self.xstr(row[PRE_QTY_SOLD]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 11, self.xstr(row[PRE_FORMAT]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 12, self.xstr(row[PRE_LABEL]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 13, self.xstr(row[PRE_GENRE]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 14, self.xstr(row[PRE_DATE_ADDED]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 15, self.xstr(row[PRE_DATE_MODIFIED]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 16, self.xstr(row[PRE_NOTES]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 17, self.xstr(row[PRE_SHOPIFY_ID]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 18, self.xstr(row[PRE_SHOPIFY_TYPE]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 19, self.xstr(row[PRE_SHOPIFY_DESC]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 20, self.xstr(row[PRE_SHOPIFY_COLLECTIONS]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 21, self.xstr(row[PRE_SHOPIFY_TAGS]))
+            self.website_pre_order_active_tab_results_table_change_text(ix, 22, self.xstr(row[PRE_ID]))
 
                         
         self.website_pre_order_active_tab_results_table.resizeColumnsToContents()
@@ -22720,11 +22771,17 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('DROP table IF EXISTS virt_catalog_input_inventory')
             self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_catalog_input_inventory USING fts4(key INT, content)')
             self.db.commit()
-            self.db_cursor.execute("""INSERT INTO virt_catalog_input_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || label FROM inventory""")
+            self.db_cursor.execute("""INSERT INTO virt_catalog_input_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || format || ' ' || label FROM inventory""")
             self.db.commit()
             SEARCH_FTS = """SELECT * FROM inventory WHERE id in (SELECT key FROM virt_catalog_input_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
             self.db_cursor.execute(SEARCH_FTS, (str(query),))
             for row in self.db_cursor.fetchall():
+                #skip used unless checkbox is checked
+                if self.website_add_catalog_show_used.isChecked():
+                    todo = 0
+                else:#if it is not checked, skip used
+                    if row[NEW_USED_INDEX] == 'Used':
+                        continue
                 #if active already, skip her
                 if row[UPC_INDEX] in active_upcs:
                     continue
@@ -22747,6 +22804,12 @@ class Ui_Form(QtGui.QWidget):
                 #    potentials[row[UPC_INDEX]] = 1
         else:#query is blank
             for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+                #skip used unless checkbox is checked
+                if self.website_add_catalog_show_used.isChecked():
+                    todo = 0
+                else:#if it is not checked, skip used
+                    if row[NEW_USED_INDEX] == 'Used':
+                        continue
                 #if active already, skip her
                 if row[UPC_INDEX] in active_upcs:
                     continue
@@ -22775,7 +22838,7 @@ class Ui_Form(QtGui.QWidget):
             if row[UPC_INDEX] in qoh:
                 qoh[row[UPC_INDEX]] += 1
         already_added = set()
-        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
             if row[UPC_INDEX] in qoh:
                 if row[UPC_INDEX] not in already_added:
                     self.website_add_catalog_results_table_list.append([qoh[row[UPC_INDEX]]] + list(row))
@@ -22821,7 +22884,7 @@ class Ui_Form(QtGui.QWidget):
         print 'three'
         test = 0
         already_added = set()
-        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
+        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM inventory ORDER BY date_added DESC')):
             if row[UPC_INDEX] in upcs:
                 if row[UPC_INDEX] not in already_added:
                     self.website_add_catalog_results_table_list.append([upcs[row[UPC_INDEX]]] + list(row))
@@ -22897,7 +22960,7 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_GENRE] = self.xstr(row[8])
                 db_item[ONLINE_DATE_ADDED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
                 db_item[ONLINE_DATE_MODIFIED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                db_item[ONLINE_NOTES] = ''
+                db_item[ONLINE_NOTES] = row[11]#keep format in the notes so tags (like BF and RSD) are searchable)
                 db_item[ONLINE_SHOPIFY_ID] = ''
                 db_item[ONLINE_SHOPIFY_TYPE] = ''
                 db_item[ONLINE_SHOPIFY_DESC] = ''#'This item is a pre-order. It should ship within 72 hours of %s' % (db_item[PRE_STREET_DATE])
@@ -22958,20 +23021,20 @@ class Ui_Form(QtGui.QWidget):
             db_query = (0, self.xstr(self.website_catalog_active_results_table_get_text(row,3)), #sync, upc
                         self.xstr(self.website_catalog_active_results_table_get_text(row,4)), #artist
                         self.xstr(self.website_catalog_active_results_table_get_text(row,5)), #title
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,6)), #street date
-                        self.xfloat(self.website_catalog_active_results_table_get_text(row,7)), #sale price
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,8)), #distro
-                        self.xint(self.website_catalog_active_results_table_get_text(row,9)), #qoh
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,10)), #format
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,11)), #label
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,12)), #genre
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,7)), #street date
+                        self.xfloat(self.website_catalog_active_results_table_get_text(row,8)), #sale price
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,9)), #distro
+                        self.xint(self.website_catalog_active_results_table_get_text(row,10)), #qoh
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,11)), #format
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,12)), #label
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,13)), #genre
                         self.xstr(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")), #modified
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,15)), #notes
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,16)), #shopify id
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,17)), #type
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,18)), #desc
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,19)), #collections
-                        self.xstr(self.website_catalog_active_results_table_get_text(row,20)), key) #tags, key
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,16)), #notes
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,17)), #shopify id
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,18)), #type
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,19)), #desc
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,20)), #collections
+                        self.xstr(self.website_catalog_active_results_table_get_text(row,21)), key) #tags, key
         except Exception as e:
             print 'website_catalog_active_save_request: %s' % e
             return
@@ -22992,7 +23055,7 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('DROP table IF EXISTS virt_online_inventory')
             self.db_cursor.execute('CREATE VIRTUAL TABLE IF NOT EXISTS virt_online_inventory USING fts4(key, content)')
             self.db.commit()
-            self.db_cursor.execute("""INSERT INTO virt_online_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || label || ' ' || shopify_tags || ' ' || shopify_desc || ' ' || shopify_type FROM online_inventory""")
+            self.db_cursor.execute("""INSERT INTO virt_online_inventory (key, content) SELECT id, upc || ' ' || artist || ' ' || title || ' ' || label || ' ' || shopify_tags || ' ' || shopify_desc || ' ' || notes || ' ' || shopify_type FROM online_inventory""")
             self.db.commit()
             #get search term
             SEARCH_FTS = """SELECT * FROM online_inventory WHERE id IN (SELECT key from virt_online_inventory WHERE content MATCH ?) ORDER BY date_added DESC"""
@@ -23095,25 +23158,32 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(self.website_catalog_active_results_table_list):
             if ix > (self.website_catalog_active_results_table.rowCount()-1):
                 break
+            image_exists = False
+            for web_row in self.db_cursor.execute('SELECT * FROM website_images WHERE upc = ?', (row[ONLINE_UPC],)):
+                image_exists = True
             self.website_catalog_active_results_table_change_text(ix, 3, self.xstr(row[ONLINE_UPC]))
             self.website_catalog_active_results_table_change_text(ix, 4, self.xstr(row[ONLINE_ARTIST]))
             self.website_catalog_active_results_table_change_text(ix, 5, self.xstr(row[ONLINE_TITLE]))
-            self.website_catalog_active_results_table_change_text(ix, 6, self.xstr(row[ONLINE_STREET_DATE]))
-            self.website_catalog_active_results_table_change_text(ix, 7, self.xstr(row[ONLINE_SALE_PRICE]))
-            self.website_catalog_active_results_table_change_text(ix, 8, self.xstr(row[ONLINE_DISTRO]))
-            self.website_catalog_active_results_table_change_text(ix, 9, self.xstr(row[ONLINE_QOH]))
-            self.website_catalog_active_results_table_change_text(ix, 10, self.xstr(row[ONLINE_FORMAT]))
-            self.website_catalog_active_results_table_change_text(ix, 11, self.xstr(row[ONLINE_LABEL]))
-            self.website_catalog_active_results_table_change_text(ix, 12, self.xstr(row[ONLINE_GENRE]))
-            self.website_catalog_active_results_table_change_text(ix, 13, self.xstr(row[ONLINE_DATE_ADDED]))
-            self.website_catalog_active_results_table_change_text(ix, 14, self.xstr(row[ONLINE_DATE_MODIFIED]))
-            self.website_catalog_active_results_table_change_text(ix, 15, self.xstr(row[ONLINE_NOTES]))
-            self.website_catalog_active_results_table_change_text(ix, 16, self.xstr(row[ONLINE_SHOPIFY_ID]))
-            self.website_catalog_active_results_table_change_text(ix, 17, self.xstr(row[ONLINE_SHOPIFY_TYPE]))
-            self.website_catalog_active_results_table_change_text(ix, 18, self.xstr(row[ONLINE_SHOPIFY_DESC]))
-            self.website_catalog_active_results_table_change_text(ix, 19, self.xstr(row[ONLINE_SHOPIFY_COLLECTIONS]))
-            self.website_catalog_active_results_table_change_text(ix, 20, self.xstr(row[ONLINE_SHOPIFY_TAGS]))
-            self.website_catalog_active_results_table_change_text(ix, 21, self.xstr(row[ONLINE_ID]))
+            if image_exists:
+                self.website_catalog_active_results_table_change_text(ix, 6, 'Found') 
+            else:
+                self.website_catalog_active_results_table_change_text(ix, 6, 'NULL')
+            self.website_catalog_active_results_table_change_text(ix, 7, self.xstr(row[ONLINE_STREET_DATE]))
+            self.website_catalog_active_results_table_change_text(ix, 8, self.xstr(row[ONLINE_SALE_PRICE]))
+            self.website_catalog_active_results_table_change_text(ix, 9, self.xstr(row[ONLINE_DISTRO]))
+            self.website_catalog_active_results_table_change_text(ix, 10, self.xstr(row[ONLINE_QOH]))
+            self.website_catalog_active_results_table_change_text(ix, 11, self.xstr(row[ONLINE_FORMAT]))
+            self.website_catalog_active_results_table_change_text(ix, 12, self.xstr(row[ONLINE_LABEL]))
+            self.website_catalog_active_results_table_change_text(ix, 13, self.xstr(row[ONLINE_GENRE]))
+            self.website_catalog_active_results_table_change_text(ix, 14, self.xstr(row[ONLINE_DATE_ADDED]))
+            self.website_catalog_active_results_table_change_text(ix, 15, self.xstr(row[ONLINE_DATE_MODIFIED]))
+            self.website_catalog_active_results_table_change_text(ix, 16, self.xstr(row[ONLINE_NOTES]))
+            self.website_catalog_active_results_table_change_text(ix, 17, self.xstr(row[ONLINE_SHOPIFY_ID]))
+            self.website_catalog_active_results_table_change_text(ix, 18, self.xstr(row[ONLINE_SHOPIFY_TYPE]))
+            self.website_catalog_active_results_table_change_text(ix, 19, self.xstr(row[ONLINE_SHOPIFY_DESC]))
+            self.website_catalog_active_results_table_change_text(ix, 20, self.xstr(row[ONLINE_SHOPIFY_COLLECTIONS]))
+            self.website_catalog_active_results_table_change_text(ix, 21, self.xstr(row[ONLINE_SHOPIFY_TAGS]))
+            self.website_catalog_active_results_table_change_text(ix, 22, self.xstr(row[ONLINE_ID]))
 
         self.website_catalog_active_results_table.resizeColumnsToContents()
         self.website_catalog_active_results_table.setColumnWidth(0,50)
@@ -23894,10 +23964,33 @@ class Ui_Form(QtGui.QWidget):
         #print order
         for line in trans.line_items:
             qty += int(line.quantity)
-        self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], self.xstr(qty), trans.name, from_db[ONLINE_SS_UPC],from_db[ONLINE_SS_ARTIST], from_db[ONLINE_SS_TITLE], from_db[ONLINE_SS_DATE_SOLD], trans.shipping_lines[0].attributes["title"], trans.total_price, from_db[ONLINE_SS_PRICE], from_db[ONLINE_SS_PRE_ORDER], from_db[ONLINE_SS_STREET_DATE])
-        todo = 0
+        self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], self.xstr(qty), trans.name, from_db[ONLINE_SS_UPC],from_db[ONLINE_SS_ARTIST], from_db[ONLINE_SS_TITLE], from_db[ONLINE_SS_DATE_SOLD], trans.shipping_lines[0].attributes["title"], self.xfloat(trans.total_price), from_db[ONLINE_SS_PRICE], from_db[ONLINE_SS_PRE_ORDER], from_db[ONLINE_SS_STREET_DATE])
+        self.website_order_history_results_table_list[row][ONLINE_SS_PICKED] = 1
         self.website_order_history_results_table_refresh()
 
+    def pre_order_in_stock_now(self, id_to_pick):
+        self.db_cursor.execute('UPDATE sold_online_status SET picked = ? WHERE id = ?', (1,self.xint(id_to_pick)))
+        self.db.commit()
+        from_db = ''
+        print id_to_pick
+        for row in self.db_cursor.execute('SELECT * FROM sold_online_status WHERE id = ?', (self.xint(id_to_pick),)):
+            from_db = list(row)
+            break
+        print from_db
+        #print sticker
+        #from_db = self.website_order_history_results_table_list[row]
+        #get transaction to get more info for sticker
+        trans = self.shopify_interface.get_trans_info(from_db[ONLINE_SS_SHOPIFY_ID])
+        qty = 0
+        #print order
+        for line in trans.line_items:
+            qty += int(line.quantity)
+        self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], self.xstr(qty), trans.name, from_db[ONLINE_SS_UPC],from_db[ONLINE_SS_ARTIST], from_db[ONLINE_SS_TITLE], from_db[ONLINE_SS_DATE_SOLD], trans.shipping_lines[0].attributes["title"], self.xfloat(trans.total_price), from_db[ONLINE_SS_PRICE], from_db[ONLINE_SS_PRE_ORDER], from_db[ONLINE_SS_STREET_DATE])
+        self.website_order_history_results_table_list = []
+        self.website_order_history_results_table_list.append(from_db)
+        self.website_order_history_results_table_refresh()
+        
+        
     def website_order_history_generate_fulfilled_buttons(self):
         self.website_order_history_fulfill_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.website_order_history_results_table.rowCount()):

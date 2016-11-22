@@ -21985,6 +21985,11 @@ p, li { white-space: pre-wrap; }
           </column>
           <column>
            <property name="text">
+            <string>Image</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Street Date</string>
            </property>
           </column>
@@ -26179,6 +26184,11 @@ Modified</string>
           </column>
           <column>
            <property name="text">
+            <string>Image</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Street Date</string>
            </property>
           </column>
@@ -28296,7 +28306,7 @@ Date Sold</string>
         <rect>
          <x>1</x>
          <y>130</y>
-         <width>1850</width>
+         <width>1851</width>
          <height>821</height>
         </rect>
        </property>
@@ -28876,7 +28886,27 @@ Date Sold</string>
        </column>
        <column>
         <property name="text">
+         <string>Date Sold</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Distro</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>Shopify ID</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Pre-Order</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Street Date</string>
         </property>
        </column>
       </widget>
