@@ -23865,7 +23865,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_order_history_results_table.resizeColumnsToContents()
         self.website_order_history_results_table.setColumnWidth(1,50)
         self.website_order_history_results_table.setColumnWidth(2,50)
-
+ 
     def website_order_history_generate_picked_buttons(self):
         self.website_order_history_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.website_order_history_results_table.rowCount()):
@@ -23888,7 +23888,13 @@ class Ui_Form(QtGui.QWidget):
         self.db.commit()
         #print sticker
         from_db = self.website_order_history_results_table_list[row]
-        self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], '1', 'lorem ipsum', '1404')
+        #get transaction to get more info for sticker
+        trans = self.shopify_interface.get_trans_info(from_db[ONLINE_SS_SHOPIFY_ID])
+        qty = 0
+        #print order
+        for line in trans.line_items:
+            qty += int(line.quantity)
+        self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], self.xstr(qty), trans.name, from_db[ONLINE_SS_UPC],from_db[ONLINE_SS_ARTIST], from_db[ONLINE_SS_TITLE], from_db[ONLINE_SS_DATE_SOLD], trans.shipping_lines[0].attributes["title"], trans.total_price, from_db[ONLINE_SS_PRICE], from_db[ONLINE_SS_PRE_ORDER], from_db[ONLINE_SS_STREET_DATE])
         todo = 0
         self.website_order_history_results_table_refresh()
 
