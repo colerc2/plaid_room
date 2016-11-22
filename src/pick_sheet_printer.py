@@ -52,11 +52,11 @@ class PickSheetPrinter():
             y_pos -= 4
         
             
-        code_picture.drawOn(c, 20*mm, 2*mm)
+        code_picture.drawOn(c, 20*mm, 3*mm)
         upc_picture.drawOn(c, 20*mm, 80*mm)
         c.showPage()
         c.save()
         
         #make call to subprocess to talk to CUPS to print this shiz on the printer
-        command = 'lp -d Brother_QL_700 -o media=Custom.62x90mm %s' % PICK_SHEET_FILE_NAME
+        command = 'lp -d Brother_QL_700 -o media=Custom.62x92mm %s' % PICK_SHEET_FILE_NAME
         subprocess.call(command, shell=True)

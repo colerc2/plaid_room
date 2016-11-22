@@ -24011,6 +24011,7 @@ class Ui_Form(QtGui.QWidget):
         id_to_fulfill = self.website_order_history_results_table_list[row][ONLINE_SS_ID]
         self.db_cursor.execute('UPDATE sold_online_status SET fulfilled = ? WHERE id = ?', (1,id_to_fulfill))
         self.db.commit()
+        self.website_order_history_results_Table_list[row][ONLINE_SS_FULFILLED] = 1
         #print sticker
         todo = 0
         self.website_order_history_results_table_refresh()
