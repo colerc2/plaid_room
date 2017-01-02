@@ -172,6 +172,7 @@ class Ui_Form(QtGui.QWidget):
         
         #tab website four stuff
         self.wesbite_add_catalog_results_table_list = []
+        self.sold_qty = dict()
 
         #tab five website stuff
         self.website_catalog_active_results_table_list = []
@@ -409,7 +410,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute('DROP table IF EXISTS pre_order_inventory')
+        #self.db_cursor.execute('DROP table IF EXISTS pre_order_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS pre_order_inventory
         (active integer,
         sync integer,
@@ -438,7 +439,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
         
-        self.db_cursor.execute('DROP table IF EXISTS online_inventory')
+        #self.db_cursor.execute('DROP table IF EXISTS online_inventory')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS online_inventory
         (active integer,
         sync integer,
@@ -467,13 +468,13 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute('DROP table IF EXISTS permabans')
+        #self.db_cursor.execute('DROP table IF EXISTS permabans')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS permabans
         (upc text,
         id integer primary key autoincrement)
         """)
         
-        self.db_cursor.execute('DROP table IF EXISTS website_images')
+        #self.db_cursor.execute('DROP table IF EXISTS website_images')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS website_images
         (upc text,
         filename text,
@@ -484,7 +485,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute('DROP table IF EXISTS website_pending_transactions')
+        #self.db_cursor.execute('DROP table IF EXISTS website_pending_transactions')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS website_pending_transactions
         (shopify_id text,
         date text,
@@ -495,7 +496,7 @@ class Ui_Form(QtGui.QWidget):
         id integer primary key autoincrement)
         """)
 
-        self.db_cursor.execute('DROP table IF EXISTS sold_online_status')
+        #self.db_cursor.execute('DROP table IF EXISTS sold_online_status')
         self.db_cursor.execute("""CREATE TABLE IF NOT EXISTS sold_online_status
         (transaction_id text,
         picked integer,
@@ -8680,7 +8681,7 @@ class Ui_Form(QtGui.QWidget):
         self.label_108 = QtGui.QLabel(self.layoutWidget19)
         self.label_108.setMaximumSize(QtCore.QSize(16777215, 20))
         self.label_108.setObjectName(_fromUtf8("label_108"))
-        self.verticalLayout_100.addWidget(self.label_108, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_100.addWidget(self.label_108)
         self.website_tab_one_distro_combo_box = QtGui.QComboBox(self.layoutWidget19)
         self.website_tab_one_distro_combo_box.setMaximumSize(QtCore.QSize(150, 30))
         self.website_tab_one_distro_combo_box.setObjectName(_fromUtf8("website_tab_one_distro_combo_box"))
@@ -8849,6 +8850,16 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_find_image.setMaximumSize(QtCore.QSize(95, 16777215))
         self.website_pre_order_active_tab_find_image.setObjectName(_fromUtf8("website_pre_order_active_tab_find_image"))
         self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_find_image)
+        self.website_pre_order_active_tab_auto_find_image = QtGui.QCheckBox(self.layoutWidget_6)
+        self.website_pre_order_active_tab_auto_find_image.setMinimumSize(QtCore.QSize(50, 20))
+        self.website_pre_order_active_tab_auto_find_image.setMaximumSize(QtCore.QSize(50, 40))
+        self.website_pre_order_active_tab_auto_find_image.setObjectName(_fromUtf8("website_pre_order_active_tab_auto_find_image"))
+        self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_auto_find_image)
+        self.website_pre_order_active_tab_remove_image = QtGui.QPushButton(self.layoutWidget_6)
+        self.website_pre_order_active_tab_remove_image.setMinimumSize(QtCore.QSize(0, 45))
+        self.website_pre_order_active_tab_remove_image.setMaximumSize(QtCore.QSize(115, 16777215))
+        self.website_pre_order_active_tab_remove_image.setObjectName(_fromUtf8("website_pre_order_active_tab_remove_image"))
+        self.horizontalLayout_63.addWidget(self.website_pre_order_active_tab_remove_image)
         spacerItem226 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_63.addItem(spacerItem226)
         self.website_pre_order_active_tab_sync_selected = QtGui.QPushButton(self.layoutWidget_6)
@@ -9836,7 +9847,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_add_catalog_tab = QtGui.QWidget()
         self.website_add_catalog_tab.setObjectName(_fromUtf8("website_add_catalog_tab"))
         self.layoutWidget_8 = QtGui.QWidget(self.website_add_catalog_tab)
-        self.layoutWidget_8.setGeometry(QtCore.QRect(0, 0, 1883, 944))
+        self.layoutWidget_8.setGeometry(QtCore.QRect(0, 0, 1871, 951))
         self.layoutWidget_8.setObjectName(_fromUtf8("layoutWidget_8"))
         self.verticalLayout_109 = QtGui.QVBoxLayout(self.layoutWidget_8)
         self.verticalLayout_109.setMargin(0)
@@ -10002,49 +10013,61 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_86.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_86.setObjectName(_fromUtf8("add_item_vert_line_86"))
         self.horizontalLayout_68.addWidget(self.add_item_vert_line_86)
-        spacerItem266 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        spacerItem266 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_68.addItem(spacerItem266)
+        self.website_add_catalog_best_sellers_checkbox = QtGui.QCheckBox(self.layoutWidget_8)
+        self.website_add_catalog_best_sellers_checkbox.setObjectName(_fromUtf8("website_add_catalog_best_sellers_checkbox"))
+        self.horizontalLayout_68.addWidget(self.website_add_catalog_best_sellers_checkbox)
+        spacerItem267 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem267)
+        self.add_item_vert_line_111 = QtGui.QFrame(self.layoutWidget_8)
+        self.add_item_vert_line_111.setFrameShape(QtGui.QFrame.VLine)
+        self.add_item_vert_line_111.setFrameShadow(QtGui.QFrame.Sunken)
+        self.add_item_vert_line_111.setObjectName(_fromUtf8("add_item_vert_line_111"))
+        self.horizontalLayout_68.addWidget(self.add_item_vert_line_111)
+        spacerItem268 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem268)
         self.website_add_catalog_filter_dist_checkbox = QtGui.QCheckBox(self.layoutWidget_8)
         self.website_add_catalog_filter_dist_checkbox.setObjectName(_fromUtf8("website_add_catalog_filter_dist_checkbox"))
         self.horizontalLayout_68.addWidget(self.website_add_catalog_filter_dist_checkbox)
-        spacerItem267 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem267)
+        spacerItem269 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem269)
         self.website_add_catalog_filter_dist_combobox = QtGui.QComboBox(self.layoutWidget_8)
         self.website_add_catalog_filter_dist_combobox.setObjectName(_fromUtf8("website_add_catalog_filter_dist_combobox"))
         self.horizontalLayout_68.addWidget(self.website_add_catalog_filter_dist_combobox)
-        spacerItem268 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem268)
+        spacerItem270 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem270)
         self.add_item_vert_line_87 = QtGui.QFrame(self.layoutWidget_8)
         self.add_item_vert_line_87.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_87.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_87.setObjectName(_fromUtf8("add_item_vert_line_87"))
         self.horizontalLayout_68.addWidget(self.add_item_vert_line_87)
-        spacerItem269 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem269)
+        spacerItem271 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem271)
         self.website_add_catalog_show_permabans = QtGui.QCheckBox(self.layoutWidget_8)
         self.website_add_catalog_show_permabans.setObjectName(_fromUtf8("website_add_catalog_show_permabans"))
         self.horizontalLayout_68.addWidget(self.website_add_catalog_show_permabans)
-        spacerItem270 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem270)
+        spacerItem272 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem272)
         self.add_item_vert_line_89 = QtGui.QFrame(self.layoutWidget_8)
         self.add_item_vert_line_89.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_89.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_89.setObjectName(_fromUtf8("add_item_vert_line_89"))
         self.horizontalLayout_68.addWidget(self.add_item_vert_line_89)
-        spacerItem271 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem271)
+        spacerItem273 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem273)
         self.website_add_catalog_show_used = QtGui.QCheckBox(self.layoutWidget_8)
         self.website_add_catalog_show_used.setObjectName(_fromUtf8("website_add_catalog_show_used"))
         self.horizontalLayout_68.addWidget(self.website_add_catalog_show_used)
-        spacerItem272 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem272)
+        spacerItem274 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem274)
         self.add_item_vert_line_109 = QtGui.QFrame(self.layoutWidget_8)
         self.add_item_vert_line_109.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_109.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_109.setObjectName(_fromUtf8("add_item_vert_line_109"))
         self.horizontalLayout_68.addWidget(self.add_item_vert_line_109)
-        spacerItem273 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem273)
+        spacerItem275 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem275)
         self.label_115 = QtGui.QLabel(self.layoutWidget_8)
         self.label_115.setObjectName(_fromUtf8("label_115"))
         self.horizontalLayout_68.addWidget(self.label_115)
@@ -10059,15 +10082,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_116 = QtGui.QLabel(self.layoutWidget_8)
         self.label_116.setObjectName(_fromUtf8("label_116"))
         self.horizontalLayout_68.addWidget(self.label_116)
-        spacerItem274 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem274)
+        spacerItem276 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem276)
         self.add_item_vert_line_90 = QtGui.QFrame(self.layoutWidget_8)
         self.add_item_vert_line_90.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_90.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_90.setObjectName(_fromUtf8("add_item_vert_line_90"))
         self.horizontalLayout_68.addWidget(self.add_item_vert_line_90)
-        spacerItem275 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem275)
+        spacerItem277 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem277)
         self.website_add_catalog_items_found_label = QtGui.QLabel(self.layoutWidget_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -10077,8 +10100,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_add_catalog_items_found_label.setMinimumSize(QtCore.QSize(170, 0))
         self.website_add_catalog_items_found_label.setObjectName(_fromUtf8("website_add_catalog_items_found_label"))
         self.horizontalLayout_68.addWidget(self.website_add_catalog_items_found_label)
-        spacerItem276 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_68.addItem(spacerItem276)
+        spacerItem278 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_68.addItem(spacerItem278)
         self.verticalLayout_110.addLayout(self.horizontalLayout_68)
         self.verticalLayout_109.addLayout(self.verticalLayout_110)
         self.website_add_catalog_results_table = QtGui.QTableWidget(self.layoutWidget_8)
@@ -10344,15 +10367,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_item_lbl_15.setScaledContents(False)
         self.tab_one_search_item_lbl_15.setObjectName(_fromUtf8("tab_one_search_item_lbl_15"))
         self.horizontalLayout_69.addWidget(self.tab_one_search_item_lbl_15)
-        spacerItem277 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem277)
+        spacerItem279 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem279)
         self.add_item_vert_line_91 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_91.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_91.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_91.setObjectName(_fromUtf8("add_item_vert_line_91"))
         self.horizontalLayout_69.addWidget(self.add_item_vert_line_91)
-        spacerItem278 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem278)
+        spacerItem280 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem280)
         self.website_catalog_active_search_qline = QtGui.QLineEdit(self.layoutWidget_9)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -10363,66 +10386,74 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_search_qline.setText(_fromUtf8(""))
         self.website_catalog_active_search_qline.setObjectName(_fromUtf8("website_catalog_active_search_qline"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_search_qline)
-        spacerItem279 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem279)
+        spacerItem281 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem281)
         self.website_catalog_active_search_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_search_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_search_button.setObjectName(_fromUtf8("website_catalog_active_search_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_search_button)
-        spacerItem280 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem280)
+        spacerItem282 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem282)
         self.website_catalog_active_hard_search_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_hard_search_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_hard_search_button.setObjectName(_fromUtf8("website_catalog_active_hard_search_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_hard_search_button)
-        spacerItem281 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem281)
+        spacerItem283 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem283)
         self.website_catalog_active_reset_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_reset_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_reset_button.setObjectName(_fromUtf8("website_catalog_active_reset_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_reset_button)
-        spacerItem282 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem282)
+        spacerItem284 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem284)
         self.add_item_vert_line_92 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_92.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_92.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_92.setObjectName(_fromUtf8("add_item_vert_line_92"))
         self.horizontalLayout_69.addWidget(self.add_item_vert_line_92)
-        spacerItem283 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem283)
+        spacerItem285 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem285)
         self.website_catalog_active_remove_selected_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_remove_selected_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_remove_selected_button.setMaximumSize(QtCore.QSize(250, 16777215))
         self.website_catalog_active_remove_selected_button.setObjectName(_fromUtf8("website_catalog_active_remove_selected_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_remove_selected_button)
-        spacerItem284 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem284)
+        spacerItem286 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem286)
         self.website_catalog_active_find_image_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_find_image_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_find_image_button.setMaximumSize(QtCore.QSize(95, 16777215))
         self.website_catalog_active_find_image_button.setObjectName(_fromUtf8("website_catalog_active_find_image_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_find_image_button)
-        spacerItem285 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem285)
+        self.website_catalog_active_auto_download_images_checkbox = QtGui.QCheckBox(self.layoutWidget_9)
+        self.website_catalog_active_auto_download_images_checkbox.setObjectName(_fromUtf8("website_catalog_active_auto_download_images_checkbox"))
+        self.horizontalLayout_69.addWidget(self.website_catalog_active_auto_download_images_checkbox)
+        self.website_catalog_active_remove_image_button = QtGui.QPushButton(self.layoutWidget_9)
+        self.website_catalog_active_remove_image_button.setMinimumSize(QtCore.QSize(0, 45))
+        self.website_catalog_active_remove_image_button.setMaximumSize(QtCore.QSize(115, 16777215))
+        self.website_catalog_active_remove_image_button.setObjectName(_fromUtf8("website_catalog_active_remove_image_button"))
+        self.horizontalLayout_69.addWidget(self.website_catalog_active_remove_image_button)
+        spacerItem287 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem287)
         self.website_catalog_active_sync_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_sync_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_sync_button.setObjectName(_fromUtf8("website_catalog_active_sync_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_sync_button)
-        spacerItem286 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem286)
+        spacerItem288 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem288)
         self.website_catalog_active_save_button = QtGui.QPushButton(self.layoutWidget_9)
         self.website_catalog_active_save_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_catalog_active_save_button.setObjectName(_fromUtf8("website_catalog_active_save_button"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_save_button)
-        spacerItem287 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem287)
+        spacerItem289 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem289)
         self.add_item_vert_line_93 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_93.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_93.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_93.setObjectName(_fromUtf8("add_item_vert_line_93"))
         self.horizontalLayout_69.addWidget(self.add_item_vert_line_93)
-        spacerItem288 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem288)
+        spacerItem290 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem290)
         self.website_catalog_active_inventory_label = QtGui.QLabel(self.layoutWidget_9)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -10432,8 +10463,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_inventory_label.setMinimumSize(QtCore.QSize(220, 0))
         self.website_catalog_active_inventory_label.setObjectName(_fromUtf8("website_catalog_active_inventory_label"))
         self.horizontalLayout_69.addWidget(self.website_catalog_active_inventory_label)
-        spacerItem289 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_69.addItem(spacerItem289)
+        spacerItem291 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_69.addItem(spacerItem291)
         self.verticalLayout_114.addLayout(self.horizontalLayout_69)
         self.horizontalLayout_70 = QtGui.QHBoxLayout()
         self.horizontalLayout_70.setSpacing(-1)
@@ -10446,22 +10477,22 @@ class Ui_Form(QtGui.QWidget):
         self.tab_one_search_item_lbl_16.setScaledContents(False)
         self.tab_one_search_item_lbl_16.setObjectName(_fromUtf8("tab_one_search_item_lbl_16"))
         self.horizontalLayout_70.addWidget(self.tab_one_search_item_lbl_16)
-        spacerItem290 = QtGui.QSpacerItem(77, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem290)
+        spacerItem292 = QtGui.QSpacerItem(77, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem292)
         self.add_item_vert_line_94 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_94.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_94.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_94.setObjectName(_fromUtf8("add_item_vert_line_94"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_94)
-        spacerItem291 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem291)
+        spacerItem293 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem293)
         self.website_catalog_active_date_modified_checkbox = QtGui.QCheckBox(self.layoutWidget_9)
         self.website_catalog_active_date_modified_checkbox.setMinimumSize(QtCore.QSize(90, 20))
         self.website_catalog_active_date_modified_checkbox.setMaximumSize(QtCore.QSize(90, 40))
         self.website_catalog_active_date_modified_checkbox.setObjectName(_fromUtf8("website_catalog_active_date_modified_checkbox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_date_modified_checkbox)
-        spacerItem292 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem292)
+        spacerItem294 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem294)
         self.verticalLayout_115 = QtGui.QVBoxLayout()
         self.verticalLayout_115.setSpacing(0)
         self.verticalLayout_115.setSizeConstraint(QtGui.QLayout.SetFixedSize)
@@ -10504,66 +10535,66 @@ class Ui_Form(QtGui.QWidget):
         self.label_118.setObjectName(_fromUtf8("label_118"))
         self.verticalLayout_116.addWidget(self.label_118)
         self.horizontalLayout_70.addLayout(self.verticalLayout_116)
-        spacerItem293 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem293)
+        spacerItem295 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem295)
         self.add_item_vert_line_95 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_95.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_95.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_95.setObjectName(_fromUtf8("add_item_vert_line_95"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_95)
-        spacerItem294 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem294)
+        spacerItem296 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem296)
         self.website_catalog_active_distro_checkbox = QtGui.QCheckBox(self.layoutWidget_9)
         self.website_catalog_active_distro_checkbox.setObjectName(_fromUtf8("website_catalog_active_distro_checkbox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_distro_checkbox)
-        spacerItem295 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem295)
+        spacerItem297 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem297)
         self.website_catalog_active_distro_combobox = QtGui.QComboBox(self.layoutWidget_9)
         self.website_catalog_active_distro_combobox.setObjectName(_fromUtf8("website_catalog_active_distro_combobox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_distro_combobox)
-        spacerItem296 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem296)
+        spacerItem298 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem298)
         self.add_item_vert_line_96 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_96.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_96.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_96.setObjectName(_fromUtf8("add_item_vert_line_96"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_96)
-        spacerItem297 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem297)
+        spacerItem299 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem299)
         self.website_catalog_active_active_checkbox = QtGui.QCheckBox(self.layoutWidget_9)
         self.website_catalog_active_active_checkbox.setObjectName(_fromUtf8("website_catalog_active_active_checkbox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_active_checkbox)
-        spacerItem298 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem298)
+        spacerItem300 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem300)
         self.website_catalog_active_combobox = QtGui.QComboBox(self.layoutWidget_9)
         self.website_catalog_active_combobox.setObjectName(_fromUtf8("website_catalog_active_combobox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_combobox)
-        spacerItem299 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem299)
+        spacerItem301 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem301)
         self.add_item_vert_line_98 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_98.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_98.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_98.setObjectName(_fromUtf8("add_item_vert_line_98"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_98)
-        spacerItem300 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem300)
+        spacerItem302 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem302)
         self.website_catalog_active_sync_checkbox = QtGui.QCheckBox(self.layoutWidget_9)
         self.website_catalog_active_sync_checkbox.setObjectName(_fromUtf8("website_catalog_active_sync_checkbox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_sync_checkbox)
-        spacerItem301 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem301)
+        spacerItem303 = QtGui.QSpacerItem(10, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem303)
         self.website_catalog_active_sync_combobox = QtGui.QComboBox(self.layoutWidget_9)
         self.website_catalog_active_sync_combobox.setObjectName(_fromUtf8("website_catalog_active_sync_combobox"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_sync_combobox)
-        spacerItem302 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem302)
+        spacerItem304 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem304)
         self.add_item_vert_line_99 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_99.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_99.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_99.setObjectName(_fromUtf8("add_item_vert_line_99"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_99)
-        spacerItem303 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem303)
+        spacerItem305 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem305)
         self.label_119 = QtGui.QLabel(self.layoutWidget_9)
         self.label_119.setObjectName(_fromUtf8("label_119"))
         self.horizontalLayout_70.addWidget(self.label_119)
@@ -10578,15 +10609,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_120 = QtGui.QLabel(self.layoutWidget_9)
         self.label_120.setObjectName(_fromUtf8("label_120"))
         self.horizontalLayout_70.addWidget(self.label_120)
-        spacerItem304 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem304)
+        spacerItem306 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem306)
         self.add_item_vert_line_100 = QtGui.QFrame(self.layoutWidget_9)
         self.add_item_vert_line_100.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_100.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_100.setObjectName(_fromUtf8("add_item_vert_line_100"))
         self.horizontalLayout_70.addWidget(self.add_item_vert_line_100)
-        spacerItem305 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem305)
+        spacerItem307 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem307)
         self.website_catalog_active_filtered_inventory_label = QtGui.QLabel(self.layoutWidget_9)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -10596,8 +10627,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_filtered_inventory_label.setMinimumSize(QtCore.QSize(170, 0))
         self.website_catalog_active_filtered_inventory_label.setObjectName(_fromUtf8("website_catalog_active_filtered_inventory_label"))
         self.horizontalLayout_70.addWidget(self.website_catalog_active_filtered_inventory_label)
-        spacerItem306 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_70.addItem(spacerItem306)
+        spacerItem308 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_70.addItem(spacerItem308)
         self.verticalLayout_114.addLayout(self.horizontalLayout_70)
         self.verticalLayout_113.addLayout(self.verticalLayout_114)
         self.website_catalog_active_results_table = QtGui.QTableWidget(self.layoutWidget_9)
@@ -10878,26 +10909,26 @@ class Ui_Form(QtGui.QWidget):
         self.website_trans_search_id_line.setMaximumSize(QtCore.QSize(200, 16777215))
         self.website_trans_search_id_line.setObjectName(_fromUtf8("website_trans_search_id_line"))
         self.horizontalLayout_71.addWidget(self.website_trans_search_id_line)
-        spacerItem307 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_71.addItem(spacerItem307)
+        spacerItem309 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_71.addItem(spacerItem309)
         self.website_trans_search_id_button = QtGui.QPushButton(self.layoutWidget21)
         self.website_trans_search_id_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_trans_search_id_button.setObjectName(_fromUtf8("website_trans_search_id_button"))
         self.horizontalLayout_71.addWidget(self.website_trans_search_id_button)
-        spacerItem308 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_71.addItem(spacerItem308)
+        spacerItem310 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_71.addItem(spacerItem310)
         self.website_trans_id_refresh_button = QtGui.QPushButton(self.layoutWidget21)
         self.website_trans_id_refresh_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_trans_id_refresh_button.setObjectName(_fromUtf8("website_trans_id_refresh_button"))
         self.horizontalLayout_71.addWidget(self.website_trans_id_refresh_button)
-        spacerItem309 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_71.addItem(spacerItem309)
+        spacerItem311 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_71.addItem(spacerItem311)
         self.website_trans_hard_refresh_button = QtGui.QPushButton(self.layoutWidget21)
         self.website_trans_hard_refresh_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_trans_hard_refresh_button.setObjectName(_fromUtf8("website_trans_hard_refresh_button"))
         self.horizontalLayout_71.addWidget(self.website_trans_hard_refresh_button)
-        spacerItem310 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_71.addItem(spacerItem310)
+        spacerItem312 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_71.addItem(spacerItem312)
         self.verticalLayout_117.addLayout(self.horizontalLayout_71)
         self.website_trans_results_table = QtGui.QTableWidget(self.layoutWidget21)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
@@ -11131,8 +11162,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_trans_ring_out_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_trans_ring_out_button.setObjectName(_fromUtf8("website_trans_ring_out_button"))
         self.horizontalLayout_73.addWidget(self.website_trans_ring_out_button)
-        spacerItem311 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_73.addItem(spacerItem311)
+        spacerItem313 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_73.addItem(spacerItem313)
         self.verticalLayout_117.addLayout(self.horizontalLayout_73)
         self.website_trans_items_table = QtGui.QTableWidget(self.layoutWidget21)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
@@ -11386,15 +11417,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_search_item_label_2.setScaledContents(False)
         self.tab_four_search_item_label_2.setObjectName(_fromUtf8("tab_four_search_item_label_2"))
         self.horizontalLayout_74.addWidget(self.tab_four_search_item_label_2)
-        spacerItem312 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem312)
+        spacerItem314 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem314)
         self.add_item_vert_line_97 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_97.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_97.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_97.setObjectName(_fromUtf8("add_item_vert_line_97"))
         self.horizontalLayout_74.addWidget(self.add_item_vert_line_97)
-        spacerItem313 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem313)
+        spacerItem315 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem315)
         self.website_order_history_search_qline = QtGui.QLineEdit(self.layoutWidget22)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -11405,27 +11436,27 @@ class Ui_Form(QtGui.QWidget):
         self.website_order_history_search_qline.setText(_fromUtf8(""))
         self.website_order_history_search_qline.setObjectName(_fromUtf8("website_order_history_search_qline"))
         self.horizontalLayout_74.addWidget(self.website_order_history_search_qline)
-        spacerItem314 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem314)
+        spacerItem316 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem316)
         self.website_order_history_search_button = QtGui.QPushButton(self.layoutWidget22)
         self.website_order_history_search_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_order_history_search_button.setObjectName(_fromUtf8("website_order_history_search_button"))
         self.horizontalLayout_74.addWidget(self.website_order_history_search_button)
-        spacerItem315 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem315)
+        spacerItem317 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem317)
         self.website_order_history_reset_button = QtGui.QPushButton(self.layoutWidget22)
         self.website_order_history_reset_button.setMinimumSize(QtCore.QSize(0, 45))
         self.website_order_history_reset_button.setObjectName(_fromUtf8("website_order_history_reset_button"))
         self.horizontalLayout_74.addWidget(self.website_order_history_reset_button)
-        spacerItem316 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem316)
+        spacerItem318 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem318)
         self.add_item_vert_line_101 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_101.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_101.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_101.setObjectName(_fromUtf8("add_item_vert_line_101"))
         self.horizontalLayout_74.addWidget(self.add_item_vert_line_101)
-        spacerItem317 = QtGui.QSpacerItem(550, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem317)
+        spacerItem319 = QtGui.QSpacerItem(550, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem319)
         self.add_item_vert_line_102 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_102.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_102.setFrameShadow(QtGui.QFrame.Sunken)
@@ -11461,8 +11492,8 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_104.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_104.setObjectName(_fromUtf8("add_item_vert_line_104"))
         self.horizontalLayout_74.addWidget(self.add_item_vert_line_104)
-        spacerItem318 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_74.addItem(spacerItem318)
+        spacerItem320 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_74.addItem(spacerItem320)
         self.verticalLayout_127 = QtGui.QVBoxLayout()
         self.verticalLayout_127.setObjectName(_fromUtf8("verticalLayout_127"))
         self.website_order_history_total_label = QtGui.QLabel(self.layoutWidget22)
@@ -11496,20 +11527,20 @@ class Ui_Form(QtGui.QWidget):
         self.tab_four_filter_label_3.setScaledContents(False)
         self.tab_four_filter_label_3.setObjectName(_fromUtf8("tab_four_filter_label_3"))
         self.horizontalLayout_75.addWidget(self.tab_four_filter_label_3)
-        spacerItem319 = QtGui.QSpacerItem(75, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem319)
+        spacerItem321 = QtGui.QSpacerItem(75, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem321)
         self.add_item_vert_line_105 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_105.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_105.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_105.setObjectName(_fromUtf8("add_item_vert_line_105"))
         self.horizontalLayout_75.addWidget(self.add_item_vert_line_105)
-        spacerItem320 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem320)
+        spacerItem322 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem322)
         self.website_order_history_filter_date_checkbox = QtGui.QCheckBox(self.layoutWidget22)
         self.website_order_history_filter_date_checkbox.setObjectName(_fromUtf8("website_order_history_filter_date_checkbox"))
         self.horizontalLayout_75.addWidget(self.website_order_history_filter_date_checkbox)
-        spacerItem321 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem321)
+        spacerItem323 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem323)
         self.verticalLayout_120 = QtGui.QVBoxLayout()
         self.verticalLayout_120.setSpacing(0)
         self.verticalLayout_120.setSizeConstraint(QtGui.QLayout.SetFixedSize)
@@ -11548,8 +11579,8 @@ class Ui_Form(QtGui.QWidget):
         self.label_122.setObjectName(_fromUtf8("label_122"))
         self.verticalLayout_121.addWidget(self.label_122)
         self.horizontalLayout_75.addLayout(self.verticalLayout_121)
-        spacerItem322 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem322)
+        spacerItem324 = QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem324)
         self.add_item_vert_line_106 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_106.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_106.setFrameShadow(QtGui.QFrame.Sunken)
@@ -11610,8 +11641,8 @@ class Ui_Form(QtGui.QWidget):
         self.add_item_vert_line_107.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_107.setObjectName(_fromUtf8("add_item_vert_line_107"))
         self.horizontalLayout_75.addWidget(self.add_item_vert_line_107)
-        spacerItem323 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem323)
+        spacerItem325 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem325)
         self.label_123 = QtGui.QLabel(self.layoutWidget22)
         self.label_123.setObjectName(_fromUtf8("label_123"))
         self.horizontalLayout_75.addWidget(self.label_123)
@@ -11626,15 +11657,15 @@ class Ui_Form(QtGui.QWidget):
         self.label_124 = QtGui.QLabel(self.layoutWidget22)
         self.label_124.setObjectName(_fromUtf8("label_124"))
         self.horizontalLayout_75.addWidget(self.label_124)
-        spacerItem324 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem324)
+        spacerItem326 = QtGui.QSpacerItem(28, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem326)
         self.add_item_vert_line_108 = QtGui.QFrame(self.layoutWidget22)
         self.add_item_vert_line_108.setFrameShape(QtGui.QFrame.VLine)
         self.add_item_vert_line_108.setFrameShadow(QtGui.QFrame.Sunken)
         self.add_item_vert_line_108.setObjectName(_fromUtf8("add_item_vert_line_108"))
         self.horizontalLayout_75.addWidget(self.add_item_vert_line_108)
-        spacerItem325 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_75.addItem(spacerItem325)
+        spacerItem327 = QtGui.QSpacerItem(5, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_75.addItem(spacerItem327)
         self.verticalLayout_126 = QtGui.QVBoxLayout()
         self.verticalLayout_126.setObjectName(_fromUtf8("verticalLayout_126"))
         self.website_order_history_search_label = QtGui.QLabel(self.layoutWidget22)
@@ -11912,7 +11943,7 @@ class Ui_Form(QtGui.QWidget):
         self.cole_tab_widget.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
-        self.website_tab_widget.setCurrentIndex(5)
+        self.website_tab_widget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -15980,6 +16011,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_reset_tab.setText(_translate("Form", "Reset", None))
         self.website_pre_order_active_tab_remove_from_inventory.setText(_translate("Form", "Remove Selected Item From Inventory", None))
         self.website_pre_order_active_tab_find_image.setText(_translate("Form", "Find Image", None))
+        self.website_pre_order_active_tab_auto_find_image.setText(_translate("Form", "Auto", None))
+        self.website_pre_order_active_tab_remove_image.setText(_translate("Form", "Remove Image", None))
         self.website_pre_order_active_tab_sync_selected.setText(_translate("Form", "Sync Selected", None))
         self.website_pre_order_active_tab_save_changes.setText(_translate("Form", "Save Changes To Selected Item", None))
         self.website_pre_order_active_tab_inventory_label.setText(_translate("Form", "XXXX Pre-Order Items (XX pre-orders)", None))
@@ -16693,6 +16726,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_add_catalog_filter_by_date_added_checkbox.setText(_translate("Form", "Filter by Date Added", None))
         self.label_113.setText(_translate("Form", "Start Date", None))
         self.label_114.setText(_translate("Form", "End Date", None))
+        self.website_add_catalog_best_sellers_checkbox.setText(_translate("Form", "Sort By\n"
+"Best Sellers", None))
         self.website_add_catalog_filter_dist_checkbox.setText(_translate("Form", "Filter By Distributor", None))
         self.website_add_catalog_show_permabans.setText(_translate("Form", "Show Permabans Only", None))
         self.website_add_catalog_show_used.setText(_translate("Form", "Show Used", None))
@@ -16928,15 +16963,18 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_reset_button.setText(_translate("Form", "Reset", None))
         self.website_catalog_active_remove_selected_button.setText(_translate("Form", "Remove Selected Item From Inventory", None))
         self.website_catalog_active_find_image_button.setText(_translate("Form", "Find Image", None))
+        self.website_catalog_active_auto_download_images_checkbox.setText(_translate("Form", "Auto", None))
+        self.website_catalog_active_remove_image_button.setText(_translate("Form", "Remove Image", None))
         self.website_catalog_active_sync_button.setText(_translate("Form", "Sync Selected", None))
-        self.website_catalog_active_save_button.setText(_translate("Form", "Save Changes To Selected Item", None))
+        self.website_catalog_active_save_button.setText(_translate("Form", "Save Item", None))
         self.website_catalog_active_inventory_label.setText(_translate("Form", "XXXX Pre-Order Items (XX pre-orders)", None))
         self.tab_one_search_item_lbl_16.setText(_translate("Form", "Filter", None))
         self.website_catalog_active_date_modified_checkbox.setText(_translate("Form", "  Date\n"
 "Modified", None))
         self.label_117.setText(_translate("Form", "Start Date", None))
         self.label_118.setText(_translate("Form", "End Date", None))
-        self.website_catalog_active_distro_checkbox.setText(_translate("Form", "Preferred Distro", None))
+        self.website_catalog_active_distro_checkbox.setText(_translate("Form", "Preferred\n"
+" Distro", None))
         self.website_catalog_active_active_checkbox.setText(_translate("Form", "Active", None))
         self.website_catalog_active_sync_checkbox.setText(_translate("Form", "Sync Status", None))
         self.label_119.setText(_translate("Form", "Show", None))
@@ -18004,6 +18042,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_pre_order_active_tab_save_changes.clicked.connect(self.tab_website_two_results_table_save)
         self.website_pre_order_active_tab_find_image.clicked.connect(self.tab_website_two_find_image_request)
         self.website_pre_order_active_tab_search_button.clicked.connect(self.tab_website_two_results_table_search)
+        self.website_pre_order_active_tab_remove_image.clicked.connect(self.tab_website_two_remove_image_association)
         self.website_pre_order_active_tab_remove_from_inventory.clicked.connect(self.tab_website_two_remove_item)
 
         #website four
@@ -18020,6 +18059,8 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_search_button.clicked.connect(self.website_catalog_active_results_table_search)
         self.website_catalog_active_find_image_button.clicked.connect(self.website_catalog_active_find_image_request)
         self.website_catalog_active_save_button.clicked.connect(self.website_catalog_active_save_request)
+        self.website_catalog_active_remove_selected_button.clicked.connect(self.website_catalog_active_remove_item)
+        self.website_catalog_active_remove_image_button.clicked.connect(self.website_catalog_active_remove_currently_associated_images)
         
         #website six
         self.website_trans_id_refresh_button.clicked.connect(self.website_trans_results_table_refresh)
@@ -18230,7 +18271,6 @@ class Ui_Form(QtGui.QWidget):
         try:
             self.db_cursor.execute('INSERT INTO inventory (upc, artist, title, format, price, price_paid, new_used, distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', tuple(db_item))
             self.db.commit()
-            self.upc_qty_change_update_the_site(db_item[UPC_INDEX])
             self.tab_one_print_to_console('%s item added to database\n' % (db_item[ARTIST_INDEX]))
         except Exception as e:
             print 'tab_one_add_to_inventory, adding item to db: %s' % e
@@ -18247,6 +18287,9 @@ class Ui_Form(QtGui.QWidget):
         if self.tab_one_print_sticker_check_box.isChecked():
             self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX]) 
 
+        #update qoh
+        self.upc_qty_change_update_the_site(db_item[UPC_INDEX])
+            
         #display in recently added table
         self.tab_one_recently_added_table_refresh()
 
@@ -19332,7 +19375,8 @@ class Ui_Form(QtGui.QWidget):
                         if row_db[UPC_INDEX] == row[UPC_INDEX]:
                             counter += 1
                         if counter > 1:
-                            row[RESERVED_TWO_INDEX] = self.xstr(NEEDS_PUT_OUT)
+                            if row_db[NEW_USED_INDEX] == 'New':
+                                row[RESERVED_TWO_INDEX] = self.xstr(NEEDS_PUT_OUT)
                     self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used,distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_three) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                     self.db.commit()
                     upcs_to_check_qoh.append(row[UPC_INDEX])
@@ -19514,7 +19558,8 @@ class Ui_Form(QtGui.QWidget):
                         if row_db[UPC_INDEX] == row[UPC_INDEX]:
                             counter += 1
                         if counter > 1:
-                            row[RESERVED_TWO_INDEX] = self.xstr(NEEDS_PUT_OUT)
+                            if row_db[NEW_USED_INDEX] == 'New':
+                                row[RESERVED_TWO_INDEX] = self.xstr(NEEDS_PUT_OUT)
                     self.db_cursor.execute('INSERT INTO sold_inventory (upc, artist, title, format, price, price_paid, new_used,distributor, label, genre, year, date_added, discogs_release_number, real_name, profile, variations, aliases, track_list, notes, taxable, reserved_one, reserved_two, inventory_id, sold_for, percent_discount, date_sold, sold_notes, reorder_state, transaction_id, reserved_three) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', tuple(row))
                     self.db.commit()
                     sold_inventory_new_ids.append(str(self.db_cursor.lastrowid))
@@ -19637,7 +19682,10 @@ class Ui_Form(QtGui.QWidget):
 
                 # 8. Clean up
                 for upc in upcs_to_check_qoh:
-                    self.upc_qty_change_update_the_site(upc)
+                    try:
+                        self.upc_qty_change_update_the_site(upc)
+                    except Exception as e:
+                        print 'could not update qoh for upc %s: %s' (upc,e)
                 self.tab_four_checkout_table_list = []
                 self.tab_four_misc_checkout_table_list = []
                 self.tab_four_checkout_table_refresh()
@@ -19747,6 +19795,7 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_misc_generate_5_perc_buttons()
             self.tab_four_misc_generate_remove_buttons()
             self.tab_four_misc_generate_taxable_buttons()
+
             for ix, row in enumerate(self.tab_four_misc_checkout_table_list):
                 self.tab_four_misc_checkout_table_change_text(ix, 2, str(row[MISC_UPC_INDEX]))
                 self.tab_four_misc_checkout_table_change_text(ix, 3, str(row[MISC_TYPE_INDEX]))
@@ -19909,6 +19958,11 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_generate_5_perc_buttons()
             self.tab_four_generate_remove_buttons()
             self.tab_four_generate_taxable_buttons()
+
+            #add in some temp code for Black friday
+            #for ix, row in enumerate(self.tab_four_checkout_table_list):
+                #if row[NEW_USED_INDEX] == 'Used':
+                #    self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 20
             for ix, row in enumerate(self.tab_four_checkout_table_list):
                 self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
                 self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
@@ -22275,7 +22329,8 @@ class Ui_Form(QtGui.QWidget):
                 db_item[PRE_SHOPIFY_TYPE] = ''
                 street_date_formatted_for_america = datetime.datetime.strptime(db_item[PRE_STREET_DATE], "%Y-%m-%d")
                 street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
-                db_item[PRE_SHOPIFY_DESC] = 'This item is a pre-order. It should ship within 72 hours of %s' % (street_date_formatted_for_america)
+                #db_item[PRE_SHOPIFY_DESC] = 'This item is a pre-order. It should ship within 72 hours of %s<br>For orders that have multiple items with pre-orders, all items will be held until every item from the order is available to ship. Please contact us with any questions.' % (street_date_formatted_for_america)
+                db_item[PRE_SHOPIFY_DESC] = '<b><font color="red">This item is a pre-order. It should ship or be available for pick up within 72 hours of %s</font> <br><br>For orders that have multiple items with pre-orders, all items will be held until every item from the order is available to ship. Please contact us with any questions.</b><br><br> <p align="justify">' % (street_date_formatted_for_america)
                 db_item[PRE_SHOPIFY_COLLECTIONS] = 'Pre-Orders' 
                 db_item[PRE_SHOPIFY_TAGS] = 'Pre-Order Street Date_%s,Format_LP,Pre-Orders' % street_date_formatted_for_america
                 db_item[PRE_RESERVED_ONE] = ''
@@ -22330,7 +22385,7 @@ class Ui_Form(QtGui.QWidget):
                 header_indexes["release_date"] = ix
             if 'label' == header.lower() or 'label name' == header.lower():
                 header_indexes["label"] = ix
-            if 'list price' == header.lower() or 'srp' == header.lower() or 'code' == header.lower() or 'msrp' == header.lower():#AEC, WEA/ADA, RED, and AMS respectively
+            if 'srlp' == header.lower() or 'list price' == header.lower() or 'srp' == header.lower() or 'code' == header.lower() or 'msrp' == header.lower():#AEC, WEA/ADA, RED, and AMS respectively
                 header_indexes["price"] = ix
         print header_indexes
         self.tab_website_one_imported_table_clear(len(lines))
@@ -22393,7 +22448,7 @@ class Ui_Form(QtGui.QWidget):
         row = self.website_pre_order_active_tab_results_table.currentRow()
         key = self.tab_website_two_results_table_list[row][PRE_ID]
         #first, remove this item from the website (if it exists on the website)
-        if len(self.tab_wesbite_two_results_table_list[row][PRE_SHOPIFY_ID]) > 1:#if it's connnected to website
+        if len(self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID]) > 1:#if it's connnected to website
             if self.shopify_interface.delete_item(self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID]):
                 #if the removal from the website was successful, delete it from our db
                 self.db_cursor.execute('DELETE FROM pre_order_inventory WHERE id = ?', (key,))
@@ -22608,6 +22663,17 @@ class Ui_Form(QtGui.QWidget):
         placeholder = 0
         #TODO
 
+    
+    def tab_website_two_remove_image_association(self):
+        rows_selected = set()
+        for item in self.website_pre_order_active_tab_results_table.selectedItems():
+            rows_selected.add(item.row())
+        for row in rows_selected:
+            upc = self.tab_website_two_results_table_list[row][PRE_UPC]
+            self.db_cursor.execute('DELETE FROM website_images WHERE upc = ?', (upc,))
+            self.db.commit()
+
+        
     def tab_website_two_generate_active_buttons(self):
         self.tab_website_two_active_mapper = QtCore.QSignalMapper(self)
         for ii in range(self.website_pre_order_active_tab_results_table.rowCount()):
@@ -22697,9 +22763,15 @@ class Ui_Form(QtGui.QWidget):
         for item in self.website_pre_order_active_tab_results_table.selectedItems():
             rows_selected.add(item.row())
         for row in rows_selected:
+            print 'row selected'
+            print row
             #first, run through any automated image import utilities i've created for various distros
-            self.try_to_auto_download_images(self.tab_website_two_results_table_list[row][PRE_UPC], self.tab_website_two_results_table_list[row][PRE_DISTRO])
+            if self.website_pre_order_active_tab_auto_find_image.isChecked():
+                self.try_to_auto_download_images(self.tab_website_two_results_table_list[row][PRE_UPC], self.tab_website_two_results_table_list[row][PRE_DISTRO])
+            else:
+                print 'not trying to get images automatically'
             self.update_currently_associated_images(self.tab_website_two_results_table_list[row][PRE_UPC],self.tab_website_two_results_table_list[row][PRE_SHOPIFY_ID])
+            print 'made it to the end of the call'
         #extensions = ['.jpg']
         #for row in rows_selected:
         #    for extension in extensions:
@@ -22843,9 +22915,30 @@ class Ui_Form(QtGui.QWidget):
                 if row[UPC_INDEX] not in already_added:
                     self.website_add_catalog_results_table_list.append([qoh[row[UPC_INDEX]]] + list(row))
                     already_added.add(row[UPC_INDEX])
-        
+        if self.website_add_catalog_best_sellers_checkbox.isChecked():
+            #first, get list of how much ever sold
+            print 'the box is checked'
+            self.sold_qty = dict()
+            for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                if row[UPC_INDEX] in self.sold_qty:
+                    self.sold_qty[row[UPC_INDEX]] += 1
+                else:
+                    self.sold_qty[row[UPC_INDEX]] = 1
+            print self.sold_qty
+            print 'that was sold qty'
+            new_list = sorted(self.website_add_catalog_results_table_list, key=self.get_sold_qty, reverse=True)
+            self.website_add_catalog_results_table_list = new_list
+        for line in self.website_add_catalog_results_table_list:
+            print line[UPC_INDEX+1]
         self.tab_website_add_catalog_results_table_refresh()
-            
+
+    def get_sold_qty(self, item):
+        print item
+        if item[UPC_INDEX+1] in self.sold_qty:#the whole +1 thing is due to this table not being associated with a db entry, there's a lot of temporary tables and shit and stuff
+            return self.sold_qty[item[UPC_INDEX+1]]
+        else:
+            print 'about to return 0'
+            return 0
                 
     def tab_website_add_catalog_results_table_reset(self):
         self.tab_website_add_catalog_results_table_clear()
@@ -22899,11 +22992,11 @@ class Ui_Form(QtGui.QWidget):
         #    row_for_table = []
             #row_for_table = [upc, item[UPC_INDEX], item[ARTIST_INDEX], item[TITLE_INDEX], item[PRICE_INDEX], upcs[upc], item[DISTRIBUTOR_INDEX], item[LABEL_INDEX], item[GENRE_INDEX], item[YEAR_INDEX], item[NOTES_INDEX]]
         #    self.website_add_catalog_results_table_list.append(row_for_table)
-        print len(upcs)
+        #print len(upcs)
         #print self.website_add_catalog_results_table_list
         print 'refresh'
-        self.tab_website_add_catalog_results_table_refresh()
-        
+                #now, after the search, if the best sellers is checked, sort by that, TIME CONSUMING
+        self.tab_website_add_catalog_results_table_refresh()        
 
     def tab_website_add_catalog_results_table_refresh(self):
         self.tab_website_add_catalog_results_table_clear()
@@ -22923,6 +23016,7 @@ class Ui_Form(QtGui.QWidget):
             self.website_add_catalog_results_table_change_text(ix, 8, self.xstr(row[GENRE_INDEX+1]))
             self.website_add_catalog_results_table_change_text(ix, 9, self.xstr(row[YEAR_INDEX+1]))
             self.website_add_catalog_results_table_change_text(ix, 11, self.xstr(row[FORMAT_INDEX+1]))
+        self.website_add_catalog_items_found_label.setText('%s Items Found For Search Terms' % str(len(self.website_add_catalog_results_table_list)))
         self.website_add_catalog_results_table.resizeColumnsToContents()
         self.website_add_catalog_results_table.setColumnWidth(0,50)
 
@@ -22955,7 +23049,7 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_SALE_PRICE] = self.xfloat(row[4])
                 db_item[ONLINE_DISTRO] = self.xstr(row[6])
                 db_item[ONLINE_QOH] = self.xint(row[5])
-                db_item[ONLINE_FORMAT] = 'LP'
+                db_item[ONLINE_FORMAT] = 'LP Vinyl'
                 db_item[ONLINE_LABEL] = self.xstr(row[7])
                 db_item[ONLINE_GENRE] = self.xstr(row[8])
                 db_item[ONLINE_DATE_ADDED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
@@ -22963,9 +23057,11 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_NOTES] = row[11]#keep format in the notes so tags (like BF and RSD) are searchable)
                 db_item[ONLINE_SHOPIFY_ID] = ''
                 db_item[ONLINE_SHOPIFY_TYPE] = ''
-                db_item[ONLINE_SHOPIFY_DESC] = ''#'This item is a pre-order. It should ship within 72 hours of %s' % (db_item[PRE_STREET_DATE])
+                db_item[ONLINE_SHOPIFY_DESC] = ''
                 db_item[ONLINE_SHOPIFY_COLLECTIONS] = 'In Stock' 
                 db_item[ONLINE_SHOPIFY_TAGS] = 'Format_LP'
+                if 'BF2016' in row[11]:
+                    db_item[ONLINE_SHOPIFY_TAGS] += ',BF2016'
                 db_item[ONLINE_RESERVED_ONE] = ''
                 db_item[ONLINE_RESERVED_TWO] = ''
                 db_item[ONLINE_RESERVED_THREE] = ''
@@ -23043,7 +23139,27 @@ class Ui_Form(QtGui.QWidget):
         self.db.commit()
         self.website_catalog_active_results_table_search()
 
-
+    def website_catalog_active_remove_item(self):
+        row = self.website_catalog_active_results_table.currentRow()
+        key = self.website_catalog_active_results_table_list[row][ONLINE_ID]
+        upc = self.website_catalog_active_results_table_list[row][ONLINE_UPC]
+        #first, remove this item from the website (if it exists on the website)
+        if len(self.website_catalog_active_results_table_list[row][ONLINE_SHOPIFY_ID]) > 1:
+               if self.shopify_interface.delete_item(self.website_catalog_active_results_table_list[row][ONLINE_SHOPIFY_ID]):
+                   #if removal from site was successful, remove from our db
+                   self.db_cursor.execute('DELETE FROM online_inventory WHERE id = ?', (key,))
+                   self.db.commit()
+                   self.website_catalog_active_results_table_search()
+               else:
+                   print 'problem removing: \n'
+                   print self.website_catalog_active_results_table_list[row]
+        else:#this item only exists locally, delete this fucker
+            self.db_cursor.execute('DELETE FROM online_inventory WHERE id = ?', (key,))
+            self.db.commit()
+            self.website_catalog_active_results_table_search()
+        #if there was any images associated with this, delete those too
+        self.db_cursor.execute('DELETE FROM website_images WHERE upc = ?', (upc,))
+        self.db.commit()
                         
     def website_catalog_active_results_table_search(self, hard_search=False):
         query = self.website_catalog_active_search_qline.text()
@@ -23114,8 +23230,7 @@ class Ui_Form(QtGui.QWidget):
                         continue
                 self.website_catalog_active_results_table_list.append(list(row))
         self.website_catalog_active_results_table_refresh()
-    
-    
+
     def website_catalog_active_results_table_reset(self):
         self.website_catalog_active_results_table_clear()
         self.website_catalog_active_spin_box.setValue(50)
@@ -23189,6 +23304,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_results_table.setColumnWidth(0,50)
         self.website_catalog_active_results_table.setColumnWidth(1,50)
         self.website_catalog_active_results_table.setColumnWidth(2,50)
+        self.website_catalog_active_filtered_inventory_label.setText('%s Filtered Items' % str(len(self.website_catalog_active_results_table_list)))
 
     def website_catalog_active_generate_more_info_buttons(self):
         self.website_catalog_active_more_info_mapper = QtCore.QSignalMapper(self)
@@ -23287,10 +23403,19 @@ class Ui_Form(QtGui.QWidget):
         for item in self.website_catalog_active_results_table.selectedItems():
             rows_selected.add(item.row())
         for row in rows_selected:
-            self.try_to_auto_download_images(self.website_catalog_active_results_table_list[row][ONLINE_UPC], self.website_catalog_active_results_table_list[row][ONLINE_DISTRO])
+            if self.website_catalog_active_auto_download_images_checkbox.isChecked():
+                self.try_to_auto_download_images(self.website_catalog_active_results_table_list[row][ONLINE_UPC], self.website_catalog_active_results_table_list[row][ONLINE_DISTRO])
             self.update_currently_associated_catalog_images(self.website_catalog_active_results_table_list[row][ONLINE_UPC], self.website_catalog_active_results_table_list[row][ONLINE_SHOPIFY_ID])
         self.website_catalog_active_results_table_search()
-        
+
+    def website_catalog_active_remove_currently_associated_images(self):
+        rows_selected = set()
+        for item in self.website_catalog_active_results_table.selectedItems():
+            rows_selected.add(item.row())
+        for row in rows_selected:
+            upc = self.website_catalog_active_results_table_list[row][ONLINE_UPC]
+            self.db_cursor.execute('DELETE FROM website_images WHERE upc = ?', (upc,))
+            self.db.commit()
     
     def website_catalog_active_results_table_clear(self):
         for ii in range(self.website_catalog_active_results_table.rowCount()):
@@ -23516,8 +23641,8 @@ class Ui_Form(QtGui.QWidget):
         trans_item[TRANS_SOLD_MISC_INVENTORY_IDS_INDEX] = self.xstr(",".join(sold_misc_inventory_new_ids))
         trans_item[TRANS_TENDERED_INDEX] = shopify_trans.total_price
         trans_item[TRANS_CHANGE_INDEX] = '0'
-        trans_item[TRANS_RESERVED_ONE_INDEX] = 'This was a shopify transaction. shopify_trans'
-        trans_item[TRANS_RESERVED_TWO_INDEX] = ''
+        trans_item[TRANS_RESERVED_ONE_INDEX] = ''
+        trans_item[TRANS_RESERVED_TWO_INDEX] = 'This was a shopify transaction. shopify_trans'
         trans_item[TRANS_RESERVED_THREE_INDEX] = ''
         trans_item[TRANS_RESERVED_FOUR_INDEX] = ''
         self.db_cursor.execute('INSERT INTO transactions (number_of_items, date_sold, subtotal, discount_percent, discounted_price, tax, shipping, total, cash_credit, sold_inventory_ids, sold_misc_inventory_ids, tendered, change, reserved_one, reserved_two, reserved_three, reserved_four) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', trans_item)
@@ -23981,8 +24106,7 @@ class Ui_Form(QtGui.QWidget):
         #from_db = self.website_order_history_results_table_list[row]
         #get transaction to get more info for sticker
         trans = self.shopify_interface.get_trans_info(from_db[ONLINE_SS_SHOPIFY_ID])
-        qty = 0
-        #print order
+        qty = 0        #print order
         for line in trans.line_items:
             qty += int(line.quantity)
         self.pick_sheet_printer.print_pick_sheet(from_db[ONLINE_SS_FULFILL_SKU], from_db[ONLINE_SS_NAME], from_db[ONLINE_SS_SHOPIFY_ID], self.xstr(qty), trans.name, from_db[ONLINE_SS_UPC],from_db[ONLINE_SS_ARTIST], from_db[ONLINE_SS_TITLE], from_db[ONLINE_SS_DATE_SOLD], trans.shipping_lines[0].attributes["title"], self.xfloat(trans.total_price), from_db[ONLINE_SS_PRICE], from_db[ONLINE_SS_PRE_ORDER], from_db[ONLINE_SS_STREET_DATE])
@@ -24011,7 +24135,7 @@ class Ui_Form(QtGui.QWidget):
         id_to_fulfill = self.website_order_history_results_table_list[row][ONLINE_SS_ID]
         self.db_cursor.execute('UPDATE sold_online_status SET fulfilled = ? WHERE id = ?', (1,id_to_fulfill))
         self.db.commit()
-        self.website_order_history_results_Table_list[row][ONLINE_SS_FULFILLED] = 1
+        self.website_order_history_results_table_list[row][ONLINE_SS_FULFILLED] = 1
         #print sticker
         todo = 0
         self.website_order_history_results_table_refresh()
@@ -24087,8 +24211,6 @@ class Ui_Form(QtGui.QWidget):
             except Exception as e:
                 print 'error trying to get WEA/ADA pictures for upc %s : %s' % (upc,e)
 
-    def remove_currently_associated_images(self, upc):
-        placeholder = 0
 
     #function used for catalog titles, NOT pre-orders
     def update_currently_associated_catalog_images(self, upc, product_id):
@@ -24135,11 +24257,13 @@ class Ui_Form(QtGui.QWidget):
    
     #ONLY used for pre-orders
     def update_currently_associated_images(self, upc, product_id):
-        extensions = ['.jpg']#might need to add more here later
+        print upc
+        print product_id
+        extensions = ['.jpg', '.jpeg']#might need to add more here later
         filename_addons = ['', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9']
         files_to_add = []
         for ix, adds in enumerate(filename_addons):
-            #print '%s,%s' % (upc,adds)
+            print '%s,%s' % (upc,adds)
             already_in_db = False
             added_to_queue = False
             #does this file exist in the db?
@@ -24181,17 +24305,23 @@ class Ui_Form(QtGui.QWidget):
     ################### image table manipulation ends ##################################
 
     def upc_qty_change_update_the_site(self, upc):
-        qoh = self.get_qoh()
-        exists = False
-        #is it in the database?
-        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM online_inventory WHERE upc = ?', (upc,))):
-            self.shopify_interface.update_qoh(row[ONLINE_SHOPIFY_ID], qoh[upc])
-            exists = True
-            break
-        if exists:
-            self.db_cursor.execute('UPDATE online_inventory SET qoh = ? WHERE upc = ?', (qoh[upc],upc))
-            self.db.commit()
-                                 
+        try:
+            qoh = self.get_qoh()
+            exists = False
+            upc_on_hand = 0
+            if upc in qoh:
+                upc_on_hand = qoh[upc]
+            #is it in the database?
+            for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM online_inventory WHERE upc = ?', (upc,))):
+                self.shopify_interface.update_qoh(row[ONLINE_SHOPIFY_ID], upc_on_hand)
+                exists = True
+                break
+            if exists:
+                self.db_cursor.execute('UPDATE online_inventory SET qoh = ? WHERE upc = ?', (upc_on_hand,upc))
+                self.db.commit()
+        except Exception as e:
+            print 'Exception while trying to update qoh on website: %s' % e
+                            
     
     def get_qoh(self):
         qoh = dict()

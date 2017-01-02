@@ -20698,6 +20698,44 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="website_pre_order_active_tab_auto_find_image">
+              <property name="minimumSize">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_pre_order_active_tab_remove_image">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>115</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Remove Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_212">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -23330,8 +23368,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1883</width>
-         <height>944</height>
+         <width>1871</width>
+         <height>951</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_109">
@@ -23815,6 +23853,53 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <widget class="Line" name="add_item_vert_line_86">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_323">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_best_sellers_checkbox">
+              <property name="text">
+               <string>Sort By
+Best Sellers</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_324">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Line" name="add_item_vert_line_111">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -24962,6 +25047,32 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="website_catalog_active_auto_download_images_checkbox">
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="website_catalog_active_remove_image_button">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>115</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Remove Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_278">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -25012,7 +25123,7 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="text">
-               <string>Save Changes To Selected Item</string>
+               <string>Save Item</string>
               </property>
              </widget>
             </item>
@@ -25311,7 +25422,7 @@ Modified</string>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_287">
+             <spacer name="horizontalSpacer_318">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -25329,7 +25440,8 @@ Modified</string>
             <item>
              <widget class="QCheckBox" name="website_catalog_active_distro_checkbox">
               <property name="text">
-               <string>Preferred Distro</string>
+               <string>Preferred
+ Distro</string>
               </property>
              </widget>
             </item>

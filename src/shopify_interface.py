@@ -18,6 +18,7 @@ class ShopifyInterface():
         self.api_password = (f.readline()).strip()
         
         shop_url = "https://%s:%s@plaid-room-records-2.myshopify.com/admin" % (self.api_key, self.api_password)
+        #shop_url = "
         shopify.ShopifyResource.set_site(shop_url)
         #shop_url = "https://%s:%s@colemine-records.myshopify.com/admin" % (self.api_key, self.api_password)
         #shopify.ShopifyResource.set_site(shop_url)
@@ -135,10 +136,32 @@ class ShopifyInterface():
                 new_product = shopify.Product()
                 #street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
                 #street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
-                new_product.title = "<b>%s</b><br><i>%s</i>" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
-                new_product.product_type = "LP"#default for now, might change later
-                new_product.tags = row[ONLINE_SHOPIFY_TAGS]
-                new_product.body_html = row[ONLINE_SHOPIFY_DESC]
+                new_product.title = "<b>%s </b><br><i>%s</i>" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
+                if 'BF2016' in row[ONLINE_SHOPIFY_TAGS]:
+                    new_product.product_type = "BF2016"#default for now, might change later
+                else:
+                    new_product.product_type = "LP"#default for now, might change later
+                #build tags
+                if len(row[ONLINE_GENRE]) > 1:
+                    genres = [x.strip() for x in row[ONLINE_GENRE].split(',')]
+                genres_split = []
+                for genre in genres:
+                    genres_split.append('Genre_%s' % genre)
+                genre_tags_to_add = ",".join(genres_split)
+                new_product.tags = genre_tags_to_add + ',' + row[ONLINE_SHOPIFY_TAGS]
+                #build description
+                desc = '<b>UPC: %s </b><br>' % row[ONLINE_UPC]
+                if len(row[ONLINE_LABEL]) > 1:
+                    desc += 'Label: %s <br>' % row[ONLINE_LABEL]
+                desc += 'Format: %s <br>' % row[ONLINE_FORMAT]
+                if len(row[ONLINE_STREET_DATE]) > 1:
+                    desc += 'Release Date: %s <br>' % row[ONLINE_STREET_DATE]
+                desc += 'In stock items ship within 24 hours. <br>'
+                desc += '<br>'
+                #new_product.body_html = '<b>UPC: %s </b><br>Format: %s <br>Label: In stock items ship within 24 hours.'
+                new_product.body_html = desc + row[ONLINE_SHOPIFY_DESC]
+                new_product.metafields_global_title_tag = "%s - %s" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
+                new_product.metafields_global_description_tag = "Order now from an independently owned record store in Cincinnati, OH %s" % (row[ONLINE_UPC])
                 pprint (vars(new_product))
                 if row[ONLINE_ACTIVE] == 0:
                     new_product.published_at = None
@@ -167,10 +190,34 @@ class ShopifyInterface():
         else:
             try:
                 product = shopify.Product.find(row[ONLINE_SHOPIFY_ID])
-                product.title = "<b>%s</b><br><i>%s</i>" % (row[PRE_ARTIST], row[PRE_TITLE])
-                product.product_type = "LP"#default for now, might change later
+                product.title = "<b>%s </b><br><i>%s</i>" % (row[PRE_ARTIST], row[PRE_TITLE])
+                if 'BF2016' in row[ONLINE_SHOPIFY_TAGS]:
+                    product.product_type = "BF2016"#default for now, might change later
+                else:
+                    product.product_type = "LP"#default for now, might change later
                 product.tags = row[ONLINE_SHOPIFY_TAGS]
                 product.body_html = row[ONLINE_SHOPIFY_DESC]
+                #build tags
+                if len(row[ONLINE_GENRE]) > 1:
+                    genres = [x.strip() for x in row[ONLINE_GENRE].split(',')]
+                genres_split = []
+                for genre in genres:
+                    genres_split.append('Genre_%s' % genre)
+                genre_tags_to_add = ",".join(genres_split)
+                product.tags = genre_tags_to_add + ',' + row[ONLINE_SHOPIFY_TAGS]
+                #build description
+                desc = '<b>UPC: %s </b><br>' % row[ONLINE_UPC]
+                if len(row[ONLINE_LABEL]) > 1:
+                    desc += 'Label: %s <br>' % row[ONLINE_LABEL]
+                desc += 'Format: %s <br>' % row[ONLINE_FORMAT]
+                if len(row[ONLINE_STREET_DATE]) > 1:
+                    desc += 'Release Date: %s <br>' % row[ONLINE_STREET_DATE]
+                desc += 'In stock items ship within 24 hours. <br>'
+                desc += '<br>'
+                #new_product.body_html = '<b>UPC: %s </b><br>Format: %s <br>Label: In stock items ship within 24 hours.'
+                product.body_html = desc + row[ONLINE_SHOPIFY_DESC]
+                product.metafields_global_title_tag = "%s - %s" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
+                product.metafields_global_description_tag = "Order now from an independently owned record store in Cincinnati, OH %s" % (row[ONLINE_UPC])
                 if row[ONLINE_ACTIVE] == 0:
                     product.published_at = None
                 else:
@@ -219,10 +266,25 @@ class ShopifyInterface():
                 new_product = shopify.Product()
                 street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
                 street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
-                new_product.title = "<b>%s</b><br><i>%s</i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
+                new_product.title = "<b>%s </b><br><i>%s </i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
                 new_product.product_type = "LP"#default for now, might change later
                 new_product.tags = row[PRE_SHOPIFY_TAGS]
-                new_product.body_html = '<b>UPC: %s</b><br>%s' % (row[PRE_UPC],row[PRE_SHOPIFY_DESC])
+
+                #build description
+                desc = '<b>UPC: %s </b><br>' % row[PRE_UPC]
+                if len(row[PRE_LABEL]) > 1:
+                    desc += 'Label: %s <br>' % row[PRE_LABEL]
+                desc += 'Format: %s <br>' % row[PRE_FORMAT]
+                if len(row[PRE_STREET_DATE]) > 1:
+                    desc += 'Release Date: %s <br>' % row[PRE_STREET_DATE]
+                desc += '<br>'
+                #new_product.body_html = '<b>UPC: %s </b><br>Format: %s <br>Label: In stock items ship within 24 hours.'
+                new_product.body_html = desc + row[PRE_SHOPIFY_DESC]
+                
+                #new_product.body_html = row[PRE_SHOPIFY_DESC]
+                #new_product.body_html = '<b>UPC: %s </b><br>%s' % (row[PRE_UPC],row[PRE_SHOPIFY_DESC])
+                new_product.metafields_global_title_tag = "Pre-Order %s %s" % (row[PRE_ARTIST], row[PRE_TITLE])
+                new_product.metafields_global_description_tag = "Pre-order now from an independently owned record store in Cincinnati, OH %s" % (row[PRE_UPC])
                 pprint (vars(new_product))
                 if row[PRE_ACTIVE] == 0:
                     new_product.published_at = None
@@ -250,10 +312,25 @@ class ShopifyInterface():
                 product = shopify.Product.find(row[PRE_SHOPIFY_ID])
                 street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
                 street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
-                product.title = "<b>%s</b><br><i>%s</i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
+                product.title = "<b>%s </b><br><i>%s </i><br>Release Date : %s" % (row[PRE_ARTIST], row[PRE_TITLE], street_date_formatted_for_america)
                 product.product_type = "LP"#default for now, might change later
                 product.tags = row[PRE_SHOPIFY_TAGS]
-                product.body_html = row[PRE_SHOPIFY_DESC]
+                
+                #build description
+                desc = '<b>UPC: %s </b><br>' % row[PRE_UPC]
+                if len(row[PRE_LABEL]) > 1:
+                    desc += 'Label: %s <br>' % row[PRE_LABEL]
+                desc += 'Format: %s <br>' % row[PRE_FORMAT]
+                if len(row[PRE_STREET_DATE]) > 1:
+                    desc += 'Release Date: %s <br>' % row[PRE_STREET_DATE]
+                desc += '<br>'
+                #new_product.body_html = '<b>UPC: %s </b><br>Format: %s <br>Label: In stock items ship within 24 hours.'
+                product.body_html = desc + row[PRE_SHOPIFY_DESC]
+
+                
+                #product.body_html = row[PRE_SHOPIFY_DESC]
+                product.metafields_global_title_tag = "Pre-Order %s %s" % (row[PRE_ARTIST], row[PRE_TITLE])
+                product.metafields_global_description_tag = "Pre-order now from an independently owned record store in Cincinnati, OH %s" % (row[PRE_UPC])
                 if row[PRE_ACTIVE] == 0:
                     product.published_at = None
                 else:

@@ -30,6 +30,13 @@ class Util():
 
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
+                list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                #        if 'BF2016' in row[FORMAT_INDEX]:
+                #                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
+                #for row in list_of_stuff_to_update:
+                #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?', (row))
+                #self.db.commit()
 		#placeholder = 0
                 #total = 0
                 #list_of_stuff_to_update = []
@@ -45,7 +52,15 @@ class Util():
                 #self.db.commit()
                 #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (57821,))
 		#self.db.commit()
-                #self.db_cursor.execute('UPDATE sold_inventory SET distributor = ? WHERE upc = ?', ('Colemine','659123058414'))
+                self.db_cursor.execute('UPDATE sold_online_status SET upc = ? WHERE upc = ?', ('634457537019','602547762986'))
+                self.db.commit()
+                #self.db_cursor.execute('UPDATE online_inventory SET format = ? WHERE format = ?', ('LP Vinyl', 'LP'))
+                #self.db.commit()
+                #self.db_cursor.execute('UPDATE online_inventory SET shopify_desc = ?', ('',))
+                #self.db.commit()
+                #self.db_cursor.execute('UPDATE online_inventory SET genre = ? WHERE genre = ?', ('Pop / Rock', 'Pop/Rock'))
+                #self.db.commit()
+                #self.db_cursor.execute('UPDATE pre_order_inventory SET format = ?', ('LP Vinyl',))
                 #self.db.commit()
                 #list_of_stuff_to_update = []
                 #for row in self.db_cursor.execute('SELECT * from sold_inventory WHERE distributor = ?', ('Looney T Birds',)):
@@ -56,8 +71,12 @@ class Util():
                 #        self.db_cursor.execute('UPDATE sold_inventory SET distributor = ? WHERE id = ?', (row))
                 #self.db.commit()
                 #FUCKFUCK
-		self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (60674,))
-		self.db.commit()
+                #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions'):
+                #        print row
+                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,73))
+                #self.db.commit()
+                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (60674,))
+		#self.db.commit()
 		#FIXING ALABAMA SHAKES UPC
 		#old_upc = '710882226718'
 		#new_upc = '880882226718'
@@ -372,6 +391,7 @@ class Util():
 		other_misc_net = 0
 		total_tax_paid = 0
                 total_gift_cards_redeemed = 0
+                total_shipping = 0
 		for date_ in list_of_dates:
 			separate = date_.isoformat().split('-')
 			returned_stats = self.summary_by_day(separate[0], separate[1], separate[2])
@@ -385,6 +405,7 @@ class Util():
 			other_misc_net += returned_stats[7]
 			total_tax_paid += returned_stats[8]
                         total_gift_cards_redeemed += returned_stats[12]
+                        total_shipping += returned_stats[13]
 
 
 		print '-'*50
@@ -408,6 +429,7 @@ class Util():
 		print '\t\t\tOther Misc. Net Income: %s' % str(other_misc_net)
 		print '\tTotal Tax Paid: %s' % str(total_tax_paid)
 		#print '\tThese two numbers should be close: (%s, %s)' % (str(total_gross_with_tax),str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross+total_tax_paid))
+                print '\tTotal Shipping: %s' % str(total_shipping)
 		print '\n'
 		print '-'*50
 
@@ -455,6 +477,7 @@ class Util():
 		desired_date = datetime.date(int(year), int(month), int(day))
                 total_gift_cards = 0
 		number_of_transactions = 0
+                shipping = 0
 		#build a list of crap to iterate over first because doing nested cursors hurts sqlite3
 		db_results = []
 		for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
@@ -503,10 +526,12 @@ class Util():
 				total_tax_paid += (row[TRANS_TAX_INDEX])
 				total_gross_with_tax += row[TRANS_TOTAL_INDEX]
                                 split_sentence = row[TRANS_RESERVED_ONE_INDEX].split()
+                                shipping += row[TRANS_SHIPPING_INDEX]
                                 if len(split_sentence) > 1:
-                                        total_gift_cards += (float(split_sentence[4][:-1]) - float(split_sentence[22][:-1]))
+                                        if 'shopify' not in split_sentence:
+                                                total_gift_cards += (float(split_sentence[4][:-1]) - float(split_sentence[22][:-1]))
 
-		stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty, number_of_transactions, total_gift_cards]
+		stats_to_return = [new_vinyl_gross, used_vinyl_gross, new_vinyl_net, used_vinyl_net, clothing_misc_gross, clothing_misc_net, other_misc_gross, other_misc_net, total_tax_paid, new_vinyl_qty, used_vinyl_qty, number_of_transactions, total_gift_cards, shipping]
 
 		print '\nDate: %s-%s-%s' % (str(year),str(month),str(day))
 		print '\tTotal Gross Income(including gift cards): %s' % str(new_vinyl_gross + used_vinyl_gross + clothing_misc_gross + other_misc_gross)
