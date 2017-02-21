@@ -89,8 +89,8 @@ class Ui_Pending_Dialog(QtGui.QDialog):
     def fill_in_table(self):
         self.pending_table_widget.setRowCount(len(self.pre_order_list))
         for ix, row in enumerate(self.pre_order_list):
-            self.change_text(ix, 0, str(row[0]))
-            self.change_text(ix, 1, str(row[1]))
+            self.change_text(ix, 0, str(self.filter_unprintable(row[0])))
+            self.change_text(ix, 1, str(self.filter_unprintable(row[1])))
             self.change_text(ix, 2, str(row[2]))
             self.change_text(ix, 3, str(row[3]))
             self.change_text(ix, 4, str(row[4]))

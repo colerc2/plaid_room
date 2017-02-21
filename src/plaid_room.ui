@@ -20074,7 +20074,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="website_pre_order_input_tab">
       <attribute name="title">
@@ -23368,7 +23368,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1871</width>
+         <width>2000</width>
          <height>951</height>
         </rect>
        </property>
@@ -28311,7 +28311,7 @@ Date Sold</string>
              <number>10</number>
             </property>
             <property name="maximum">
-             <number>99</number>
+             <number>999</number>
             </property>
             <property name="singleStep">
              <number>10</number>

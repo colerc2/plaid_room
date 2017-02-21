@@ -11649,7 +11649,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_order_history_num_displayed = QtGui.QSpinBox(self.layoutWidget22)
         self.website_order_history_num_displayed.setCorrectionMode(QtGui.QAbstractSpinBox.CorrectToNearestValue)
         self.website_order_history_num_displayed.setMinimum(10)
-        self.website_order_history_num_displayed.setMaximum(99)
+        self.website_order_history_num_displayed.setMaximum(999)
         self.website_order_history_num_displayed.setSingleStep(10)
         self.website_order_history_num_displayed.setProperty("value", 50)
         self.website_order_history_num_displayed.setObjectName(_fromUtf8("website_order_history_num_displayed"))
@@ -19961,8 +19961,11 @@ class Ui_Form(QtGui.QWidget):
 
             #add in some temp code for Black friday
             #for ix, row in enumerate(self.tab_four_checkout_table_list):
-                #if row[NEW_USED_INDEX] == 'Used':
-                #    self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 20
+            #    if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
+            #        if row[NEW_USED_INDEX] == 'Used':
+            #            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 20
+            #        elif row[NEW_USED_INDEX] == 'New':
+            #            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 10
             for ix, row in enumerate(self.tab_four_checkout_table_list):
                 self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
                 self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
@@ -20745,9 +20748,13 @@ class Ui_Form(QtGui.QWidget):
             print 'query is BLANNNKKKK'
             self.tab_seven_search_sold_table_list = []
             for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
+                #if row[UPC_INDEX] == '045778665815':
+                #    print 'We here'
                 #check state
                 if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
                     continue
+                #if row[UPC_INDEX] == '045778665815':
+                #    print 'We here, distro is %s, after check state' % row[DI 
                 #check distributor
                 if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
                     dist = self.tab_seven_search_sold_dist_combo_box.currentText()
@@ -23051,7 +23058,25 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_QOH] = self.xint(row[5])
                 db_item[ONLINE_FORMAT] = 'LP Vinyl'
                 db_item[ONLINE_LABEL] = self.xstr(row[7])
-                db_item[ONLINE_GENRE] = self.xstr(row[8])
+                #db_item[ONLINE_GENRE] = self.xstr(row[8])
+                genre = self.xstr(row[8])
+                if 'Rock' in genre:
+                    genre = 'Pop / Rock'
+                elif 'Pop' in genre:
+                    genre = 'Pop / Rock'
+                elif 'Funk' in genre:
+                    genre = 'Funk / Soul'
+                elif 'Blues' in genre:
+                    genre = 'Blues'
+                elif 'Hip Hop' in genre:
+                    genre = 'Hip Hop'
+                elif 'Jazz' in genre:
+                    genre = 'Jazz'
+                elif 'Reggae' in genre:
+                    genre = 'Reggae'
+                elif 'Stage' in genre:
+                    genre = 'Soundtracks'
+                db_item[ONLINE_GENRE] = genre
                 db_item[ONLINE_DATE_ADDED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
                 db_item[ONLINE_DATE_MODIFIED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 db_item[ONLINE_NOTES] = row[11]#keep format in the notes so tags (like BF and RSD) are searchable)
@@ -23496,7 +23521,7 @@ class Ui_Form(QtGui.QWidget):
                     db_item[SOLD_NOTES_INDEX] = 'shopify_catalog Sold online, shopify transaction %s' % shopify_id
                     db_item[REORDER_STATE_INDEX] = NEEDS_REORDERED
                     db_item[TRANSACTION_ID_INDEX] = 0
-                    db_item[RESERVED_THREE_INDEX] = db_row[DISTRIBUTOR_INDEX]
+                    db_item[RESERVED_ONE_INDEX] = db_row[DISTRIBUTOR_INDEX]
                     if qoh[upc] > 1:
                         db_item[RESERVED_TWO_INDEX] = self.xstr(NEEDS_PUT_OUT)
                     id_to_delete = db_row[ID_INDEX]
@@ -24023,7 +24048,7 @@ class Ui_Form(QtGui.QWidget):
             self.website_order_history_results_table_change_text(ix, 5, self.xstr(row[ONLINE_SS_ARTIST]))
             self.website_order_history_results_table_change_text(ix, 6, self.xstr(row[ONLINE_SS_TITLE]))
             self.website_order_history_results_table_change_text(ix, 7, self.xstr(row[ONLINE_SS_PRICE]))
-            self.website_order_history_results_table_change_text(ix, 8, self.xstr(row[ONLINE_SS_NAME]))
+            self.website_order_history_results_table_change_text(ix, 8, self.xstr(self.filter_unprintable(row[ONLINE_SS_NAME])))
             self.website_order_history_results_table_change_text(ix, 9, self.xstr(row[ONLINE_SS_SHIPPING_METHOD]))
             self.website_order_history_results_table_change_text(ix, 10, self.xstr(row[ONLINE_SS_DATE_SOLD]))
             self.website_order_history_results_table_change_text(ix, 11, self.xstr(row[ONLINE_SS_DISTRO]))

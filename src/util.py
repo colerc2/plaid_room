@@ -50,10 +50,10 @@ class Util():
                 #for row in list_of_stuff_to_update:
                 #        self.db_cursor.execute('UPDATE sold_inventory SET date_sold = ? WHERE id = ?', (row))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (57821,))
+                #self.db_cursor.execute('DELETE FROM inventory WHERE upc = ?', ('PLAID074080',))
 		#self.db.commit()
-                self.db_cursor.execute('UPDATE sold_online_status SET upc = ? WHERE upc = ?', ('634457537019','602547762986'))
-                self.db.commit()
+                #self.db_cursor.execute('UPDATE sold_online_status SET upc = ? WHERE upc = ?', ('634457537019','602547762986'))
+                #self.db.commit()
                 #self.db_cursor.execute('UPDATE online_inventory SET format = ? WHERE format = ?', ('LP Vinyl', 'LP'))
                 #self.db.commit()
                 #self.db_cursor.execute('UPDATE online_inventory SET shopify_desc = ?', ('',))
@@ -73,39 +73,50 @@ class Util():
                 #FUCKFUCK
                 #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions'):
                 #        print row
-                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,73))
+                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', (60674,))
+                #self.db_cursor.execute('DELETE FROM inventory WHERE upc = ?', ('PLAID075557',))
 		#self.db.commit()
 		#FIXING ALABAMA SHAKES UPC
 		#old_upc = '710882226718'
 		#new_upc = '880882226718'
-                #self.db_cursor.execute('UPDATE inventory SET taxable = ? WHERE taxable = ?', (1,-1))
+                #self.db_cursor.execute('UPDATE inventory SET taxable = ? WHERE taxable = ?', (1,0))
                 #self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET upc = ? WHERE upc = ?', (new_upc,old_upc))
 		#self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
 		#self.db.commit()
 		#checking our double game
-		#current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/up_top').read().splitlines()
+		#current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/inventory_01_18_17').read().splitlines()
 		#temp_inventory = list()
 		#for item in current_inventory:
-		#	 temp_inventory.append(item.strip())
+                #        temp_inventory.append(item.strip())
 		#current_inventory = temp_inventory
 		#print current_inventory
 		#print current_inventory --------------------
+                #count = 0
 		#for row in self.db_cursor.execute('SELECT * from inventory'):
-		#	 if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
+                #	 if 'PLAID' not in row[UPC_INDEX] and 'PRR' not in row[UPC_INDEX]:
 		#		 if row[NEW_USED_INDEX] == 'New':
 		#			 if str(row[UPC_INDEX]) not in current_inventory:
 		#				 placeholder = 0
-		#				 print '%s ; %s ; %s ; %s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                #                                 count += 1
+		#				 print '%i ; %s ; %s ; %s ; %s' % (count, row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
 		#total = 0
 		#for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
 		#	 total += float(row[PRICE_PAID_INDEX])
 			#	print '%s\t%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0), str(row[DISCOGS_RELEASE_NUMBER_
 		#print total
-
+                list_of_updates = []
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ?', (NEEDS_REORDERED,)):
+                        if 'shopify' in row[SOLD_NOTES_INDEX]:
+                                if row[RESERVED_ONE_INDEX] == '':
+                                        print '%s - %s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX], row[RESERVED_ONE_INDEX])
+                                        list_of_updates.append((row[DISTRIBUTOR_INDEX],row[NEW_ID_INDEX]))
+                print list_of_updates
+                for row in list_of_updates:
+                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (row))
+                self.db.commit()
 		#pricing some distro to a percentage of selling price
 		#list_of_stuff_to_update = []
 		#for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Tom Luce 2',)):
@@ -172,7 +183,11 @@ class Util():
         def soundscan(self, list_of_dates):
                 upcs = dict()
                 db_results = []
+                online_results = []
+                pre_upcs = set()
                 print list_of_dates
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_online_status')):
+                        online_results.append(row)
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory WHERE new_used = ? ORDER BY date_sold DESC', ('New',))):
                         db_results.append(row)
                 for date_ in list_of_dates:
@@ -187,6 +202,22 @@ class Util():
                                                         upcs[row[UPC_INDEX]] += 1
                                                 else:
                                                         upcs[row[UPC_INDEX]] = 1
+                        for ix, row in enumerate(online_results):
+                                #for this batch, it doesn't matter when they sold, it just matters when the street date is
+                                try:
+                                        date_pre_ordered = (datetime.datetime.strptime(str(row[ONLINE_SS_STREET_DATE]), "%Y-%m-%d")).date()
+                                        if date_pre_ordered == desired_date:
+                                                pre_upcs.add(row[ONLINE_SS_UPC])
+                                except Exception as e:
+                                        print 'no pre-order date'
+                for pre_upc in pre_upcs:
+                        qty_sold = 0
+                        for ix, row in enumerate(db_results):
+                                if row[UPC_INDEX] == pre_upc:
+                                        qty_sold += 1
+                        if qty_sold > 0:
+                                if pre_upc.isdigit():
+                                        upcs[pre_upc] = qty_sold
                 #print header
                 separate = list_of_dates[0].isoformat().split('-')
                 print '92090000746%s' % (list_of_dates[0].strftime("%y%m%d"))
