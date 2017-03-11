@@ -52,7 +52,14 @@ class ShopifyInterface():
                 for line in order.line_items:
                     qty += int(line.quantity)
                 #print '%s - %s items' % (order.name,str(qty))
-                to_append = [order.id, order.processed_at, qty, order.total_price, order.shipping_lines[0].attributes["title"],0]
+                print order
+                print order.shipping_lines
+                ship_temp = ''
+                if len(order.shipping_lines) == 0:
+                    ship_temp = 'ERROR'
+                else:
+                    ship_temp = order.shipping_lines[0].attributes["title"]
+                to_append = [order.id, order.processed_at, qty, order.total_price, ship_temp, 0]
                 orders_to_return.append(to_append)
                 #print order.attributes
                 #print order
