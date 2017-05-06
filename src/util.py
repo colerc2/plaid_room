@@ -30,16 +30,49 @@ class Util():
 
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
+                #print stuff to cull new
+                #qty_sold = dict()
+                #for row in self.db_cursor.execute('SELECT * from sold_inventory'):
+                #        if row[UPC_INDEX] in qty_sold:
+                #                qty_sold[row[UPC_INDEX]] += 1
+                #        else:
+                #                qty_sold[row[UPC_INDEX]] = 1
+                #qoh = dict()
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ?', ('New',)):
+                #        if row[UPC_INDEX] in qoh:
+                #                qoh[row[UPC_INDEX]] += 1
+                #        else:
+                #                qoh[row[UPC_INDEX]] = 1
+                #already_done = set()
+                #for row in self.db_cursor.execute('SELECT * FROM inventory WHERE new_used = ?', ('New',)):
+                #        qoh_ = 0
+                #        if row[UPC_INDEX] in already_done:
+                #                continue
+                #        if row[UPC_INDEX] in qoh:
+                #                qoh_ = qoh[row[UPC_INDEX]]
+                #        sold = 0
+                #        if row[UPC_INDEX] in qty_sold:
+                #                sold = qty_sold[row[UPC_INDEX]]
+                #        print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],qoh_,sold,row[DATE_ADDED_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX])
+                #        already_done.add(row[UPC_INDEX])
+                
                 list_of_stuff_to_update = []
-                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                #        if 'BF2016' in row[FORMAT_INDEX]:
-                #                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
-                #for row in list_of_stuff_to_update:
-                #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?', (row))
-                #self.db.commit()
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                        if 'RSD2017' in row[FORMAT_INDEX]:
+                #        if '075992125703' in row[UPC_INDEX]:
+                                #list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
+                                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
+                                print '%s - %s - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[UPC_INDEX])
+                for row in list_of_stuff_to_update:
+                        #self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', (row))
+                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?', (row))
+                self.db.commit()
 		#placeholder = 0
                 #total = 0
                 #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * from sold_inventory'):
+                #        if 'RSD2017' in row[FORMAT_INDEX]:
+                #                list_of_stuff_to_update.append((
                 #for row in self.db_cursor.execute('SELECT * from sold_inventory'):
                 #        if 'sundaypowerout' in row[SOLD_NOTES_INDEX]:
                 #                list_of_stuff_to_update.append(('2016-07-30 12:00:00', row[NEW_ID_INDEX]))
@@ -50,7 +83,7 @@ class Util():
                 #for row in list_of_stuff_to_update:
                 #        self.db_cursor.execute('UPDATE sold_inventory SET date_sold = ? WHERE id = ?', (row))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE upc = ?', ('PLAID074080',))
+                #self.db_cursor.execute('DELETE FROM sold_inventory WHERE upc = ?', ('PLAID080658',))
 		#self.db.commit()
                 #self.db_cursor.execute('UPDATE sold_online_status SET upc = ? WHERE upc = ?', ('634457537019','602547762986'))
                 #self.db.commit()
@@ -75,9 +108,11 @@ class Util():
                 #        print row
                 #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE upc = ?', ('PLAID075557',))
+                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('86828',))
 		#self.db.commit()
-		#FIXING ALABAMA SHAKES UPC
+                #self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', ('67236',))
+                #elf.db.commit()
+                #FIXING ALABAMA SHAKES UPC
 		#old_upc = '710882226718'
 		#new_upc = '880882226718'
                 #self.db_cursor.execute('UPDATE inventory SET taxable = ? WHERE taxable = ?', (1,0))
@@ -102,21 +137,23 @@ class Util():
 		#				 placeholder = 0
                 #                                 count += 1
 		#				 print '%i ; %s ; %s ; %s ; %s' % (count, row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[FORMAT_INDEX])
+                #self.db_cursor.execute('UPDATE inventory SET price_paid = ? WHERE id = ?', ('7.5', '80658'))
+                #self.db.commit()
 		#total = 0
 		#for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Phil',)):
 		#	 total += float(row[PRICE_PAID_INDEX])
 			#	print '%s\t%s\t%s\t%s' % (row[ARTIST_INDEX], row[TITLE_INDEX], str(row[PRICE_INDEX]/2.0), str(row[DISCOGS_RELEASE_NUMBER_
 		#print total
-                list_of_updates = []
-                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ?', (NEEDS_REORDERED,)):
-                        if 'shopify' in row[SOLD_NOTES_INDEX]:
-                                if row[RESERVED_ONE_INDEX] == '':
-                                        print '%s - %s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX], row[RESERVED_ONE_INDEX])
-                                        list_of_updates.append((row[DISTRIBUTOR_INDEX],row[NEW_ID_INDEX]))
-                print list_of_updates
-                for row in list_of_updates:
-                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (row))
-                self.db.commit()
+                #list_of_updates = []
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ?', (NEEDS_REORDERED,)):
+                #        if 'shopify' in row[SOLD_NOTES_INDEX]:
+                #                if row[RESERVED_ONE_INDEX] == '':
+                #                        print '%s - %s - %s' % (row[ARTIST_INDEX],row[TITLE_INDEX], row[RESERVED_ONE_INDEX])
+                #                        list_of_updates.append((row[DISTRIBUTOR_INDEX],row[NEW_ID_INDEX]))
+                #print list_of_updates
+                #for row in list_of_updates:
+                #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_one = ? WHERE id = ?', (row))
+                #self.db.commit()
 		#pricing some distro to a percentage of selling price
 		#list_of_stuff_to_update = []
 		#for row in self.db_cursor.execute('SELECT * FROM inventory WHERE distributor = ?', ('Tom Luce 2',)):
@@ -676,8 +713,11 @@ class Util():
 			if time_put_in < at_moment:
 				specified_db.append(list(row))
 		for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                        #print row
 			if len(specified_db)%100 == 0:
-				print '%d - sold' % len(specified_db)
+                                shit = 0
+                                #print '%d - sold' % len(specified_db)
+                        #print row[DATE_ADDED_INDEX]
 			time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
 			time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
 			if ((at_moment > time_put_in) and (at_moment < time_sold)):

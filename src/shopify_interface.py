@@ -144,8 +144,8 @@ class ShopifyInterface():
                 #street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
                 #street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
                 new_product.title = "<b>%s </b><br><i>%s</i>" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
-                if 'BF2016' in row[ONLINE_SHOPIFY_TAGS]:
-                    new_product.product_type = "BF2016"#default for now, might change later
+                if 'RSD2017' in row[ONLINE_SHOPIFY_TAGS]:
+                    new_product.product_type = "RSD2017"#default for now, might change later
                 else:
                     new_product.product_type = "LP"#default for now, might change later
                 #build tags
@@ -180,6 +180,18 @@ class ShopifyInterface():
                 v.sku = row[ONLINE_UPC]
                 v.inventory_management = 'shopify'
                 v.inventory_policy = 'deny'
+                if row[ONLINE_UPC] == '889854196219':
+                    v.weight = 17
+                    v.weight_unit = 'oz'
+                elif row[ONLINE_UPC] == '659123080019':
+                    v.weight = '34'
+                    v.weight_unit = 'oz'
+                elif row[ONLINE_UPC] == '081227941000':
+                    v.weight = 17
+                    v.weight_unit = 'oz'
+                else:
+                    v.weight = 500
+                    v.weight_unit = 'lb'
                 v.inventory_quantity = row[ONLINE_QOH]
                 v.product_id = new_product.id
                 new_product.variants = [v]
@@ -198,8 +210,8 @@ class ShopifyInterface():
             try:
                 product = shopify.Product.find(row[ONLINE_SHOPIFY_ID])
                 product.title = "<b>%s </b><br><i>%s</i>" % (row[PRE_ARTIST], row[PRE_TITLE])
-                if 'BF2016' in row[ONLINE_SHOPIFY_TAGS]:
-                    product.product_type = "BF2016"#default for now, might change later
+                if 'RSD2017' in row[ONLINE_SHOPIFY_TAGS]:
+                    product.product_type = "RSD2017"#default for now, might change later
                 else:
                     product.product_type = "LP"#default for now, might change later
                 product.tags = row[ONLINE_SHOPIFY_TAGS]
@@ -236,6 +248,18 @@ class ShopifyInterface():
                 v.sku = row[ONLINE_UPC]
                 v.inventory_management = 'shopify'
                 v.inventory_policy = 'deny'
+                if row[ONLINE_UPC] == '889854196219':
+                    v.weight = 17
+                    v.weight_unit = 'oz'
+                elif row[ONLINE_UPC] == '659123080019':
+                    v.weight = '34'
+                    v.weight_unit = 'oz'
+                elif row[ONLINE_UPC] == '081227941000':
+                    v.weight = 17
+                    v.weight_unit = 'oz'
+                else:
+                    v.weight = 500
+                    v.weight_unit = 'lb'
                 v.inventory_quantity = row[ONLINE_QOH]
                 v.product_id = product.id
                 #new_product.variants = [v]

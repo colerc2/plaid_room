@@ -10601,7 +10601,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_spin_box = QtGui.QSpinBox(self.layoutWidget_9)
         self.website_catalog_active_spin_box.setCorrectionMode(QtGui.QAbstractSpinBox.CorrectToNearestValue)
         self.website_catalog_active_spin_box.setMinimum(10)
-        self.website_catalog_active_spin_box.setMaximum(1000)
+        self.website_catalog_active_spin_box.setMaximum(5000)
         self.website_catalog_active_spin_box.setSingleStep(10)
         self.website_catalog_active_spin_box.setProperty("value", 50)
         self.website_catalog_active_spin_box.setObjectName(_fromUtf8("website_catalog_active_spin_box"))
@@ -17983,6 +17983,9 @@ class Ui_Form(QtGui.QWidget):
         self.tab_six_reset_button.clicked.connect(self.tab_six_results_table_reset)
 
         #tab seven
+        #add current and historical items pricing data
+        self.catalogs.add_current_db(self.db)
+        #views
         self.tab_seven_search_sold_table_reset()
         self.tab_seven_po_table_reset()
         self.tab_seven_done_table_reset()
@@ -18411,18 +18414,36 @@ class Ui_Form(QtGui.QWidget):
                 formats.append(row[FORMAT_INDEX])
         #TEMP CODE FOR RSD
         #read in csv
-        file_name  = BASE_PATH + 'plaid_room/config/rsd.csv'
+        file_name  = BASE_PATH + 'plaid_room/config/rsd_2017.csv'
         with open(file_name, 'rb') as f:
             data = [row for row in csv.reader(f.read().splitlines())]
         for title in data:
-            if search_query in title[0]:
+            if (search_query in title[0]) or (title[0] in search_query):
             #if title[0] == search_query:
                 answers = [''] * 23
                 answers[UPC_INDEX] = search_query
                 answers[ARTIST_INDEX] = string.capwords(title[1])
                 answers[TITLE_INDEX] = string.capwords(title[2])
-                answers[FORMAT_INDEX] = '1xVinyl, LP, Album, BF2016'
+                if '2 x LP' in title[4]:
+                    answers[FORMAT_INDEX] = '2xVinyl, LP, Album, RSD2017'
+                elif '3 x LP' in title[4]:
+                    answers[FORMAT_INDEX] = '3xVinyl, LP, Album, RSD2017'
+                elif 'LP' in title[4]:
+                    answers[FORMAT_INDEX] = '1xVinyl, LP, Album, RSD2017'
+                elif 'Box' in title[4]:
+                    answers[FORMAT_INDEX] = '1xBox, LP, Album, RSD2017'
+                elif '10\"' in title[4]:
+                    answers[FORMAT_INDEX] = '1xVinyl, 10\", RSD2017'
+                elif '12\"' in title[4]:
+                    answers[FORMAT_INDEX] = '1xVinyl, 12\", RSD2017'
+                elif '7\"' in title[4]:
+                    answers[FORMAT_INDEX] = '1xVinyl, 7\", RSD2017'
+                else:
+                    answers[FORMAT_INDEX] = '1xVinyl, RSD2017'
+                #answers[FORMAT_INDEX] = '1xVinyl, LP, Album, BF2016'
+                answers[LABEL_INDEX] = string.capwords(title[3])
                 answers[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
+                answers[PRICE_INDEX] = string.capwords(title[5])
                 answers[TAXABLE_INDEX] = 1
                 self.tab_one_results_table_list.append(answers)
                 self.tab_one_results_table_list_tracker.append([True,answers])
@@ -18865,8 +18886,8 @@ class Ui_Form(QtGui.QWidget):
         how_much_paid = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
-            #print row
-            #print row[PRICE_INDEX]
+            print row
+            print row[PRICE_INDEX]
             how_much = how_much + row[PRICE_INDEX]
             how_much_paid = how_much_paid + row[PRICE_PAID_INDEX]
         self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s / %s)' % (str(how_many), locale.currency(how_much), locale.currency(how_much_paid)))
@@ -19960,12 +19981,12 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_generate_taxable_buttons()
 
             #add in some temp code for Black friday
-            #for ix, row in enumerate(self.tab_four_checkout_table_list):
-            #    if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
-            #        if row[NEW_USED_INDEX] == 'Used':
-            #            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 20
-            #        elif row[NEW_USED_INDEX] == 'New':
-            #            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 10
+            for ix, row in enumerate(self.tab_four_checkout_table_list):
+                if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
+                    if row[NEW_USED_INDEX] == 'Used':
+                        id_index = row[ID_INDEX]
+                        if int(id_index) < 85578:
+                            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 40
             for ix, row in enumerate(self.tab_four_checkout_table_list):
                 self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
                 self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
@@ -20270,6 +20291,7 @@ class Ui_Form(QtGui.QWidget):
         gross = 0
         net = 0
         for item in self.tab_five_results_table_2_list:
+            print item
             gross += item[SOLD_FOR_INDEX]
             net += (item[SOLD_FOR_INDEX]-item[PRICE_PAID_INDEX])
         self.tab_five_gross_label.setText(str(locale.currency(gross) + ' Gross'))
@@ -20747,32 +20769,42 @@ class Ui_Form(QtGui.QWidget):
         else:
             print 'query is BLANNNKKKK'
             self.tab_seven_search_sold_table_list = []
-            for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC'):
-                #if row[UPC_INDEX] == '045778665815':
-                #    print 'We here'
-                #check state
-                if row[REORDER_STATE_INDEX] != NEEDS_REORDERED:
-                    continue
-                #if row[UPC_INDEX] == '045778665815':
-                #    print 'We here, distro is %s, after check state' % row[DI 
-                #check distributor
-                if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
-                    dist = self.tab_seven_search_sold_dist_combo_box.currentText()
-                    dist = str(dist.split('-')[0]).strip()
-                    if dist != row[RESERVED_ONE_INDEX]:
-                        continue
-                #check date ranges specified
-                if self.tab_seven_search_sold_filter_date_checkbox.isChecked():
-                    compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
-                    start = self.tab_seven_search_sold_start_date.date().toPyDate()
-                    end = self.tab_seven_search_sold_end_date.date().toPyDate()
-                    range_delta = end - start
-                    compare_delta = end - compare
-                    zero_days = start - start
-                    if (compare_delta < zero_days) or (compare_delta > range_delta):
-                        #out of range
-                        continue
-                self.tab_seven_search_sold_table_list.append(list(row))
+            #save these variables locally before the for loop to avoid excess calls
+            check_distributor = self.tab_seven_search_sold_filter_dist_checkbox.isChecked()
+            check_date_ranges = self.tab_seven_search_sold_filter_date_checkbox.isChecked()
+            #get some more data for the query, tryna speed this ish up
+            if check_distributor and not check_date_ranges:#this special piece is made for making orders "faster"
+                print 'QUERY IS BLANK, DISTRO IS CHECKED, NO DATE RANGE SELECTED, SPEED MODE ENGAGEEEEE!'
+                a = datetime.datetime.now()
+                dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                dist = str(dist.split('-')[0]).strip()
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? AND reserved_one = ? ORDER BY date_sold DESC', (NEEDS_REORDERED, dist)):
+                    self.tab_seven_search_sold_table_list.append(list(row))
+                b = datetime.datetime.now()
+                c = b - a
+                print 'DONE - Time: %s ms' % (str(c.microseconds/1000)) 
+            else:
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? ORDER BY date_sold DESC', (NEEDS_REORDERED,)):
+                    #check distributor
+                    #if self.tab_seven_search_sold_filter_dist_checkbox.isChecked():
+                    if check_distributor:
+                        dist = self.tab_seven_search_sold_dist_combo_box.currentText()
+                        dist = str(dist.split('-')[0]).strip()
+                        if dist != row[RESERVED_ONE_INDEX]:
+                            continue
+                    #check date ranges specified
+                    #if self.tab_seven_search_sold_filter_date_checkbox.isChecked():
+                    if check_date_ranges:
+                        compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
+                        start = self.tab_seven_search_sold_start_date.date().toPyDate()
+                        end = self.tab_seven_search_sold_end_date.date().toPyDate()
+                        range_delta = end - start
+                        compare_delta = end - compare
+                        zero_days = start - start
+                        if (compare_delta < zero_days) or (compare_delta > range_delta):
+                            #out of range
+                            continue
+                    self.tab_seven_search_sold_table_list.append(list(row))
         #update UI
         #self.tab_seven_refresh()
 
@@ -20899,29 +20931,41 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_seven_po_table_list_filtered.append(row)
         
     def tab_seven_get_list_of_distros_and_prices(self, row):
+        start = datetime.datetime.now()
         list_of_distros = dict()
         #first add the one we got it from
         list_of_distros[row[DISTRIBUTOR_INDEX]] =  row[PRICE_PAID_INDEX]
-        for item in self.catalogs.get_catalog():
-            #if item[1] == row[UPC_INDEX]:
-            if row[UPC_INDEX] in item[1]:
-                list_of_distros[item[0]] = item[2]
-        for db_row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (row[UPC_INDEX],)):
-            if db_row[DISTRIBUTOR_INDEX] == 'Used':
-                continue
-            list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
-        for db_row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (row[UPC_INDEX],)):
-            if db_row[DISTRIBUTOR_INDEX] == 'Used':
-                continue
-            list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
+        catalog_dict = self.catalogs.get_catalog_dict()
+        upc = row[UPC_INDEX]
+        if upc in catalog_dict:
+            for item in catalog_dict[upc]:
+                list_of_distros[item] = catalog_dict[upc][item]
+        #for item in self.catalogs.get_catalog():
+        #    if row[UPC_INDEX] in item[1]:
+        #        list_of_distros[item[0]] = item[2]
+        #for db_row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ? AND new_used = ?', (row[UPC_INDEX],'New')):
+        #    list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
+        #for db_row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ? AND new_used = ?', (row[UPC_INDEX],'New')):
+        #    list_of_distros[db_row[DISTRIBUTOR_INDEX]] = db_row[PRICE_PAID_INDEX]
+
+        end = datetime.datetime.now()
+        diff = end-start
+        print diff.total_seconds()
+        
         return list_of_distros
             
     def tab_seven_refresh(self, hard_search=False, top_table_refresh=True, bottom_table_refresh=True):
+        start = datetime.datetime.now()
+        a = datetime.datetime.now()
         #clear tables
         self.tab_seven_search_sold_table_clear()
         self.tab_seven_po_table_clear()
         self.tab_seven_done_table_clear()
+        b = datetime.datetime.now()
+        diff = b-a
+        print 'refresh - clear tables time %s ms' % (str(diff.microseconds/1000))
         #perform search
+        c = datetime.datetime.now()
         if top_table_refresh:
             self.tab_seven_search(hard_search)
         else:
@@ -20930,6 +20974,10 @@ class Ui_Form(QtGui.QWidget):
             self.tab_seven_done_table_search(hard_search)
         else:
             print 'skipping bottom table refresh'
+        d = datetime.datetime.now()
+        diff = d - c
+        print 'refresh - search time %s ms' % (str(diff.microseconds/1000))
+        e = datetime.datetime.now()
         #filter distributors
         self.tab_seven_po_table_filter()
         #generate all the buttons
@@ -20938,10 +20986,22 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_table_generate_ignore_buttons()
         self.tab_seven_done_table_generate_more_info_buttons()
         self.tab_seven_done_table_generate_back_buttons()
-
+        f = datetime.datetime.now()
+        diff = f - e
+        print 'refresh - po_table_filter and button generation time %s ms' % (str(diff.microseconds/1000))
+        
         self.tab_seven_distributor_mapper = QtCore.QSignalMapper(self)
         #search sold table
+        g = datetime.datetime.now()
+        qoh = self.get_qoh()
+        qsold = self.get_qsold()
+        h = datetime.datetime.now()
+        diff = h - g
+        print 'refresh - getting qoh and qsold %s ms' % (str(diff.microseconds/1000))
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
+            a = datetime.datetime.now()
+            diff = a - h
+            print 'just getting into this for loop for the %i time, time so far %s ms' % (ix, str(diff.total_seconds()))
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
                 break
             #do stuff to make display better for ordering
@@ -20957,18 +21017,32 @@ class Ui_Form(QtGui.QWidget):
             cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
             num_in_stock = 0
             barcode_query = str(row[UPC_INDEX])
-            for copy in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
-                num_in_stock += 1
-                if self.xfloat(copy[PRICE_PAID_INDEX]) < cheapest_price:
-                    cheapest_distro = copy[DISTRIBUTOR_INDEX]
-                    cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            b = datetime.datetime.now()
+            diff = b - a
+            print 'looping - pt1 %s ms' % (str(diff.microseconds/1000))
+            #for copy in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
+            #    num_in_stock += 1
+            #    if self.xfloat(copy[PRICE_PAID_INDEX]) < cheapest_price:
+            #        cheapest_distro = copy[DISTRIBUTOR_INDEX]
+            #        cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            try:
+                num_in_stock = qoh[barcode_query]
+            except Exception as e:
+                num_in_stock = 0
             #how many have we sold ever?
-            num_sold_ever = 0
-            for num_sold in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (barcode_query,)):
-                num_sold_ever += 1
-                if self.xfloat(num_sold[PRICE_PAID_INDEX]) < cheapest_price:
-                    cheapest_distro = num_sold[DISTRIBUTOR_INDEX]
-                    cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            #num_sold_ever = 0
+            #for num_sold in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (barcode_query,)):
+            #    num_sold_ever += 1
+            #    if self.xfloat(num_sold[PRICE_PAID_INDEX]) < cheapest_price:
+            #        cheapest_distro = num_sold[DISTRIBUTOR_INDEX]
+            #        cheapest_price = self.xfloat(row[PRICE_PAID_INDEX])
+            try:
+                num_sold_ever = qsold[barcode_query]
+            except Exception as e:
+                num_sold_ever = 0
+            c = datetime.datetime.now()
+            diff = c - b
+            print 'looping - pt2 %s ms' % (str(diff.microseconds/1000))
             #work black magic with distributor stuff
             choices = self.tab_seven_get_list_of_distros_and_prices(row)
             list_of_choices = []
@@ -20988,6 +21062,9 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_seven_search_sold_table.setCellWidget(ix,11,combobox)
             else:
                 self.tab_seven_search_sold_table_change_text(ix, 11, cheapest_distro)
+            d = datetime.datetime.now()
+            diff = d - c
+            print 'looping - pt3 %s ms' % (str(diff.microseconds/1000))
 
             self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
             self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
@@ -21016,6 +21093,9 @@ class Ui_Form(QtGui.QWidget):
             if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
                 items_in_history += 1
         self.tab_seven_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
+        e = datetime.datetime.now()
+        diff = e - d
+        print 'looping - pt4 %s ms' % (str(diff.microseconds/1000))
 
         #po table
         self.tab_seven_po_table.setRowCount(len(self.tab_seven_po_table_list_filtered))
@@ -21086,7 +21166,10 @@ class Ui_Form(QtGui.QWidget):
                items_in_history += 1
         self.tab_seven_done_item_history_label.setText('%s Items in History' % str(items_in_history))
         self.tab_seven_done_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_done_table_list)))
-
+        end = datetime.datetime.now()
+        diff = end-start
+        print 'TOTAL TIME: %s' % (str(diff.microseconds/1000))
+        print 'TOTAL TIME: %s' % (str(diff.total_seconds()))
     
     def tab_seven_distributor_mapper_change_request(self, row):
         selection = self.tab_seven_search_sold_table_get_text(row, 11)
@@ -23046,6 +23129,13 @@ class Ui_Form(QtGui.QWidget):
         for ix, row in enumerate(data_to_import):
             db_item = [''] * 24
             try:
+                tag_format = 'LP'
+                if '7\"' in row[11]:
+                    tag_format = '7\"'
+                if '10\"' in row[11]:
+                    tag_format = '10\"'
+                if '12\"' in row[11]:
+                    tag_format = '12\"'
                 db_item[ONLINE_ACTIVE] = 0
                 db_item[ONLINE_SYNC] = 0
                 db_item[ONLINE_UPC] = self.xstr(row[1])
@@ -23057,6 +23147,8 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_DISTRO] = self.xstr(row[6])
                 db_item[ONLINE_QOH] = self.xint(row[5])
                 db_item[ONLINE_FORMAT] = 'LP Vinyl'
+                if 'RSD2017' in row[11]:
+                    db_item[ONLINE_FORMAT] = tag_format + ' Vinyl'
                 db_item[ONLINE_LABEL] = self.xstr(row[7])
                 #db_item[ONLINE_GENRE] = self.xstr(row[8])
                 genre = self.xstr(row[8])
@@ -23076,6 +23168,12 @@ class Ui_Form(QtGui.QWidget):
                     genre = 'Reggae'
                 elif 'Stage' in genre:
                     genre = 'Soundtracks'
+                elif 'Punk' in genre:
+                    genre = 'Punk / Metal'
+                elif 'Metal' in genre:
+                    genre = 'Punk / Metal'
+                else:
+                    genre = 'Pop / Rock'
                 db_item[ONLINE_GENRE] = genre
                 db_item[ONLINE_DATE_ADDED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
                 db_item[ONLINE_DATE_MODIFIED] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -23085,8 +23183,10 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_SHOPIFY_DESC] = ''
                 db_item[ONLINE_SHOPIFY_COLLECTIONS] = 'In Stock' 
                 db_item[ONLINE_SHOPIFY_TAGS] = 'Format_LP'
-                if 'BF2016' in row[11]:
-                    db_item[ONLINE_SHOPIFY_TAGS] += ',BF2016'
+                if 'RSD2017' in row[11]:
+                    db_item[ONLINE_SHOPIFY_TAGS] = 'Format_' + tag_format
+                if 'RSD2017' in row[11]:
+                    db_item[ONLINE_SHOPIFY_TAGS] += ',RSD2017'
                 db_item[ONLINE_RESERVED_ONE] = ''
                 db_item[ONLINE_RESERVED_TWO] = ''
                 db_item[ONLINE_RESERVED_THREE] = ''
@@ -23188,6 +23288,16 @@ class Ui_Form(QtGui.QWidget):
                         
     def website_catalog_active_results_table_search(self, hard_search=False):
         query = self.website_catalog_active_search_qline.text()
+        start = 0
+        stop = 50
+        print query
+        if 'update weights' in query:
+            query_split = query.split(',')
+            for ii in range(int(query_split[1]),int(query_split[2])):
+                self.website_catalog_active_sync_requested(int(ii))
+                time.sleep(1)
+                print ii
+            return
         self.website_catalog_active_results_table_clear()
         self.website_catalog_active_results_table.setRowCount(self.website_catalog_active_spin_box.value())
         self.website_catalog_active_results_table_list = []
@@ -23390,6 +23500,8 @@ class Ui_Form(QtGui.QWidget):
             self.website_catalog_active_results_table.setCellWidget(ii,2,button)
         self.connect(self.website_catalog_active_sync_mapper, QtCore.SIGNAL("mapped(int)"), self.website_catalog_active_sync_requested)
 
+    
+        
     def website_catalog_active_sync_requested(self, row):
         #first, check qoh because this fucking matters a fucking lot
         new_qoh = 0
@@ -23397,6 +23509,8 @@ class Ui_Form(QtGui.QWidget):
             if db_row[UPC_INDEX] == self.website_catalog_active_results_table_list[row][ONLINE_UPC]:
                 new_qoh += 1
         self.website_catalog_active_results_table_list[row][ONLINE_QOH] = new_qoh
+        #print self.website_catalog_active_results_table_list
+        #print db_row
         #this shit is hard, pass off most of the work to shopify
         product = self.shopify_interface.create_or_update_catalog_item(self.website_catalog_active_results_table_list[row])
         #update database on our end where necessary
@@ -24347,7 +24461,15 @@ class Ui_Form(QtGui.QWidget):
         except Exception as e:
             print 'Exception while trying to update qoh on website: %s' % e
                             
-    
+    def get_qsold(self):
+        qsold = dict()
+        for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+            if row[UPC_INDEX] in qsold:
+                qsold[row[UPC_INDEX]] += 1
+            else:
+                qsold[row[UPC_INDEX]] = 1
+        return qsold
+            
     def get_qoh(self):
         qoh = dict()
         for row in self.db_cursor.execute('SELECT * FROM inventory'):
