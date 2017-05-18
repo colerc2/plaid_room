@@ -20,7 +20,8 @@ class MediaMail():
 
         
     def reset_paypal_browser(self):
-        chromedriver = "/Users/plaidroomrecords/Downloads/chromedriver"
+        #chromedriver = "/Users/plaidroomrecords/Downloads/chromedriver"
+        chromedriver = "/usr/local/bin/chromedriver"
         os.environ["webdriver.chrome.driver"] = chromedriver
         if self.driver is not None:
             self.driver.close()

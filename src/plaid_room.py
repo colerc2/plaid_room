@@ -18886,8 +18886,8 @@ class Ui_Form(QtGui.QWidget):
         how_much_paid = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
-            print row
-            print row[PRICE_INDEX]
+            #print row
+            #print row[PRICE_INDEX]
             how_much = how_much + row[PRICE_INDEX]
             how_much_paid = how_much_paid + row[PRICE_PAID_INDEX]
         self.tab_two_num_inventory_label.setText('%s Items In Inventory (%s / %s)' % (str(how_many), locale.currency(how_much), locale.currency(how_much_paid)))

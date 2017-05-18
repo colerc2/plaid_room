@@ -56,17 +56,17 @@ class Util():
                 #        print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],qoh_,sold,row[DATE_ADDED_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX])
                 #        already_done.add(row[UPC_INDEX])
                 
-                list_of_stuff_to_update = []
-                for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                        if 'RSD2017' in row[FORMAT_INDEX]:
+                #list_of_stuff_to_update = []
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
+                #        if 'RSD2017' in row[FORMAT_INDEX]:
                 #        if '075992125703' in row[UPC_INDEX]:
-                                #list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
-                                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
-                                print '%s - %s - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[UPC_INDEX])
-                for row in list_of_stuff_to_update:
+                #                #list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
+                #                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
+                #                print '%s - %s - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[UPC_INDEX])
+                #for row in list_of_stuff_to_update:
                         #self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', (row))
-                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?', (row))
-                self.db.commit()
+                #        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?', (row))
+                #self.db.commit()
 		#placeholder = 0
                 #total = 0
                 #list_of_stuff_to_update = []
@@ -108,8 +108,8 @@ class Util():
                 #        print row
                 #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('86828',))
-		#self.db.commit()
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('88160',))
+		self.db.commit()
                 #self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', ('67236',))
                 #elf.db.commit()
                 #FIXING ALABAMA SHAKES UPC
