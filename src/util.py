@@ -10,6 +10,9 @@ import csv
 import discogs_client
 from discogs_interface import DiscogsClient
 import math
+from colemine_soundscan_shopify import ColemineSoundscan
+import random
+import re
 
 class Util():
 	def __init__(self, primary='real_inventory.db'):
@@ -108,8 +111,8 @@ class Util():
                 #        print row
                 #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
                 #self.db.commit()
-                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('88160',))
-		self.db.commit()
+                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('88160',))
+		#self.db.commit()
                 #self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', ('67236',))
                 #elf.db.commit()
                 #FIXING ALABAMA SHAKES UPC
@@ -121,6 +124,11 @@ class Util():
 		#self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
 		#self.db.commit()
+                carolina_soul = open('/Users/plaidroomrecords/Documents/purchases/carolina_soul_may_2017.csv').read().splitlines()
+                for sku in carolina_soul:
+                        sku_s = sku.strip()
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (sku_s,)):
+                                print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX],row[PRICE_INDEX],row[PRICE_PAID_INDEX],row[DISTRIBUTOR_INDEX],row[DISCOGS_RELEASE_NUMBER_INDEX])
 		#checking our double game
 		#current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/inventory_01_18_17').read().splitlines()
 		#temp_inventory = list()
@@ -217,6 +225,100 @@ class Util():
 
 		placeholder = 0
 
+        def colemine_soundscan(self, list_of_dates):
+                colemine_soundscan = ColemineSoundscan()
+                print 'object initialized, getting ready to crunch numbers'
+                #are there any pre-orders we need to be checking skus for?
+                #read in pre-order file
+                with open(COLEMINE_PRE_ORDER_FILE_NAME, 'rb') as f:
+                        reader = csv.reader(f)
+                        pre_order_list = list(reader)
+                print list_of_dates
+                pre_order_cross_check = []
+                pre_order_cross_check_pre_date = []
+                for title in pre_order_list:
+                        print title[1]
+                        split_date = title[1].split('-')
+                        split_date = datetime.date(int(split_date[0]), int(split_date[1]), int(split_date[2]))
+                        if split_date in list_of_dates:
+                                pre_order_cross_check.append(title[0])
+                        elif split_date > datetime.date.today():
+                                pre_order_cross_check_pre_date.append(title[0])
+                        #also, if the pre order is in the future, 
+                print pre_order_cross_check
+                end_date = list_of_dates[0] + datetime.timedelta(days=1)
+                sold = colemine_soundscan.get_list_of_orders_from_beginning(list_of_dates[-1],end_date, pre_order_cross_check)
+                
+                start_date = list_of_dates[0] - datetime.timedelta(days=180)
+                sold_pre_orders = colemine_soundscan.get_list_of_orders_for_pre_orders(start_date, end_date, pre_order_cross_check)
+                #grab list of zips
+                with open(COLEMINE_ZIP_CODE_FILE, 'rb') as f:
+                        reader = csv.reader(f)
+                        zip_codes = list(reader)
+                #print zip_codes
+                #now that i have a list of all the stuff, i need to format it in the way that makes soundscan happy
+                soundscan_lines = []
+                for order in sold:
+                        #find zip code for this order
+                        zip_code = 0
+                        try:
+                                if order.shipping_address.country_code == 'US':
+                                        zip_ = order.shipping_address.zip[:5]
+                                        if zip_.isdigit() and len(zip_) == 5:
+                                                zip_code = zip_
+                                if zip_code == 0:
+                                        zip_code = zip_codes[int(re.sub("[^0-9]", "", order.name))][0]
+                        except Exception as e:
+                                print 'Exception: %s\n\n\n\n' % e
+                                zip_code = '45140'
+                        for line in order.line_items:
+                                for ii in range(line.quantity):
+                                        if line.sku is not None:
+                                                if len(line.sku) > 11:
+                                                        if line.sku not in pre_order_cross_check:
+                                                                if line.sku not in pre_order_cross_check_pre_date:
+                                                                        soundscan_lines.append('M3%013d%05dS' % (int(line.sku), int(zip_code)))
+                for order in sold_pre_orders:
+                        zip_code = 0
+                        try:
+                                if order.shipping_address.country_code == 'US':
+                                        zip_ = order.shipping_address.zip[:5]
+                                        if zip_.isdigit() and len(zip_) == 5:
+                                                zip_code = zip_
+                                if zip_code == 0:
+                                        zip_code = zip_codes[int(re.sub("[^0-9]", "", order.name))][0]
+                        except Exception as e:
+                                zip_code = '45140'
+                        for line in order.line_items:
+                                for ii in range(int(line.quantity)):
+                                        if line.sku in pre_order_cross_check:
+                                                soundscan_lines.append('M3%013d%05dS' % (int(line.sku), int(zip_code)))
+                #print header
+                separate = list_of_dates[0].isoformat().split('-')
+                print '92090000746%s' % (list_of_dates[0].strftime("%y%m%d"))
+                for line in soundscan_lines:
+                        print line
+                #print footer
+                print '%s%05d%07d' % ('94', int(len(soundscan_lines)), int(len(soundscan_lines)))
+                
+                colemine_soundscan.get_list_of_orders_for_back_dating()
+                #generate pool of zip codes
+                #zip_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/zip_codes.csv', 'w')
+                #random_zips = []
+                #zips = colemine_soundscan.generate_list_of_zips()
+                #random_zips.append(zips)
+                #for ii in zips:
+                #        print ii
+                #        random_zips.append(ii)
+                #for ii in range(100000):
+                #        random_zips.append(random.choice(zips))
+                #random_zips = zips + random_zips
+                #for zip_ in random_zips:
+                #        zip_file.write("%s\n" % zip_)
+
+                
+                
+                        
         def soundscan(self, list_of_dates):
                 upcs = dict()
                 db_results = []
@@ -789,6 +891,7 @@ if __name__ == '__main__':
 			print 'import_alliance - import an alliance order'
 			print 'shit_selling_doubles - self explanatory'
                         print 'soundscan - generate soundscan report'
+                        print 'colemine_soundscan - generate colemine soundscan IMO report'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -845,6 +948,19 @@ if __name__ == '__main__':
 			util.import_csv()
                 elif entered == 'monthly':
                         util.monthly_stats()
+                elif entered == 'colemine_soundscan':
+                        print '\tPlease enter the starting date in the following format: yyyy-mm-dd'
+			start_date = raw_input('plaid-room-util/colemine-soundscan > ')
+			start_date = start_date.split('-')
+			start_date = datetime.date(int(start_date[0]), int(start_date[1]), int(start_date[2]))
+			print '\tPlease enter the ending date in the following format:	 yyyy-mm-dd'
+			end_date = raw_input('plaid-room-util/colemine-soundscan > ')
+			end_date = end_date.split('-')
+			end_date = datetime.date(int(end_date[0]), int(end_date[1]), int(end_date[2]))
+			delta_dates = (end_date - start_date)
+			delta_dates = int(delta_dates.days) + 1
+			date_list = [end_date - datetime.timedelta(days=x) for x in range(0, delta_dates)]
+                        util.colemine_soundscan(date_list)
                 elif entered == 'soundscan':
                         print '\tPlease enter the starting date in the following format: yyyy-mm-dd'
 			start_date = raw_input('plaid-room-util/soundscan > ')

@@ -18288,7 +18288,7 @@ class Ui_Form(QtGui.QWidget):
             self.db_cursor.execute('UPDATE inventory SET upc = ? WHERE id = ?', (code, last_row_id))
             self.db.commit()
         if self.tab_one_print_sticker_check_box.isChecked():
-            self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX]) 
+            self.barcode_printer.print_barcode(code, db_item[ARTIST_INDEX], db_item[TITLE_INDEX], db_item[PRICE_INDEX], db_item[GENRE_INDEX], db_item[NEW_USED_INDEX]) 
 
         #update qoh
         self.upc_qty_change_update_the_site(db_item[UPC_INDEX])
@@ -18467,7 +18467,7 @@ class Ui_Form(QtGui.QWidget):
                         break
                     #only display US releases if necessary (it's the little things man, this is beautiful)
                     if self.tab_one_us_releases_only_checkbox.isChecked():
-                        if result.country != 'US':
+                        if 'US' not in result.country:
                             break
                     
                     temp_row = []
@@ -18524,7 +18524,7 @@ class Ui_Form(QtGui.QWidget):
                         #8 - label
                         temp_row.append(result.labels[0].name)
                         #9 - genre
-                        temp_row.append(", ".join(result.genres))
+                        temp_row.append(", ".join(result.genres) + " >> " + ", ".join(result.styles))
                         #10 - year
                         temp_row.append(str(result.year))
                         #11 - date_added
@@ -18727,7 +18727,7 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_two_reprint_sticker(self):
         row = self.tab_two_results_table_list[self.tab_two_results_table.currentRow()]
-        self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX]) 
+        self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[GENRE_INDEX], row[NEW_USED_INDEX]) 
     
     def tab_two_more_info_requested(self, row):
         if row <= len(self.tab_two_results_table_list):
@@ -18989,7 +18989,7 @@ class Ui_Form(QtGui.QWidget):
 
     def tab_three_reprint_sticker(self):
         row = self.tab_three_results_table_list[self.tab_three_results_table.currentRow()]
-        self.barcode_printer.print_barcode(row[MISC_UPC_INDEX], row[MISC_ITEM_INDEX], row[MISC_DESCRIPTION_INDEX], row[MISC_PRICE_INDEX]) 
+        self.barcode_printer.print_barcode(row[MISC_UPC_INDEX], row[MISC_ITEM_INDEX], row[MISC_DESCRIPTION_INDEX], row[MISC_PRICE_INDEX], row[GENRE_INDEX], row[NEW_USED_INDEX]) 
 
     def tab_three_edit_inventory(self):
         row = self.tab_three_results_table.currentRow()
@@ -19090,7 +19090,7 @@ class Ui_Form(QtGui.QWidget):
                 self.db_cursor.execute('UPDATE misc_inventory SET upc = ? WHERE id = ?', (code, last_row_id))
                 self.db.commit()
         if self.tab_three_print_sticker_checkbox.isChecked():
-            self.barcode_printer.print_barcode(code, db_item[MISC_ITEM_INDEX], db_item[MISC_DESCRIPTION_INDEX], db_item[MISC_PRICE_INDEX]) 
+            self.barcode_printer.print_barcode(code, db_item[MISC_ITEM_INDEX], db_item[MISC_DESCRIPTION_INDEX], db_item[MISC_PRICE_INDEX], db_item[GENRE_INDEX], db_item[NEW_USED_INDEX]) 
 
         self.tab_three_search_inventory()
         
@@ -19981,12 +19981,12 @@ class Ui_Form(QtGui.QWidget):
             self.tab_four_generate_taxable_buttons()
 
             #add in some temp code for Black friday
-            for ix, row in enumerate(self.tab_four_checkout_table_list):
-                if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
-                    if row[NEW_USED_INDEX] == 'Used':
-                        id_index = row[ID_INDEX]
-                        if int(id_index) < 85578:
-                            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 40
+            #for ix, row in enumerate(self.tab_four_checkout_table_list):
+            #    if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
+            #        if row[NEW_USED_INDEX] == 'Used':
+            #            id_index = row[ID_INDEX]
+            #            if int(id_index) < 85578:
+            #                self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 40
             for ix, row in enumerate(self.tab_four_checkout_table_list):
                 self.tab_four_checkout_table_change_text(ix, 2, str(row[UPC_INDEX]))
                 self.tab_four_checkout_table_change_text(ix, 3, str(row[ARTIST_INDEX]))
