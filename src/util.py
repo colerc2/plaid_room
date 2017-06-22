@@ -295,13 +295,13 @@ class Util():
                                                 soundscan_lines.append('M3%013d%05dS' % (int(line.sku), int(zip_code)))
                 #print header
                 separate = list_of_dates[0].isoformat().split('-')
-                print '92090000746%s' % (list_of_dates[0].strftime("%y%m%d"))
+                print '92403001406%s' % (list_of_dates[0].strftime("%y%m%d"))
                 for line in soundscan_lines:
                         print line
                 #print footer
-                print '%s%05d%07d' % ('94', int(len(soundscan_lines)), int(len(soundscan_lines)))
+                print '%s %d %d' % ('94', int(len(soundscan_lines)), int(len(soundscan_lines)))
                 
-                colemine_soundscan.get_list_of_orders_for_back_dating()
+                #colemine_soundscan.get_list_of_orders_for_back_dating()
                 #generate pool of zip codes
                 #zip_file = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/zip_codes.csv', 'w')
                 #random_zips = []

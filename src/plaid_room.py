@@ -18468,7 +18468,7 @@ class Ui_Form(QtGui.QWidget):
                     #only display US releases if necessary (it's the little things man, this is beautiful)
                     if self.tab_one_us_releases_only_checkbox.isChecked():
                         if 'US' not in result.country:
-                            break
+                            continue
                     
                     temp_row = []
                     
@@ -18524,7 +18524,10 @@ class Ui_Form(QtGui.QWidget):
                         #8 - label
                         temp_row.append(result.labels[0].name)
                         #9 - genre
-                        temp_row.append(", ".join(result.genres) + " >> " + ", ".join(result.styles))
+                        try:
+                            temp_row.append(", ".join(result.genres) + " >> " + ", ".join(result.styles))
+                        except Exception as e:
+                            temp_row.append(", ".join(result.genres))
                         #10 - year
                         temp_row.append(str(result.year))
                         #11 - date_added
