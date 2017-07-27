@@ -271,6 +271,7 @@ PICK_SHEET_FILE_NAME = BASE_PATH + 'plaid_room/images/pick_sheet.pdf'
 COLEMINE_PRE_ORDER_FILE_NAME = BASE_PATH + 'plaid_room/config/colemine_street_dates.csv'
 COLEMINE_ZIP_CODE_FILE = BASE_PATH + 'plaid_room/config/zip_codes.csv'
 COLEMINE_MAPPER = BASE_PATH + 'plaid_room/config/clmn_mapping.csv'
+COLEMINE_BOOKS_FILE = BASE_PATH + 'plaid_room/colemine_books.xlsx'
 
 #other stuff
 LOVELAND_TAX_RATE = 6.75 #percent
