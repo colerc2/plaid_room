@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>12</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -1391,10 +1391,10 @@ p, li { white-space: pre-wrap; }
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>9</y>
+       <x>0</x>
+       <y>0</y>
        <width>1881</width>
-       <height>944</height>
+       <height>981</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1759,6 +1759,9 @@ p, li { white-space: pre-wrap; }
           <property name="spacing">
            <number>-1</number>
           </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
           <item>
            <widget class="QLabel" name="tab_one_search_item_lbl_3">
             <property name="font">
@@ -1785,7 +1788,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>77</width>
+              <width>40</width>
               <height>20</height>
              </size>
             </property>
@@ -1808,7 +1811,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>30</width>
               <height>20</height>
              </size>
             </property>
@@ -1948,7 +1951,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>28</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -1956,8 +1959,20 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <widget class="QCheckBox" name="tab_two_filter_by_dist">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>85</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
-             <string>Filter By Distributor</string>
+             <string notr="true">Distributor</string>
             </property>
            </widget>
           </item>
@@ -1971,7 +1986,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -1990,7 +2005,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -2013,7 +2028,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -2036,7 +2051,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -2055,7 +2070,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>10</width>
               <height>20</height>
              </size>
             </property>
@@ -2069,7 +2084,53 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
+           <spacer name="horizontalSpacer_287">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="tab_two_fix_genre">
+            <property name="text">
+             <string>Fix Genre</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_99">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="Line" name="add_item_vert_line_110">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_322">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -2150,7 +2211,7 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>5</width>
+              <width>40</width>
               <height>20</height>
              </size>
             </property>
@@ -2206,7 +2267,7 @@ p, li { white-space: pre-wrap; }
         <property name="minimumSize">
          <size>
           <width>1850</width>
-          <height>825</height>
+          <height>850</height>
          </size>
         </property>
         <property name="selectionMode">

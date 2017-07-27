@@ -111,8 +111,8 @@ class Util():
                 #        print row
                 #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
                 #self.db.commit()
-                #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('88160',))
-		#self.db.commit()
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('95630',))
+		self.db.commit()
                 #self.db_cursor.execute('DELETE FROM sold_inventory WHERE id = ?', ('67236',))
                 #elf.db.commit()
                 #FIXING ALABAMA SHAKES UPC
@@ -124,11 +124,11 @@ class Util():
 		#self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
 		#self.db.commit()
-                carolina_soul = open('/Users/plaidroomrecords/Documents/purchases/carolina_soul_may_2017.csv').read().splitlines()
-                for sku in carolina_soul:
-                        sku_s = sku.strip()
-                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (sku_s,)):
-                                print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX],row[PRICE_INDEX],row[PRICE_PAID_INDEX],row[DISTRIBUTOR_INDEX],row[DISCOGS_RELEASE_NUMBER_INDEX])
+                #carolina_soul = open('/Users/plaidroomrecords/Documents/purchases/carolina_soul_may_2017.csv').read().splitlines()
+                #for sku in carolina_soul:
+                #        sku_s = sku.strip()
+                #        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (sku_s,)):
+                #                print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX],row[PRICE_INDEX],row[PRICE_PAID_INDEX],row[DISTRIBUTOR_INDEX],row[DISCOGS_RELEASE_NUMBER_INDEX])
 		#checking our double game
 		#current_inventory = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/inventory_01_18_17').read().splitlines()
 		#temp_inventory = list()
