@@ -17,7 +17,8 @@ class ColemineBooks():
         locale.setlocale (locale.LC_ALL, '' )
         self.non_decimal = re.compile(r'[^\d.]+')
         self.year = yr
-        self.quarter = q 
+        self.quarter = q
+        
         
     def get_projects(self):
         #get all projects
@@ -114,9 +115,11 @@ class ColemineBooks():
 
     def generate_project_summary(self, code):
         dict_summary = {}
+        dict_qty = {}
         summary_lines = []
         for item in self.get_sales_categories():
             dict_summary[str(item)] = 0.0
+            dict_qty[str(item)] = 0
         for row in self.data_input:
             this_adjustment_project = row[2].value
             try:
@@ -139,7 +142,14 @@ class ColemineBooks():
                 summary_lines.append(summary_line)
                 #adjust dict by amount
                 dict_summary[category] += amount
-        
+                #adjust qty if applicable
+                if qty is not None:
+                    try:
+                        qty = int(qty)
+                        dict_qty[category] += qty
+                    except Exception as e:
+                        continue
+        return (dict_summary, dict_qty, summary_lines)
                 
     def get_royalty_status(self):
         royalty_codes = self.get_royalty_codes()
@@ -223,6 +233,17 @@ class ColemineBooks():
                     sheet_name = str(row[1].value).replace(' ','_')
                     sheet_name = re.sub(r'\W+', '', sheet_name)
                     ws_project = wb.create_sheet('%s_%s' % (sheet_name, str(row[2].value)))
+                    project_sheet_row = 1
+                    (ws_project.cell(row=project_sheet_row, column=1)).value = 'ALL TIME SUMMARY'
+                    project_sheet_row += 1
+                    for index, col, in enumerate(('Category', 'Debit/Credit', 'Quantity (if applicable)')):
+                        (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+                    project_sheet_row += 1
+                    for key, value in (project_summary[0].iteritems()):
+                        (ws_project.cell(row=project_sheet_row, column=1)).value = str(key)
+                        (ws_project.cell(row=project_sheet_row, column=2)).value = str(value)
+                        (ws_project_cell(row=project_sheet_row, column=3)).value = str((project_summary[1])['key'])
+                        project_sheet_row += 1
                     
 
                     
