@@ -32,7 +32,7 @@ class ColemineBooks():
                 projects_set.add(row.value.lower())
             except Exception as e:
                 projects_set.add(row.value)
-                print e
+                #print e
         sorted_projects = sorted(projects_set)
         #for row in sorted_projects:
         #    print row
@@ -66,17 +66,17 @@ class ColemineBooks():
                 continue
             if len(str(row[3].value)) < 2 or row[3].value is None:
                 #this is a project summary, not a payee
-                print 'This is a summary, not a payee: %s - %s' % (str(row[0].value),str(row[1].value))
+                #print 'This is a summary, not a payee: %s - %s' % (str(row[0].value),str(row[1].value))
                 continue
             try:
                 payees_set.add(row[0].value.lower().strip())
             except Exception as e:
                 print 'couldnt add payee to list: %s - %s' % (str(row[0].value), e)
         sorted_payees = sorted(payees_set)
-        print '--------------------------'
-        for row in sorted_payees:
-            print row
-        print '--------------------------'
+        #print '--------------------------'
+        #for row in sorted_payees:
+            #print row
+        #print '--------------------------'
         return sorted_payees
         
     def get_sales_categories(self):
@@ -89,10 +89,12 @@ class ColemineBooks():
                 sales_categories.add(row.value.lower())
             except Exception as e:
                 print 'tried to add a none type to categories: %s' % e    
-        print sales_categories
+        #print sales_categories
+        return sales_categories
 
     def get_project_status(self):
         project_codes = self.get_projects()
+        royalty_codes = self.get_royalty_codes()
         project_status = {} #new dict
         for pro in project_codes:
             project_status[str(pro)] = 0.0
@@ -102,15 +104,16 @@ class ColemineBooks():
                 this_adjustment_project = this_adjustment_project.lower()
             except Exception as e:
                 placeholder = 0
-            print '--%s--' % this_adjustment_project
+            #print '--%s--' % this_adjustment_project
             found = False
             if str(this_adjustment_project) in project_status:
                 project_status[str(this_adjustment_project)] += float(eval(str(row[1].value).replace('=','')))
             else:
-                print 'couldnt find matching key for row: %s %s --%s--' % (row[0].value, row[1].value, row[2].value)
+                if str(this_adjustment_project) not in royalty_codes:
+                    print 'couldnt find matching key for row: %s %s --%s--' % (row[0].value, row[1].value, row[2].value)
                 continue
-        for key, value in iter(sorted(project_status.iteritems())):
-            print '%s - %s' % (key, str(value))
+        #for key, value in iter(sorted(project_status.iteritems())):
+        #    print '%s - %s' % (key, str(value))
         return project_status
 
     def generate_project_summary(self, code):
@@ -125,17 +128,22 @@ class ColemineBooks():
             try:
                 this_adjustment_project = this_adjustment_project.lower()
             except Exception as e:
-                print 'ERROR generate_project_summery .lower()'
-                continue
                 placeholder = 0
-            if this_adjustment_project in code:
+            if code == str(this_adjustment_project):# or (('r%s'%code) == str(this_adjustment_project)):
+                #print row
                 #save summary line
                 date = str(row[0].value)
                 amount = float(eval(str(row[1].value).replace('=','')))
                 royalty = this_adjustment_project
                 qty = str(row[3].value)
                 category = str(row[4].value).lower()
-                company = str(row[5].value)
+                company = ''
+                try:
+                    company = self.xstr(row[5].value)
+                except Exception as e:
+                    continue
+                    #print '**********\n' * 5
+                    #print row[5].value
                 details = str(row[6].value)
                 details_2 = str(row[7].value)
                 summary_line = [date, amount, royalty, qty, category, company, details, details_2]
@@ -153,6 +161,8 @@ class ColemineBooks():
                 
     def get_royalty_status(self):
         royalty_codes = self.get_royalty_codes()
+        project_codes = self.get_projects()
+        project_codes = map(str, project_codes)
         royalty_status = {}
         for roy in royalty_codes:
             royalty_status[str(roy)] = 0.0
@@ -166,15 +176,29 @@ class ColemineBooks():
             if str(this_adjustment_project) in royalty_status:
                 royalty_status[str(this_adjustment_project)] += float(eval(str(row[1].value).replace('=','')))
             else:
-                print 'couldnt find matching key for row: %s %s %s' % (row[0].value, row[1].value, row[2].value)
+                if str(this_adjustment_project) not in project_codes:
+                    print 'couldnt find matching key for row: %s %s %s' % (row[0].value, row[1].value, row[2].value)
+                    #print project_codes
                 continue
-        for key, value in iter(sorted(royalty_status.iteritems())):
-            print '%s - %s' % (key, str(value))
+        #for key, value in iter(sorted(royalty_status.iteritems())):
+        #    print '%s - %s' % (key, str(value))
         return royalty_status
 
             #adjustments = self.data_input['B']
             #for index, item in adjustments:
-
+    def correct_column_widths(self, wb):
+        for sheet in wb.worksheets:
+            for col in ['A','B','C','D','E','F','G']:
+                sheet_col = sheet[col]
+                list_of_lengths = []
+                for row in sheet_col:
+                    try:
+                        list_of_lengths.append(len(row.value))
+                    except Exception as e:
+                        placeholder = 0
+                max_length = max(list_of_lengths)
+                sheet.column_dimensions[col].width = max_length
+            
     def print_payee_summary(self):
         project_status = self.get_project_status()
         royalty_status = self.get_royalty_status()
@@ -190,8 +214,8 @@ class ColemineBooks():
             ws = wb.active
             ws.title = "All Projects Summary"
             summary_of_payments = []
-            print '-----------------------------------------------'
-            print payee
+            #print '-----------------------------------------------'
+            #print payee
             for row in self.projects:
                 if str(row[0].value).lower().strip() == payee:#this guy is on this project, what we owe him?
                     #first make sure that this is an actual payee, and not a project summary
@@ -224,7 +248,7 @@ class ColemineBooks():
                     else:
                         money_paid = float(royalty_status[royalty_number])
                     money_owed_after_paid = money_owed + money_paid
-                    summary_of_payments.append([str(payee),str(row[1].value),str(row[2].value),str(row[3].value),str(locale.currency(project_budget_status)),str(percent*100)+'%',str(locale.currency(money_owed)),str(locale.currency(-money_paid)),str(locale.currency(money_owed_after_paid))])
+                    summary_of_payments.append([str(payee),str(row[1].value),str(row[2].value),str(row[3].value),project_budget_status,str(percent*100)+'%',money_owed,-money_paid,money_owed_after_paid])
                     
                     #individual project workbooks
                     #generate project_summary
@@ -240,55 +264,75 @@ class ColemineBooks():
                         (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
                     project_sheet_row += 1
                     for key, value in (project_summary[0].iteritems()):
+                        if float(value) == 0:
+                            continue
                         (ws_project.cell(row=project_sheet_row, column=1)).value = str(key)
-                        (ws_project.cell(row=project_sheet_row, column=2)).value = str(value)
-                        (ws_project_cell(row=project_sheet_row, column=3)).value = str((project_summary[1])['key'])
+                        (ws_project.cell(row=project_sheet_row, column=2)).value = value
+                        (ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[1])[key]
                         project_sheet_row += 1
-                    
+                    project_sheet_row += 2
+                    for index, col, in enumerate(('Date', 'Credit/Debit', 'Royalty', 'Qty', 'Category','Company','Details','Details 2')):
+                        (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+                    project_sheet_row += 1
+                    for row_ in project_summary[2]:
+                        for index, col in enumerate(row_):
+                            (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+                        project_sheet_row += 1
 
                     
-            print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % ('Payee','Title','Catalog No', 'Code', 'Total', 'Percentage','Total Earned','Total Paid','Current Due')
-            for index, col, in enumerate(('Payee','Title','Catalog No', 'Code', 'Total', 'Percentage','Total Earned','Total Paid','Current Due')):
+            #print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % ('Payee','Title','Catalog No', 'Code', 'Total', 'Percentage','Total Earned','Total Paid','Current Due')
+            for index, col, in enumerate(('Payee','Title','Catalog No', 'Code', 'Project Status', 'Percentage','Total Earned','Total Paid','Current Due')):
                 (ws.cell(row=sheet_row, column=index+1)).value = col
             sheet_row += 1
 
-            for index, col, in enumerate(('Payee','Title','Catalog No', 'Code', 'Total', 'Percentage','Total Earned','Total Paid','Current Due')):
+            for index, col, in enumerate(('Payee','Title','Catalog No', 'Code', 'Project Status', 'Percentage','Total Earned','Total Paid','Current Due')):
                 (ws_master.cell(row=sheet_row_master, column=index+1)).value = col
             sheet_row_master += 1
             
             total_owed = 0
             for row in summary_of_payments:
-                print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % tuple(row) 
-                print '--------------------------------------------------------------------------' * 2
+                #print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % tuple(row) 
+                #print '--------------------------------------------------------------------------' * 2
                 for index, col in enumerate(row):
                     (ws.cell(row=sheet_row, column=index+1)).value = col
+                    if (index+1) in [5, 7, 8, 9]:#rows with $$ formatting needed
+                        (ws.cell(row=sheet_row, column=index+1)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                 sheet_row += 1
-                cash_me_outside = self.xfloat(row[-1].replace('$',''))
+                #cash_me_outside = self.xfloat(row[-1].replace('$',''))
+                cash_me_outside = row[-1]
                 if cash_me_outside > 0:
                     total_owed += cash_me_outside
-            (ws.cell(row=sheet_row,column=8)).value = 'Total Due ->'
+            (ws.cell(row=sheet_row,column=8)).value = 'Total Due'
             #(ws.cell(row=sheet_row,column=9)).style = 'Currency' 
             (ws.cell(row=sheet_row,column=9)).value = str(locale.currency(total_owed))
             (ws.cell(row=sheet_row,column=9)).font = openpyxl.styles.Font(bold=True)
             sheet_row += 2
-            print '-------------------------------------'
+            #print '-------------------------------------'
+            self.correct_column_widths(wb)
             wb.save(BASE_PATH + 'plaid_room/royalty_summaries/%s.xlsx' % (payee.replace(' ','-')))
 
             #master summary workbook
             total_owed = 0
             for row in summary_of_payments:
-                print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % tuple(row) 
+                #print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % tuple(row) 
                 for index, col in enumerate(row):
                     (ws_master.cell(row=sheet_row_master, column=index+1)).value = col
+                    if (index+1) in [5, 7, 8, 9]:#rows with $$ formatting needed
+                        (ws_master.cell(row=sheet_row_master, column=index+1)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                 sheet_row_master += 1
-                cash_me_outside = self.xfloat(row[-1].replace('$',''))
+                #cash_me_outside = self.xfloat(row[-1].replace('$',''))
+                cash_me_outside = row[-1]
                 if cash_me_outside > 0:
                     total_owed += cash_me_outside
-            (ws_master.cell(row=sheet_row_master,column=8)).value = 'Total Due ->'
+            (ws_master.cell(row=sheet_row_master,column=8)).value = 'Total Due'
+            (ws_master.cell(row=sheet_row_master,column=8)).font = openpyxl.styles.Font(bold=True)
             #(ws.cell(row=sheet_row,column=9)).style = 'Currency' 
-            (ws_master.cell(row=sheet_row_master,column=9)).value = str(locale.currency(total_owed))
+            #(ws_master.cell(row=sheet_row_master,column=9)).value = str(locale.currency(total_owed))
+            (ws_master.cell(row=sheet_row_master,column=9)).value = total_owed
             (ws_master.cell(row=sheet_row_master,column=9)).font = openpyxl.styles.Font(bold=True)
-            sheet_row_master += 2            
+            (ws_master.cell(row=sheet_row_master,column=9)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            sheet_row_master += 2
+            self.correct_column_widths(wb_master)
             
         wb_master.save(BASE_PATH + 'plaid_room/royalty_summaries/MASTER_FOR_COLEMINE_EMPLOYEES.xlsx')
             
@@ -301,10 +345,20 @@ class ColemineBooks():
         if (f is None) or (f == ''):
             return -1
         return float(f)
+
+    def filter_unprintable(self, str_):
+        return filter(lambda x: x in string.printable, str_)
+
     
     def print_sheet_names(self):
         for sheet in self.wb.worksheets:
             print sheet
+
+    def xstr(self,s):
+        if s is None:
+            return ''
+        return str(s.encode('utf-8'))
+
 
 
 if __name__ == '__main__':
