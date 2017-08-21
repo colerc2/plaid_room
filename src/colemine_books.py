@@ -215,6 +215,34 @@ class ColemineBooks():
                     except Exception as e:
                         continue
         return (dict_summary, dict_qty, summary_lines)
+
+    def set_border(self, ws, cell_range):
+        rows = ws[cell_range]
+        side = Side(border_style='thick', color="FF000000")
+
+        rows = list(rows)  # we convert iterator to list for simplicity, but it's not memory efficient solution
+        max_y = len(rows) - 1  # index of the last row
+        for pos_y, cells in enumerate(rows):
+            max_x = len(cells) - 1  # index of the last cell
+            for pos_x, cell in enumerate(cells):
+                border = Border(
+                    left=cell.border.left,
+                    right=cell.border.right,
+                    top=cell.border.top,
+                    bottom=cell.border.bottom
+                )
+                if pos_x == 0:
+                    border.left = side
+                if pos_x == max_x:
+                    border.right = side
+                if pos_y == 0:
+                    border.top = side
+                if pos_y == max_y:
+                    border.bottom = side
+
+                # set new border only if it's one of the edge cells
+                if pos_x == 0 or pos_x == max_x or pos_y == 0 or pos_y == max_y:
+                    cell.border = border
     
     def get_royalty_status(self):
         royalty_codes = self.get_royalty_codes()
@@ -324,24 +352,58 @@ class ColemineBooks():
                     project_sheet_row += 1
                     total_sold = 0
                     project_budget = 0
+                    budget_positive = 0
+                    budget_negative = 0
+                    qty_positive = 0
+                    qty_negative = 0
+                    pos_summary = False
                     #for key, value in sorted(project_summary[0].iteritems()):
                     for key, value in sorted(project_summary[0].items(), key=lambda x: x[1],reverse=True):
-                        if float(value) == 0:
+                        if float(value) == 0:#we've reached the center of the list, do things
+                            if budget_positive > 0 and not pos_summary:#display summary
+                                (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Income'
+                                (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                                (ws_project.cell(row=project_sheet_row, column=2)).value = budget_positive
+                                (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                                (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                                (ws_project.cell(row=project_sheet_row, column=3)).value = qty_positive
+                                (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+                                project_sheet_row += 2
+                                pos_summary = True
                             continue
                         project_budget += value
                         total_sold += (project_summary[1])[key]
+                        if value > 0:
+                            budget_positive += value
+                            qty_positive += (project_summary[1])[key]
+                        elif value < 0:
+                            budget_negative += value
+                            qty_negative += (project_summary[1])[key]
                         (ws_project.cell(row=project_sheet_row, column=1)).value = str(key).title()
                         (ws_project.cell(row=project_sheet_row, column=2)).value = value
                         (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                         (ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[1])[key]
                         project_sheet_row += 1
-                    (ws_project.cell(row=project_sheet_row, column=1)).value = 'Totals'
+                    #display negative summaries
+                    if budget_negative < 0:#display summary
+                                (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Expenses'
+                                (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                                (ws_project.cell(row=project_sheet_row, column=2)).value = budget_negative
+                                (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                                (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                                #(ws_project.cell(row=project_sheet_row, column=3)).value = qty_negative
+                                #(ws_project.cell(row=project_sheet_row, column=4)).font = openpyxl.styles.Font(bold=True)
+                                project_sheet_row += 2                    
+                    #display neg and pos combined    
+                    (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Income Minus Expenses'
                     (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
                     (ws_project.cell(row=project_sheet_row, column=2)).value = project_budget
                     (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
                     (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                     (ws_project.cell(row=project_sheet_row, column=3)).value = total_sold
                     (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+
+                    self.set_border(ws_project, ('A1:C%s' % (str(project_sheet_row))))
 
                     #quarterly summary ---------------
                     num_quarters = 4
@@ -359,6 +421,7 @@ class ColemineBooks():
                         project_quarterly_summary = self.generate_quarterly_project_summary(catalog_number,int(pair[0]),int(pair[1]))
                     
                         project_sheet_row += 2
+                        border_start_quarter = project_sheet_row
                         (ws_project.cell(row=project_sheet_row, column=1)).value = '%s Q%s SUMMARY' % (str(pair[0]), str(pair[1]))
                         (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
                         project_sheet_row += 1
@@ -369,23 +432,60 @@ class ColemineBooks():
                         total_sold = 0
                         project_budget = 0
                         #for key, value in sorted(project_summary[0].iteritems()):
+                        budget_positive = 0
+                        budget_negative = 0
+                        qty_positive = 0
+                        qty_negative = 0
+                        pos_summary = False
                         for key, value in sorted(project_quarterly_summary[0].items(), key=lambda x: x[1],reverse=True):
-                            if float(value) == 0:
+                            if float(value) == 0:#we've reached the center of the list, do things
+                                if budget_positive > 0 and not pos_summary:#display summary
+                                    (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Income'
+                                    (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                                    (ws_project.cell(row=project_sheet_row, column=2)).value = budget_positive
+                                    (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                                    (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                                    (ws_project.cell(row=project_sheet_row, column=3)).value = qty_positive
+                                    (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+                                    project_sheet_row += 2
+                                    pos_summary = True
                                 continue
                             project_budget += value
                             total_sold += (project_quarterly_summary[1])[key]
+                            if value > 0:
+                                budget_positive += value
+                                qty_positive += (project_quarterly_summary[1])[key]
+                            elif value < 0:
+                                budget_negative += value
+                                qty_negative += (project_quarterly_summary[1])[key]
                             (ws_project.cell(row=project_sheet_row, column=1)).value = str(key).title()
                             (ws_project.cell(row=project_sheet_row, column=2)).value = value
                             (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                             (ws_project.cell(row=project_sheet_row, column=3)).value = (project_quarterly_summary[1])[key]
                             project_sheet_row += 1
-                        (ws_project.cell(row=project_sheet_row, column=1)).value = 'Totals'
+                        #display negative summaries
+                        if budget_negative < 0:#display summary
+                            (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Expenses'
+                            (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                            (ws_project.cell(row=project_sheet_row, column=2)).value = budget_negative
+                            (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                            (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                            #(ws_project.cell(row=project_sheet_row, column=3)).value = qty_negative
+                            #(ws_project.cell(row=project_sheet_row, column=4)).font = openpyxl.styles.Font(bold=True)
+                            project_sheet_row += 2                    
+
+                        #display positive minus negative
+                        (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Totals'
                         (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
                         (ws_project.cell(row=project_sheet_row, column=2)).value = project_budget
                         (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
                         (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                         (ws_project.cell(row=project_sheet_row, column=3)).value = total_sold
                         (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+
+                        #create border
+                        self.set_border(ws_project, ('A%s:C%s' % (str(border_start_quarter),str(project_sheet_row))))
+
 
 
                     
