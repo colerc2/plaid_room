@@ -82,7 +82,7 @@ class ColemineBooks():
         
     def get_sales_categories(self):
         #get all categories
-        categories = self.data_input['E']
+        categories = self.data_input['F']
 
         sales_categories = set()
         for row in categories:
@@ -92,6 +92,17 @@ class ColemineBooks():
                 print 'tried to add a none type to categories: %s' % e    
         #print sales_categories
         return sales_categories
+
+    def get_format_categories(self):
+        categories = self.data_input['E']
+
+        format_categories = set()
+        for row in categories:
+            try:
+                format_categories.add(str(row.value).lower())
+            except Exception as e:
+                print 'tried to add some fucked up format category: %s' % e
+        return format_categories
 
     def get_project_status(self):
         project_codes = self.get_projects()
@@ -120,10 +131,17 @@ class ColemineBooks():
     def generate_project_summary(self, code):
         dict_summary = {}
         dict_qty = {}
+        dict_dict_summary = {}
+        dict_dict_qty = {}
         summary_lines = []
         for item in self.get_sales_categories():
             dict_summary[str(item)] = 0.0
             dict_qty[str(item)] = 0
+            dict_dict_summary[str(item)] = {}
+            dict_dict_qty[str(item)] = {}
+            for format_type in self.get_format_categories():
+                dict_dict_summary[str(item)][str(format_type)] = 0.0
+                dict_dict_qty[str(item)][str(format_type)] = 0
         for row in self.data_input:
             this_adjustment_project = row[2].value
             try:
@@ -137,29 +155,40 @@ class ColemineBooks():
                 amount = float(eval(str(row[1].value).replace('=','')))
                 royalty = this_adjustment_project
                 qty = row[3].value
-                category = str(row[4].value).lower()
+                fmt = ''
+                try:
+                    fmt = str(row[4].value).lower()
+                except Exception as e:
+                    placeholder = 0
+                category = str(row[5].value).lower()
                 company = ''
                 try:
-                    company = self.xstr(row[5].value)
+                    company = self.xstr(row[6].value)
                 except Exception as e:
                     placeholder = 0
                     #continue
                     #print '**********\n' * 5
                     #print row[5].value
-                details = str(row[6].value)
-                details_2 = str(row[7].value)
-                summary_line = [date, amount, royalty, qty, category, company, details, details_2]
+                details = str(row[7].value)
+                details_2 = str(row[8].value)
+                summary_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
                 summary_lines.append(summary_line)
                 #adjust dict by amount
                 dict_summary[category] += amount
+                if category in dict_dict_summary:
+                    if fmt in dict_dict_summary[category]:
+                        dict_dict_summary[category][fmt] += amount
                 #adjust qty if applicable
                 if qty is not None:
                     try:
                         qty = int(qty)
                         dict_qty[category] += qty
+                        if category in dict_dict_summary:
+                            if fmt in dict_dict_summary[category]:
+                                dict_dict_qty[category][fmt] += qty
                     except Exception as e:
                         continue
-        return (dict_summary, dict_qty, summary_lines)
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
 
     def generate_quarterly_project_summary(self, code, year, quarter):
         dict_summary = {}
@@ -193,17 +222,22 @@ class ColemineBooks():
                 amount = float(eval(str(row[1].value).replace('=','')))
                 royalty = this_adjustment_project
                 qty = str(row[3].value)
-                category = str(row[4].value).lower()
+                fmt = ''
+                try:
+                    fmt = self.xstr(row[4].value)
+                except Exception as e:
+                    placeholder = 0
+                category = str(row[5].value).lower()
                 company = ''
                 details = ''
                 details_2 = ''
                 try:
-                    company = self.xstr(row[5].value)
-                    details = str(row[6].value)
-                    details_2 = str(row[7].value)
+                    company = self.xstr(row[6].value)
+                    details = str(row[7].value)
+                    details_2 = str(row[8].value)
                 except Exception as e:
                     placeholder = 0
-                summary_line = [date, amount, royalty, qty, category, company, details, details_2]
+                summary_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
                 summary_lines.append(summary_line)
                 #adjust dict by amount
                 dict_summary[category] += amount
@@ -338,7 +372,9 @@ class ColemineBooks():
                     #individual project workbooks
                     #generate project_summary
                     project_summary = self.generate_project_summary(catalog_number)
-                    
+
+                    need_details_for = set()
+                    need_sub_details_for = set()
                     sheet_name = str(row[1].value).replace(' ','_')
                     sheet_name = re.sub(r'\W+', '', sheet_name)
                     ws_project = wb.create_sheet('%s_%s' % (sheet_name, str(row[2].value)))
@@ -384,6 +420,26 @@ class ColemineBooks():
                         (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                         (ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[1])[key]
                         project_sheet_row += 1
+
+                        #display format sub-categories if necessary
+                        if key in project_summary[3]: #does this category have sub-catgeories
+                            #print '%s - yep, shes got sub categories' % catalog_number
+                            #next line loops through the sub-categories of a category in sorted order
+                            for key_sub, value_sub in sorted((project_summary[3])[key].items(), key=lambda x: x[1], reverse=True):
+                                #print '%s - %s - %s - %s' % (catalog_number, key, key_sub, str(value_sub))
+                                if float(value_sub) == 0:
+                                    continue
+                                if key_sub == 'none' or key_sub is None or key_sub == '':
+                                    continue
+                                need_details_for.add(key)
+                                need_sub_details_for.add(key_sub)
+                                category = '   - %s %s' % (key, key_sub)
+                                #(ws_project.cell(row=project_sheet_row, column=1)).value = str(category).title()
+                                #(ws_project.cell(row=project_sheet_row, column=2)).value = value_sub
+                                #(ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                                #(ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[4])[key][key_sub]
+                                project_sheet_row += 1
+                        
                     #display negative summaries
                     if budget_negative < 0:#display summary
                                 (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Expenses'
@@ -405,6 +461,24 @@ class ColemineBooks():
 
                     self.set_border(ws_project, ('A1:C%s' % (str(project_sheet_row))))
 
+                    #display detailed breakdown of sales with sub-categories -------------
+                    need_sub_details_for = list(need_sub_details_for)
+                    need_sub_details_for.sort()
+                    project_sheet_details_row = 2
+                    for index, col, in enumerate(need_sub_details_for):
+                        (ws_project.cell(row=project_sheet_details_row, column=index+5)).value = str(col).title()
+                        (ws_project.cell(row=project_sheet_details_row, column=index+5)).font = openpyxl.styles.Font(bold=True)
+                    project_sheet_details_row += 1
+                    for key in list(need_details_for):
+                        (ws_project.cell(row=project_sheet_details_row, column=5)).value = str(key).title()
+                        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+                        for index, key_sub, in enumerate(need_sub_details_for):
+                            #THIS IS WHERE I AM
+                            (ws_project.cell(row=project_sheet_details_row, column=index+5)).value = col
+                            (ws_project.cell(row=project_sheet_details_row, column=index+5)).font = openpyxl.styles.Font(bold=True)
+                            
+                            
+                    
                     #quarterly summary ---------------
                     num_quarters = 4
                     pairs = []
@@ -492,7 +566,7 @@ class ColemineBooks():
                     
                     #all the data ------------
                     project_sheet_row += 3
-                    for index, col, in enumerate(('Date', 'Credit/Debit', 'Royalty', 'Qty', 'Category','Company','Details','Details 2')):
+                    for index, col, in enumerate(('Date', 'Credit/Debit', 'Royalty', 'Qty','Format', 'Category','Company','Details','Details 2')):
                         (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
                         (ws_project.cell(row=project_sheet_row, column=index+1)).font = openpyxl.styles.Font(bold=True)
                     project_sheet_row += 1
@@ -504,7 +578,7 @@ class ColemineBooks():
                                 #(ws_project.cell(row=project_sheet_row, column=index+1)).number_format = '[$-409]m/d/yy h:mm AM/PM;@'
                             if index == 1:
                                 (ws_project.cell(row=project_sheet_row, column=index+1)).number_format = '$#,##0.00;[Red]-$#,##0.00'
-                            if index == 4:
+                            if index == 5:
                                 (ws_project.cell(row=project_sheet_row, column=index+1)).value = col.title()
                                 
                                 
