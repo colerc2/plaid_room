@@ -33,15 +33,16 @@ class MediaMail():
 
         email = (f.readline()).strip()
         password = (f.readline()).strip()
-        
-        email_line = self.driver.find_element_by_name('login_email')
-        email_line.send_keys(email)
-        password_line = self.driver.find_element_by_name('login_password')
-        password_line.send_keys(password)
-        login_button = self.driver.find_element_by_name('btnLogin')
-        login_button.click()
-        time.sleep(7)
-
+        try:
+            email_line = self.driver.find_element_by_name('login_email')
+            email_line.send_keys(email)
+            password_line = self.driver.find_element_by_name('login_password')
+            password_line.send_keys(password)
+            login_button = self.driver.find_element_by_name('btnLogin')
+            login_button.click()
+            time.sleep(7)
+        except Exception as e:
+            print 'fuck this new paypal shit'
         
     def reset_shopify_connection(self, clmn_or_prr):
         if clmn_or_prr == COLEMINE:
