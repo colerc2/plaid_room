@@ -63,9 +63,9 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>30</y>
+     <y>10</y>
      <width>171</width>
-     <height>71</height>
+     <height>91</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -83,6 +83,27 @@
      <widget class="QRadioButton" name="plaid_room_radio">
       <property name="text">
        <string>Plaid Room Shopify</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="durand_radio">
+      <property name="text">
+       <string>Durand Shopify</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="ikebe_radio">
+      <property name="text">
+       <string>Ikebe Shopify</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="dlo3_radio">
+      <property name="text">
+       <string>DLO3 Shopify</string>
       </property>
      </widget>
     </item>

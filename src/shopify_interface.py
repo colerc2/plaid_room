@@ -325,6 +325,8 @@ class ShopifyInterface():
                 v = shopify.Variant()
                 v.price = row[PRE_SALE_PRICE]
                 v.sku = row[PRE_UPC]
+                v.weight = 500
+                v.weight_unit = 'lb'
                 v.product_id = new_product.id
                 new_product.variants = [v]
                 success = new_product.save()
@@ -372,6 +374,8 @@ class ShopifyInterface():
                 v.price = row[PRE_SALE_PRICE]
                 v.sku = row[PRE_UPC]
                 v.product_id = product.id
+                v.weight = 500
+                v.weight_unit = 'lb'
                 #new_product.variants = [v]
                 success = product.save()
                 #pprint (vars(new_product))

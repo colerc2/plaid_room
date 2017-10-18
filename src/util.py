@@ -34,17 +34,17 @@ class Util():
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
                 #print doubles so i can print out to a spreadsheet
-                need_to_put_out = []
-                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
-                        if self.xint(row[RESERVED_TWO_INDEX]) == NEEDS_PUT_OUT:
-                                if row[DISTRIBUTOR_INDEX] != 'Colemine':
-                                        need_to_put_out.append(row)
-                for row in need_to_put_out:
+                #need_to_put_out = []
+                #for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
+                #        if self.xint(row[RESERVED_TWO_INDEX]) == NEEDS_PUT_OUT:
+                #               if row[DISTRIBUTOR_INDEX] != 'Colemine':
+                #                        need_to_put_out.append(row)
+                #for row in need_to_put_out:
                         #figure out how many we have left of this item
-                        in_stock_count = 0
-                        for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
-                                in_stock_count += 1
-                        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX])
+               #         in_stock_count = 0
+               #         for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
+                #                in_stock_count += 1
+                #        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX])
                 
                 #print stuff to cull new
                 #qty_sold = dict()
@@ -120,9 +120,11 @@ class Util():
                 #        self.db_cursor.execute('UPDATE sold_inventory SET distributor = ? WHERE id = ?', (row))
                 #self.db.commit()
                 #FUCKFUCK
-                #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions'):
+                #self.db_cursor.execute('UPDATE sold_online_status SET street_date = ? WHERE shopify_id = ?', ('2017-09-08', '5447133010'))
+                #self.db.commit()
+                #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions WHERE checked_out = ?', (0,)):
                 #        print row
-                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,292))
+                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,1336))
                 #self.db.commit()
                 #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('97733',))
 		#self.db.commit()
@@ -133,10 +135,20 @@ class Util():
 		#new_upc = '880882226718'
                 #self.db_cursor.execute('UPDATE inventory SET taxable = ? WHERE taxable = ?', (1,0))
                 #self.db.commit()
-		#self.db_cursor.execute('UPDATE sold_inventory SET upc = ? WHERE upc = ?', (new_upc,old_upc))
+		#self.db_cursor.execute('UPDATE sold_inventory SET format = ? WHERE id = ?', ('2xVinyl, LP, Album, Limited Edition','79251'))
 		#self.db.commit()
 		#self.db_cursor.execute('UPDATE sold_inventory SET new_used = ? WHERE upc = ?', ('New', new_upc))
 		#self.db.commit()
+                umg_deal = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/umg_deal.csv').read().splitlines()
+                for upc in umg_deal:
+                        upc = upc.strip()
+                        count = 0
+                        for row in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (upc,)):
+                                count += 1
+                        sold_count = 0
+                        for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE upc = ?', (upc,)):
+                                sold_count += 1
+                        print '%s\t%s\t%s' % (upc,count,sold_count)
                 #carolina_soul = open('/Users/plaidroomrecords/Documents/purchases/carolina_soul_may_2017.csv').read().splitlines()
                 #for sku in carolina_soul:
                 #        sku_s = sku.strip()
@@ -818,13 +830,13 @@ class Util():
 		specified_db = []
 		at_moment = datetime.datetime(year, month, day, hour, minute)
 		for row in self.db_cursor.execute('SELECT * FROM inventory'):
-			if len(specified_db)%100 == 0:
-				print '%d - current' % len(specified_db)
-			#try:
-			time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
-			#except Exception as e:
-			#	 print e
-			#	 print row
+			#if len(specified_db)%100 == 0:
+				#print '%d - current' % len(specified_db)
+                        try:
+                                time_put_in = (datetime.datetime.strptime(str(row[DATE_ADDED_INDEX]), "%Y-%m-%d %H:%M:%S"))
+			except Exception as e:
+				 print e
+				 print row
 			if time_put_in < at_moment:
 				specified_db.append(list(row))
 		for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):

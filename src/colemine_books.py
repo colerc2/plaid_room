@@ -138,12 +138,58 @@ class ColemineBooks():
         #    print '%s - %s' % (key, str(value))
         return project_status
 
+    def generate_royalty_lines(self, code):
+        royalty_lines = []
+        for row in self.data_input:
+            this_adjustment_project = row[2].value
+            try:
+                this_adjustment_project = this_adjustment_project.lower()
+            except Exception as e:
+                placeholder = 0
+            if (str(code) == str(this_adjustment_project)):
+                #print 'found some royalties'
+                #print code
+                #print '1'
+                #print row
+                #save summary line
+                date = row[0].value
+                amount = float(eval(str(row[1].value).replace('=','')))
+                royalty = this_adjustment_project
+                qty = row[3].value
+                fmt = ''
+                #print '2'
+                try:
+                    fmt = str(row[4].value).lower()
+                except Exception as e:
+                    placeholder = 0
+                category = str(row[5].value).lower()
+                #print '3'
+                company = ''
+                try:
+                    company = self.xstr(row[6].value)
+                except Exception as e:
+                    placeholder = 0
+                    #continue
+                    #print '**********\n' * 5
+                    #print row[5].value
+                #print '4'
+                details = str(row[7].value)
+                details_2 = str(row[8].value)
+                #print '5'
+                #if this was a royalty line, get the summary and get the fuck outta here
+                royalty_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+                royalty_lines.append(royalty_line)
+                #print '6'
+                #print
+        return royalty_lines
+    
     def generate_project_summary(self, code):
         dict_summary = {}
         dict_qty = {}
         dict_dict_summary = {}
         dict_dict_qty = {}
         summary_lines = []
+        royalty_lines = []
         for item in self.get_sales_categories():
             dict_summary[str(item)] = 0.0
             dict_qty[str(item)] = 0
@@ -158,7 +204,7 @@ class ColemineBooks():
                 this_adjustment_project = this_adjustment_project.lower()
             except Exception as e:
                 placeholder = 0
-            if code == str(this_adjustment_project):# or (('r%s'%code) == str(this_adjustment_project)):
+            if code == str(this_adjustment_project) or (('r%s'%code) == str(this_adjustment_project)):
                 #print row
                 #save summary line
                 date = row[0].value
@@ -181,6 +227,11 @@ class ColemineBooks():
                     #print row[5].value
                 details = str(row[7].value)
                 details_2 = str(row[8].value)
+                #if this was a royalty line, get the summary and get the fuck outta here
+                if (('r%s'%code) == str(this_adjustment_project)):
+                    royalty_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+                    royalty_lines.append(royalty_line)
+                    continue
                 summary_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
                 summary_lines.append(summary_line)
                 #adjust dict by amount
@@ -198,7 +249,7 @@ class ColemineBooks():
                                 dict_dict_qty[category][fmt] += qty
                     except Exception as e:
                         continue
-        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, royalty_lines)
 
     def generate_quarterly_project_summary(self, code, year, quarter):
         dict_summary = {}
@@ -274,6 +325,8 @@ class ColemineBooks():
         return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
 
     def generate_royalty_summary(self, code):
+        #print '--------'
+        #print code
         royalty_summary = []
         for row in self.data_input:
             this_adjustment_project = row[2].value
@@ -458,6 +511,8 @@ class ColemineBooks():
                     #royalty summaries ---------------
                     project_sheet_details_row = 1
                     royalty_summary = self.generate_royalty_summary(royalty_number)#[type amount format qty]
+                    royalty_lines = self.generate_royalty_lines(royalty_number)
+                    #print royalty_lines
                     types_of_royalties = set()
                     types_amount = {}
                     types_qty = {}
@@ -477,10 +532,10 @@ class ColemineBooks():
                             type_of_product = '%s - %s' % (royalty_row[0], royalty_row[2])
                             types_amount[type_of_product] += royalty_row[1]
                             types_qty[type_of_product] += royalty_row[3]
-                    print royalty_number
-                    for types in types_of_royalties:
-                        print '%s - %s - %s' % (types, -types_amount[types], types_qty[types])
-                    print
+                    #print royalty_number
+                    #for types in types_of_royalties:
+                    #    print '%s - %s - %s' % (types, -types_amount[types], types_qty[types])
+                    #print
                     if len(types_of_royalties) > 0:
                         (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'ROYALTIES PAID'
                         (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
@@ -907,10 +962,20 @@ class ColemineBooks():
                                 (ws_project.cell(row=project_sheet_row, column=index+1)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                             if index == 5:
                                 (ws_project.cell(row=project_sheet_row, column=index+1)).value = col.title()
-                                
-                                
                         project_sheet_row += 1
-
+                    #print royalty_lines
+                    #print '---------------'
+                    for row_ in reversed(royalty_lines):
+                        for index, col in enumerate(row_):
+                            (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+                            if index == 0:
+                                (ws_project.cell(row=project_sheet_row, column=index+1)).number_format = 'm/d/yyyy;@'
+                                #(ws_project.cell(row=project_sheet_row, column=index+1)).number_format = '[$-409]m/d/yy h:mm AM/PM;@'
+                            if index == 1:
+                                (ws_project.cell(row=project_sheet_row, column=index+1)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                            if index == 5:
+                                (ws_project.cell(row=project_sheet_row, column=index+1)).value = col.title()
+                        project_sheet_row += 1
                     
             #print '|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|\t%s\t|' % ('Payee','Title','Catalog No', 'Code', 'Total', 'Percentage','Total Earned','Total Paid','Current Due')
             for index, col, in enumerate(('Payee','Title','Catalog No', 'Code', 'Project Status', 'Percentage','Total Earned','Total Paid','Current Due')):

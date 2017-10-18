@@ -1,0 +1,1868 @@
+var cy={};
+cy.control={};
+cy._version='5_8_00';
+
+//DM3785
+cy.control.document={};
+cy.control.document.domain={};
+cy.control.document.domain.relax={};
+cy.control.document.domain.relax.level=1;
+cy.documentdomain = window.document.domain;
+cy.control.document.domain.relax.relaxeddomain = getRelaxedDomain(window.document.domain, cy.control.document.domain.relax.level);
+
+cy.locationpathname=window.location.pathname;
+cy.documentreferrer=window.document.referrer;
+
+cy.control.defaults={};
+cy.control.defaults.PageName="";
+cy.control.defaults.FunnelLevel="0";
+cy.control.defaults.Section="";
+cy.control.defaults.UserId="";
+cy.control.defaults.Product="";
+cy.control.defaults.Quantity=0;
+cy.control.defaults.Value=0.0;
+cy.control.defaults.OrderNumber="";
+cy.control.defaults.ReturnToLink="";
+cy.control.defaults.Custom1="";
+cy.control.defaults.Custom2="";
+cy.control.defaults.Custom3="";
+cy.control.defaults.Custom4="";
+cy.control.defaults.Custom5="";
+cy.control.defaults.Custom6="";
+cy.control.defaults.Custom7="";
+cy.control.defaults.Custom8="";
+cy.control.defaults.Custom9="";
+cy.control.defaults.Custom10="";
+cy.control.defaults.Custom11="0";
+cy.control.defaults.Custom12="0";
+cy.control.defaults.Custom13="0";
+cy.control.defaults.Custom14="0";
+cy.control.defaults.Custom15="0";
+cy.control.defaults.Custom16="0";
+cy.control.defaults.Custom17="0";
+cy.control.defaults.Custom18="0";
+cy.control.defaults.Custom19="0";
+cy.control.defaults.Custom20="0";
+cy.control.defaults.BusinessUnitCode="";
+
+cy.control.WAIT_DURATION=100;
+cy.control.UPPER_LIMIT_WAIT_DURATION=2000;
+
+cy.control.CSSR=0.0;
+cy.control.CSM=0;
+cy.CSSID='';
+cy.control.CSSESSIONFLAG=-1;
+
+cy.control.inhibit = false;
+cy.CUSTOMERCODE='7501687723';
+cy.BASKETAPPEND='1';
+
+cy.control.misc_data_keys = new Array();
+cy.control.misc_data_vals = new Array();
+cy.control.misc_data_map = new Array();
+cy.control.misc_data_count = 0;
+
+cy.control.cookieinfo={domain:null,path:"/",secure:false};
+
+var cyPageBasket="";
+var cyCurrLineNumber="";
+
+cy.control._cyImages={};
+
+cy.control._cyGetUniqueId = (function() {
+	var id=0;
+	return function(){ return "_" + id++; };
+})();
+
+cy.control.cySessionIdDetails=null;
+cy.control.cyGenerateSessionId=true;
+
+/**
+ * Relax the domain to the required level
+ * @returns
+ */
+function getRelaxedDomain(domain, level){
+	var relaxeddomain = domain;
+	for (i=0; i<level; i++){
+		var liBehindFirstDot = relaxeddomain.indexOf('.') + 1;
+		if (liBehindFirstDot>0){
+			temp = relaxeddomain.substr(liBehindFirstDot);
+			if (temp.indexOf('.') > 0)
+				relaxeddomain = temp;
+		}
+	}	
+	return relaxeddomain;	
+}
+function cyResetCYToDefaults()
+{
+	cy.documentdomain=window.document.domain;
+	cy.locationpathname=window.location.pathname;
+	cy.documentreferrer=window.document.referrer;
+
+	cy.control.defaults.PageName="";
+	cy.control.defaults.FunnelLevel="0";
+	cy.control.defaults.Section="";
+	cy.control.defaults.UserId="";
+	cy.control.defaults.Product="";
+	cy.control.defaults.Quantity=0;
+	cy.control.defaults.OrderNumber="";
+	cy.control.defaults.Value=0.0;
+	cy.control.defaults.ReturnToLink="";
+	cy.control.defaults.Custom1="";
+	cy.control.defaults.Custom2="";
+	cy.control.defaults.Custom3="";
+	cy.control.defaults.Custom4="";
+	cy.control.defaults.Custom5="";
+	cy.control.defaults.Custom6="";
+	cy.control.defaults.Custom7="";
+	cy.control.defaults.Custom8="";
+	cy.control.defaults.Custom9="";
+	cy.control.defaults.Custom10="";
+	cy.control.defaults.Custom11="0";
+	cy.control.defaults.Custom12="0";
+	cy.control.defaults.Custom13="0";
+	cy.control.defaults.Custom14="0";
+	cy.control.defaults.Custom15="0";
+	cy.control.defaults.Custom16="0";
+	cy.control.defaults.Custom17="0";
+	cy.control.defaults.Custom18="0";
+	cy.control.defaults.Custom19="0";
+	cy.control.defaults.Custom20="0";
+	cy.control.defaults.BusinessUnitCode="";
+}
+
+cy.control._cyBrowser = {
+isMicrosoft: navigator.appName.indexOf("Microsoft") != -1
+};
+
+cy.control.isMobile = function() {
+	if (/Android|iPhone|iPad|BlackBerry|Windows Phone|Opera Mini|IEMobile|Mobile|webOS/i.test(navigator.userAgent)) {
+		return true;
+	}
+	return false;
+};
+
+// On all versions of Internet Explorer, setting the document.location to load a new page results in the document.referrer on the
+// new page not being set. This function provides a workaround to that problem.
+cy.control._cyNavigate = function(url)
+{
+	if (cy.control._cyBrowser.isMicrosoft === true)
+	{
+		var referLink = document.createElement('a');
+		referLink.href = url;
+		document.body.appendChild(referLink);
+		referLink.click();
+	}
+	else
+	{
+		window.location=url;
+	}
+}
+
+// Split string s according to delimiter d and return element n. n is 1-based.
+String.prototype.cySplit = function(n, d)
+{
+	var delimiter = ':';
+	if (d) {
+		delimiter = d;
+	}
+	var r = "";
+	try {
+		var p = this.split(delimiter);
+		r = p[n-1];
+	}
+	catch(e) {
+		r = "";
+	}
+
+	return r;
+};
+
+function _cyGetCookie(c_name, suffix_allowed)
+{
+	// Search case-insensitive
+
+	var c_start;
+	var c_end;
+
+	if (document.cookie.length>0)
+	{
+		if (suffix_allowed === false)
+		{
+			// Look for a complete word match
+			c_start = document.cookie.toLowerCase().indexOf(c_name.toLowerCase() + "=");
+
+			if (c_start != -1)
+			{
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+
+				if (c_end == -1)
+				{
+					c_end = document.cookie.length;
+				}
+
+				return decodeURIComponent(document.cookie.substring(c_start, c_end));
+			}
+		}
+		else
+		{
+			// Look for a partial word match
+			var regexp = c_name.toLowerCase() + "(.*)=";
+
+			c_start = document.cookie.toLowerCase().search(regexp);
+
+			if (c_start != -1)
+			{
+				// create new string with our search criteria at the beginning
+				var s1 = document.cookie.slice(c_start);
+
+				// Search from the beginning of this new string for "="
+				c_start = s1.indexOf("=") +1;
+
+				if (c_start != -1)	// overkill
+				{
+					c_end = s1.indexOf(";");
+
+					if (c_end == -1)
+					{
+						c_end = s1.length;
+					}
+
+					return decodeURIComponent(s1.substring(c_start, c_end));
+				}
+			}
+		}
+
+	}
+
+	return "";
+}
+
+
+function _cyDRSLD(){
+
+	cy.control._cyConvertCYPropertyNamesToUpperCase();
+	uidtest=(cy.USERID==undefined) ? -1 : cy.USERID.length;
+	bizunit=(cy.BUSINESSUNITCODE==undefined) ? -1 : cy.BUSINESSUNITCODE.length;
+	sldrcheck=(cy.SECTION==undefined) ? -1 : cy.SECTION.indexOf("slider");
+
+	if(bizunit>=0)
+	{
+		if(uidtest>=0 && sldrcheck<0)
+		{
+			_cyCreateClientCookie("DRSldrCtrl","disabled",600);
+		}
+	}
+	
+}
+
+//==================MERGE=======================
+//====================Slider Add On=====================
+
+(function() {
+
+	var sPage = encodeURIComponent(window.location.protocol+"//"+window.location.hostname+window.location.pathname);
+	var pp = window.location.pathname
+	var p = pp.substring(pp.lastIndexOf('/') + 1);
+	var testStr = "";
+	var inTest = false;
+	var host = "d2uevgmgh16uk4.cloudfront.net";
+
+	if (typeof CYTESTPAGE != 'undefined') {
+    	sPage=CYTESTPAGE;
+    	testStr="&test=true";
+    	inTest = true;
+	}
+
+	if (typeof CUSTCODE != 'undefined') {
+    	cy.CUSTOMERCODE=CUSTCODE;
+	}
+
+	var ssl = window.location.protocol.toLowerCase().indexOf('https') >= 0;
+    var protocol='http';
+    if (ssl) {
+		protocol='https';
+	}
+
+	var url =  protocol+"://"+host+"/EmailCapSliderClient/sliderstyle.css?servicecode="+cy.CUSTOMERCODE+"&pagename="+sPage+testStr+"&scheme="+protocol;
+	if(document.createStyleSheet) {
+		document.createStyleSheet(url);
+	}
+	else {
+		var css=document.createElement("link");
+		document.getElementsByTagName("head")[0].appendChild(css);
+
+		css.setAttribute("rel", "stylesheet");
+		css.setAttribute("type", "text/css");
+		css.setAttribute("id","sliderstyle");
+		css.setAttribute("href", url);
+	}
+
+	var oScript= document.createElement("script");
+	oScript.setAttribute("id","sliderjs");
+	oScript.type = "text/javascript";
+	oScript.src=protocol+"://"+host+"/EmailCapSliderClient/slide.js?servicecode="+cy.CUSTOMERCODE+"&pagename="+sPage+testStr+"&scheme="+protocol;
+	document.getElementsByTagName("head")[0].appendChild(oScript);
+
+	cy.control._cyGetInTest = function() {
+		return inTest;
+	};
+
+})();
+
+
+
+//==================MERGE END===================
+
+
+cy.control._cyConvertCYPropertyNamesToUpperCase = function()
+{
+	var propertyValue = "";
+	for (var propertyName in cy)
+	{
+		if (propertyName != "control")
+		{
+			propertyValue = cy[propertyName];
+			delete cy[propertyName];
+			cy[propertyName.toUpperCase()] = propertyValue;
+		}
+	}
+	return "";
+}
+
+cy.control._cyGetWaitDuration = function()
+{
+	return cy.control.WAIT_DURATION;
+}
+
+function cySetWaitDuration(millis)
+{
+	cy.control.WAIT_DURATION = millis;
+}
+
+cy.control._cyGetUpperLimitWaitDuration = function()
+{
+	return cy.control.UPPER_LIMIT_WAIT_DURATION;
+}
+
+function cySetUpperLimitWaitDuration(millis)
+{
+	cy.control.UPPER_LIMIT_WAIT_DURATION = millis;
+}
+
+cy.control._cyOnImageLoad = function(elementId)
+{
+	cy.control._cyImages[elementId].loadingComplete = true;
+}
+
+cy.control._cyGetLoaded = function(elementId)
+{
+	return cy.control._cyImages[elementId].loadingComplete;
+}
+
+cy.control._cyOnImageAbort = function(elementId)
+{
+	cy.control._cyImages[elementId].loadingComplete = false;
+}
+
+// The doCreateHandlers parameter is an optional boolean value that, if true, means that an onLoad and onAbort handler should be
+// added to the created image. In general, a value of true will be passed when an actual image is being requested and we are to
+// wait on the image being loaded before carrying out the action in question.
+cy.control._cyCreateImage = function(doCreateHandlers)
+{
+	// Note - images are not removed from the document when they are no longer required. There will be only one image
+	// created in most circumstances, and never enough in a realistic scenario to cause a problem.
+	var cy_image = document.createElement("img");
+
+	cy_image.id = cy.control._cyGetUniqueId();
+
+	var createHandlers = false;
+	if (doCreateHandlers && typeof(doCreateHandlers) == "boolean")
+	{
+		createHandlers = doCreateHandlers;
+	}
+
+	if (createHandlers === true)
+	{
+		cy_image.onload = function(){cy.control._cyOnImageLoad(cy_image.id);};
+		cy_image.onabort = function(){cy.control._cyOnImageAbort(cy_image.id);};
+	}
+
+	cy_image.width = 1;
+	cy_image.height = 1;
+	cy_image.border = 0;
+
+	var s = document.getElementsByTagName('script')[0];
+	s.parentNode.insertBefore(cy_image, s);
+
+	return cy_image;
+}
+
+cy.control._cySetCYProperties = function(/* optional */ ocy, /* optional */ cysetter)
+{
+	if (ocy)
+	{
+		for (var p in ocy)
+		{
+			cy[p] = ocy[p];
+		}
+		cy.control._cyConvertCYPropertyNamesToUpperCase();
+	}
+
+	if (cysetter && typeof(cysetter) == "function")
+	{
+		cysetter();
+		cy.control._cyConvertCYPropertyNamesToUpperCase();
+	}
+}
+
+cy.control._cyTimeoutSubmit = function(thisForm, elementId, resetTimeout)
+{
+	if (resetTimeout === true && cy.control._cyIsImageLoadedOrTimedOut(elementId) === false)
+	{
+		// If resetTimeout = true, then we have to wait for the image to be returned from our server before
+		// submitting the form. So if we haven't yet loaded the image from our server, reset the timeout function
+		// so that we come back in here to check in a little while.
+
+		setTimeout(function(){cy.control._cyTimeoutSubmit(thisForm, elementId, true);}, cy.control._cyGetWaitDuration());
+		cy.control._cyImages[elementId].totalWaitTime += cy.control._cyGetWaitDuration();
+	}
+	else
+	{
+		// If resetTimeout is false, then we are not required to wait for the image to be returned from our server (in
+		// fact, in that case, no image is actually returned). So in this case, submit the form.
+		// Also, it may be that we are required to wait for the image to be loaded from our server, and that image has
+		// now loaded. In this case, submit the form.
+
+		thisForm.submit();
+	}
+}
+
+// thisForm - the form to be submitted
+// wait - boolean. If true, send our request, return actual image, wait for image to come back, wait in increments up to max duration
+//                 if false, send our request (do not return an image), wait for 100ms (or whatever is configured), submit the form
+cy.control._cyOnSubmit = function(thisForm, wait)
+{
+	try
+	{
+		var cy_image = cy.control._cyCreateImage(wait);
+
+		if (wait === true)
+		{
+			// Set a property of the _cyImages object. The property name is cy_image.id. The value of the property is an
+			// object. That object has two properties, totalWaitTime and loadingComplete. These are given initial values
+			// of 0 and false respectively.
+			cy.control._cyImages[cy_image.id] = {totalWaitTime:0, loadingComplete:false};
+
+			cy_image.src = cy.control._cyGetElementSrc("seewhy.gif");
+		}
+		else
+		{
+			cy_image.src = cy.control._cyGetElementSrc("seewhy.nogif");
+		}
+
+		setTimeout(function(){cy.control._cyTimeoutSubmit(thisForm, cy_image.id, wait);}, cy.control._cyGetWaitDuration());
+	}
+	catch(err){}
+
+	return false;
+}
+
+function cyOnSubmit(thisForm, /* optional */ doWait, /* optional */ ocy, /* optional */ cysetter)
+{
+	var waitOnImage = false;
+	try
+	{
+		cy.control._cySetCYProperties(ocy, cysetter);
+
+		if (doWait && typeof(doWait) == "boolean")
+		{
+			waitOnImage = doWait;
+		}
+	}
+	catch(err){}
+
+	return cy.control._cyOnSubmit(thisForm, waitOnImage);
+}
+
+cy.control._cyIsImageLoadedOrTimedOut = function(elementId)
+{
+	if ((cy.control._cyImages[elementId].totalWaitTime > cy.control._cyGetUpperLimitWaitDuration()) ||
+	    (document.getElementById(elementId).complete === true && cy.control._cyGetLoaded(elementId) === true))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+// This function should not be used with impunity
+cy.control._cyWait = function(millis)
+{
+	var start = new Date().getTime();
+	while(new Date().getTime() < (start+millis)) {
+	}
+}
+
+function cyOnPageLoad(/* optional */ isBlocking, /* optional */ doDelay, /* optional */ ocy, /* optional */ cysetter)
+{
+	var block = false;
+	if (isBlocking && typeof(isBlocking) == "boolean")
+	{
+		block = isBlocking;
+	}
+
+	try
+	{
+		cy.control._cySetCYProperties(ocy, cysetter);
+
+		if (block === true)
+		{
+			src = cy.control._cyGetElementSrc("seewhy.js");
+
+			// Doing a document.write requires that it be done before the page has finished loading (otherwise we will completely
+			// overwrite the page with the output of the document.write call).
+
+			if (document.readyState)
+			{
+				if (document.readyState != "complete")
+				{
+					document.write('<script type="text/javascript" src="',src,'"><\/script>');
+				}
+			}
+			else
+			{
+				document.write('<script type="text/javascript" src="',src,'"><\/script>');
+			}
+		}
+		else
+		{
+			var cy_image = cy.control._cyCreateImage(false);
+
+			cy_image.src = cy.control._cyGetElementSrc("seewhy.nogif");
+			
+			cy_image.style.cssText = 'display:none;'; 
+		}
+
+		var delay = false;
+		if (doDelay && typeof(doDelay) == "boolean")
+		{
+			delay = doDelay;
+		}
+
+		if (delay === true)
+		{
+			cy.control._cyWait(cy.control._cyGetWaitDuration());
+		}
+	}
+	catch(err){}
+}
+
+cy.control._cyTimeoutLink = function(anchor, elementId, resetTimeout)
+{
+	if (resetTimeout === true && cy.control._cyIsImageLoadedOrTimedOut(elementId) === false)
+	{
+		setTimeout(function(){cy.control._cyTimeoutLink(anchor, elementId, true);}, cy.control._cyGetWaitDuration());
+		cy.control._cyImages[elementId].totalWaitTime += cy.control._cyGetWaitDuration();
+	}
+	else
+	{
+		if (anchor && anchor.href)
+		{
+			cy.control._cyNavigate(anchor.href);
+		}
+	}
+}
+
+function cyOnLink(anchor, /* optional */doWait, /* optional */ ocy, /* optional */ cysetter)
+{
+	var wait = false;
+	if (doWait && typeof(doWait) == "boolean")
+	{
+		wait = doWait;
+	}
+
+	try
+	{
+		cy.control._cySetCYProperties(ocy, cysetter);
+
+		var cy_image = cy.control._cyCreateImage(wait);
+
+		if (wait)
+		{
+			cy.control._cyImages[cy_image.id] = {totalWaitTime:0, loadingComplete:false};
+			cy_image.src = cy.control._cyGetElementSrc("seewhy.gif");
+		}
+		else
+		{
+			cy_image.src = cy.control._cyGetElementSrc("seewhy.nogif");
+		}
+
+		setTimeout(function(){cy.control._cyTimeoutLink(anchor, cy_image.id, wait);}, cy.control._cyGetWaitDuration());
+	}
+	catch(err){}
+
+	// Returning false stops the browser from following the link as a consequence of the user clicking the link. The link will
+	// be followed when the timeout code is invoked.
+	return false;
+}
+
+function cyOnClick(/* optional */ doDelay, /* optional */ ocy, /* optional */ cysetter)
+{
+	try
+	{
+		cy.control._cySetCYProperties(ocy, cysetter);
+
+		var cy_image = cy.control._cyCreateImage(false);
+
+		cy_image.src = cy.control._cyGetElementSrc("seewhy.nogif");
+
+		var delay = false;
+		if (doDelay && typeof(doDelay) == "boolean")
+		{
+			delay = doDelay;
+		}
+
+		if (delay)
+		{
+			cy.control._cyWait(cy.control._cyGetWaitDuration());
+		}
+	}
+	catch(err){}
+}
+
+function cyOnChange(/* optional */ doDelay, /* optional */ ocy, /* optional */ cysetter)
+{
+	try
+	{
+		cy.control._cySetCYProperties(ocy, cysetter);
+
+		var cy_image = cy.control._cyCreateImage(false);
+
+		cy_image.src = cy.control._cyGetElementSrc("seewhy.nogif");
+
+		var delay = false;
+		if (doDelay && typeof(doDelay) == "boolean")
+		{
+			delay = doDelay;
+		}
+
+		if (delay)
+		{
+			cy.control._cyWait(cy.control._cyGetWaitDuration());
+		}
+	}
+	catch(err){}
+}
+
+cy.control._cyGetDT = function()
+{
+	var d = new Date();
+	var t = d.getTime();
+	var tz = d.getTimezoneOffset();
+
+	return t+"~"+tz;
+}
+
+cy.control._getBaseURL = function(/* optional */ res)
+{
+	var resource="seewhy.gif";
+	if (res)
+	{
+		resource = res;
+	}
+        var uidtest;
+	var protocol;
+	var port;
+	var swd='abandonment4.saas.seewhy.com';
+	var path='/abandonment2/WE/' +resource;
+	var ssl = window.location.protocol.toLowerCase().indexOf('https') >= 0;
+	if (ssl)
+	{
+		protocol='https';
+		port=443;
+	}
+	else
+	{
+		cy.control._cyConvertCYPropertyNamesToUpperCase();
+		uidtest=(cy.USERID==undefined) ? -1 : cy.USERID.length;
+
+		if (uidtest>0)
+		{
+			protocol='https';
+			port=443;
+		}
+		else
+		{
+			protocol='http';
+			port=80;
+		}
+
+
+	}
+	var swi = protocol+'://'+swd+':'+port+path;
+	var rn = Math.random();
+
+	return swi+"/"+rn;
+}
+
+cy.control._cyGetElementSrc = function(res)
+{
+	cy.control._cyConvertCYPropertyNamesToUpperCase();
+	var baseURL = cy.control._getBaseURL(res);
+
+	var sessionId = cy.control._cyGetSessionId();
+
+
+	if(cy._VERSION=='Hybris')
+	{
+		_cyCheckBrowse();
+	}
+
+	var csData='';
+	if (cy.control._cyIsCSSession() == true)
+	{
+		if (cy.control.CSM == 0)
+		{
+			csData = "&ClickstreamFlag=2&ClickstreamSessionID=" +cy.CSSID;
+		}
+	}
+	else
+	{
+		csData = "&ClickstreamFlag=0";
+	}
+	
+	
+	_cyDRSLD();
+	
+	if (cy.control.DXoptionCallOut) {
+ 	 	cy.control.DXoptionCallOut();
+ 	 	if (cy.control.inhibit) {
+	 		return "";
+	 	}
+	 	else {
+			var cn = _cyGetCookie("_cy_ar");
+			cy.CUSTOM15 = cn.cySplit(1);
+			cy.CUSTOM16 = cn.cySplit(3);
+		}
+	}
+	else if (cy.control.dx && cy.control.dx.q) {
+		cy.control.dx.q.unshift({f:cy.FUNNELLEVEL,u:cy.USERID,v:cy.VALUE,s:cy.CUSTOM1});
+	}
+
+	var queryString="?Event=WebEvent"+
+			"&CustomerCode=" +cy.CUSTOMERCODE+
+			"&Server=" +cy.DOCUMENTDOMAIN+
+			"&DefaultPageName=" +encodeURIComponent(cy.LOCATIONPATHNAME)+
+			"&Referrer=" +encodeURIComponent(cy.DOCUMENTREFERRER)+
+			"&SessionID=" +encodeURIComponent(sessionId)+
+			"&FunnelLevel=" +encodeURIComponent((cy.FUNNELLEVEL==undefined) ? cy.control.defaults.FunnelLevel : cy.FUNNELLEVEL)+
+			"&Section=" +encodeURIComponent((cy.SECTION==undefined) ? cy.control.defaults.Section : cy.SECTION)+
+			"&UserID=" +encodeURIComponent((cy.USERID==undefined) ? cy.control.defaults.UserId : cy.USERID)+
+			"&Product=" +encodeURIComponent((cy.PRODUCT==undefined) ? cy.control.defaults.Product : cy.PRODUCT)+
+			"&Quantity=" +encodeURIComponent((cy.QUANTITY==undefined) ? cy.control.defaults.Quantity : cy.QUANTITY)+
+			"&OrderNumber=" +encodeURIComponent((cy.ORDERNUMBER==undefined) ? cy.control.defaults.OrderNumber : cy.ORDERNUMBER)+
+			"&Value=" +encodeURIComponent((cy.VALUE==undefined) ? cy.control.defaults.Value : cy.VALUE)+
+			"&PageName=" +encodeURIComponent((cy.PAGENAME==undefined) ? cy.control.defaults.PageName : cy.PAGENAME)+
+			"&ReturnToLink=" +encodeURIComponent((cy.RETURNTOLINK==undefined) ? cy.control.defaults.ReturnToLink : cy.RETURNTOLINK)+
+			"&Custom1=" +encodeURIComponent((cy.CUSTOM1==undefined) ? cy.control.defaults.Custom1 : cy.CUSTOM1)+
+			"&Custom2=" +encodeURIComponent((cy.CUSTOM2==undefined) ? cy.control.defaults.Custom2 : cy.CUSTOM2)+
+			"&Custom3=" +encodeURIComponent((cy.CUSTOM3==undefined) ? cy.control.defaults.Custom3 : cy.CUSTOM3)+
+			"&Custom4=" +encodeURIComponent((cy.CUSTOM4==undefined) ? cy.control.defaults.Custom4 : cy.CUSTOM4)+
+			"&Custom5=" +encodeURIComponent((cy.CUSTOM5==undefined) ? cy.control.defaults.Custom5 : cy.CUSTOM5)+
+			"&Custom6=" +encodeURIComponent((cy.CUSTOM6==undefined) ? cy.control.defaults.Custom6 : cy.CUSTOM6)+
+			"&Custom7=" +encodeURIComponent((cy.CUSTOM7==undefined) ? cy.control.defaults.Custom7 : cy.CUSTOM7)+
+			"&Custom8=" +encodeURIComponent((cy.CUSTOM8==undefined) ? cy.control.defaults.Custom8 : cy.CUSTOM8)+
+			"&Custom9=" +encodeURIComponent((cy.CUSTOM9==undefined) ? cy.control.defaults.Custom9 : cy.CUSTOM9)+
+			"&Custom10=" +encodeURIComponent((cy.CUSTOM10==undefined) ? cy.control.defaults.Custom10 : cy.CUSTOM10)+
+			"&Custom11=" +encodeURIComponent((cy.CUSTOM11==undefined) ? cy.control.defaults.Custom11 : cy.CUSTOM11)+
+			"&Custom12=" +encodeURIComponent((cy.CUSTOM12==undefined) ? cy.control.defaults.Custom12 : cy.CUSTOM12)+
+			"&Custom13=" +encodeURIComponent((cy.CUSTOM13==undefined) ? cy.control.defaults.Custom13 : cy.CUSTOM13)+
+			"&Custom14=" +encodeURIComponent((cy.CUSTOM14==undefined) ? cy.control.defaults.Custom14 : cy.CUSTOM14)+
+			"&Custom15=" +encodeURIComponent((cy.CUSTOM15==undefined) ? cy.control.defaults.Custom15 : cy.CUSTOM15)+
+			"&Custom16=" +encodeURIComponent((cy.CUSTOM16==undefined) ? cy.control.defaults.Custom16 : cy.CUSTOM16)+
+			"&Custom17=" +encodeURIComponent((cy.CUSTOM17==undefined) ? cy.control.defaults.Custom17 : cy.CUSTOM17)+
+			"&Custom18=" +encodeURIComponent((cy.CUSTOM18==undefined) ? cy.control.defaults.Custom18 : cy.CUSTOM18)+
+			"&Custom19=" +encodeURIComponent((cy.CUSTOM19==undefined) ? cy.control.defaults.Custom19 : cy.CUSTOM19)+
+			"&Custom20=" +encodeURIComponent((cy.CUSTOM20==undefined) ? cy.control.defaults.Custom20 : cy.CUSTOM20)+
+			"&BizUnit=" +encodeURIComponent((cy.BUSINESSUNITCODE==undefined) ? cy.control.defaults.BusinessUnitCode : cy.BUSINESSUNITCODE)+
+			csData+
+			"&ClientTimeAndTZ=" +cy.control._cyGetDT()+
+			"&Version=" +cy._VERSION + 
+			_cyGetBasketLinesQueryString() + 
+			"&BasketAppend=" + cy.BASKETAPPEND +
+			cy.control.cyGetUserDefinedQueryString();
+
+	var src = baseURL+queryString;
+
+	if(cy._VERSION=='Hybris')
+	{	
+		if(cy.control.inhibit)
+		{
+			return "";
+			cy.control.inhibit=false;
+		}
+	}	
+
+	return src;
+}
+
+function cySetSessionDetails(sessionIdName, /* optional */ suffixAllowed)
+{
+	var isSuffixAllowed = false;
+	if (suffixAllowed && typeof(suffixAllowed) == "boolean")
+	{
+		isSuffixAllowed = suffixAllowed;
+	}
+	cy.control.cySessionIdDetails = {sessionKeyName:sessionIdName, sessionKeySuffixAllowed:isSuffixAllowed};
+}
+
+cy.control._cyGetSessionId = function()
+{
+	var sessionId;
+
+	if (cy.SESSIONID != null)
+	{
+		sessionId = cy.SESSIONID;
+	}
+	else
+	{
+		if (cy.control.cyGenerateSessionId === true)
+		{
+			sessionId = cy.control._cyGetGeneratedSessionId();
+		}
+		else
+		{
+			if (cy.control.cySessionIdDetails && cy.control.cySessionIdDetails.sessionKeyName)
+			{
+				sessionId = _cyGetCookie(cy.control.cySessionIdDetails.sessionKeyName, cy.control.cySessionIdDetails.sessionKeySuffixAllowed);
+			}
+			else
+			{
+				var sessionId = _cyGetCookie("JSESSIONID", false);
+				if (sessionId == "")
+				{
+					sessionId = _cyGetCookie("ASPSESSIONID", true);
+				}
+				if (sessionId == "")
+				{
+					sessionId = _cyGetCookie("PHPSESSID", false);
+				}
+				if (sessionId == "")
+				{
+					sessionId = _cyGetCookie("ASP.NET_SessionId", false);
+				}
+				if (sessionId == "")
+				{
+					sessionId = _cyGetCookie("sid", false);
+				}
+				if (sessionId == "")
+				{
+					sessionId = _cyGetCookie("SESS", true);
+				}
+			}
+		}
+	}
+
+	return sessionId;
+}
+
+cy.control._cyGetGeneratedSessionId = function()
+{
+	var cyd;
+
+	cyd = _cyGetCookie("__cy_d", false);
+
+	if (cyd == "")
+	{
+		cyd = _cyGenerateUUID();
+	}
+
+	_cyCreateClientCookie("__cy_d", cyd, (60*60*24*365*2));
+
+	return cyd;
+}
+
+function cySetCookieInfo(domain, /* optional */ path, /* optional */ secure)
+{
+	//DM3785
+	//	cy.control.cookieinfo.domain=domain;
+	cy.control.document.domain.relax.relaxeddomain=domain;
+	
+	if (path) {
+		cy.control.cookieinfo.path=path;
+	}
+	if (secure) {
+		cy.control.cookieinfo.secure=secure;
+	}
+}
+
+
+function _cyGenerateUUID()
+{
+	// Generate an RFC 4122 compliant version 4 UUID
+	return 'NNNNNNNN-NNNN-4NNN-XNNN-NNNNNNNNNNNN'.replace(/[NX]/g,
+							      function(c) {
+									var rn = Math.floor(Math.random()*16);
+									if (c == 'N')
+									{
+										v = rn;
+									}
+									else
+									{
+										// 0 <= rn < 16, but RFC 4122 requires that the 2 most sig bits be 1 and 0
+										v = (rn&0x3|0x8);
+									}
+									return v.toString(16);
+								}).toUpperCase();
+}
+
+// maxage in seconds
+function _cyCreateClientCookie(cookieName, cookieValue, /* optional */ maxage, /*optional */ domain, /* optional */ path, /* optional */secure)
+{
+	// Cookie values may not include semi-colons, commas, or whitespace. For this reason we encode the value here.
+	// Because we have encoded the cookie value, when we read it we will have to use the corresponding decodeURIComponent method.
+	var value = encodeURIComponent(cookieValue);
+	
+	var maxageString="";
+	var domainString="";
+	var pathString=";path=/";
+	var secureString="";
+
+	if (maxage != null && maxage != "")
+	{
+		// Although 'expires' is obsolete, no IE version supports max-age. 'expires' could be used for all browsers,
+		// but we'll use 'expires' for IE, and 'max-age' for all other browsers.
+		if (cy.control._cyBrowser.isMicrosoft === true) {
+			var date = new Date();
+			date.setTime(date.getTime()+(maxage*1000));
+			maxageString = "; expires=" +date.toUTCString();
+		}
+		else {
+			maxageString = "; max-age="+maxage;
+		}
+    	}
+    	else {
+		maxageString = "";
+	}
+	
+	if (domain) {
+		domainString=";domain=" +domain;
+	}
+	//DM3785
+	else if (cy.control.document.domain.relax.relaxeddomain){
+		domainString=";domain="+cy.control.document.domain.relax.relaxeddomain;
+	}
+
+	if (path) {
+		pathString=";path=" +path;
+	}
+	else if (cy.control.cookieinfo.path) {
+		pathString=";path=" +cy.control.cookieinfo.path;
+	}
+
+	if (secure && secure === true) {
+		secureString=";secure";
+	}
+	else if (cy.control.cookieinfo.secure && cy.control.cookieinfo.secure === true) {
+		secureString=";secure";
+	}
+
+	document.cookie = cookieName+"="+value+domainString+maxageString+pathString+secureString;
+}
+
+// Backwards compatibility. The cy_getImageSrc function is used for Page Load events. Page Load events do not require an image event
+// handler, and therefore there is no need to add one dynamically here.
+function cy_getImageSrc()
+{
+	// Non-blocking, non-waiting call used in the backwards compatibility version	
+	cyOnPageLoad(false, false);	
+
+}
+
+cy.control._getCSSampleRate = function()
+{
+	return cy.control.CSSR;
+}
+
+cy.control._cyCreateClickStreamCookie = function(isCS)
+{
+	var css_c_val;
+	if (isCS)
+	{
+		var css_id = _cyGenerateUUID();
+		cy.cssid = css_id;
+		css_c_val = "1:" + css_id;
+	}
+	else
+	{
+		css_c_val = "0:";
+	}
+	_cyCreateClientCookie("__cy_e", css_c_val);
+}
+
+cy.control._cyIsCSSession = function()
+{
+	if (cy.control.CSSESSIONFLAG == -1)
+	{
+		cy.control.CSSESSIONFLAG = cy.control._cyCSSession() == true ? 1 : 0;
+	}
+	return cy.control.CSSESSIONFLAG == 1 ? true : false;
+}
+
+cy.control._cyCSSession = function()
+{
+	var sr = cy.control._getCSSampleRate();
+	
+	if (sr <= 0) {
+		return false;
+	}
+
+	var css = false;
+	var cssid = _cyGetCookie("__cy_e", false);
+	
+	if (cssid != "")
+	{
+		var cssid_details = [];
+		cssid_details = cssid.split(':');
+		if (cssid_details.length > 0)
+		{
+			var is_css = cssid_details[0];
+			if (is_css == 1)
+			{
+				css = true;
+				if (cssid_details.length > 1) {
+					cy.cssid = cssid_details[1];
+				}
+				else {
+					css = cy.control._cyClickStreamCookie();
+				}
+			}
+		}
+		else {
+			css = cy.control._cyClickStreamCookie();
+		}
+	}
+	else
+	{
+		var rn = Math.random();
+		if (rn < sr)
+		{
+			cy.control._cyCreateClickStreamCookie(true);
+			css = true;
+		}
+		else {
+			cy.control._cyCreateClickStreamCookie(false);
+		}
+	}
+
+	return css;
+}
+
+cy.control._cyClickStreamCookie = function()
+{
+	var css = false;
+	var rn = Math.random();
+	if (rn < sr)
+	{
+		cy.control._cyCreateClickStreamCookie(true);
+		css = true;
+	}
+	else {
+		cy.control._cyCreateClickStreamCookie(false);
+	}
+	
+	return css;
+}
+
+cy.control._cyCS = function()
+{
+	if (cy.control._cyIsCSSession() == true)
+	{
+		cy.control.CSM == 1 ? cy.control._cyCS1() : cy.control._cyCS0();
+	}
+}
+
+cy.control._cyCS0 = function()
+{
+	cy.control._cyConvertCYPropertyNamesToUpperCase();
+	
+	var baseURL = cy.control._getBaseURL();
+	var ref = encodeURIComponent(cy.DOCUMENTREFERRER);
+
+	var queryString="?Event=WebEvent"+
+			"&CustomerCode=" +cy.CUSTOMERCODE+
+			"&DefaultPageName=" +encodeURIComponent(cy.LOCATIONPATHNAME)+
+			"&Referrer=" +encodeURIComponent(cy.DOCUMENTREFERRER)+
+			"&ClickstreamSessionID=" +cy.CSSID+
+			"&ClientTimeAndTZ=" +cy.control._cyGetDT()+
+			"&FunnelLevel=0"+
+			"&ClickstreamFlag=1"+
+			"&Version=" +cy._VERSION;
+
+	var src = baseURL+queryString;
+	
+	var cy_image = cy.control._cyCreateImage(false);
+	cy_image.src = src;
+}
+
+cy.control._cyCS1 = function()
+{
+}
+
+function _cyFormatLineNumber(iLineNumber)
+{
+  var strLineNumber;
+  iLineNumber < 10?(strLineNumber = '00' + iLineNumber):iLineNumber < 100?(strLineNumber = '0' + iLineNumber):(strLineNumber = '' + iLineNumber);
+  return strLineNumber;
+}
+
+function _cyGetBasketDetailNameFromKeyStartingAt(strValue, iStartPosition)
+{
+  var iEqualsStartPosition, iLineNameStartPosition, strLineName;
+  iLineNameStartPosition = iStartPosition + 7;
+  iEqualsStartPosition = strValue.indexOf(':', iStartPosition);
+  strLineName = strValue.substr(iLineNameStartPosition, iEqualsStartPosition - iLineNameStartPosition);
+  return strLineName;
+}
+
+function _cyGetBasketDetailValueFromKeyStartingAt(strValue, iStartPosition)
+{
+  var iKVDelimiterStartPosition, iPairDelimiterStartPosition, strLineValue;
+  iKVDelimiterStartPosition = strValue.indexOf(':', iStartPosition);
+  iPairDelimiterStartPosition = strValue.indexOf('&', iStartPosition);
+  iPairDelimiterStartPosition == -1?(strLineValue = strValue.substr(iKVDelimiterStartPosition + 1, strValue.length - (iKVDelimiterStartPosition + 1))):(strLineValue = strValue.substr(iKVDelimiterStartPosition + 1, iPairDelimiterStartPosition - (iKVDelimiterStartPosition + 1)));
+  return strLineValue;
+}
+
+function _cyGetNextBasketLineNumber()
+{
+  var iCurrentLineNumber, iHighestLineNumber, iNextStartPosition, iPos, strBasketLineCookieValue, strLineNumber, iLineNumberStartPosition;
+  iNextStartPosition = 0;
+  iHighestLineNumber = 0;
+  strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+  while ((iPos = strBasketLineCookieValue.indexOf('CYBK', iNextStartPosition)) != -1)
+  {
+    strLineNumber = (iLineNumberStartPosition = iPos + 4 , strBasketLineCookieValue.substr(iLineNumberStartPosition, iLineNumberStartPosition + 3 - iLineNumberStartPosition));
+    iCurrentLineNumber = parseInt(strLineNumber, 10);
+    iCurrentLineNumber > iHighestLineNumber && (iHighestLineNumber = iCurrentLineNumber);
+    iNextStartPosition = iPos + 1;
+  }
+  return _cyFormatLineNumber(iHighestLineNumber + 1);
+}
+
+function _cyGetNextBasketLineNumberInt()
+{
+  var strNextLineNumber;
+  var iNextLineNumber;
+
+  strNextLineNumber = _cyGetNextBasketLineNumber();
+  iNextLineNumber = parseInt(strNextLineNumber, 10);
+
+  return iNextLineNumber;
+}
+
+function _cyInsertBasketLineValue(strBeforeLineNumber, strInsertionName, strInsertionValue)
+{
+  var blnFirst, iCurrentLineNumber, iInsertionPointLineNumber, iNextStartPosition, iPos, strBasketLineCookieValue, strDetailsToKeep, strLineNumber, strName, strValue, iLineNumberStartPosition;
+  iNextStartPosition = 0;
+  strDetailsToKeep = '';
+  blnFirst = true;
+  strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+  if (strBasketLineCookieValue != null)
+  {
+    iInsertionPointLineNumber = parseInt(strBeforeLineNumber, 10);
+    while ((iPos = strBasketLineCookieValue.indexOf('CYBK', iNextStartPosition)) != -1)
+    {
+      strLineNumber = (iLineNumberStartPosition = iPos + 4 , strBasketLineCookieValue.substr(iLineNumberStartPosition, iLineNumberStartPosition + 3 - iLineNumberStartPosition));
+      strName = _cyGetBasketDetailNameFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      strValue = _cyGetBasketDetailValueFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      iNextStartPosition = iPos + 1;
+      iCurrentLineNumber = parseInt(strLineNumber, 10);
+      iCurrentLineNumber >= iInsertionPointLineNumber && ++iCurrentLineNumber;
+      blnFirst || (strDetailsToKeep = strDetailsToKeep + '&');
+      strDetailsToKeep = strDetailsToKeep + 'CYBK';
+      strDetailsToKeep = strDetailsToKeep + _cyFormatLineNumber(iCurrentLineNumber);
+      strDetailsToKeep = strDetailsToKeep + strName;
+      strDetailsToKeep = strDetailsToKeep + ':';
+      strDetailsToKeep = strDetailsToKeep + strValue;
+      blnFirst = false;
+    }
+    _cySetBasketLineCookieValue(strDetailsToKeep);
+  }
+  _cyUpdateBasketLineValue(strBeforeLineNumber, strInsertionName, strInsertionValue);
+}
+
+function _cyInsertBasketLineValueInt(iBeforeLineNumber, strInsertionName, strInsertionValue)
+{
+  _cyInsertBasketLineValue(_cyFormatLineNumber(iBeforeLineNumber), strInsertionName, strInsertionValue);
+}
+
+function _cyRemoveBasketLine(strLineNumberToRemove)
+{
+  var blnFirst, iCurrentLineNumber, iLineNumberToRemove, iNextStartPosition, iPos, strBasketLineCookieValue, strDetailsToKeep, strLineNumber, strName, strValue, iLineNumberStartPosition;
+  iNextStartPosition = 0;
+  strDetailsToKeep = '';
+  blnFirst = true;
+  strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+  if (strBasketLineCookieValue != null)
+  {
+    iLineNumberToRemove = parseInt(strLineNumberToRemove, 10);
+    while ((iPos = strBasketLineCookieValue.indexOf('CYBK', iNextStartPosition)) != -1)
+    {
+      strLineNumber = (iLineNumberStartPosition = iPos + 4 , strBasketLineCookieValue.substr(iLineNumberStartPosition, iLineNumberStartPosition + 3 - iLineNumberStartPosition));
+      strName = _cyGetBasketDetailNameFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      strValue = _cyGetBasketDetailValueFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      iNextStartPosition = iPos + 1;
+      iCurrentLineNumber = parseInt(strLineNumber, 10);
+      if (iLineNumberToRemove != iCurrentLineNumber)
+      {
+        iCurrentLineNumber > iLineNumberToRemove && --iCurrentLineNumber;
+        blnFirst || (strDetailsToKeep = strDetailsToKeep + '&');
+        strDetailsToKeep = strDetailsToKeep + 'CYBK';
+        strDetailsToKeep = strDetailsToKeep + _cyFormatLineNumber(iCurrentLineNumber);
+        strDetailsToKeep = strDetailsToKeep + strName;
+        strDetailsToKeep = strDetailsToKeep + ':';
+        strDetailsToKeep = strDetailsToKeep + strValue;
+        blnFirst = false;
+      }
+    }
+    _cySetBasketLineCookieValue(strDetailsToKeep);
+  }
+}
+
+function _cyRemoveBasketLineInt(iLineNumberToRemove)
+{
+  _cyRemoveBasketLine(_cyFormatLineNumber(iLineNumberToRemove));
+}
+
+function _cyRemoveBasketLineValue(strLineNumberOfValue, strNameOfValue)
+{
+  var blnDetailsStillExistForLine, blnFirst, iNextStartPosition, iPos, strBasketLineCookieValue, strDetailsToKeep, strLineNumber, strName, strValue, iLineNumberStartPosition;
+  iNextStartPosition = 0;
+  strDetailsToKeep = '';
+  blnFirst = true;
+  blnDetailsStillExistForLine = false;
+  strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+  if (strBasketLineCookieValue != null) 
+  {
+    while ((iPos = strBasketLineCookieValue.indexOf('CYBK', iNextStartPosition)) != -1) 
+    {
+      strLineNumber = (iLineNumberStartPosition = iPos + 4 , strBasketLineCookieValue.substr(iLineNumberStartPosition, iLineNumberStartPosition + 3 - iLineNumberStartPosition));
+      strName = _cyGetBasketDetailNameFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      strValue = _cyGetBasketDetailValueFromKeyStartingAt(strBasketLineCookieValue, iPos);
+      iNextStartPosition = iPos + 1;
+      if (compareTo(strLineNumber, strLineNumberOfValue) != 0 || compareTo(strName, strNameOfValue) != 0) 
+      {
+        compareTo(strLineNumber, strLineNumberOfValue) == 0 && (blnDetailsStillExistForLine = true);
+        blnFirst || (strDetailsToKeep = strDetailsToKeep + '&');
+        strDetailsToKeep = strDetailsToKeep + 'CYBK';
+        strDetailsToKeep = strDetailsToKeep + strLineNumber;
+        strDetailsToKeep = strDetailsToKeep + strName;
+        strDetailsToKeep = strDetailsToKeep + ':';
+        strDetailsToKeep = strDetailsToKeep + strValue;
+        blnFirst = false;
+      }
+    }
+    _cySetBasketLineCookieValue(strDetailsToKeep);
+    blnDetailsStillExistForLine || _cyRemoveBasketLine(strLineNumberOfValue);
+  }
+  
+  return !blnDetailsStillExistForLine;
+}
+
+function _cyRemoveBasketLineValueInt(iLineNumberOfValue, strNameOfValue)
+{
+  return _cyRemoveBasketLineValue(_cyFormatLineNumber(iLineNumberOfValue), strNameOfValue);
+}
+
+function _cyUpdateBasketLineValue(strLineNumber, strKey, strValue)
+{
+  var blnLineRemoved = false;
+  var strBasketLineCookieValue, strDetailsToKeep;
+  strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+
+  if (strBasketLineCookieValue.indexOf('CYBK000') != -1)
+  {
+    _cyRemoveBasketLine('000');
+    strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+  }
+
+  if (strBasketLineCookieValue.indexOf('CYBK' + strLineNumber + strKey) != -1)
+  {
+    blnLineRemoved = _cyRemoveBasketLineValue(strLineNumber, strKey);
+  }
+
+  if( blnLineRemoved == true )
+  {
+    _cyInsertBasketLineValue(strLineNumber, strKey, strValue);
+  }
+  else
+  {
+    strBasketLineCookieValue = _cyGetBasketLineCookieValue();
+
+    strBasketLineCookieValue == null && (strBasketLineCookieValue = '');
+    
+    strDetailsToKeep = '' + strBasketLineCookieValue;
+    compareTo(strBasketLineCookieValue, '') != 0 && (strDetailsToKeep = strDetailsToKeep + '&');
+    strDetailsToKeep = strDetailsToKeep + 'CYBK';
+    strDetailsToKeep = strDetailsToKeep + strLineNumber;
+    strDetailsToKeep = strDetailsToKeep + strKey;
+    strDetailsToKeep = strDetailsToKeep + ':';
+    strDetailsToKeep = strDetailsToKeep + encodeURIComponent(strValue);
+    _cySetBasketLineCookieValue(strDetailsToKeep);
+  }
+}
+
+function _cyUpdateBasketLineValueInt(iLineNumber, strKey, strValue)
+{
+  _cyUpdateBasketLineValue(_cyFormatLineNumber(iLineNumber), strKey, strValue);
+}
+
+
+function _cyEmptyTheServerBasket()
+{
+  _cyUpdateBasketLineValue('000', 'Empty', 'TheBasket');
+}
+
+function _cyEmptyTheClientBasket()
+{
+  _cySetBasketLineCookieValue('');
+}
+
+function _cySetBasketLineCookieValue(strValue)
+{
+  cyPageBasket = strValue;
+  _cyCreateClientCookie('_cybskt', strValue);
+}
+
+function _cyGetBasketLineCookieValue()
+{
+  var strValue = '';
+
+  if( cyPageBasket == '' )
+  {
+    strValue = _cyGetCookie('_cybskt', false);
+  }
+  else
+  {
+    strValue = cyPageBasket;
+  }
+
+  return strValue;
+}
+
+function _cyGetBasketLinesQueryString()
+{
+  var strValue = '';
+  
+  strValue = _cyGetBasketLineCookieValue();
+  _cySetBasketLineCookieValue('');
+  _cySetCurrentLineNumberCookieValue('');
+
+  if( strValue != undefined && strValue != null && strValue != '' )
+  {
+    strValue = $replaceAll(strValue, ':', '=');
+    strValue = "&" + strValue;
+  }
+
+  return strValue;
+}
+
+function $replaceAll(strValue, regex, replace)
+{
+  replace = __translateReplaceString(replace);
+  return strValue.replace(RegExp(regex, 'g'), replace);
+}
+
+function __translateReplaceString(replaceStr)
+{
+  var pos;
+  pos = 0;
+  while (0 <= (pos = replaceStr.indexOf('\\', pos)))
+  {
+    replaceStr.charCodeAt(pos + 1) == 36?(replaceStr = replaceStr.substr(0, pos - 0) + '$' + $substring(replaceStr, ++pos)):(replaceStr = replaceStr.substr(0, pos - 0) + $substring(replaceStr, ++pos));
+  }
+  return replaceStr;
+}
+
+function compareTo(thisStr, otherStr)
+{
+  thisStr = String(thisStr);
+  if (thisStr == otherStr)
+  {
+    return 0;
+  }
+  return thisStr < otherStr?-1:1;
+}
+
+function _cySetCurrentLineNumberCookieValue(strValue)
+{
+  cyCurrLineNumber = strValue;
+  _cyCreateClientCookie('_cycurrln', strValue);
+}
+
+function _cyGetCurrentLineNumberCookieValue()
+{
+  var strValue = '';
+
+  if( cyCurrLineNumber == '' )
+  {
+    strValue = _cyGetCookie('_cycurrln', false);
+  }
+  else
+  {
+    strValue = cyCurrLineNumber;
+  }
+
+  return strValue;
+}
+
+function cyNewBasketLine()
+{
+  var strLineNumber = '';
+
+  strLineNumber = _cyGetNextBasketLineNumber();
+
+  _cySetCurrentLineNumberCookieValue(strLineNumber);
+}
+
+function cyAddBasketLineDetail(strKey, strValue)
+{
+  var strLineNumber = '';
+
+  strLineNumber = _cyGetCurrentLineNumberCookieValue();
+
+  if( strLineNumber == undefined || strLineNumber == null || strLineNumber == '' )
+  {
+  	cyNewBasketLine();
+  	strLineNumber = _cyGetCurrentLineNumberCookieValue();
+  }
+
+  if (cy.control.dx && cy.control.dx.cySM1) {
+	  if (strKey.toUpperCase() === 'ITEMID') {
+		  cy.control.dx.cySM1(strValue);
+	  }
+  }
+  else if (cy.control.dx && cy.control.dx.sm) {
+	  cy.control.dx.sm.push(strValue);
+  }
+
+  _cyUpdateBasketLineValue(strLineNumber, strKey, strValue);
+}
+
+cyAddBasketLineDetail_ITEMID = function(itemID) {
+	cyAddBasketLineDetail('ITEMID', itemID);
+};
+
+function cyRemoveCurrentBasketLine()
+{
+  var strLineNumber = '';
+
+  strLineNumber = _cyGetCurrentLineNumberCookieValue();
+
+  if( strLineNumber != undefined && strLineNumber != null && strLineNumber != '' )
+  {
+    _cyRemoveBasketLine(strLineNumberToRemove)
+  }
+}
+
+function cyClientSideBasketReset()
+{
+  _cySetCurrentLineNumberCookieValue('');
+  _cyEmptyTheClientBasket();
+}
+
+function cyServerSideBasketReset()
+{
+  _cyEmptyTheServerBasket();
+}
+
+cy.control.cySetUserDefined = function( strKey, strValue )
+{
+	if( strKey != undefined && strKey != null && strKey != 'HasDiscount' )
+	{
+		if( strKey == "length" )
+		{
+			strKey = "Length";
+		}
+
+		var strMappedKeyIndex;
+
+		strMappedKeyIndex = cy.control.misc_data_map[strKey];
+
+
+
+		if( strMappedKeyIndex == undefined || strMappedKeyIndex == null )
+		{
+			strMappedKeyIndex = cy.control.misc_data_count;
+			cy.control.misc_data_count = cy.control.misc_data_count + 1;
+		}
+		else
+		{
+		}
+
+		cy.control.misc_data_keys[strMappedKeyIndex] = strKey;
+		cy.control.misc_data_vals[strMappedKeyIndex] = strValue;
+		cy.control.misc_data_map[strKey] = strMappedKeyIndex;
+	}
+	else
+	{
+		cy.CUSTOM10 = strValue;
+	}
+}
+
+cy.control.cyGetUserDefined = function()
+{
+	var strUserDefined = "";
+
+
+	for( var count = 0; count < cy.control.misc_data_keys.length; count++ )
+	{
+		if( count != 0 )
+		{
+			strUserDefined = strUserDefined + "&";
+		}
+
+		strUserDefined = strUserDefined + encodeURIComponent( cy.control.misc_data_keys[count] ) + "=" + encodeURIComponent (cy.control.misc_data_vals[count] );
+	}
+
+
+	cy.control.misc_data_keys = new Array();
+	cy.control.misc_data_vals = new Array();
+	cy.control.misc_data_map = new Array();
+	cy.control.misc_data_count = 0;
+
+	return strUserDefined;
+}
+
+cy.control.cyGetUserDefinedQueryString = function()
+{
+	var strUserDefinedQueryString = "";
+	var strUserDefinedData = "";
+
+	strUserDefinedData = cy.control.cyGetUserDefined();
+
+	if( strUserDefinedData != undefined && strUserDefinedData != null && strUserDefinedData != '' )
+	{
+		strUserDefinedQueryString = "&" + strUserDefinedData;
+	}
+
+	return strUserDefinedQueryString;
+}
+
+
+_cyWriteBrowseCookie = function()
+{
+	cy.control._cyConvertCYPropertyNamesToUpperCase();
+	cyCART=(cy.CUSTOM9==undefined) ? cy.control.defaults.Custom9 : cy.CUSTOM9;
+	cyMODE=(_cyGetCookie("_cy_crt",true)==undefined) ? "BROWSE" : _cyGetCookie("_cy_crt",true);
+	cyCookieProd=(_cyGetCookie("_cy_prd",true)==undefined) ? 1 : (_cyGetCookie("_cy_prd",true)*1)+1;
+	
+	if (cyCART.toUpperCase()=='BROWSE')
+	{
+		if (cyMODE.toUpperCase()=='CART')
+		{
+			cy.control.inhibit=true;
+		}
+		else
+		{
+			_cyCreateClientCookie("_cy_crt",cyCART,3600);
+			_cyCreateClientCookie("_cy_prd",cyCookieProd,3600);
+			cy.control.inhibit=false;
+		}
+	}
+	else
+	{
+		
+		if (cyCART.toUpperCase()=='CART')
+		{
+			_cyCreateClientCookie("_cy_crt",cyCART,3600);	
+			
+			if (cyMODE.toUpperCase()=='BROWSE')
+			{
+				_cyCreateClientCookie("_cy_prd",1,3600);
+			}
+			else
+			{
+				_cyCreateClientCookie("_cy_prd",cyCookieProd,3600);
+			}
+		}
+		
+		cy.control.inhibit=false;
+		
+	}
+
+}
+
+
+_cyCheckBrowse = function()
+{
+   cy.control._cyConvertCYPropertyNamesToUpperCase();
+   _cyHYSLD();
+   _cyWriteBrowseCookie();	
+   cyCheckProds=(_cyGetCookie("_cy_prd",true)==undefined) ? 0 : (_cyGetCookie("_cy_prd",true)*1);
+   cyCheckCart=_cyGetCookie("_cy_crt",true);
+   cyCheckFlag=(cy.CUSTOM9==undefined) ? cy.control.defaults.Custom9 : cy.CUSTOM9;
+   
+   if (cyCheckProds<3 && cyCheckCart.toUpperCase()=='BROWSE')
+   {
+   	cy.control.inhibit=true;
+   }
+   else
+   {
+   	if(cyCheckFlag.toUpperCase()=='BROWSE' && cyCheckCart.toUpperCase()=='CART')
+   	{
+   		cy.control.inhibit=true;
+   	}
+   	else
+   	{
+   		cy.control.inhibit=false;
+   	}
+   }
+   
+   if (cyCheckProds==1 && cyCheckCart.toUpperCase()=='CART')
+   {
+   	cy.BASKETAPPEND=0;
+   }
+   else
+   {
+   	cy.BASKETAPPEND=1;
+   }
+
+   cy.QUANTITY=cyCheckProds;
+}
+
+
+_cyHYSLD = function()
+{
+	cy.control._cyConvertCYPropertyNamesToUpperCase();
+	uidtest=(cy.USERID==undefined) ? -1 : cy.USERID.length;
+	sldrcheck=(cy.SECTION==undefined) ? -1 : cy.SECTION.indexOf("slider");
+
+	if(uidtest>=0 && sldrcheck<0)
+	{
+		_cyCreateClientCookie("_cpcy_","disabled",3600);
+	}
+}
+	
+cy.control.cyStripProtocol = function(cyInDomain)
+{
+var cyOutDomain='';
+if (cyInDomain != null)
+        {
+        var cyProtocolPosition=cyInDomain.indexOf("://");
+
+        if (cyProtocolPosition>0)
+        {
+        cyOutDomain=cyInDomain.substring(cyProtocolPosition+3);
+        }
+        else
+        {
+        cyOutDomain=cyInDomain.substring(cyProtocolPosition);
+        }
+}
+return cyOutDomain;
+};
+
+// self executing function to check and in need be, send fingerprint data
+(function()
+{
+	try 
+	{
+	var x=checkFingerprintSend();
+	}
+	catch(e)
+	{}
+	function checkFingerprintSend(pForceUserCookie)
+	{
+		var d= new Date(),
+			t1=d.getTime(),
+			t2=ls("__cy_fp"),
+			tenDays=86400*1000*10;
+		if (!pForceUserCookie) {pForceUserCookie=false;}
+		if ((typeof(Storage) !== "undefined")&&(!pForceUserCookie)) {
+			// Use LS
+			if (ls("__cy_fp")) {				
+				if (isNaN(parseInt(t2))) {
+					ls("__cy_fp",t1);
+					checkFingerprintSend();
+					return {"status":false,
+							"message":"'__cy_fp' was not a number. Setting to now, and calling checkFingerprintSend() again",
+							"storage":"localStorage"};
+				};			
+				if ((t2-t1)>0) { return {"status":false,"message":"'__cy_fp' is set to the future.",
+							"storage":"localStorage"};} 		
+				// calculate FP
+				send()
+				// Set __cy_fp to 10 days hence
+				ls("__cy_fp",t1+tenDays);
+				return {"status":true,"message":"'__cy_fp' was set to the past.",
+							"storage":"localStorage"};
+			} else {
+				send();
+				// Set __cy_fp to 10 days hence
+				ls("__cy_fp",t1+tenDays);
+				return {"status":true,
+						"message":"'__cy_fp' was not present.",
+						"storage":"localStorage"};
+			}
+		} else {
+			// Use Cookie
+			if (!_cyGetCookie("__cy_fp")) {
+				send();			
+				_cyCreateClientCookie("__cy_fp", tenDays, (tenDays/1000));
+				return {"status":true,
+						"message":"'__cy_fp' cookie was not present. Sending",
+						"storage":"cookieStorage"};
+			}
+			else {
+				return {"status":false,
+						"message":"'__cy_fp' cookie was present. Not Sending",
+						"storage":"cookieStorage"};
+			}
+		}
+		return ;
+		function send()
+		{	
+			// calculate FP
+			cyFingerPrint();
+			// Send FP
+			cy_getImageSrc();
+		}
+		function ls(pItem,pValue)
+		{
+			if (pValue===undefined) {return localStorage.getItem(pItem);};	
+			localStorage.setItem(pItem, pValue);
+			return ls(pItem);
+		}
+		function cyFingerPrint(/*optional */ seed)
+		{
+			//default cookie lifetime is 30 days
+			//default seed is 1	
+			var cy_s,
+				cy_d3_arrh = [],
+				i,
+				cy_d3h;
+			if (!seed) { seed=1; }	    
+			cy_s=seed;	
+			if(!sessionStorage) {sessionStorageCheck="No";} else {sessionStorageCheck="Yes";}
+			if(!window.indexedDB) {indexedDBCheck="No";} else {indexedDBCheck="Yes";}
+			if(!window.openDatabase) {openDatabaseCheck="No";} else {openDatabaseCheck="Yes";}
+			
+			if( navigator.plugins )
+			{
+				for (i = 0; i < navigator.plugins.length; i++ ) {
+					cy_d3_arrh.push( (String(murmurhash3_32_gc(navigator.plugins[i].name 
+						+ " " + navigator.plugins[i].description )))
+						);
+				}
+			}	
+			cy_d3h = String(cy_d3_arrh);    	
+			cy.control.cySetUserDefined("DEVICEIDENTITYDONOTTRACK",navigator.doNotTrack);
+			cy.control.cySetUserDefined("DEVICEIDENTITYTIMEZONEOFFSET",String(new Date().getTimezoneOffset()));
+			cy.control.cySetUserDefined("DEVICEIDENTITYSTATIC",murmurhash3_32_gc((navigator.language + String(Math.pow (2, window.screen.colorDepth)) + screen.width + "&times;" + screen.height + sessionStorageCheck + indexedDBCheck + openDatabaseCheck + navigator.cpuClass + navigator.platform), cy_s));
+			cy.control.cySetUserDefined("DEVICEIDENTITYUSERAGENT",murmurhash3_32_gc(navigator.userAgent.replace(/[0-9]/g, ''), cy_s));
+			cy.control.cySetUserDefined("DEVICEIDENTITYCANVAS",murmurhash3_32_gc(getCanvasFingerPrint(), cy_s));
+			cy.control.cySetUserDefined("DEVICEIDENTITYBROWSERPLUGINS",cy_d3h);		
+			
+			return;
+			// Supporting functions
+			function getCanvasFingerPrint () 
+			{
+				try
+				{
+				var canvas = document.createElement('canvas'),
+					ctx = canvas.getContext('2d'),
+					txt = 'men who swim';
+					
+			  ctx.textBaseline = "top";
+			  ctx.font = "14px 'Arial'";
+			  ctx.textBaseline = "alphabetic";
+			  ctx.fillStyle = "#f60";
+			  ctx.fillRect(125,1,62,20);
+			  ctx.fillStyle = "#069";
+			  ctx.fillText(txt, 2, 15);
+			  ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+			  ctx.fillText(txt, 4, 17);
+			  return canvas.toDataURL();
+			}
+				catch (e)
+				{
+					return "";
+				}
+			}
+
+		/**
+			 * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
+			 *
+			 * @author <a href="mailto:gary.court@gmail.com">Gary Court</a>
+			 * @see http://github.com/garycourt/murmurhash-js
+			 * @author <a href="mailto:aappleby@gmail.com">Austin Appleby</a>
+			 * @see http://sites.google.com/site/murmurhash/
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+			 * THE SOFTWARE.
+			 */
+
+			function murmurhash3_32_gc (key, seed) {
+			  var remainder, bytes, h1, h1b, c1, c2, k1, i;
+
+			  remainder = key.length & 3; // key.length % 4
+			  bytes = key.length - remainder;
+			  h1 = seed;
+			  c1 = 0xcc9e2d51;
+			  c2 = 0x1b873593;
+			  i = 0;
+
+			  while (i < bytes) {
+				  k1 =
+					((key.charCodeAt(i) & 0xff)) |
+					((key.charCodeAt(++i) & 0xff) << 8) |
+					((key.charCodeAt(++i) & 0xff) << 16) |
+					((key.charCodeAt(++i) & 0xff) << 24);
+				++i;
+
+				k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+				k1 = (k1 << 15) | (k1 >>> 17);
+				k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+
+				h1 ^= k1;
+					h1 = (h1 << 13) | (h1 >>> 19);
+				h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+				h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+			  }
+
+			  k1 = 0;
+
+			  switch (remainder) {
+				case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+				case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+				case 1: k1 ^= (key.charCodeAt(i) & 0xff);
+
+				k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+				k1 = (k1 << 15) | (k1 >>> 17);
+				k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+				h1 ^= k1;
+			  }
+
+			  h1 ^= key.length;
+
+			  h1 ^= h1 >>> 16;
+			  h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+			  h1 ^= h1 >>> 13;
+			  h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+			  h1 ^= h1 >>> 16;
+
+			  return h1 >>> 0;
+			}
+		}
+		
+	}
+
+})();

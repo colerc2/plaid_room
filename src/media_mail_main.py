@@ -6,6 +6,9 @@ import shopify
 
 COLEMINE = 0
 PLAID_ROOM = 1
+DURAND = 2
+IKEBE = 3
+DLO3 = 4
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -44,17 +47,27 @@ class Ui_ShipPaypal(QtGui.QWidget):
         self.address_text_box.setGeometry(QtCore.QRect(60, 190, 431, 141))
         self.address_text_box.setObjectName(_fromUtf8("address_text_box"))
         self.layoutWidget = QtGui.QWidget(ShipPaypal)
-        self.layoutWidget.setGeometry(QtCore.QRect(310, 30, 171, 71))
+        self.layoutWidget.setGeometry(QtCore.QRect(310, 10, 171, 91))
         self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.colemine_radio = QtGui.QRadioButton(self.layoutWidget)
+        self.colemine_radio.setChecked(True)
         self.colemine_radio.setObjectName(_fromUtf8("colemine_radio"))
         self.verticalLayout.addWidget(self.colemine_radio)
         self.plaid_room_radio = QtGui.QRadioButton(self.layoutWidget)
         self.plaid_room_radio.setObjectName(_fromUtf8("plaid_room_radio"))
         self.verticalLayout.addWidget(self.plaid_room_radio)
+        self.durand_radio = QtGui.QRadioButton(self.layoutWidget)
+        self.durand_radio.setObjectName(_fromUtf8("durand_radio"))
+        self.verticalLayout.addWidget(self.durand_radio)
+        self.ikebe_radio = QtGui.QRadioButton(self.layoutWidget)
+        self.ikebe_radio.setObjectName(_fromUtf8("ikebe_radio"))
+        self.verticalLayout.addWidget(self.ikebe_radio)
+        self.dlo3_radio = QtGui.QRadioButton(self.layoutWidget)
+        self.dlo3_radio.setObjectName(_fromUtf8("dlo3_radio"))
+        self.verticalLayout.addWidget(self.dlo3_radio)
 
         self.retranslateUi(ShipPaypal)
         QtCore.QMetaObject.connectSlotsByName(ShipPaypal)
@@ -65,6 +78,9 @@ class Ui_ShipPaypal(QtGui.QWidget):
         self.reset_button.setText(_translate("ShipPaypal", "Reset", None))
         self.colemine_radio.setText(_translate("ShipPaypal", "Colemine Shopify", None))
         self.plaid_room_radio.setText(_translate("ShipPaypal", "Plaid Room Shopify", None))
+        self.durand_radio.setText(_translate("ShipPaypal", "Durand Shopify", None))
+        self.ikebe_radio.setText(_translate("ShipPaypal", "Ikebe Shopify", None))
+        self.dlo3_radio.setText(_translate("ShipPaypal", "DLO3 Shopify", None))
 
         self.colemine_radio.toggle()
 
@@ -89,6 +105,15 @@ class Ui_ShipPaypal(QtGui.QWidget):
         elif self.plaid_room_radio.isChecked():
             self.shipping.reset_shopify_connection(PLAID_ROOM)
             print 'prr is checked'
+        elif self.durand_radio.isChecked():
+            self.shipping.reset_shopify_connection(DURAND)
+            print 'durand is checked'
+        elif self.ikebe_radio.isChecked():
+            self.shipping.reset_shopify_connection(IKEBE)
+            print 'ikebe is checked'
+        elif self.dlo3_radio.isChecked():
+            self.shipping.reset_shopify_connection(DLO3)
+            print 'dlo3 is checked'
         self.shipping.reset_paypal_browser()
         
 if __name__ == '__main__':

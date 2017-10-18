@@ -9,6 +9,9 @@ from config_stuff import *
 
 COLEMINE = 0
 PLAID_ROOM = 1
+DURAND = 2
+IKEBE = 3
+DLO3 = 4
 
 class MediaMail():
     def __init__(self):
@@ -44,13 +47,17 @@ class MediaMail():
         except Exception as e:
             print 'fuck this new paypal shit'
         
-    def reset_shopify_connection(self, clmn_or_prr):
-        if clmn_or_prr == COLEMINE:
-            #this needs to be changed to the colemine shopify once it's actually a thing
-            #f = open(SHOPIFY_PLAID_ROOM_NAME)
+    def reset_shopify_connection(self, which_shopify):
+        if which_shopify == COLEMINE:
             f = open(SHOPIFY_COLEMINE_NAME)
-        else: #plaid room
+        elif which_shopify == PLAID_ROOM:
             f = open(SHOPIFY_PLAID_ROOM_NAME)
+        elif which_shopify == DURAND:
+            f = open(SHOPIFY_DURAND_NAME)
+        elif which_shopify == IKEBE:
+            f = open(SHOPIFY_IKEBE_NAME)
+        elif which_shopify == DLO3:
+            f = open(SHOPIFY_DLO3_NAME)
 
         self.api_key = (f.readline()).strip()
         self.api_password = (f.readline()).strip()
@@ -58,10 +65,16 @@ class MediaMail():
         print self.api_key
         print self.api_password
 
-        if clmn_or_prr == COLEMINE:
+        if which_shopify == COLEMINE:
             shop_url = "https://%s:%s@colemine-records.myshopify.com/admin" % (self.api_key, self.api_password)
-        else: #plaid room
+        elif which_shopify == PLAID_ROOM:
             shop_url = "https://%s:%s@plaid-room-records-2.myshopify.com/admin" % (self.api_key, self.api_password)
+        elif which_shopify == DURAND:
+            shop_url = "https://%s:%s@durand-jones.myshopify.com/admin" % (self.api_key, self.api_password)
+        elif which_shopify == IKEBE:
+            shop_url = "https://%s:%s@ikebe-shakedown.myshopify.com/admin" % (self.api_key, self.api_password)
+        elif which_shopify == DLO3:
+            shop_url = "https://%s:%s@delvon-lamarr-organ-trio.myshopify.com/admin" % (self.api_key, self.api_password)
 
         print shop_url
         shopify.ShopifyResource.set_site(shop_url)
