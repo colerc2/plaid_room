@@ -56,7 +56,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>12</number>
    </property>
    <property name="iconSize">
     <size>
@@ -20135,7 +20135,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="website_pre_order_input_tab">
       <attribute name="title">
@@ -23424,12 +23424,12 @@ p, li { white-space: pre-wrap; }
       <attribute name="title">
        <string>Catalog Input</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget_8">
+      <widget class="QWidget" name="">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>2000</width>
+         <width>1871</width>
          <height>951</height>
         </rect>
        </property>
@@ -23713,7 +23713,8 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="text">
-               <string>XXXX Items In Possible Stock</string>
+               <string>XXXX Items In
+Possible Stock</string>
               </property>
              </widget>
             </item>
@@ -23944,6 +23945,30 @@ Best Sellers</string>
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer_325">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Minimum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="website_add_catalog_worst_sellers">
+              <property name="text">
+               <string>Sort By
+Worst Sellers</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_324">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -23985,7 +24010,8 @@ Best Sellers</string>
             <item>
              <widget class="QCheckBox" name="website_add_catalog_filter_dist_checkbox">
               <property name="text">
-               <string>Filter By Distributor</string>
+               <string>Filter By
+Distributor</string>
               </property>
              </widget>
             </item>
@@ -24050,7 +24076,9 @@ Best Sellers</string>
             <item>
              <widget class="QCheckBox" name="website_add_catalog_show_permabans">
               <property name="text">
-               <string>Show Permabans Only</string>
+               <string>Show
+Permabans
+Only</string>
               </property>
              </widget>
             </item>
@@ -24226,7 +24254,8 @@ Best Sellers</string>
                </size>
               </property>
               <property name="text">
-               <string>XXXX Items Found For Search Terms</string>
+               <string>XXXX Items Found
+For Search Terms</string>
               </property>
              </widget>
             </item>
