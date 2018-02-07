@@ -11,16 +11,19 @@ import discogs_client
 from discogs_interface import DiscogsClient
 import math
 from colemine_soundscan_shopify import ColemineSoundscan
+from shopify_interface import ShopifyInterface
 import random
 import re
 
 class Util():
-	def __init__(self, primary='real_inventory.db'):
+	def __init__(self, primary='real_inventory_copy.db'):
 		print 'Primary DB: %s' % primary
 		self.db = sqlite3.connect(primary)
 		self.db_cursor = self.db.cursor()
 		locale.setlocale( locale.LC_ALL, '')
 		self.discogs = DiscogsClient()#discogs api
+                #shopify connect
+                self.shopify_interface = ShopifyInterface()
 
 	def import_alliance_order(self):
 		order = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/PLS89388384.csv').read().splitlines()
@@ -33,6 +36,9 @@ class Util():
 
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('115120',))
+		self.db.commit()
+                return
                 #print doubles so i can print out to a spreadsheet
                 need_to_put_out = []
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
@@ -40,11 +46,43 @@ class Util():
                                if row[DISTRIBUTOR_INDEX] != 'Colemine':
                                         need_to_put_out.append(row)
                 for row in need_to_put_out:
-                        #figure out how many we have left of this item
+                #        #figure out how many we have left of this item
                         in_stock_count = 0
                         for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
                                 in_stock_count += 1
                         print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX])
+
+                #let's update the tags on each of the items on the website
+                
+                #read in blowout sale percentages
+                #reader = csv.reader(open(BLOWOUT_PERCENTAGE_FILE))
+                #self.new_percentages = {}
+                #for row in reader:
+                #        key = row[0]
+                #        self.new_percentages[key] = int(row[1])
+
+                #count = 0
+                #new_tags = ''
+                #for key, value in self.new_percentages.iteritems():
+                #        count += 1
+                #        print count
+                #        if count > 8554:
+                #                break
+                #        con = False
+                #        for row in self.db_cursor.execute('SELECT * FROM online_inventory WHERE upc = ?', (key,)):
+                #                if 'NEWSALE' in row[ONLINE_SHOPIFY_TAGS]:
+                #                        con = True
+                #                new_tags = row[ONLINE_SHOPIFY_TAGS] + ',' + 'NEWSALE' + str(value)
+                #        if con == True:
+                #                print '%s already done' % key
+                #                continue
+                #        self.db_cursor.execute('UPDATE online_inventory SET shopify_tags = ? WHERE upc = ?', (new_tags,key))
+                #        self.db.commit()
+                #        for row in self.db_cursor.execute('SELECT * FROM online_inventory WHERE upc = ?', (key,)):
+                #                self.shopify_interface.create_or_update_catalog_item(list(row))
+                #                print 'updated %s' % key
+                #                time.sleep(0.75)
+
                 
                 #print stuff to cull new
                 #qty_sold = dict()
@@ -69,14 +107,13 @@ class Util():
                 #        sold = 0
                 #        if row[UPC_INDEX] in qty_sold:
                 #                sold = qty_sold[row[UPC_INDEX]]
-                #        print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],qoh_,sold,row[DATE_ADDED_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX])
+                #        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX],qoh_,sold,row[DATE_ADDED_INDEX],row[ARTIST_INDEX],row[TITLE_INDEX],row[FORMAT_INDEX])
                 #        already_done.add(row[UPC_INDEX])
                 
                 #list_of_stuff_to_update = []
                 #for row in self.db_cursor.execute('SELECT * FROM sold_inventory'):
-                #        if 'RSD2017' in row[FORMAT_INDEX]:
-                #        if '075992125703' in row[UPC_INDEX]:
-                #                #list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
+                #        if 'BF2017' in row[FORMAT_INDEX]:
+                                #list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
                 #                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
                 #                print '%s - %s - %s' % (row[ARTIST_INDEX], row[TITLE_INDEX], row[UPC_INDEX])
                 #for row in list_of_stuff_to_update:

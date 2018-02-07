@@ -169,7 +169,7 @@ class ShopifyInterface():
                 new_product.body_html = desc + row[ONLINE_SHOPIFY_DESC]
                 new_product.metafields_global_title_tag = "%s - %s" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
                 new_product.metafields_global_description_tag = "Order now from an independently owned record store in Cincinnati, OH %s" % (row[ONLINE_UPC])
-                pprint (vars(new_product))
+                #pprint (vars(new_product))
                 if row[ONLINE_ACTIVE] == 0:
                     new_product.published_at = None
 #                else:
@@ -197,7 +197,7 @@ class ShopifyInterface():
                 new_product.variants = [v]
                 success = new_product.save()
                 time.sleep(0.25)
-                pprint (vars(new_product))
+                #pprint (vars(new_product))
                 print
             except Exception as e:
                 print 'error in the shopify:create_or_update_item func: %s' % e
