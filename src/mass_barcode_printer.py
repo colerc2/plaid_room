@@ -18,7 +18,7 @@ class MassBarcodePrinter():
 		for key in range(int(self.start), int(self.stop)):
 			for row in self.db_cursor.execute('SELECT * FROM inventory where id = ?', (key,)):
                                 print 'now printing: %s, %i' %  (row[ARTIST_INDEX],key)
-				self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX])
+				self.barcode_printer.print_barcode(row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[GENRE_INDEX], row[NEW_USED_INDEX])
 				break
 			time.sleep(3)
 

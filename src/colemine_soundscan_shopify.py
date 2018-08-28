@@ -48,6 +48,7 @@ class ColemineSoundscan():
             #this needs to be changed to the colemine shopify once it's actually a thing
             #f = open(SHOPIFY_PLAID_ROOM_NAME)
             f = open(SHOPIFY_COLEMINE_NAME)
+            #f = open(SHOPIFY_DLO3_NAME)
         else: #plaid room
             f = open(SHOPIFY_PLAID_ROOM_NAME)
 
@@ -59,6 +60,7 @@ class ColemineSoundscan():
 
         if clmn_or_prr == COLEMINE:
             shop_url = "https://%s:%s@colemine-records.myshopify.com/admin" % (self.api_key, self.api_password)
+            #shop_url = "https://%s:%s@delvon-lamarr-organ-trio.myshopify.com/admin" % (self.api_key, self.api_password)
         else: #plaid room
             shop_url = "https://%s:%s@plaid-room-records-2.myshopify.com/admin" % (self.api_key, self.api_password)
 
@@ -93,6 +95,8 @@ class ColemineSoundscan():
         for page in range(250):
             print 'page %s' % page
             orders = shopify.Order.find(page=(page+1),created_at_min=start_date,created_at_max=end_date)
+            print start_date
+            print end_date
             time.sleep(0.75)
             print len(orders)
             if len(orders) == 0:
@@ -103,6 +107,7 @@ class ColemineSoundscan():
                     order_id = 0
                     order_id = order.id
                     for line in order.line_items:
+                        print line
                         if line.sku in pre_orders:
                             orders_to_return.append(order)
                             break

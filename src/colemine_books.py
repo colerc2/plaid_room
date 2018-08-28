@@ -389,6 +389,7 @@ class ColemineBooks():
         for roy in royalty_codes:
             royalty_status[str(roy)] = 0.0
         for row in self.data_input:
+            #print row
             this_adjustment_project = row[2].value
             try:
                 this_adjustment_project = this_adjustment_project.lower()

@@ -14,6 +14,7 @@ from colemine_soundscan_shopify import ColemineSoundscan
 from shopify_interface import ShopifyInterface
 import random
 import re
+from receipt_printer import ReceiptPrinter
 
 class Util():
 	def __init__(self, primary='real_inventory_copy.db'):
@@ -24,6 +25,7 @@ class Util():
 		self.discogs = DiscogsClient()#discogs api
                 #shopify connect
                 self.shopify_interface = ShopifyInterface()
+                self.receipt_printer = ReceiptPrinter(TEMP_RECEIPT_FILE_NAME)
 
 	def import_alliance_order(self):
 		order = open('/Users/plaidroomrecords/Documents/pos_software/plaid_room/config/PLS89388384.csv').read().splitlines()
@@ -34,11 +36,85 @@ class Util():
 			print item
 			print
 
-	#this method should be left blank unless some one time operation needs to be done
-	def custom_temp_operation(self):
-                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('115120',))
-		self.db.commit()
-                return
+        def add_new_release_tag(self):
+                list_of_stuff_to_update = []
+                count = 0
+                for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
+                        count += 1
+                        if count > 44:
+                                break
+                        if ',New Release' not in row[ONLINE_SHOPIFY_TAGS]:
+                                print row[ONLINE_ARTIST]
+                                tags = row[ONLINE_SHOPIFY_TAGS]
+                                tags = tags + ',New Release'
+                                #tags = tags + ',Audiophile'
+                                list_of_stuff_to_update.append((0,tags,row[ONLINE_ID]))
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE online_inventory SET sync = ? WHERE id = ?', (row[0], row[2]))
+                        self.db_cursor.execute('UPDATE online_inventory SET shopify_tags = ? WHERE id = ?', (row[1], row[2]))
+                self.db.commit()
+
+                        
+        def remove_older_new_releases_from_site(self):
+                list_of_stuff_to_update = []
+                count = 0
+                for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
+                        if ',New Release' in row[ONLINE_SHOPIFY_TAGS]:
+                                count = count + 1
+                                if count > 125:
+                                        print row[ONLINE_ARTIST]
+                                        tags = row[ONLINE_SHOPIFY_TAGS]
+                                        tags = tags.replace(',New Release','')
+                                        list_of_stuff_to_update.append((0, tags, row[ONLINE_ID]))
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE online_inventory SET sync = ? WHERE id = ?', (row[0], row[2]))
+                        self.db_cursor.execute('UPDATE online_inventory SET shopify_tags = ? WHERE id = ?', (row[1], row[2]))
+                self.db.commit()
+                        
+        def get_qoh(self):
+                qoh = dict()
+                for row in self.db_cursor.execute('SELECT * FROM inventory'):
+                        if row[UPC_INDEX] in qoh:
+                                qoh[row[UPC_INDEX]] += 1
+                        else:
+                                qoh[row[UPC_INDEX]] = 1
+                return qoh
+                        
+                        
+        def remove_dupes_for_doubles(self):
+                list_of_stuff_to_update = []
+                upcs = set()
+                qoh = self.get_qoh()
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reserved_two = ?', (NEEDS_PUT_OUT,)):
+                        upc = row[UPC_INDEX]
+                        if upc in upcs:
+                                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
+                        elif upc not in qoh:
+                                list_of_stuff_to_update.append((ALREADY_OUT, row[NEW_ID_INDEX]))
+                        else:
+                                upcs.add(upc)
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE id = ?' , (row))
+                self.db.commit()
+                        
+        def remove_dupes_for_ordering(self):
+                list_of_stuff_to_update = []
+                upcs = set()
+                for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? ORDER BY date_sold DESC', (NEEDS_REORDERED,)):
+                        upc = row[UPC_INDEX]
+                        if upc in upcs:
+                                print upc
+                                list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
+                        elif row[NEW_USED_INDEX] == 'Used':
+                                list_of_stuff_to_update.append((REORDERED, row[NEW_ID_INDEX]))
+                        else:
+                              upcs.add(upc)
+                for row in list_of_stuff_to_update:
+                        print row
+                        self.db_cursor.execute('UPDATE sold_inventory SET reorder_state = ? WHERE id = ?', (row))
+                self.db.commit()
+
+        def print_doubles_for_spreadsheet(self):
                 #print doubles so i can print out to a spreadsheet
                 need_to_put_out = []
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
@@ -46,14 +122,69 @@ class Util():
                                if row[DISTRIBUTOR_INDEX] != 'Colemine':
                                         need_to_put_out.append(row)
                 for row in need_to_put_out:
-                #        #figure out how many we have left of this item
+                        #figure out how many we have left of this item
                         in_stock_count = 0
                         for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
                                 in_stock_count += 1
-                        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX])
+                        print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX],row[GENRE_INDEX])
+                return
 
-                #let's update the tags on each of the items on the website
                 
+	#this method should be left blank unless some one time operation needs to be done
+	def custom_temp_operation(self):
+
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('139526',))
+		self.db.commit()
+                return
+
+
+                list_of_stuff_to_update = []
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * from sold_online_status')):
+                        if 'UPS' in row[ONLINE_SS_SHIPPING_METHOD]:
+                                list_of_stuff_to_update.append(('UPS Ground',row[ONLINE_SS_ID]))
+                for row in list_of_stuff_to_update:
+                        self.db_cursor.execute('UPDATE sold_online_status SET shipping_method = ? WHERE id = ?', row)
+                self.db.commit()
+                        
+                return
+        
+        
+        
+                for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY date_sold DESC')):
+                        compare = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]),"%Y-%m-%d %H:%M:%S"))
+                        if compare.year < 2018:
+                                continue
+                        if 'shopify' in row[SOLD_NOTES_INDEX]:
+                                continue
+                        if compare.weekday() == 0:#Monday
+                                if compare.hour > 19 and compare.hour < 22:
+                                        print 'Monday-%i-%i\t%.2f' % (compare.month,compare.day,row[SOLD_FOR_INDEX])
+                        elif compare.weekday() == 1:#tuesday
+                                if compare.hour > 19 and compare.hour < 22:
+                                        print 'Tuesday-%i-%i\t%.2f' % (compare.month,compare.day,row[SOLD_FOR_INDEX])
+                        elif compare.weekday() == 2:#wed
+                                if compare.hour > 19 and compare.hour < 22:
+                                        print 'Wednesday-%i-%i\t%.2f' % (compare.month,compare.day,row[SOLD_FOR_INDEX])
+                        elif compare.weekday() == 3:#thurs
+                                if compare.hour > 19 and compare.hour < 22:
+                                        print 'Thursday-%i-%i\t%.2f' % (compare.month,compare.day,row[SOLD_FOR_INDEX])
+ 
+                return
+
+                
+                #item_lines = []
+                #trans_with_id = None
+                #for row in self.db_cursor.execute('SELECT * FROM transactions WHERE id = ?', (9052,)):
+                #        trans_with_id = list(row)
+                #        print row
+                #for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE transaction_id = ?', (9052,)):
+                #        item_lines.append(list(row))
+                #self.receipt_printer.print_receipt(item_lines,[],trans_with_id)
+                #return
+                
+                
+                #let's update the tags on each of the items on the website
+                #9.8 11.3
                 #read in blowout sale percentages
                 #reader = csv.reader(open(BLOWOUT_PERCENTAGE_FILE))
                 #self.new_percentages = {}
@@ -83,6 +214,40 @@ class Util():
                 #                print 'updated %s' % key
                 #                time.sleep(0.75)
 
+                #this is here to fix the qoh after using the mass ringer outer at RSD
+                #upcs = set()
+                #qoh = self.get_qoh()
+                #for row in self.db_cursor.execute('SELECT * FROM online_inventory'):
+                #        if row[ONLINE_UPC] in qoh:
+                #                if qoh[row[ONLINE_UPC]] != row[ONLINE_QOH]:
+                #                        upcs.add(row[ONLINE_UPC])
+                #                        print '%s - %s' % (row[ONLINE_ARTIST],row[ONLINE_TITLE])
+                #        else:#qty is 0
+                #                if row[ONLINE_QOH] != 0:
+                #                        upcs.add(row[ONLINE_UPC])
+                #                        print '%s - %s' % (row[ONLINE_ARTIST],row[ONLINE_TITLE])                                  
+                #for upc in upcs:
+                #        print 'updating...%s...' % upc
+                #        self.upc_qty_change_update_the_site(upc)
+                #        time.sleep(0.75)
+                #return
+                
+                #update weights of each item on site
+                qoh = self.get_qoh()
+                count = 0
+                for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
+                #for row in self.db_cursor.execute('SELECT * FROM online_inventory'):
+                        count += 1
+                        qty = 0
+                        if row[ONLINE_UPC] in qoh:
+                               qty = qoh[row[ONLINE_UPC]]
+                        row_list = list(row)
+                        row_list[ONLINE_QOH] = qty
+                        if count > 6000 and count <= 7000:
+                                self.shopify_interface.create_or_update_catalog_item(row_list)
+                                print 'updated %s - %s - %s - %s' % (str(count),row_list[ONLINE_ARTIST],row_list[ONLINE_TITLE], row_list[ONLINE_QOH])
+                                time.sleep(0.75)
+                        
                 
                 #print stuff to cull new
                 #qty_sold = dict()
@@ -313,7 +478,7 @@ class Util():
                 end_date = list_of_dates[0] + datetime.timedelta(days=1)
                 sold = colemine_soundscan.get_list_of_orders_from_beginning(list_of_dates[-1],end_date, pre_order_cross_check)
                 
-                start_date = list_of_dates[0] - datetime.timedelta(days=180)
+                start_date = list_of_dates[0] - datetime.timedelta(days=30)
                 sold_pre_orders = colemine_soundscan.get_list_of_orders_for_pre_orders(start_date, end_date, pre_order_cross_check)
                 #grab list of zips
                 with open(COLEMINE_ZIP_CODE_FILE, 'rb') as f:
@@ -381,7 +546,24 @@ class Util():
                 #        zip_file.write("%s\n" % zip_)
 
                 
-                
+        def upc_qty_change_update_the_site(self, upc):
+                try:
+                        qoh = self.get_qoh()
+                        exists = False
+                        upc_on_hand = 0
+                        if upc in qoh:
+                                upc_on_hand = qoh[upc]
+                         #is it in the database?
+                        for ix, row in enumerate(self.db_cursor.execute('SELECT * FROM online_inventory WHERE upc = ?', (upc,))):
+                                self.shopify_interface.update_qoh(row[ONLINE_SHOPIFY_ID], upc_on_hand)
+                                exists = True
+                                break
+                        if exists:
+                                self.db_cursor.execute('UPDATE online_inventory SET qoh = ? WHERE upc = ?', (upc_on_hand,upc))
+                                self.db.commit()
+                except Exception as e:
+                        print 'Exception while trying to update qoh on website: %s' % e
+            
                         
         def soundscan(self, list_of_dates):
                 upcs = dict()
@@ -401,10 +583,11 @@ class Util():
                                 date_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S")).date()
                                 if date_sold == desired_date:
                                         if row[UPC_INDEX].isdigit():
-                                                if row[UPC_INDEX] in upcs:
-                                                        upcs[row[UPC_INDEX]] += 1
-                                                else:
-                                                        upcs[row[UPC_INDEX]] = 1
+                                                if 'shopify_pre_order' not in row[SOLD_NOTES_INDEX]:
+                                                        if row[UPC_INDEX] in upcs:
+                                                                upcs[row[UPC_INDEX]] += 1
+                                                        else:
+                                                                upcs[row[UPC_INDEX]] = 1
                         for ix, row in enumerate(online_results):
                                 #for this batch, it doesn't matter when they sold, it just matters when the street date is
                                 try:
@@ -956,6 +1139,10 @@ if __name__ == '__main__':
 			print 'shit_selling_doubles - self explanatory'
                         print 'soundscan - generate soundscan report'
                         print 'colemine_soundscan - generate colemine soundscan IMO report'
+                        print 'remove_dupes_for_ordering - remove duplicate UPCs for ordering expedition'
+                        print 'remove_dupes_for_doubles - remove duplicates and items with quantity zero from doubles'
+                        print 'remove_nr - remove any new releases older than 100 releases'
+                        print 'add_nr - add new release tag to some amount of new releases'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -1010,6 +1197,14 @@ if __name__ == '__main__':
 			util.import_alliance_order()
 		elif entered == 'import_csv':
 			util.import_csv()
+                elif entered == 'remove_dupes_for_ordering':
+                        util.remove_dupes_for_ordering()
+                elif entered == 'remove_dupes_for_doubles':
+                        util.remove_dupes_for_doubles()
+                elif entered == 'remove_nr':
+                        util.remove_older_new_releases_from_site()
+                elif entered == 'add_nr':
+                        util.add_new_release_tag()
                 elif entered == 'monthly':
                         util.monthly_stats()
                 elif entered == 'colemine_soundscan':

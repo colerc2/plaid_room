@@ -18340,6 +18340,10 @@ class Ui_Form(QtGui.QWidget):
         #display in recently added table
         self.tab_one_recently_added_table_refresh()
 
+        #remove from doubles list if exists
+        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE upc = ? AND reserved_two = ?', (ALREADY_OUT, db_item[UPC_INDEX], NEEDS_PUT_OUT))
+        self.db.commit()
+
         #clear upc and artist/title search terms and give focus back to upc search box
         self.tab_one_search_upc_qline.setText('')
         self.tab_one_search_artist_title_title_qline.setText('')
@@ -18462,7 +18466,7 @@ class Ui_Form(QtGui.QWidget):
                 formats.append(row[FORMAT_INDEX])
         #TEMP CODE FOR RSD
         #read in csv
-        file_name  = BASE_PATH + 'plaid_room/config/bf_2017.csv'
+        file_name  = BASE_PATH + 'plaid_room/config/rsd_2018.csv'
         with open(file_name, 'rb') as f:
             data = [row for row in csv.reader(f.read().splitlines())]
         for title in data:
@@ -18473,21 +18477,21 @@ class Ui_Form(QtGui.QWidget):
                 answers[ARTIST_INDEX] = string.capwords(title[1])
                 answers[TITLE_INDEX] = string.capwords(title[2])
                 if '2 x LP' in title[4]:
-                    answers[FORMAT_INDEX] = '2xVinyl, LP, Album, BF2017'
+                    answers[FORMAT_INDEX] = '2xVinyl, LP, Album, RSD2018'
                 elif '3 x LP' in title[4]:
-                    answers[FORMAT_INDEX] = '3xVinyl, LP, Album, BF2017'
+                    answers[FORMAT_INDEX] = '3xVinyl, LP, Album, RSD2018'
                 elif 'LP' in title[4]:
-                    answers[FORMAT_INDEX] = '1xVinyl, LP, Album, BF2017'
+                    answers[FORMAT_INDEX] = '1xVinyl, LP, Album, RSD2018'
                 elif 'Box' in title[4]:
-                    answers[FORMAT_INDEX] = '1xBox, LP, Album, BF2017'
+                    answers[FORMAT_INDEX] = '1xBox, LP, Album, RSD2018'
                 elif '10\"' in title[4]:
-                    answers[FORMAT_INDEX] = '1xVinyl, 10\", BF2017'
+                    answers[FORMAT_INDEX] = '1xVinyl, 10\", RSD2018'
                 elif '12\"' in title[4]:
-                    answers[FORMAT_INDEX] = '1xVinyl, 12\", BF2017'
+                    answers[FORMAT_INDEX] = '1xVinyl, 12\", RSD2018'
                 elif '7\"' in title[4]:
-                    answers[FORMAT_INDEX] = '1xVinyl, 7\", BF2017'
+                    answers[FORMAT_INDEX] = '1xVinyl, 7\", RSD2018'
                 else:
-                    answers[FORMAT_INDEX] = '1xVinyl, BF2017'
+                    answers[FORMAT_INDEX] = '1xVinyl, RSD2018'
                 #answers[FORMAT_INDEX] = '1xVinyl, LP, Album, BF2016'
                 answers[LABEL_INDEX] = string.capwords(title[3])
                 answers[DISTRIBUTOR_INDEX] = self.tab_one_dist_combo_box.currentText()
@@ -20081,9 +20085,17 @@ class Ui_Form(QtGui.QWidget):
                 if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
                     if row[NEW_USED_INDEX] == 'Used':
                         id_index = row[ID_INDEX]
-                        if int(id_index) < 108536:
+                        if int(id_index) < 128699:
                             placeholder = 0
-                            #self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 40
+                            #if self.tab_four_checkout_table_list[ix][PRICE_INDEX] == 2.99:
+                            #    self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 67
+                            #elif self.tab_four_checkout_table_list[ix][PRICE_INDEX] == 1.99:
+                            #    self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 50 
+                            #else:
+                            #self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 30
+                    else:#if it's new
+                        placeholder = 0
+                        #self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 10
             #add in some temp code for the new sale of the century
             for ix, row in enumerate(self.tab_four_checkout_table_list):
                 if self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] == 0:
@@ -20900,6 +20912,7 @@ class Ui_Form(QtGui.QWidget):
             check_distributor = self.tab_seven_search_sold_filter_dist_checkbox.isChecked()
             check_date_ranges = self.tab_seven_search_sold_filter_date_checkbox.isChecked()
             #get some more data for the query, tryna speed this ish up
+            #cap = 0
             if check_distributor and not check_date_ranges:#this special piece is made for making orders "faster"
                 print 'QUERY IS BLANK, DISTRO IS CHECKED, NO DATE RANGE SELECTED, SPEED MODE ENGAGEEEEE!'
                 a = datetime.datetime.now()
@@ -20907,6 +20920,9 @@ class Ui_Form(QtGui.QWidget):
                 dist = str(dist.split('-')[0]).strip()
                 for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? AND reserved_one = ? ORDER BY date_sold DESC', (NEEDS_REORDERED, dist)):
                     self.tab_seven_search_sold_table_list.append(list(row))
+                    #cap += 1
+                    #if cap > self.tab_seven_search_sold_table.rowCount():
+                    #    break
                 b = datetime.datetime.now()
                 c = b - a
                 print 'DONE - Time: %s ms' % (str(c.microseconds/1000)) 
@@ -23299,7 +23315,7 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_DISTRO] = self.xstr(row[6])
                 db_item[ONLINE_QOH] = self.xint(row[5])
                 db_item[ONLINE_FORMAT] = 'LP Vinyl'
-                if 'BF2017' in row[11]:
+                if 'RSD2018' in row[11]:
                     db_item[ONLINE_FORMAT] = tag_format + ' Vinyl'
                 db_item[ONLINE_LABEL] = self.xstr(row[7])
                 #db_item[ONLINE_GENRE] = self.xstr(row[8])
@@ -23335,10 +23351,10 @@ class Ui_Form(QtGui.QWidget):
                 db_item[ONLINE_SHOPIFY_DESC] = ''
                 db_item[ONLINE_SHOPIFY_COLLECTIONS] = 'In Stock' 
                 db_item[ONLINE_SHOPIFY_TAGS] = 'Format_LP'
-                if 'BF2017' in row[11]:
+                if 'RSD2018' in row[11]:
                     db_item[ONLINE_SHOPIFY_TAGS] = 'Format_' + tag_format
-                if 'BF2017' in row[11]:
-                    db_item[ONLINE_SHOPIFY_TAGS] += ',BF2017'
+                if 'RSD2018' in row[11]:
+                    db_item[ONLINE_SHOPIFY_TAGS] += ',RSD2018'
                 db_item[ONLINE_RESERVED_ONE] = ''
                 db_item[ONLINE_RESERVED_TWO] = ''
                 db_item[ONLINE_RESERVED_THREE] = ''
@@ -23545,7 +23561,7 @@ class Ui_Form(QtGui.QWidget):
         self.website_catalog_active_results_table.setRowCount(self.website_catalog_active_spin_box.value())
         self.website_catalog_active_results_table_list = []
         for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
-            self.website_catalog_active_results_table_list.append(row)
+            self.website_catalog_active_results_table_list.append(list(row))
         self.website_catalog_active_results_table_refresh()
                                                         
     
@@ -23664,6 +23680,9 @@ class Ui_Form(QtGui.QWidget):
         for ix, db_row in enumerate(self.db_cursor.execute('SELECT * FROM inventory')):
             if db_row[UPC_INDEX] == self.website_catalog_active_results_table_list[row][ONLINE_UPC]:
                 new_qoh += 1
+        print self.website_catalog_active_results_table_list[row]
+        print new_qoh
+        print
         self.website_catalog_active_results_table_list[row][ONLINE_QOH] = new_qoh
         #print self.website_catalog_active_results_table_list
         #print db_row
