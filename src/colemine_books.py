@@ -456,6 +456,8 @@ class ColemineBooks():
                     if catalog_number not in project_status:
                         print 'Holy shit, this dude is on a project that doesn\'t even exist'
                         print catalog_number
+                        print row[0].value
+                        print row
                         continue
                     #what is this payee's percentage?
                     percent = float(row[5].value)
