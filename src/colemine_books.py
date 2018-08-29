@@ -138,6 +138,58 @@ class ColemineBooks():
         #    print '%s - %s' % (key, str(value))
         return project_status
 
+    def generate_label_royalty_lines(self):
+        royalty_lines = []
+        for row in self.data_input:
+            this_adjustment_project = row[2].value
+            try:
+                this_adjustment_project = this_adjustment_project.lower()
+            except Exception as e:
+                placeholder = 0
+            if str(this_adjustment_project)[0] == 'r':
+                #print 'found some royalties'
+                #print code
+                #print '1'
+                #print row
+                #save summary line
+                date = row[0].value
+                amount = 0
+                try:
+                    amount = float(eval(str(row[1].value).replace('=','')))
+                except Exception as e:
+                    print 'warning: error in generate_label_royalty_lines'
+                    print e
+                    continue
+                royalty = this_adjustment_project
+                qty = row[3].value
+                fmt = ''
+                #print '2'
+                try:
+                    fmt = str(row[4].value).lower()
+                except Exception as e:
+                    placeholder = 0
+                category = str(row[5].value).lower()
+                #print '3'
+                company = ''
+                try:
+                    company = self.xstr(row[6].value)
+                except Exception as e:
+                    placeholder = 0
+                    #continue
+                    #print '**********\n' * 5
+                    #print row[5].value
+                #print '4'
+                details = str(row[7].value)
+                details_2 = str(row[8].value)
+                #print '5'
+                #if this was a royalty line, get the summary and get the fuck outta here
+                royalty_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+                royalty_lines.append(royalty_line)
+                #print '6'
+                #print
+        return royalty_lines
+    
+    
     def generate_royalty_lines(self, code):
         royalty_lines = []
         for row in self.data_input:
@@ -182,7 +234,81 @@ class ColemineBooks():
                 #print '6'
                 #print
         return royalty_lines
-    
+
+    def generate_all_project_summary(self):
+        dict_summary = {}
+        dict_qty = {}
+        dict_dict_summary = {}
+        dict_dict_qty = {}
+        summary_lines = []
+        royalty_lines = []
+        for item in self.get_sales_categories():
+            dict_summary[str(item)] = 0.0
+            dict_qty[str(item)] = 0
+            dict_dict_summary[str(item)] = {}
+            dict_dict_qty[str(item)] = {}
+            for format_type in self.get_format_categories():
+                dict_dict_summary[str(item)][str(format_type)] = 0.0
+                dict_dict_qty[str(item)][str(format_type)] = 0
+        for row in self.data_input:
+            this_adjustment_project = row[2].value
+            try:
+                this_adjustment_project = this_adjustment_project.lower()
+            except Exception as e:
+                placeholder = 0
+            date = row[0].value
+            amount = 0
+            try:
+                amount = float(eval(str(row[1].value).replace('=','')))
+            except Exception as e:
+                print 'trouble casting data input to amount:'
+                print row[1].value
+                print '---------'
+                continue
+            royalty = this_adjustment_project
+            qty = row[3].value
+            fmt = ''
+            try:
+                fmt = str(row[4].value).lower()
+            except Exception as e:
+                placeholder = 0
+            category = str(row[5].value).lower()
+            company = ''
+            try:
+                company = self.xstr(row[6].value)
+            except Exception as e:
+                placeholder = 0
+                #continue
+                #print '**********\n' * 5
+                #print row[5].value
+            details = str(row[7].value)
+            details_2 = str(row[8].value)
+            #if this was a royalty line, get the summary and get the fuck outta here
+            if str(this_adjustment_project)[0] == 'r':
+                royalty_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+                royalty_lines.append(royalty_line)
+                continue
+            summary_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+            summary_lines.append(summary_line)
+            #adjust dict by amount
+            dict_summary[category] += amount
+            if category in dict_dict_summary:
+                if fmt in dict_dict_summary[category]:
+                    dict_dict_summary[category][fmt] += amount
+            #adjust qty if applicable
+            if qty is not None:
+                try:
+                    qty = int(qty)
+                    dict_qty[category] += qty
+                    if category in dict_dict_summary:
+                        if fmt in dict_dict_summary[category]:
+                            dict_dict_qty[category][fmt] += qty
+                except Exception as e:
+                    continue
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, royalty_lines)
+
+
+            
     def generate_project_summary(self, code):
         dict_summary = {}
         dict_qty = {}
@@ -251,6 +377,81 @@ class ColemineBooks():
                         continue
         return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, royalty_lines)
 
+    def generate_quarterly_label_project_summary(self, year, quarter):
+        dict_summary = {}
+        dict_qty = {}
+        dict_dict_summary = {}
+        dict_dict_qty = {}
+        summary_lines = []
+        for item in self.get_sales_categories():
+            dict_summary[str(item)] = 0.0
+            dict_qty[str(item)] = 0
+            dict_dict_summary[str(item)] = {}
+            dict_dict_qty[str(item)] = {}
+            for format_type in self.get_format_categories():
+                dict_dict_summary[str(item)][str(format_type)] = 0.0
+                dict_dict_qty[str(item)][str(format_type)] = 0.0
+        for row in self.data_input:
+            this_adjustment_project = row[2].value
+            try:
+                this_adjustment_project = this_adjustment_project.lower()
+            except Exception as e:
+                placeholder = 0
+            if str(this_adjustment_project)[0] is not 'r':
+                #if code == str(this_adjustment_project):# or (('r%s'%code) == str(this_adjustment_project)):
+                #print row
+                #save summary line
+                date = row[0].value
+                #date_ = openpyxl.utils.datetime.from_excel(date)
+                #date_ = datetime.datetime(date)
+                #print date.month
+                #print self.quarter
+                #print
+                #print date.year
+                #print self.year
+                #print
+                if (((date.month-1)//3)+1) != int(quarter):
+                    continue
+                if date.year != int(year):
+                    continue
+                amount = float(eval(str(row[1].value).replace('=','')))
+                royalty = this_adjustment_project
+                qty = str(row[3].value)
+                fmt = ''
+                try:
+                    fmt = str(row[4].value).lower()
+                except Exception as e:
+                    placeholder = 0
+                category = str(row[5].value).lower()
+                company = ''
+                details = ''
+                details_2 = ''
+                try:
+                    company = self.xstr(row[6].value)
+                    details = str(row[7].value)
+                    details_2 = str(row[8].value)
+                except Exception as e:
+                    placeholder = 0
+                summary_line = [date, amount, royalty, qty, fmt, category, company, details, details_2]
+                summary_lines.append(summary_line)
+                #adjust dict by amount
+                dict_summary[category] += amount
+                if category in dict_dict_summary:
+                    if fmt in dict_dict_summary[category]:
+                        dict_dict_summary[category][fmt] += amount
+                #adjust qty if applicable
+                if qty is not None:
+                    try:
+                        qty = int(qty)
+                        dict_qty[category] += qty
+                        if category in dict_dict_summary:
+                            if fmt in dict_dict_summary[category]:
+                                dict_dict_qty[category][fmt] += qty
+                    except Exception as e:
+                        continue
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
+    
+    
     def generate_quarterly_project_summary(self, code, year, quarter):
         dict_summary = {}
         dict_qty = {}
@@ -323,6 +524,39 @@ class ColemineBooks():
                     except Exception as e:
                         continue
         return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
+
+    def generate_label_royalty_summary(self):
+        royalty_summary = []
+        for row in self.data_input:
+            this_adjustment_project = row[2].value
+            try:
+                this_adjustment_project = this_adjustment_project.lower()
+            except Exception as e:
+                placeholder = 0
+            if str(this_adjustment_project)[0] == 'r':
+                royalty_type = ''
+                product_qty = 0
+                product_format = ''
+                amount = 0
+                try:
+                    amount = float(eval(str(row[1].value).replace('=','')))
+                except Exception as e:
+                    print 'warning: error in generate_label_royalty_summary'
+                    print e
+                    continue
+                if row[5].value == 'Royalties (Product)':
+                    royalty_type = 'Product'
+                    product_qty = 0
+                    try:
+                        product_qty = int(row[3].value)
+                    except Exception as e:
+                        placeholder = 0
+                    product_format = str(row[4].value)
+                else:
+                    royalty_type = 'Cash'
+                royalty_summary.append([royalty_type, amount, product_format, product_qty])
+        return royalty_summary
+
 
     def generate_royalty_summary(self, code):
         #print '--------'
@@ -423,6 +657,466 @@ class ColemineBooks():
                 max_length = max(list_of_lengths)+2
                 max_length = min(max_length, 50)
                 sheet.column_dimensions[col].width = max_length
+
+
+    def print_label_summary(self):
+        project_status = self.get_project_status()
+        royalty_status = self.get_royalty_status()
+        project_sheet_row = 1
+        wb = openpyxl.Workbook()
+        ws_project = wb.active
+        ws_project.title = "Label Summary"
+        summary_of_payments = []
+
+        #giant project workbook
+        project_summary = self.generate_all_project_summary()
+
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'LABEL MASTER'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 1
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'ALL PROJECTS'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 1
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'CAT NO NOT APPLICABLE'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 1
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'WE DON\'T MAKE MONEY'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 2
+
+        need_details_for = set()
+        need_sub_details_for = set()
+
+        
+        #royalty summaries -------------------------------
+        project_sheet_details_row = 1
+        royalty_summary = self.generate_label_royalty_summary()
+        royalty_lines = self.generate_label_royalty_lines()
+        #print royalty_lines
+        types_of_royalties = set()
+        types_amount = {}
+        types_qty = {}
+        for royalty_row in royalty_summary:
+            if royalty_row[0] == 'Cash':
+                types_of_royalties.add(royalty_row[0])
+            else:
+                types_of_royalties.add('%s - %s' % (royalty_row[0], royalty_row[2]))
+        for types in types_of_royalties:
+            types_amount[types] = 0.0
+            types_qty[types] = 0
+        for royalty_row in royalty_summary:
+            if royalty_row[0] == 'Cash':
+                types_amount[royalty_row[0]] += royalty_row[1]
+                types_qty[royalty_row[0]] += royalty_row[3]
+            else:#product
+                type_of_product = '%s - %s' % (royalty_row[0], royalty_row[2])
+                types_amount[type_of_product] += royalty_row[1]
+                types_qty[type_of_product] += royalty_row[3]
+        #print royalty_number
+        if len(types_of_royalties) > 0:
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'ROYALTIES PAID'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            self.set_border(ws_project, 'E1:E1')
+            project_sheet_details_row += 1
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'Royalty Type'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_details_row, column=6)).value = 'Amount'
+            (ws_project.cell(row=project_sheet_details_row, column=6)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_details_row, column=7)).value = 'QTY'
+            (ws_project.cell(row=project_sheet_details_row, column=7)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+            amount_sums = 0
+            qty_sums = 0
+            for index, types, in enumerate(types_of_royalties):
+                (ws_project.cell(row=project_sheet_details_row, column=5)).value = types
+                (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_details_row, column=6)).value = -types_amount[types]
+                (ws_project.cell(row=project_sheet_details_row, column=6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                (ws_project.cell(row=project_sheet_details_row, column=7)).value = types_qty[types]
+                amount_sums += -types_amount[types]
+                qty_sums += types_qty[types]
+                project_sheet_details_row += 1
+            (ws_project.cell(row=project_sheet_details_row, column=6)).value = amount_sums
+            (ws_project.cell(row=project_sheet_details_row, column=6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            (ws_project.cell(row=project_sheet_details_row, column=7)).value = qty_sums
+            self.set_border(ws_project, 'E2:G%s' % int(project_sheet_details_row))
+            project_sheet_details_row += 3
+
+        #fix rows so that quarters match up with each other and shit #fuckformatting
+        project_sheet_row = max(project_sheet_row, project_sheet_details_row)
+        project_sheet_details_row = max(project_sheet_row, project_sheet_details_row)
+
+
+        #end royalty summaries ---------------
+
+        start_row = project_sheet_row
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'ALL TIME SUMMARY'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 1
+        for index, col, in enumerate(('Category', 'Debit/Credit', 'QTY')):
+            (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+            (ws_project.cell(row=project_sheet_row, column=index+1)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_row += 1
+
+                    
+        total_sold = 0
+        project_budget = 0
+        budget_positive = 0
+        budget_negative = 0
+        qty_positive = 0
+        qty_negative = 0
+        pos_summary = False
+        #for key, value in sorted(project_summary[0].iteritems()):
+        for key, value in sorted(project_summary[0].items(), key=lambda x: x[1],reverse=True):
+            if float(value) == 0:#we've reached the center of the list, do things
+                if budget_positive > 0 and not pos_summary:#display summary
+                    (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Income'
+                    (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                    (ws_project.cell(row=project_sheet_row, column=2)).value = budget_positive
+                    (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                    (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                    (ws_project.cell(row=project_sheet_row, column=3)).value = qty_positive
+                    (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+                    project_sheet_row += 2
+                    pos_summary = True
+                    continue
+            project_budget += value
+            total_sold += (project_summary[1])[key]
+            if value > 0:
+                budget_positive += value
+                qty_positive += (project_summary[1])[key]
+            elif value < 0:
+                budget_negative += value
+                qty_negative += (project_summary[1])[key]
+            (ws_project.cell(row=project_sheet_row, column=1)).value = str(key).title()
+            (ws_project.cell(row=project_sheet_row, column=2)).value = value
+            (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            (ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[1])[key]
+            project_sheet_row += 1
+
+            #display format sub-categories if necessary
+            if key in project_summary[3]: #does this category have sub-catgeories
+                #print '%s - yep, shes got sub categories' % catalog_number
+                #next line loops through the sub-categories of a category in sorted order
+                for key_sub, value_sub in sorted((project_summary[3])[key].items(), key=lambda x: x[1], reverse=True):
+                    #print '%s - %s - %s - %s' % (catalog_number, key, key_sub, str(value_sub))
+                    if float(value_sub) == 0:
+                        continue
+                    if key_sub == 'none' or key_sub is None or key_sub == '':
+                        continue
+                    need_details_for.add(key)
+                    need_sub_details_for.add(key_sub)
+                    category = '   - %s %s' % (key, key_sub)
+                    #(ws_project.cell(row=project_sheet_row, column=1)).value = str(category).title()
+                    #(ws_project.cell(row=project_sheet_row, column=2)).value = value_sub
+                    #(ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                    #(ws_project.cell(row=project_sheet_row, column=3)).value = (project_summary[4])[key][key_sub]
+                    #project_sheet_row += 1
+                        
+        #display negative summaries
+        if budget_negative < 0:#display summary
+            (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Expenses'
+            (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_row, column=2)).value = budget_negative
+            (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            #(ws_project.cell(row=project_sheet_row, column=3)).value = qty_negative
+            #(ws_project.cell(row=project_sheet_row, column=4)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_row += 2                    
+            #display neg and pos combined    
+        (ws_project.cell(row=project_sheet_row, column=1)).value = 'Total Income Minus Expenses'
+        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+        (ws_project.cell(row=project_sheet_row, column=2)).value = project_budget
+        (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+        (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+        (ws_project.cell(row=project_sheet_row, column=3)).value = total_sold
+        (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+
+        #create border
+        self.set_border(ws_project, ('A%s:A%s' % (str(start_row), str(start_row))))
+        self.set_border(ws_project, ('A%s:C%s' % (str(start_row+1), str(project_sheet_row))))
+
+        #display detailed breakdown of sales with sub-categories -------------
+        need_sub_details_for = list(need_sub_details_for)
+        need_sub_details_for.sort()
+        (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'ALL TIME BY FORMAT'
+        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+        self.set_border(ws_project, 'E%s:E%s' % (str(project_sheet_details_row), str(project_sheet_details_row)))
+        project_sheet_details_row += 1
+        start_row = project_sheet_details_row
+        (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'INCOME BREAKDOWN'
+        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+        sub_sums = {}
+        for index, col, in enumerate(need_sub_details_for):
+            sub_sums[col] = 0.0
+            if len(str(col)) == 2:
+                col = str(col).upper()
+            else:
+                col = str(col).title()
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = col
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_details_row, column=index+7)).value = 'TOTAL'
+            (ws_project.cell(row=project_sheet_details_row, column=index+7)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_details_row += 1
+        for key in list(need_details_for):
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = str(key).title()
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            category_total = 0.0
+            end_column = 20
+            for index, key_sub, in enumerate(need_sub_details_for):
+                category_total += project_summary[3][key][key_sub]
+                sub_sums[key_sub] += project_summary[3][key][key_sub]
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = project_summary[3][key][key_sub]
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                end_column = index+7
+            (ws_project.cell(row=project_sheet_details_row, column=end_column)).value = category_total
+            (ws_project.cell(row=project_sheet_details_row, column=end_column)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            (ws_project.cell(row=project_sheet_details_row, column=end_column)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+        (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'TOTAL'
+        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)       
+        for index, col, in enumerate(need_sub_details_for):
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = sub_sums[col]
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+        project_sheet_details_row += 1
+
+                            
+
+        project_sheet_details_row += 1
+        (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'QTY BREAKDOWN'
+        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+        qty_sums = {}
+        for index, col, in enumerate(need_sub_details_for):
+            qty_sums[col] = 0.0
+            if len(str(col)) == 2:
+                col = str(col).upper()
+            else:
+                col = str(col).title()
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = col
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_details_row, column=index+7)).value = 'TOTAL'
+            (ws_project.cell(row=project_sheet_details_row, column=index+7)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_details_row += 1
+        column_for_border = 0
+        for key in list(need_details_for):
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = str(key).title()
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            qty_total = 0.0
+            end_column = 20
+            for index, key_sub, in enumerate(need_sub_details_for):
+                qty_sums[key_sub] += project_summary[4][key][key_sub]
+                qty_total += project_summary[4][key][key_sub]
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = project_summary[4][key][key_sub]
+                #(ws_project.cell(row=project_sheet_details_row, column=index+6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                end_column = index+7
+            (ws_project.cell(row=project_sheet_details_row, column=end_column)).value = qty_total
+            (ws_project.cell(row=project_sheet_details_row, column=end_column)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+            column_for_border = end_column - 1
+        (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'TOTAL'
+        (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)       
+        self.set_border(ws_project, ('E%s:%s%s' % (str(start_row), chr(ord('A') + column_for_border),str(project_sheet_details_row))))
+        for index, col, in enumerate(need_sub_details_for):
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = qty_sums[col]
+            (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+        project_sheet_details_row += 1
+
+        #quarterly summary ------------------
+        num_quarters = 16
+        pairs = []
+        year = int(self.year)
+        quarter = int(self.quarter)
+        for ii in range(num_quarters):
+            if quarter == 0:
+                quarter = 4
+                year -= 1
+            pairs.append([year,quarter])
+            quarter -= 1
+        for pair in pairs:
+            #fix rows so that quarters match up with each other and shit #fuckformatting
+            project_sheet_row = max(project_sheet_row, project_sheet_details_row)
+            project_sheet_details_row = max(project_sheet_row, project_sheet_details_row)
+                    
+            project_quarterly_summary = self.generate_quarterly_label_project_summary(int(pair[0]),int(pair[1]))
+                        
+            need_details_for = set()
+            need_sub_details_for = set()
+                        
+            project_sheet_row += 2
+            border_start_quarter = project_sheet_row
+            (ws_project.cell(row=project_sheet_row, column=1)).value = '%s Q%s SUMMARY' % (str(pair[0]), str(pair[1]))
+            (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_row += 1
+            for index, col, in enumerate(('Category', 'Debit/Credit', 'QTY')):
+                (ws_project.cell(row=project_sheet_row, column=index+1)).value = col
+                (ws_project.cell(row=project_sheet_row, column=index+1)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_row += 1
+            total_sold = 0
+            project_budget = 0
+            #for key, value in sorted(project_summary[0].iteritems()):
+            budget_positive = 0
+            budget_negative = 0
+            qty_positive = 0
+            qty_negative = 0
+            pos_summary = False
+            for key, value in sorted(project_quarterly_summary[0].items(), key=lambda x: x[1],reverse=True):
+                if float(value) == 0:#we've reached the center of the list, do things
+                    if budget_positive > 0 and not pos_summary:#display summary
+                        (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Income'
+                        (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                        (ws_project.cell(row=project_sheet_row, column=2)).value = budget_positive
+                        (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                        (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                        (ws_project.cell(row=project_sheet_row, column=3)).value = qty_positive
+                        (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+                        project_sheet_row += 2
+                        pos_summary = True
+                    continue
+                project_budget += value
+                total_sold += (project_quarterly_summary[1])[key]
+                if value > 0:
+                    budget_positive += value
+                    qty_positive += (project_quarterly_summary[1])[key]
+                elif value < 0:
+                    budget_negative += value
+                    qty_negative += (project_quarterly_summary[1])[key]
+                (ws_project.cell(row=project_sheet_row, column=1)).value = str(key).title()
+                (ws_project.cell(row=project_sheet_row, column=2)).value = value
+                (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                (ws_project.cell(row=project_sheet_row, column=3)).value = (project_quarterly_summary[1])[key]
+                project_sheet_row += 1
+
+                if key in project_quarterly_summary[3]: #does this category have sub-catgeories
+                    #print '%s - yep, shes got sub categories' % catalog_number
+                    #next line loops through the sub-categories of a category in sorted order
+                    for key_sub, value_sub in sorted((project_quarterly_summary[3])[key].items(), key=lambda x: x[1], reverse=True):
+                        if float(value_sub) == 0:
+                            continue
+                        if key_sub == 'none' or key_sub is None or key_sub == '':
+                            continue
+                        need_details_for.add(key)
+                        need_sub_details_for.add(key_sub)
+                                    
+            #display negative summaries
+            if budget_negative < 0:#display summary
+                (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Expenses'
+                (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_row, column=2)).value = budget_negative
+                (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                #(ws_project.cell(row=project_sheet_row, column=3)).value = qty_negative
+                #(ws_project.cell(row=project_sheet_row, column=4)).font = openpyxl.styles.Font(bold=True)
+                project_sheet_row += 2                    
+
+            #display positive minus negative
+            (ws_project.cell(row=project_sheet_row, column=1)).value = 'Quarterly Totals'
+            (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_row, column=2)).value = project_budget
+            (ws_project.cell(row=project_sheet_row, column=2)).font = openpyxl.styles.Font(bold=True)
+            (ws_project.cell(row=project_sheet_row, column=2)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            (ws_project.cell(row=project_sheet_row, column=3)).value = total_sold
+            (ws_project.cell(row=project_sheet_row, column=3)).font = openpyxl.styles.Font(bold=True)
+
+            #create border
+            self.set_border(ws_project, ('A%s:C%s' % (str(border_start_quarter),str(project_sheet_row))))
+
+            #quarterly summary detailed breakdown ---------------
+
+            #display detailed breakdown of sales with sub-categories -------------
+            need_sub_details_for = list(need_sub_details_for)
+            need_sub_details_for.sort()
+            #print need_sub_details_for
+            project_sheet_details_row += 2
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = '%s Q%s BY FORMAT' % (str(pair[0]), str(pair[1]))
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            self.set_border(ws_project, 'E%s:E%s' % (int(project_sheet_details_row),int(project_sheet_details_row)))
+            project_sheet_details_row += 1
+            start_quarterly_details_border = project_sheet_details_row #save this row for later
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'INCOME BREAKDOWN'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            sub_sums = {}
+            for index, col, in enumerate(need_sub_details_for):
+                sub_sums[col] = 0.0
+                if len(str(col)) == 2:
+                    col = str(col).upper()
+                else:
+                    col = str(col).title()
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = col
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_details_row, column=index+7)).value = 'TOTAL'
+                (ws_project.cell(row=project_sheet_details_row, column=index+7)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+            for key in list(need_details_for):
+                (ws_project.cell(row=project_sheet_details_row, column=5)).value = str(key).title()
+                (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+                category_total = 0.0
+                end_column = 20
+                for index, key_sub, in enumerate(need_sub_details_for):
+                    category_total += project_quarterly_summary[3][key][key_sub]
+                    sub_sums[key_sub] += project_quarterly_summary[3][key][key_sub]
+                    (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = project_quarterly_summary[3][key][key_sub]
+                    (ws_project.cell(row=project_sheet_details_row, column=index+6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                    end_column = index+7
+                (ws_project.cell(row=project_sheet_details_row, column=end_column)).value = category_total
+                (ws_project.cell(row=project_sheet_details_row, column=end_column)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                (ws_project.cell(row=project_sheet_details_row, column=end_column)).font = openpyxl.styles.Font(bold=True)
+                project_sheet_details_row += 1
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'TOTAL'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)       
+            for index, col, in enumerate(need_sub_details_for):
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = sub_sums[col]
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            project_sheet_details_row += 1
+
+                            
+
+            project_sheet_details_row += 1
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'QTY BREAKDOWN'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+            qty_sums = {}
+            for index, col, in enumerate(need_sub_details_for):
+                qty_sums[col] = 0.0
+                if len(str(col)) == 2:
+                    col = str(col).upper()
+                else:
+                    col = str(col).title()
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = col
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+                (ws_project.cell(row=project_sheet_details_row, column=index+7)).value = 'TOTAL'
+                (ws_project.cell(row=project_sheet_details_row, column=index+7)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+            column_for_border = 0
+            for key in list(need_details_for):
+                (ws_project.cell(row=project_sheet_details_row, column=5)).value = str(key).title()
+                (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)
+                qty_total = 0.0
+                end_column = 20
+                for index, key_sub, in enumerate(need_sub_details_for):
+                    qty_sums[key_sub] += project_quarterly_summary[4][key][key_sub]
+                    qty_total += project_quarterly_summary[4][key][key_sub]
+                    (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = project_quarterly_summary[4][key][key_sub]
+                    end_column = index+7
+                (ws_project.cell(row=project_sheet_details_row, column=end_column)).value = qty_total
+                (ws_project.cell(row=project_sheet_details_row, column=end_column)).font = openpyxl.styles.Font(bold=True)
+                project_sheet_details_row += 1
+                column_for_border = end_column - 1
+            (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'TOTAL'
+            (ws_project.cell(row=project_sheet_details_row, column=5)).font = openpyxl.styles.Font(bold=True)       
+            self.set_border(ws_project, ('E%s:%s%s' % (start_quarterly_details_border,chr(ord('A') + column_for_border),str(project_sheet_details_row))))
+            for index, col, in enumerate(need_sub_details_for):
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).value = qty_sums[col]
+                (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
+            project_sheet_details_row += 1
+
+            #quarterly summary detailed breakdown DONE ----------------
+        
+        
+        
+        self.correct_column_widths(wb)
+        wb.save(BASE_PATH + 'plaid_room/royalty_summaries/LABEL_MASTER.xlsx')
+
             
     def print_payee_summary(self):
         project_status = self.get_project_status()
@@ -511,7 +1205,7 @@ class ColemineBooks():
                     (ws_project.cell(row=project_sheet_row, column=1)).font = openpyxl.styles.Font(bold=True)
                     project_sheet_row += 2
                     #done making header
-                    #royalty summaries ---------------
+                    #royalty summaries -------------------------------
                     project_sheet_details_row = 1
                     royalty_summary = self.generate_royalty_summary(royalty_number)#[type amount format qty]
                     royalty_lines = self.generate_royalty_lines(royalty_number)
@@ -1076,4 +1770,6 @@ if __name__ == '__main__':
     #books.get_projects()
     #books.get_project_status()
     #books.get_payees()
+    books.print_label_summary()
+    print 'done with label summary'
     books.print_payee_summary()
