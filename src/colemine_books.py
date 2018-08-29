@@ -240,6 +240,8 @@ class ColemineBooks():
         dict_qty = {}
         dict_dict_summary = {}
         dict_dict_qty = {}
+        dict_dict_title_summary = {}
+        dict_dict_title_qty = {}
         summary_lines = []
         royalty_lines = []
         for item in self.get_sales_categories():
@@ -250,6 +252,14 @@ class ColemineBooks():
             for format_type in self.get_format_categories():
                 dict_dict_summary[str(item)][str(format_type)] = 0.0
                 dict_dict_qty[str(item)][str(format_type)] = 0
+        for item in self.get_projects():
+            dict_dict_title_summary[str(item)] = {}
+            dict_dict_title_qty[str(item)] = {}
+            #print item
+            for format_type in self.get_format_categories():
+                #print format_type
+                dict_dict_title_summary[str(item)][str(format_type)] = 0.0
+                dict_dict_title_qty[str(item)][str(format_type)] = 0
         for row in self.data_input:
             this_adjustment_project = row[2].value
             try:
@@ -304,8 +314,27 @@ class ColemineBooks():
                         if fmt in dict_dict_summary[category]:
                             dict_dict_qty[category][fmt] += qty
                 except Exception as e:
+                    print e
                     continue
-        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, royalty_lines)
+            #for summary on each title
+            if str(this_adjustment_project) in dict_dict_title_summary:
+                if fmt in dict_dict_title_summary[str(this_adjustment_project)]:
+                    dict_dict_title_summary[str(this_adjustment_project)][fmt] += amount
+            #add info for qty sold by title and format
+            if qty is not None:
+                try:
+                    qty = int(qty)
+                    if str(this_adjustment_project) in dict_dict_title_qty:
+                        if fmt in dict_dict_title_qty[str(this_adjustment_project)]:
+                            dict_dict_title_qty[str(this_adjustment_project)][fmt] += qty
+                except Exception as e:
+                    print e
+                    continue
+        #for title in dict_dict_title_summary:
+        #    for fmt, value in dict_dict_title_summary[title].iteritems():
+        #        placeholder = 0
+        #        print '%s\t%s\t%s' % (str(title), str(fmt), str(value))
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, royalty_lines, dict_dict_title_summary, dict_dict_title_qty)
 
 
             
@@ -382,6 +411,8 @@ class ColemineBooks():
         dict_qty = {}
         dict_dict_summary = {}
         dict_dict_qty = {}
+        dict_dict_title_summary = {}
+        dict_dict_title_qty = {}
         summary_lines = []
         for item in self.get_sales_categories():
             dict_summary[str(item)] = 0.0
@@ -391,6 +422,14 @@ class ColemineBooks():
             for format_type in self.get_format_categories():
                 dict_dict_summary[str(item)][str(format_type)] = 0.0
                 dict_dict_qty[str(item)][str(format_type)] = 0.0
+        for item in self.get_projects():
+            dict_dict_title_summary[str(item)] = {}
+            dict_dict_title_qty[str(item)] = {}
+            #print item
+            for format_type in self.get_format_categories():
+                #print format_type
+                dict_dict_title_summary[str(item)][str(format_type)] = 0.0
+                dict_dict_title_qty[str(item)][str(format_type)] = 0
         for row in self.data_input:
             this_adjustment_project = row[2].value
             try:
@@ -449,7 +488,22 @@ class ColemineBooks():
                                 dict_dict_qty[category][fmt] += qty
                     except Exception as e:
                         continue
-        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty)
+                #for summary on each title
+                if str(this_adjustment_project) in dict_dict_title_summary:
+                    if fmt in dict_dict_title_summary[str(this_adjustment_project)]:
+                        dict_dict_title_summary[str(this_adjustment_project)][fmt] += amount
+                #add info for qty sold by title and format
+                if qty is not None:
+                    try:
+                        qty = int(qty)
+                        if str(this_adjustment_project) in dict_dict_title_qty:
+                            if fmt in dict_dict_title_qty[str(this_adjustment_project)]:
+                                dict_dict_title_qty[str(this_adjustment_project)][fmt] += qty
+                    except Exception as e:
+                        print e
+                        continue
+                    
+        return (dict_summary, dict_qty, summary_lines, dict_dict_summary, dict_dict_qty, dict_dict_title_summary, dict_dict_title_qty)
     
     
     def generate_quarterly_project_summary(self, code, year, quarter):
@@ -836,7 +890,9 @@ class ColemineBooks():
         self.set_border(ws_project, ('A%s:A%s' % (str(start_row), str(start_row))))
         self.set_border(ws_project, ('A%s:C%s' % (str(start_row+1), str(project_sheet_row))))
 
-        #display detailed breakdown of sales with sub-categories -------------
+        label_summary_details_row = project_sheet_details_row
+        
+       #display detailed breakdown of sales with sub-categories -------------
         need_sub_details_for = list(need_sub_details_for)
         need_sub_details_for.sort()
         (ws_project.cell(row=project_sheet_details_row, column=5)).value = 'ALL TIME BY FORMAT'
@@ -922,8 +978,43 @@ class ColemineBooks():
             (ws_project.cell(row=project_sheet_details_row, column=index+6)).font = openpyxl.styles.Font(bold=True)
         project_sheet_details_row += 1
 
+        #start of title breakdown ---------------------
+        (ws_project.cell(row=label_summary_details_row, column=14)).value = 'ALL TIME TITLE BREAKDOWN SUMMARY'
+        (ws_project.cell(row=label_summary_details_row, column=14)).font = openpyxl.styles.Font(bold=True)
+        self.set_border(ws_project, 'N%s:Q%s' % (str(label_summary_details_row),str(label_summary_details_row)))
+        self.set_border(ws_project, 'N%s:Q%s' % (str(label_summary_details_row+1),str(label_summary_details_row+1)))
+        start_label_summary_details_row = label_summary_details_row
+        label_summary_details_row += 1
+
+        for index, col in enumerate(('Title', 'Format', 'Amount', 'Qty')):
+            (ws_project.cell(row=label_summary_details_row, column=index+14)).value = col
+            (ws_project.cell(row=label_summary_details_row, column=index+14)).font = openpyxl.styles.Font(bold=True)
+        label_summary_details_row += 1
+
+        label_display_array = []
+        for title in project_summary[6]:
+            for fmt, value in project_summary[6][title].iteritems():
+                if fmt in ('cd', 'cs', 'lp', '45'):
+                    if value > 0:
+                        label_display_array.append([str(title),str(fmt),str(value),project_summary[7][title][fmt]])
+        label_display_array = sorted(label_display_array, key = lambda x: x[3], reverse=True)
+        print label_display_array
+
+        for row in label_display_array:
+            (ws_project.cell(row=label_summary_details_row, column=14)).value = row[0]
+            (ws_project.cell(row=label_summary_details_row, column=15)).value = row[1]
+            (ws_project.cell(row=label_summary_details_row, column=16)).value = locale.currency(float(row[2]))
+            (ws_project.cell(row=label_summary_details_row, column=16)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            (ws_project.cell(row=label_summary_details_row, column=17)).value = row[3]
+            label_summary_details_row += 1
+                #(ws_project.cell(row=label_summary_details_row, column=index+14)).font = openpyxl.styles.Font(bold=True)
+        self.set_border(ws_project, 'N%s:Q%s' % (str(start_label_summary_details_row),str(label_summary_details_row)))
+        label_summary_details_row = start_label_summary_details_row
+        #end of title breakdown ------------------
+
+        
         #quarterly summary ------------------
-        num_quarters = 16
+        num_quarters = 4
         pairs = []
         year = int(self.year)
         quarter = int(self.quarter)
@@ -933,7 +1024,7 @@ class ColemineBooks():
                 year -= 1
             pairs.append([year,quarter])
             quarter -= 1
-        for pair in pairs:
+        for pair_index, pair in enumerate(pairs):
             #fix rows so that quarters match up with each other and shit #fuckformatting
             project_sheet_row = max(project_sheet_row, project_sheet_details_row)
             project_sheet_details_row = max(project_sheet_row, project_sheet_details_row)
@@ -1111,8 +1202,43 @@ class ColemineBooks():
             project_sheet_details_row += 1
 
             #quarterly summary detailed breakdown DONE ----------------
+
+
+
+            #start of title breakdown ---------------------
+            alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','aa','ab','ac','ad','ae','af','ag','ah','ai','aj','ak','al','am','an','ao','ap','aq','ar','as','at','au','av','aw','ax','ay','az','ba','bb','bc','bd','be','bf','bg','bh','bi','bj','bk','bl','bm','bn','bo','bp','bq','br','bs','bt','bu','bv','bw','bx','by','bz','ca','cb','cc','cd','ce','cf','cg','ch','ci','cj','ck','cl','cm','cn','co','cp','cq','cr','cs','ct','cu','cv','cw','cx','cy','cz']
+
+            (ws_project.cell(row=label_summary_details_row, column=19+(6*pair_index))).value = '%s Q%s BY TITLE' % (str(pair[0]), str(pair[1]))
+            (ws_project.cell(row=label_summary_details_row, column=19+(6*pair_index))).font = openpyxl.styles.Font(bold=True)
+            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row),str(alpha[18+6*pair_index+3]),str(label_summary_details_row)))
+            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row+1),str(alpha[18+6*pair_index+3]),str(label_summary_details_row+1)))
+            start_label_summary_details_row = label_summary_details_row
+            label_summary_details_row += 1
+
+            for index, col in enumerate(('Title', 'Format', 'Amount', 'Qty')):
+                (ws_project.cell(row=label_summary_details_row, column=19+6*pair_index+index)).value = col
+                (ws_project.cell(row=label_summary_details_row, column=19+6*pair_index+index)).font = openpyxl.styles.Font(bold=True)
+            label_summary_details_row += 1
+
+            label_display_array = []
+            for title in project_quarterly_summary[5]:
+                for fmt, value in project_quarterly_summary[5][title].iteritems():
+                    if fmt in ('cd', 'cs', 'lp', '45'):
+                        if value > 0:
+                            label_display_array.append([str(title),str(fmt),str(value),project_quarterly_summary[6][title][fmt]])
+            label_display_array = sorted(label_display_array, key = lambda x: x[3], reverse=True)
+            print label_display_array
         
-        
+            for row in label_display_array:
+                (ws_project.cell(row=label_summary_details_row, column=19+6*pair_index)).value = row[0]
+                (ws_project.cell(row=label_summary_details_row, column=20+6*pair_index)).value = row[1]
+                (ws_project.cell(row=label_summary_details_row, column=21+6*pair_index)).value = locale.currency(float(row[2]))
+                (ws_project.cell(row=label_summary_details_row, column=21+6*pair_index)).number_format = '$#,##0.00;[Red]-$#,##0.00'
+                (ws_project.cell(row=label_summary_details_row, column=22+6*pair_index)).value = row[3]
+                label_summary_details_row += 1
+
+            self.set_border(ws_project, '%s%s:%s%s' % (alpha[18+6*pair_index],str(start_label_summary_details_row),alpha[18+6*pair_index+3],str(label_summary_details_row)))
+            label_summary_details_row = start_label_summary_details_row
         
         self.correct_column_widths(wb)
         wb.save(BASE_PATH + 'plaid_room/royalty_summaries/LABEL_MASTER.xlsx')
