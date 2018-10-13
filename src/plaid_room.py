@@ -18971,7 +18971,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_two_results_table_clear()
         self.tab_two_generate_more_info_buttons()
         for ix, row in enumerate(self.tab_two_results_table_list):
-            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
+            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[PRICE_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX], row[PRICE_PAID_INDEX])
             if ix > (self.tab_two_results_table.rowCount()-1):
                 continue
             #fill in table
@@ -18986,7 +18986,7 @@ class Ui_Form(QtGui.QWidget):
         how_much_paid = 0
         for row in self.db_cursor.execute('SELECT * FROM inventory ORDER BY upc DESC'):
             how_many = how_many + 1
-            #print row
+            print row
             #print row[PRICE_INDEX]
             how_much = how_much + row[PRICE_INDEX]
             how_much_paid = how_much_paid + row[PRICE_PAID_INDEX]
@@ -20455,7 +20455,7 @@ class Ui_Form(QtGui.QWidget):
         print '*'*50
         for ix, row in enumerate(self.tab_five_results_table_2_list):
             #print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX])
-            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX], row[DISTRIBUTOR_INDEX])
+            print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[SOLD_FOR_INDEX], row[FORMAT_INDEX], row[YEAR_INDEX], row[LABEL_INDEX], row[DATE_ADDED_INDEX], row[DATE_SOLD_INDEX], row[DISCOGS_RELEASE_NUMBER_INDEX], row[DISTRIBUTOR_INDEX], row[PRICE_PAID_INDEX])
             #print '%s\t%s\t%s\t%s\t%s\t%s' % (row[UPC_INDEX], row[ARTIST_INDEX], row[TITLE_INDEX], row[DATE_SOLD_INDEX], row[SOLD_FOR_INDEX], row[SOLD_NOTES_INDEX])
             if ix > (self.tab_five_results_table_2.rowCount()-1):
                 continue

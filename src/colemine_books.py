@@ -1210,12 +1210,12 @@ class ColemineBooks():
 
             (ws_project.cell(row=label_summary_details_row, column=19+(6*pair_index))).value = '%s Q%s BY TITLE' % (str(pair[0]), str(pair[1]))
             (ws_project.cell(row=label_summary_details_row, column=19+(6*pair_index))).font = openpyxl.styles.Font(bold=True)
-            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row),str(alpha[18+6*pair_index+3]),str(label_summary_details_row)))
-            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row+1),str(alpha[18+6*pair_index+3]),str(label_summary_details_row+1)))
+            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row),str(alpha[18+6*pair_index+4]),str(label_summary_details_row)))
+            self.set_border(ws_project, '%s%s:%s%s' % (str(alpha[18+6*pair_index]),str(label_summary_details_row+1),str(alpha[18+6*pair_index+4]),str(label_summary_details_row+1)))
             start_label_summary_details_row = label_summary_details_row
             label_summary_details_row += 1
 
-            for index, col in enumerate(('Title', 'Format', 'Amount', 'Qty')):
+            for index, col in enumerate(('Title', 'Format', 'Amount', 'Qty', '$ Per Unit')):
                 (ws_project.cell(row=label_summary_details_row, column=19+6*pair_index+index)).value = col
                 (ws_project.cell(row=label_summary_details_row, column=19+6*pair_index+index)).font = openpyxl.styles.Font(bold=True)
             label_summary_details_row += 1
@@ -1235,9 +1235,11 @@ class ColemineBooks():
                 (ws_project.cell(row=label_summary_details_row, column=21+6*pair_index)).value = locale.currency(float(row[2]))
                 (ws_project.cell(row=label_summary_details_row, column=21+6*pair_index)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                 (ws_project.cell(row=label_summary_details_row, column=22+6*pair_index)).value = row[3]
+                (ws_project.cell(row=label_summary_details_row, column=23+6*pair_index)).value = locale.currency(float(row[2])/float(row[3]))
+                (ws_project.cell(row=label_summary_details_row, column=23+6*pair_index)).number_format = '$#,##0.00;[Red]-$#,##0.00'
                 label_summary_details_row += 1
 
-            self.set_border(ws_project, '%s%s:%s%s' % (alpha[18+6*pair_index],str(start_label_summary_details_row),alpha[18+6*pair_index+3],str(label_summary_details_row)))
+            self.set_border(ws_project, '%s%s:%s%s' % (alpha[18+6*pair_index],str(start_label_summary_details_row),alpha[18+6*pair_index+4],str(label_summary_details_row)))
             label_summary_details_row = start_label_summary_details_row
         
         self.correct_column_widths(wb)

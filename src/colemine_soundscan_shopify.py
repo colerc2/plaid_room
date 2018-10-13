@@ -97,7 +97,7 @@ class ColemineSoundscan():
             orders = shopify.Order.find(page=(page+1),created_at_min=start_date,created_at_max=end_date)
             print start_date
             print end_date
-            time.sleep(0.75)
+            time.sleep(1.25)
             print len(orders)
             if len(orders) == 0:
                 break

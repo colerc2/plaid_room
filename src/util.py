@@ -41,7 +41,7 @@ class Util():
                 count = 0
                 for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
                         count += 1
-                        if count > 44:
+                        if count > 67:
                                 break
                         if ',New Release' not in row[ONLINE_SHOPIFY_TAGS]:
                                 print row[ONLINE_ARTIST]
@@ -129,15 +129,7 @@ class Util():
                         print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX],row[GENRE_INDEX])
                 return
 
-                
-	#this method should be left blank unless some one time operation needs to be done
-	def custom_temp_operation(self):
-
-                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('139526',))
-		self.db.commit()
-                return
-
-
+        def fix_ups(self):
                 list_of_stuff_to_update = []
                 for ix, row in enumerate(self.db_cursor.execute('SELECT * from sold_online_status')):
                         if 'UPS' in row[ONLINE_SS_SHIPPING_METHOD]:
@@ -147,6 +139,17 @@ class Util():
                 self.db.commit()
                         
                 return
+                
+                
+	#this method should be left blank unless some one time operation needs to be done
+	def custom_temp_operation(self):
+
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('148229',))
+		self.db.commit()
+                return
+
+
+                
         
         
         
@@ -478,7 +481,7 @@ class Util():
                 end_date = list_of_dates[0] + datetime.timedelta(days=1)
                 sold = colemine_soundscan.get_list_of_orders_from_beginning(list_of_dates[-1],end_date, pre_order_cross_check)
                 
-                start_date = list_of_dates[0] - datetime.timedelta(days=30)
+                start_date = list_of_dates[0] - datetime.timedelta(days=40)
                 sold_pre_orders = colemine_soundscan.get_list_of_orders_for_pre_orders(start_date, end_date, pre_order_cross_check)
                 #grab list of zips
                 with open(COLEMINE_ZIP_CODE_FILE, 'rb') as f:
@@ -1143,6 +1146,7 @@ if __name__ == '__main__':
                         print 'remove_dupes_for_doubles - remove duplicates and items with quantity zero from doubles'
                         print 'remove_nr - remove any new releases older than 100 releases'
                         print 'add_nr - add new release tag to some amount of new releases'
+                        print 'fix_ups - fix registered trade mark issue in ups ground'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -1356,4 +1360,5 @@ if __name__ == '__main__':
 			util.show_me_new_with_plaid_skus()
 		elif entered == 'shit_selling_doubles':
 			util.print_doubles_that_havent_sold_well()
-
+                elif entered == 'fix_ups':
+                        util.fix_ups()

@@ -35,7 +35,8 @@ class BarcodePrinter():
         c.drawString(2*mm, 19*mm,artist)#19
         c.drawString(2*mm, 16*mm,title)#16
         #if new_used == 'Used':
-        c.drawString(2*mm, 13*mm,genre)#13
+        filtered_genre = genre.replace("Folk, World, & Country", "FWC")
+        c.drawString(2*mm, 13*mm,filtered_genre)#13
         c.setFont('Courier',16)
         if 'PRRGC' not in code_copy:
             if price > 99.99:
