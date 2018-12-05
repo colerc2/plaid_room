@@ -87,6 +87,7 @@ class ColemineSoundscan():
                             zips.append(zip)
                 except Exception as e:
                     print 'ERROR: %s' % e
+                    continue
         return zips
                     
     
@@ -113,6 +114,7 @@ class ColemineSoundscan():
                             break
                 except Exception as e:
                     print 'ERROR: %s' % e
+                    continue
         return orders_to_return
 
     def get_list_of_orders_for_back_dating(self):
@@ -146,6 +148,7 @@ class ColemineSoundscan():
                                             total_dict[line.vendor] = 1
                         except Exception as e:
                             print 'ERROR: %s' % e
+                            continue
         for line in soundscan_lines:
             print line
         print '%s%05d%07d' % ('94', int(len(soundscan_lines)), int(len(soundscan_lines)))
@@ -192,6 +195,7 @@ class ColemineSoundscan():
                         #    print '%s\t%s' % (key,value)
                 except Exception as e:
                     print 'ERROR: %s' % e
+                    continue
         for key, value in total_counts.iteritems():
             print '%s\t%s' % (key,value)
         #for item in orders_to_return:

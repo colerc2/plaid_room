@@ -144,8 +144,8 @@ class ShopifyInterface():
                 #street_date_formatted_for_america = datetime.datetime.strptime(row[PRE_STREET_DATE], "%Y-%m-%d")
                 #street_date_formatted_for_america = street_date_formatted_for_america.strftime("%m/%d/%Y")
                 new_product.title = "<b>%s </b><br><i>%s</i>" % (row[ONLINE_ARTIST], row[ONLINE_TITLE])
-                if 'RSD2018' in row[ONLINE_SHOPIFY_TAGS]:
-                    new_product.product_type = "RSD2018"#default for now, might change later
+                if 'BF2018' in row[ONLINE_SHOPIFY_TAGS]:
+                    new_product.product_type = "BF2018"#default for now, might change later
                 else:
                     new_product.product_type = "LP"#default for now, might change later
                 #build tags
@@ -212,8 +212,8 @@ class ShopifyInterface():
             try:
                 product = shopify.Product.find(row[ONLINE_SHOPIFY_ID])
                 product.title = "<b>%s </b><br><i>%s</i>" % (row[PRE_ARTIST], row[PRE_TITLE])
-                if 'RSD2018' in row[ONLINE_SHOPIFY_TAGS]:
-                    product.product_type = "RSD2018"#default for now, might change later
+                if 'BF2018' in row[ONLINE_SHOPIFY_TAGS]:
+                    product.product_type = "BF2018"#default for now, might change later
                 else:
                     product.product_type = "LP"#default for now, might change later
                 product.tags = row[ONLINE_SHOPIFY_TAGS]

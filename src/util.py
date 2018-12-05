@@ -41,7 +41,7 @@ class Util():
                 count = 0
                 for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
                         count += 1
-                        if count > 67:
+                        if count > 71:
                                 break
                         if ',New Release' not in row[ONLINE_SHOPIFY_TAGS]:
                                 print row[ONLINE_ARTIST]
@@ -127,6 +127,7 @@ class Util():
                         for ix_db, row_db in enumerate(self.db_cursor.execute('SELECT * FROM inventory WHERE upc=?', (row[UPC_INDEX],))):
                                 in_stock_count += 1
                         print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (str(in_stock_count),str(row[SOLD_FOR_INDEX]),row[ARTIST_INDEX],row[TITLE_INDEX],row[UPC_INDEX],row[NEW_USED_INDEX],row[DISTRIBUTOR_INDEX],row[GENRE_INDEX])
+                print len(need_to_put_out)
                 return
 
         def fix_ups(self):
@@ -139,12 +140,31 @@ class Util():
                 self.db.commit()
                         
                 return
-                
+
+        def fix_qoh(self):
+                #this is here to fix the qoh after using the mass ringer outer at RSD
+                upcs = set()
+                qoh = self.get_qoh()
+                for row in self.db_cursor.execute('SELECT * FROM online_inventory'):
+                        if row[ONLINE_UPC] in qoh:
+                                if qoh[row[ONLINE_UPC]] != row[ONLINE_QOH]:
+                                        upcs.add(row[ONLINE_UPC])
+                                        print '%s - %s' % (row[ONLINE_ARTIST],row[ONLINE_TITLE])
+                        else:#qty is 0
+                                if row[ONLINE_QOH] != 0:
+                                        upcs.add(row[ONLINE_UPC])
+                                        print '%s - %s' % (row[ONLINE_ARTIST],row[ONLINE_TITLE])                                  
+                for upc in upcs:
+                        print 'updating...%s...' % upc
+                        self.upc_qty_change_update_the_site(upc)
+                        time.sleep(0.75)
+                return
+        
                 
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
 
-                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('148229',))
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('162461',))
 		self.db.commit()
                 return
 
@@ -481,7 +501,7 @@ class Util():
                 end_date = list_of_dates[0] + datetime.timedelta(days=1)
                 sold = colemine_soundscan.get_list_of_orders_from_beginning(list_of_dates[-1],end_date, pre_order_cross_check)
                 
-                start_date = list_of_dates[0] - datetime.timedelta(days=40)
+                start_date = list_of_dates[0] - datetime.timedelta(days=45)
                 sold_pre_orders = colemine_soundscan.get_list_of_orders_for_pre_orders(start_date, end_date, pre_order_cross_check)
                 #grab list of zips
                 with open(COLEMINE_ZIP_CODE_FILE, 'rb') as f:
@@ -503,6 +523,7 @@ class Util():
                         except Exception as e:
                                 print 'Exception: %s\n\n\n\n' % e
                                 zip_code = '45140'
+                                continue
                         for line in order.line_items:
                                 for ii in range(line.quantity):
                                         if line.sku is not None:
@@ -1147,6 +1168,8 @@ if __name__ == '__main__':
                         print 'remove_nr - remove any new releases older than 100 releases'
                         print 'add_nr - add new release tag to some amount of new releases'
                         print 'fix_ups - fix registered trade mark issue in ups ground'
+                        print 'fix_qoh - fix qoh vs. website errors'
+                        print 'print_doubles - print doubles for spreadsheet import'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -1211,6 +1234,10 @@ if __name__ == '__main__':
                         util.add_new_release_tag()
                 elif entered == 'monthly':
                         util.monthly_stats()
+                elif entered == 'fix_qoh':
+                        util.fix_qoh()
+                elif entered == 'print_doubles':
+                        util.print_doubles_for_spreadsheet()
                 elif entered == 'colemine_soundscan':
                         print '\tPlease enter the starting date in the following format: yyyy-mm-dd'
 			start_date = raw_input('plaid-room-util/colemine-soundscan > ')
