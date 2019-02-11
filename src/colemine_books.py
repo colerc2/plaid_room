@@ -159,6 +159,7 @@ class ColemineBooks():
                 except Exception as e:
                     print 'warning: error in generate_label_royalty_lines'
                     print e
+                    print row
                     continue
                 royalty = this_adjustment_project
                 qty = row[3].value
@@ -998,7 +999,7 @@ class ColemineBooks():
                     if value > 0:
                         label_display_array.append([str(title),str(fmt),str(value),project_summary[7][title][fmt]])
         label_display_array = sorted(label_display_array, key = lambda x: x[3], reverse=True)
-        print label_display_array
+        #print label_display_array
 
         for row in label_display_array:
             (ws_project.cell(row=label_summary_details_row, column=14)).value = row[0]

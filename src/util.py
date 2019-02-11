@@ -15,6 +15,9 @@ from shopify_interface import ShopifyInterface
 import random
 import re
 from receipt_printer import ReceiptPrinter
+from shopify_interface import ShopifyInterface
+import shopify
+
 
 class Util():
 	def __init__(self, primary='real_inventory_copy.db'):
@@ -36,18 +39,64 @@ class Util():
 			print item
 			print
 
+        def generate_email_for_new_release_pickups(self):
+                entered = ''
+                skus = []
+                while(entered != 'q'):
+                        entered = raw_input('input fulfill skus > ')
+                        if entered != 'q':
+                                skus.append(entered)
+                entered = ''
+                upcs = []
+                while(entered != 'q'):
+                        entered = raw_input('input fulfill UPCs > ')
+                        if entered != 'q':
+                                upcs.append(entered)
+                upcs = set(upcs)
+                print ''
+                emails = []
+                for sku in skus:
+                        trans = self.shopify_interface.get_trans_info(sku)
+                        emails.append(trans.customer.email)
+                emails = set(emails)
+                for email in emails:
+                        print email
+                print '\n'
+                for upc in upcs:
+                        for row in self.db_cursor.execute('SELECT * FROM pre_order_inventory WHERE upc = ?', (upc,)):
+                                print '%s - %s' % (row[PRE_ARTIST], row[PRE_TITLE])
+                print ''
+        def double_deleter(self):
+                entered = ''
+                list_to_update = []
+                while(entered != 'q'):
+                        entered = raw_input('scan upc > ')
+                        if entered == 'c':
+                                for upc in list_to_update:
+                                        #remove from doubles list if exists
+                                        self.db_cursor.execute('UPDATE sold_inventory SET reserved_two = ? WHERE upc = ? AND reserved_two = ?', (ALREADY_OUT, str(upc), NEEDS_PUT_OUT))
+                                        print 'updating...%s...' % str(upc)
+                                        self.db.commit()
+
+                                list_to_update = []
+                                continue
+                        list_to_update.append(str(entered))
+
+                        
+
         def add_new_release_tag(self):
                 list_of_stuff_to_update = []
                 count = 0
                 for row in self.db_cursor.execute('SELECT * FROM online_inventory ORDER BY date_added DESC'):
                         count += 1
-                        if count > 71:
+                        if count > 54:
                                 break
                         if ',New Release' not in row[ONLINE_SHOPIFY_TAGS]:
                                 print row[ONLINE_ARTIST]
                                 tags = row[ONLINE_SHOPIFY_TAGS]
                                 tags = tags + ',New Release'
                                 #tags = tags + ',Audiophile'
+                                #tags = 'Format_SACD,Audiophile'
                                 list_of_stuff_to_update.append((0,tags,row[ONLINE_ID]))
                 for row in list_of_stuff_to_update:
                         self.db_cursor.execute('UPDATE online_inventory SET sync = ? WHERE id = ?', (row[0], row[2]))
@@ -163,8 +212,13 @@ class Util():
                 
 	#this method should be left blank unless some one time operation needs to be done
 	def custom_temp_operation(self):
-
-                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('162461',))
+                #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions WHERE checked_out = ?', (0,)):
+                #        print row
+                #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,9391))
+                #self.db.commit()
+                #return
+        
+                self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('176165',))
 		self.db.commit()
                 return
 
@@ -347,8 +401,8 @@ class Util():
                 #FUCKFUCK
                 #self.db_cursor.execute('UPDATE sold_online_status SET street_date = ? WHERE shopify_id = ?', ('2017-09-08', '5447133010'))
                 #self.db.commit()
-                #for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions WHERE checked_out = ?', (0,)):
-                #        print row
+                for row in self.db_cursor.execute('SELECT * FROM website_pending_transactions WHERE checked_out = ?', (0,)):
+                        print row
                 #self.db_cursor.execute('UPDATE website_pending_transactions SET checked_out = ? WHERE id = ?', (1,1336))
                 #self.db.commit()
                 #self.db_cursor.execute('DELETE FROM inventory WHERE id = ?', ('107038',))
@@ -1170,6 +1224,8 @@ if __name__ == '__main__':
                         print 'fix_ups - fix registered trade mark issue in ups ground'
                         print 'fix_qoh - fix qoh vs. website errors'
                         print 'print_doubles - print doubles for spreadsheet import'
+                        print 'pickup_emails - generate item list and email list from fulfill SKUs'
+                        print 'double_deleter - delete doubles from list as you scan the barcodes'
 		elif entered == 's' or entered =='summary':
 			print 'doing stuff to things'
 		elif entered == 'd' or entered == 'day':
@@ -1389,3 +1445,7 @@ if __name__ == '__main__':
 			util.print_doubles_that_havent_sold_well()
                 elif entered == 'fix_ups':
                         util.fix_ups()
+                elif entered == 'pickup_emails':
+                        util.generate_email_for_new_release_pickups()
+                elif entered == 'double_deleter':
+                        util.double_deleter()

@@ -147,6 +147,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table_list = []
         self.tab_seven_po_table_list = []
         self.tab_seven_po_table_list_filtered = []
+        self.counter_refresh = 0
 
         #tab eight stuff
         self.tab_eight_need_to_do_table_list = []
@@ -20123,7 +20124,8 @@ class Ui_Form(QtGui.QWidget):
                             #elif self.tab_four_checkout_table_list[ix][PRICE_INDEX] == 1.99:
                             #    self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 50 
                             #else:
-                            self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 25
+                            #self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 25
+                            placeholder = 0
                     else:#if it's new
                         placeholder = 0
                         #self.tab_four_checkout_table_list[ix][PERCENT_DISCOUNT_INDEX] = 10
@@ -21020,7 +21022,7 @@ class Ui_Form(QtGui.QWidget):
             check_distributor = self.tab_seven_search_sold_filter_dist_checkbox.isChecked()
             check_date_ranges = self.tab_seven_search_sold_filter_date_checkbox.isChecked()
             #get some more data for the query, tryna speed this ish up
-            #cap = 0
+            cap = 0
             if check_distributor and not check_date_ranges:#this special piece is made for making orders "faster"
                 print 'QUERY IS BLANK, DISTRO IS CHECKED, NO DATE RANGE SELECTED, SPEED MODE ENGAGEEEEE!'
                 a = datetime.datetime.now()
@@ -21028,12 +21030,12 @@ class Ui_Form(QtGui.QWidget):
                 dist = str(dist.split('-')[0]).strip()
                 for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? AND reserved_one = ? ORDER BY date_sold DESC', (NEEDS_REORDERED, dist)):
                     self.tab_seven_search_sold_table_list.append(list(row))
-                    #cap += 1
-                    #if cap > self.tab_seven_search_sold_table.rowCount():
-                    #    break
+                    cap += 1#
+                    if cap > self.tab_seven_search_sold_table.rowCount():#
+                        break#
                 b = datetime.datetime.now()
                 c = b - a
-                print 'DONE - Time: %s ms' % (str(c.microseconds/1000)) 
+                print 'DONE - Time: %s seconds' % (str(c.total_seconds())) 
             else:
                 for row in self.db_cursor.execute('SELECT * FROM sold_inventory WHERE reorder_state = ? ORDER BY date_sold DESC', (NEEDS_REORDERED,)):
                     #check distributor
@@ -21215,7 +21217,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table_clear()
         b = datetime.datetime.now()
         diff = b-a
-        print 'refresh - clear tables time %s ms' % (str(diff.microseconds/1000))
+        print 'refresh - clear tables time %s ms' % (str(diff.total_seconds()))
         #perform search
         c = datetime.datetime.now()
         if top_table_refresh:
@@ -21228,7 +21230,7 @@ class Ui_Form(QtGui.QWidget):
             print 'skipping bottom table refresh'
         d = datetime.datetime.now()
         diff = d - c
-        print 'refresh - search time %s ms' % (str(diff.microseconds/1000))
+        print 'refresh - search time %s seconds' % (str(diff.total_seconds()))
         e = datetime.datetime.now()
         #filter distributors
         self.tab_seven_po_table_filter()
@@ -21240,7 +21242,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table_generate_back_buttons()
         f = datetime.datetime.now()
         diff = f - e
-        print 'refresh - po_table_filter and button generation time %s ms' % (str(diff.microseconds/1000))
+        print 'refresh - po_table_filter and button generation time %s ms' % (str(diff.total_seconds()))
         
         self.tab_seven_distributor_mapper = QtCore.QSignalMapper(self)
         #search sold table
@@ -21249,13 +21251,13 @@ class Ui_Form(QtGui.QWidget):
         qsold = self.get_qsold()
         h = datetime.datetime.now()
         diff = h - g
-        print 'refresh - getting qoh and qsold %s ms' % (str(diff.microseconds/1000))
+        print 'refresh - getting qoh and qsold %s ms' % (str(diff.total_seconds()))
         for ix, row in enumerate(self.tab_seven_search_sold_table_list):
             a = datetime.datetime.now()
             diff = a - h
             print 'just getting into this for loop for the %i time, time so far %s ms' % (ix, str(diff.total_seconds()))
             if ix >= (self.tab_seven_search_sold_table.rowCount()):
-                #placeholder = 0
+                print 'breaking out of this loop now\n\nfor ix, row in enumerate(self.tab_seven_search_sold_table_list):\n\n'
                 break
             #do stuff to make display better for ordering
             date_time_sold = (datetime.datetime.strptime(str(row[DATE_SOLD_INDEX]), "%Y-%m-%d %H:%M:%S"))
@@ -21272,7 +21274,7 @@ class Ui_Form(QtGui.QWidget):
             barcode_query = str(row[UPC_INDEX])
             b = datetime.datetime.now()
             diff = b - a
-            print 'looping - pt1 %s ms' % (str(diff.microseconds/1000))
+            print 'looping - pt1 %s ms' % (str(diff.total_seconds()))
             #for copy in self.db_cursor.execute('SELECT * FROM inventory WHERE upc = ?', (barcode_query,)):
             #    num_in_stock += 1
             #    if self.xfloat(copy[PRICE_PAID_INDEX]) < cheapest_price:
@@ -21295,7 +21297,7 @@ class Ui_Form(QtGui.QWidget):
                 num_sold_ever = 0
             c = datetime.datetime.now()
             diff = c - b
-            print 'looping - pt2 %s ms' % (str(diff.microseconds/1000))
+            print 'looping - pt2 %s ms' % (str(diff.total_seconds()))
             #work black magic with distributor stuff
             choices = self.tab_seven_get_list_of_distros_and_prices(row)
             list_of_choices = []
@@ -21318,7 +21320,7 @@ class Ui_Form(QtGui.QWidget):
                 self.tab_seven_search_sold_table_change_text(ix, 11, cheapest_distro)
             d = datetime.datetime.now()
             diff = d - c
-            print 'looping - pt3 %s ms' % (str(diff.microseconds/1000))
+            print 'looping - pt3 %s ms' % (str(diff.total_seconds()))
 
             self.tab_seven_search_sold_table_change_text(ix, 3, date_sold)
             self.tab_seven_search_sold_table_change_text(ix, 4, days_in_shop)
@@ -21344,13 +21346,15 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_search_sold_table.setColumnWidth(2,50)
         self.tab_seven_search_sold_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_search_sold_table_list)))
         items_in_history = 0
-        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
-            if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
-                items_in_history += 1
-        self.tab_seven_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
+        print 'starting to generate items in history'
+        #commenting this out for now because shit is way too fucking slow
+        #for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+        #if row[REORDER_STATE_INDEX] == NEEDS_REORDERED:
+        #        items_in_history += 1
+        #self.tab_seven_search_sold_item_history_label.setText('%s Items in History' % str(items_in_history))
         e = datetime.datetime.now()
         diff = e - d
-        #print 'looping - pt4 %s ms' % (str(diff.microseconds/1000))
+        print 'looping - pt4 %s ms' % (str(diff.total_seconds()))
 
         #po table
         self.tab_seven_po_table.setRowCount(len(self.tab_seven_po_table_list_filtered))
@@ -21385,6 +21389,7 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_po_table.setColumnWidth(0,50)
         self.tab_seven_po_table.setColumnWidth(1,50)
 
+        start_done_list = datetime.datetime.now()
         #done list
         for ix, row in enumerate(self.tab_seven_done_table_list):
             if ix > (self.tab_seven_done_table.rowCount()-1):
@@ -21416,13 +21421,17 @@ class Ui_Form(QtGui.QWidget):
         self.tab_seven_done_table.setColumnWidth(1,50)
         #update inventory count
         items_in_history = 0
-        for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
-            if row[REORDER_STATE_INDEX] == REORDERED or row[REORDER_STATE_INDEX] == NOT_REORDERING:
-               items_in_history += 1
-        self.tab_seven_done_item_history_label.setText('%s Items in History' % str(items_in_history))
+        #commenting this shit out because fuck this it's way too slow
+        #for row in self.db_cursor.execute('SELECT * FROM sold_inventory ORDER BY upc DESC'):
+        #    if row[REORDER_STATE_INDEX] == REORDERED or row[REORDER_STATE_INDEX] == NOT_REORDERING:
+        #       items_in_history += 1
+        #self.tab_seven_done_item_history_label.setText('%s Items in History' % str(items_in_history))
+        
         self.tab_seven_done_search_items_label.setText('%s Items Found For Search Terms' % str(len(self.tab_seven_done_table_list)))
         end = datetime.datetime.now()
         diff = end-start
+        done_list_time = end - start_done_list
+        print 'done list time: %s' % (str(done_list_time.total_seconds()))
         #print 'TOTAL TIME: %s' % (str(diff.microseconds/1000))
         #print 'TOTAL TIME: %s' % (str(diff.total_seconds()))
     
@@ -21520,11 +21529,14 @@ class Ui_Form(QtGui.QWidget):
             self.db.commit()
             #fix lists brej
             temp_row = self.tab_seven_search_sold_table_list[row]
-            del self.tab_seven_search_sold_table_list[row]
+            #del self.tab_seven_search_sold_table_list[row]
             temp_row[REORDER_STATE_INDEX] = ON_CURRENT_PO_LIST
             temp_row[RESERVED_THREE_INDEX] = qty
             self.tab_seven_po_table_list.append(temp_row)
-            self.tab_seven_refresh(False,True,False)
+            self.counter_refresh += 1
+            print self.counter_refresh
+            if self.counter_refresh % 10 == 0:
+                self.tab_seven_refresh(False,True,False)
             
     def tab_seven_search_sold_ignore_requested(self, row):
         if row < len(self.tab_seven_search_sold_table_list):
@@ -21535,10 +21547,13 @@ class Ui_Form(QtGui.QWidget):
             self.db.commit()
             #fix lists
             temp_row = self.tab_seven_search_sold_table_list[row]
-            del self.tab_seven_search_sold_table_list[row]
+            #del self.tab_seven_search_sold_table_list[row]
             temp_row[REORDER_STATE_INDEX] = NOT_REORDERING
             self.tab_seven_done_table_list.append(temp_row)
-            self.tab_seven_refresh(False,True,False)
+            self.counter_refresh += 1
+            print self.counter_refresh
+            if self.counter_refresh % 10 == 0:
+                self.tab_seven_refresh(False,True,False)
 
     def tab_seven_po_more_info_requested(self, row):
         if row < len(self.tab_seven_po_table_list):
